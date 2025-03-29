@@ -106,7 +106,7 @@ export const CashOnDeliveryForm = ({
     
     try {
       // Submit order with cash on delivery details
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout/cash`, {
         productsIds: items.map((item) => item.id),
         paymentMethod: "cash_on_delivery",
         deliveryDetails: formData
