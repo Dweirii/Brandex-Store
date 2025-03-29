@@ -87,7 +87,7 @@ const Summary = () => {
         <div className="mt-8 space-y-4">
           <Button
             onClick={onCheckout}
-            className="w-full py-2 rounded-lg text-base font-medium flex items-center justify-center gap-2 bg-black transition-all hover:shadow-md"
+            className="w-full py-2 rounded-lg text-base font-medium flex items-center justify-center gap-2 bg-black md:bg-black sm:bg-black transition-all hover:shadow-md"
 
           >
             <CreditCard className="h-5 w-5" />
