@@ -257,7 +257,7 @@ export const CashOnDeliveryForm = ({
             
             <Button 
               onClick={handleSubmit}
-              className="w-full h-12 text-base font-medium rounded-xl mt-4"
+              className="w-full h-12 text-base font-medium bg-black rounded-xl mt-4"
               disabled={isLoading}
             >
               {isLoading ? (
