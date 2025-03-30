@@ -93,42 +93,6 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-
-          <div className="space-y-4">
-            <h3 className="text-base font-semibold relative inline-block after:content-[''] after:absolute after:w-1/2 after:h-0.5 after:bg-black after:bottom-0 after:left-0 pb-2">
-              Follow Us
-            </h3>
-            <div className="flex space-x-3">
-              <a
-                href="#"
-                className="bg-gray-100 p-2 rounded-full hover:bg-primary/10 transition-colors duration-200 hover:scale-110 transform"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5 text-black" />
-              </a>
-              <a
-                href="#"
-                className="bg-gray-100 p-2 rounded-full hover:bg-primary/10 transition-colors duration-200 hover:scale-110 transform"
-                aria-label="Twitter"
-              >
-                <Twitter className="h-5 w-5 text-black" />
-              </a>
-              <a
-                href="#"
-                className="bg-gray-100 p-2 rounded-full hover:bg-primary/10 transition-colors duration-200 hover:scale-110 transform"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5 text-black" />
-              </a>
-              <a
-                href="#"
-                className="bg-gray-100 p-2 rounded-full hover:bg-primary/10 transition-colors duration-200 hover:scale-110 transform"
-                aria-label="YouTube"
-              >
-                <Youtube className="h-5 w-5 text-black" />
-              </a>
-            </div>
-          </div>
         </div>
 
         {/* Mobile version - modern accordion style */}
