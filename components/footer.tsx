@@ -226,43 +226,7 @@ const Footer = () => {
               </div>
             </div>
           </div>
-
-          {/* Follow Us Section */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <button
-              onClick={() => toggleSection("follow")}
-              className="flex justify-between items-center w-full p-4 text-left"
-            >
-              <h3 className="text-sm font-semibold">Follow Us</h3>
-              <ChevronDown
-                className={`h-4 w-4 text-black transition-transform duration-200 ${openSection === "follow" ? "rotate-180" : ""}`}
-              />
-            </button>
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                openSection === "follow" ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
-              }`}
-            >
-              <div className="p-4 pt-0">
-                <div className="flex space-x-3">
-                  <a href="#" className="p-2 rounded-full bg-gray-100" aria-label="Instagram">
-                    <Instagram className="h-4 w-4 text-black" />
-                  </a>
-                  <a href="#" className="p-2 rounded-full bg-gray-100" aria-label="Twitter">
-                    <Twitter className="h-4 w-4 text-black" />
-                  </a>
-                  <a href="#" className="p-2 rounded-full bg-gray-100" aria-label="Facebook">
-                    <Facebook className="h-4 w-4 text-black" />
-                  </a>
-                  <a href="#" className="p-2 rounded-full bg-gray-100" aria-label="YouTube">
-                    <Youtube className="h-4 w-4 text-black" />
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-
         {/* Copyright - modern styling */}
         <div className="mt-10 pt-6 border-t border-gray-200">
           <p className="text-center text-xs font-medium text-muted-foreground">
