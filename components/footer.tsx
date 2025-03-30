@@ -15,66 +15,75 @@ const Footer = () => {
     <footer className="bg-white border-t border-gray-200">
       <div className="container mx-auto px-4 py-12">
         {/* Desktop View */}
-        <div className="hidden md:flex justify-center gap-8 lg:gap-16 xl:gap-24 max-w-6xl mx-auto">
-          <div className="w-64 space-y-5 flex flex-col items-center">
-            <h3 className="text-black font-semibold text-lg relative inline-block after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-black after:bottom-0 after:left-0 pb-2">
+        <div className="hidden md:grid grid-cols-3 gap-8 lg:gap-16 xl:gap-24 max-w-6xl mx-auto">
+          <div className="space-y-6 flex flex-col items-center">
+            <h3 className="text-black font-semibold text-lg relative inline-block pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-black after:bottom-0 after:left-0 after:transition-all after:duration-300 hover:after:bg-primary">
               About Us
             </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed text-center">
+            <p className="text-sm text-muted-foreground leading-relaxed text-center max-w-xs">
               Baha Store offers quality products with exceptional customer service, dedicated to bringing you the best
               shopping experience.
             </p>
+            <div className="w-16 h-1 bg-gradient-to-r from-gray-200 via-gray-400 to-gray-200 rounded-full mt-2"></div>
           </div>
 
-          <div className="w-64 space-y-5 flex flex-col items-center">
-            <h3 className="text-black font-semibold text-lg relative inline-block after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-black after:bottom-0 after:left-0 pb-2">
+          <div className="space-y-6 flex flex-col items-center">
+            <h3 className="text-black font-semibold text-lg relative inline-block pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-black after:bottom-0 after:left-0 after:transition-all after:duration-300 hover:after:bg-primary">
               Policies
             </h3>
-            <ul className="space-y-3 w-full">
+            <ul className="space-y-4 w-full max-w-xs flex flex-col items-center">
               {[
                 { href: "/privacy-policy", label: "Privacy Policy" },
                 { href: "/refund-policy", label: "Refund Policy" },
                 { href: "/terms-of-service", label: "Terms of Service" },
               ].map((item) => (
-                <li key={item.href} className="flex justify-center">
+                <li key={item.href} className="text-center">
                   <Link
                     href={item.href}
-                    className="text-sm text-muted-foreground hover:text-black transition-colors duration-200 flex items-center group"
+                    className="text-sm text-muted-foreground hover:text-black transition-colors duration-200 inline-flex items-center group relative"
                   >
-                    <span className="h-1.5 w-1.5 bg-gray-400 rounded-full mr-2 group-hover:bg-black transition-colors"></span>
-                    {item.label}
+                    <span className="absolute -left-4 h-1.5 w-1.5 bg-gray-400 rounded-full group-hover:bg-black transition-colors group-hover:scale-125 duration-200"></span>
+                    <span className="group-hover:translate-x-0.5 transition-transform duration-200">{item.label}</span>
                   </Link>
                 </li>
               ))}
             </ul>
+            <div className="w-16 h-1 bg-gradient-to-r from-gray-200 via-gray-400 to-gray-200 rounded-full mt-2"></div>
           </div>
 
-          <div className="w-64 space-y-5 flex flex-col items-center">
-            <h3 className="text-black font-semibold text-lg relative inline-block after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-black after:bottom-0 after:left-0 pb-2">
+          <div className="space-y-6 flex flex-col items-center">
+            <h3 className="text-black font-semibold text-lg relative inline-block pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bg-black after:bottom-0 after:left-0 after:transition-all after:duration-300 hover:after:bg-primary">
               Contact Us
             </h3>
-            <ul className="space-y-4 w-full">
-              <li className="flex items-center justify-center gap-3 text-sm text-muted-foreground group">
-                <div className="bg-gray-100 p-2 rounded-full group-hover:bg-primary/10 transition-colors duration-200">
+            <ul className="space-y-5 w-full max-w-xs">
+              <li className="flex items-center justify-center gap-4 text-sm text-muted-foreground group">
+                <div className="bg-gray-100 p-2.5 rounded-full group-hover:bg-gray-200 transition-colors duration-200 shadow-sm">
                   <Mail className="h-4 w-4 text-black" />
                 </div>
-                <a href="mailto:support@albahaa-store.org" className="hover:text-black transition-colors duration-200">
+                <a
+                  href="mailto:support@albahaa-store.org"
+                  className="hover:text-black transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-black after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300"
+                >
                   support@albahaa-store.org
                 </a>
               </li>
-              <li className="flex items-center justify-center gap-3 text-sm text-muted-foreground group">
-                <div className="bg-gray-100 p-2 rounded-full group-hover:bg-primary/10 transition-colors duration-200">
+              <li className="flex items-center justify-center gap-4 text-sm text-muted-foreground group">
+                <div className="bg-gray-100 p-2.5 rounded-full group-hover:bg-gray-200 transition-colors duration-200 shadow-sm">
                   <Phone className="h-4 w-4 text-black" />
                 </div>
-                <a href="tel:+962792977707" className="hover:text-black transition-colors duration-200">
+                <a
+                  href="tel:+962792977707"
+                  className="hover:text-black transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-black after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300"
+                >
                   +962-79-297-7707
                 </a>
               </li>
             </ul>
+            <div className="w-16 h-1 bg-gradient-to-r from-gray-200 via-gray-400 to-gray-200 rounded-full mt-2"></div>
           </div>
         </div>
 
-        {/* Mobile View */}
+        {/* Mobile View - Keeping the same as before */}
         <div className="md:hidden space-y-4">
           {[
             { id: "about", title: "About Us" },
