@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Mail, Phone, ChevronDown, Instagram, Twitter, Facebook, Youtube } from "lucide-react"
+import { Mail, Phone, ChevronDown } from "lucide-react"
 import { useState } from "react"
 
 const Footer = () => {
