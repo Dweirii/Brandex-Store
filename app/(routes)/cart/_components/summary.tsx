@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
-import { ShoppingBag, CreditCard, Truck } from "lucide-react"
+import { useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { ShoppingBag, CreditCard, Heart } from "lucide-react"
 import { motion } from "framer-motion"
 
 import Button from "@/components/ui/Button"
@@ -10,21 +10,20 @@ import Currency from "@/components/ui/currency"
 import { Separator } from "@/components/ui/separator"
 import useCart from "@/hooks/use-cart"
 import toast from "react-hot-toast"
-import { PaymentModal } from "@/components/payment-modal"
-import { CashOnDeliveryForm } from "@/components/cash-on-delivery-form"
+import axios from "axios"
 
 const Summary = () => {
   const searchParams = useSearchParams()
 
   const items = useCart((state) => state.items)
   const removeAll = useCart((state) => state.removeAll)
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
-  const [isDeliveryFormOpen, setIsDeliveryFormOpen] = useState(false)
+  const router = useRouter();
 
   useEffect(() => {
     if (searchParams.get("success")) {
       toast.success("Payment completed.")
       removeAll()
+      router.push("/thank-you")
     }
 
     if (searchParams.get("canceled")) {
@@ -36,14 +35,13 @@ const Summary = () => {
     return total + Number(item.price)
   }, 0)
 
-  const onCheckout = () => {
-    setIsPaymentModalOpen(true)
+  const onCheckout = async () => {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
+      productIds: items.map((item) => item.id), 
+    });
+    window.location = response.data.url;
   }
 
-  const handleSelectCashOnDelivery = () => {
-    setIsPaymentModalOpen(false)
-    setIsDeliveryFormOpen(true)
-  }
 
   return (
     <>
@@ -70,10 +68,10 @@ const Summary = () => {
 
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-1">
-              <Truck className="h-4 w-4 text-gray-500" />
-              <span className="text-gray-600">Shipping</span>
+              <Heart className="h-4 w-4 text-white" fill="red" />
+              <span className="text-gray-600">Brandex</span>
             </div>
-            <span className="font-medium text-gray-800">Calculated at checkout</span>
+            <span className="font-medium text-gray-800">Thank you</span>
           </div>
 
           <Separator className="my-2" />
@@ -88,7 +86,6 @@ const Summary = () => {
           <Button
             onClick={onCheckout}
             className="w-full py-2 rounded-lg text-base font-medium flex items-center justify-center gap-2 bg-black md:bg-black sm:bg-black transition-all hover:shadow-md"
-
           >
             <CreditCard className="h-5 w-5" />
             Proceed to Checkout
@@ -100,16 +97,8 @@ const Summary = () => {
         </div>
       </motion.div>
 
-      <PaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
-        onSelectCashOnDelivery={handleSelectCashOnDelivery}
-      />
-
-      <CashOnDeliveryForm isOpen={isDeliveryFormOpen} onClose={() => setIsDeliveryFormOpen(false)} />
     </>
   )
 }
 
 export default Summary
-

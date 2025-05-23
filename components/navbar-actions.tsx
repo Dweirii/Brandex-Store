@@ -32,7 +32,7 @@ const NavbarActions = () => {
           onClick={() => router.push("/cart")}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className="group relative flex h-10 items-center overflow-hidden rounded-xl bg-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.25)] sm:h-12"
+          className="group relative flex h-9 lg:h-9 md:h-9 xl:h-9 items-center overflow-hidden rounded-md bg-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.25)] sm:h-14"
           whileTap={{ scale: 0.97 }}
           transition={{
             scale: { duration: 0.1 },
@@ -72,7 +72,7 @@ const NavbarActions = () => {
 
           <div className="flex h-full items-center justify-center px-2">
             <motion.div
-              className="flex h-6 min-w-6 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-xs font-bold text-white sm:h-7 sm:min-w-7 sm:text-sm"
+              className="flex h-6 min-w-6 items-center justify-center rounded-full bg-white text-xs font-bold text-black sm:h-6 sm:min-w-6 sm:text-sm"
               initial={false}
               animate={{
                 scale: cart.items.length > 0 ? [1, 1.15, 1] : 1,
@@ -91,7 +91,7 @@ const NavbarActions = () => {
 
           {/* Hover effect line */}
           <motion.div
-            className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-cyan-500 to-blue-600"
+            className="absolute bottom-0 left-0 h-[2px] bg-white"
             initial={{ width: 0 }}
             animate={{ width: isHovered ? "100%" : "0%" }}
             transition={{ duration: 0.2 }}
@@ -101,7 +101,7 @@ const NavbarActions = () => {
         {/* Notification dot - only shows when cart has items */}
         {cart.items.length > 0 && (
           <motion.div
-            className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-500 text-[8px] font-bold text-white shadow-md"
+            className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-white"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{

@@ -25,15 +25,6 @@ const Billboard: React.FC<BillboardProps> = ({
           {/* Gradient Overlay for better text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/50" />
         </div>
-        
-        {/* Content */}
-        <div className="relative h-full w-full flex flex-col justify-center items-center text-center p-6 sm:p-10">
-          <div className="animate-fade-in-up">
-            <h2 className="font-bold text-3xl sm:text-5xl lg:text-6xl max-w-xs sm:max-w-xl text-Black drop-shadow-md">
-              {data?.label || ""}
-            </h2>
-          </div>
-        </div>
       </div>
     </div>
   );

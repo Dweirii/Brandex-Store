@@ -1,29 +1,28 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import type { Category } from "@/types";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, ChevronRight } from "lucide-react";
-import Button from "@/components/ui/Button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { motion } from "framer-motion";
+import { useState } from "react"
+import { cn } from "@/lib/utils"
+import type { Category } from "@/types"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Menu, ChevronRight } from "lucide-react"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { motion } from "framer-motion"
 
 interface MainNavProps {
-  data: Category[];
+  data: Category[]
 }
 
 const MainNav = ({ data }: MainNavProps) => {
-  const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const routes = data.map((route) => ({
     href: `/category/${route.id}`,
     label: route.name,
     active: pathname === `/category/${route.id}`,
-  }));
+  }))
 
   return (
     <>
@@ -42,42 +41,62 @@ const MainNav = ({ data }: MainNavProps) => {
             <Link
               href={route.href}
               className={cn(
-                "relative block px-3 py-2 text-sm font-medium transition-colors",
-                route.active ? "text-white" : "text-neutral-400 hover:text-white"
+                "relative block px-3 py-2 text-sm font-medium transition-colors duration-200",
+                route.active ? "text-white" : "text-black hover:text-white",
               )}
             >
               {route.label}
 
-              {/* Hover background */}
+              {/* Hover background with improved animation */}
               {hoveredIndex === index && !route.active && (
                 <motion.span
-                  className="absolute inset-0 -z-10 rounded-md bg-[#222]"
+                  className="absolute inset-0 -z-10 h-9 rounded-md bg-black"
                   layoutId="hoverBackground"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.0)",
+                  }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{
+                    duration: 0.2,
+                    ease: "easeOut",
+                  }}
                 />
               )}
 
-              {/* Active indicator */}
+              {/* Active indicator with improved styling */}
               {route.active && (
                 <motion.div
-                  className="absolute inset-0 -z-10 rounded-md bg-[#333]"
+                  className="absolute inset-0 -z-10 rounded-md bg-white"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
+                  animate={{
+                    opacity: 1,
+                    boxShadow: "0 0 15px rgba(0, 0, 0, 0.15)",
+                  }}
+                  transition={{ duration: 0.3 }}
                 />
               )}
 
-              {/* Underline effect */}
-              {route.active && (
+              {/* Underline effect with improved animation */}
+              {route.active ? (
                 <motion.div
                   className="absolute bottom-0 left-0 h-[2px] w-full bg-white"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ duration: 0.2, delay: 0.1 }}
                 />
+              ) : (
+                hoveredIndex === index && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 h-[2px] w-full bg-white/70"
+                    initial={{ scaleX: 0, originX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    exit={{ scaleX: 0, originX: 1 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                )
               )}
             </Link>
           </motion.div>
@@ -88,22 +107,17 @@ const MainNav = ({ data }: MainNavProps) => {
       <div className="md:hidden">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button
-              className="text-black p-2 rounded-md "
+            <button
+              className="flex items-center justify-center p-2 rounded-md text-black hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+              aria-label="Open menu"
             >
-              <motion.div
-                animate={{ rotate: isOpen ? 90 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
+              <motion.div animate={{ rotate: isOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
                 <Menu className="h-5 w-5" />
               </motion.div>
-            </Button>
+            </button>
           </SheetTrigger>
 
-          <SheetContent
-            side="left"
-            className="w-[80%] sm:w-[350px] bg-white text-black border-r-0 p-0"
-          >
+          <SheetContent side="left" className="w-[80%] sm:w-[350px] bg-white text-black border-r-0 p-0">
             <div className="flex flex-col space-y-1 py-4">
               <motion.h2
                 className="mb-4 px-4 text-lg font-semibold text-black"
@@ -126,9 +140,7 @@ const MainNav = ({ data }: MainNavProps) => {
                     onClick={() => setIsOpen(false)}
                     className={cn(
                       "group flex items-center justify-between px-4 py-3 text-sm font-medium transition-all",
-                      route.active
-                        ? "bg-[#4e4e4e1c] text-black"
-                        : "text-black "
+                      route.active ? "bg-[#4e4e4e1c] text-black" : "text-black hover:bg-gray-50",
                     )}
                   >
                     <span>{route.label}</span>
@@ -151,7 +163,7 @@ const MainNav = ({ data }: MainNavProps) => {
         </Sheet>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default MainNav;
+export default MainNav

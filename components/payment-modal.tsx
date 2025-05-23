@@ -5,15 +5,20 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import  Button  from "@/components/ui/Button"
 
 interface PaymentModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSelectCashOnDelivery: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectCashOnDelivery: () => void;
+  onSelectCardPayment: () => void; // ✅ هذا هو المطلوب
 }
+
+
+
 
 export const PaymentModal = ({
   isOpen,
   onClose,
   onSelectCashOnDelivery,
+  onSelectCardPayment,
 }: PaymentModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -38,12 +43,15 @@ export const PaymentModal = ({
             </Button>
             
             <div className="relative">
-                <Button
-                className="flex items-center justify-start gap-3 h-16 text-lg w-full cursor-not-allowed bg-gray-200 rounded-2xl"
-                >
-                <CreditCard className="h-6 w-6 text-black" />
-                <span className="text-black">Visa</span>
-                </Button>
+            <Button
+  onClick={onSelectCardPayment}
+  className="flex items-center justify-start gap-3 h-16 text-lg w-full bg-black hover:bg-gray-900 rounded-2xl"
+>
+  <CreditCard className="h-6 w-6 text-white" />
+  <span className="text-white">Visa / MasterCard</span>
+</Button>
+
+
                 <p className="text-sm text-muted-foreground mt-1 ml-1">
                 💳 Visa payments will be available soon.
                 </p>
