@@ -24,13 +24,17 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
-            {
-        protocol: "https",
-        hostname: "unsplash.com",
-      },
       {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "brandex-cdn.b-cdn.net",
+      },
+      {
+        protocol: "https",
+        hostname: "image-brandex.b-cdn.net",
       },
     ],
   },

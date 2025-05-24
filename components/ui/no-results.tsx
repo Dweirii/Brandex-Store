@@ -1,9 +1,27 @@
-const NoResults = () => {
-    return ( 
-        <div className="flex items-center justify-center h-full w-full text-neutral-500">
-            No Results.
-        </div>
-     );
+import { PackageX } from "lucide-react"
+
+interface NoResultsProps {
+  title?: string
+  description?: string
 }
- 
-export default NoResults;
+
+const NoResults = ({
+  title = "No results found",
+  description = "There are no items in this category yet.",
+}: NoResultsProps) => {
+  return (
+    <div className="flex flex-col items-center justify-center h-full w-full">
+      <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <div className="relative rounded-full bg-muted p-4">
+          <PackageX className="h-10 w-10 text-muted-foreground" />
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+          <p className="text-sm text-muted-foreground max-w-md">{description}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default NoResults
