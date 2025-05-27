@@ -152,9 +152,9 @@ export default function PrivacyPolicy() {
                   3. Payment Processing
                 </h2>
                 <p>
-                  All payment transactions are handled by third-party providers (such as HyperPay) using secure
+                  All payment transactions are handled by third-party providers (such as Stripe) using secure
                   encryption protocols. We do not store or have access to your full card details. Please review
-                  HyperPay&apos;s own privacy policy for details on their data handling practices.
+                  Stripe&apos;s own privacy policy for details on their data handling practices.
                 </p>
 
                 <h2 id="sharing-information" className="text-2xl font-semibold mt-10 mb-4 scroll-mt-24">
@@ -199,8 +199,8 @@ export default function PrivacyPolicy() {
                 </ul>
                 <p>
                   To exercise these rights, contact us at:{" "}
-                  <a href="mailto:support@albahaa-store.org" className="text-primary hover:underline">
-                    support@albahaa-store.org
+                  <a href="mailto:support@Brandex.com" className="text-primary hover:underline">
+                    support@Brandex.com
                   </a>
                 </p>
 
@@ -227,13 +227,13 @@ export default function PrivacyPolicy() {
                 <div className="bg-muted p-4 rounded-lg my-4">
                   <p>
                     <strong>Email:</strong>{" "}
-                    <a href="mailto:support@albahaa-store.org" className="text-primary hover:underline">
-                      support@albahaa-store.org
+                    <a href="mailto:support@Brandex.com" className="text-primary hover:underline">
+                      support@Brandex.com
                     </a>
                     <br />
                     <strong>Phone:</strong> +962-79-297-7707
                     <br />
-                    <strong>Business Name:</strong> Bahaa Qatamin
+                    <strong>Business Name:</strong> Brandex
                     <br />
                     <strong>Location:</strong> Amman, Jordan
                   </p>

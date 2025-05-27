@@ -16,7 +16,7 @@ export const useApiRequest = () => {
       throw new Error("Authentication failed");
     }
 
-    const res = await fetch(`http://localhost:3000${path}`, {
+    const res = await fetch(`https://brandex-admin-main.vercel.app${path}`, {
       ...options,
       headers: {
         ...(options.headers || {}),

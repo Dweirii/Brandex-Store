@@ -2,20 +2,19 @@
 import { useAuth } from "@clerk/nextjs";
 
 export const useApiRequest = () => {
-  const { getToken } = useAuth(); // ✅ مرة واحدة فقط
+  const { getToken } = useAuth();    
 
   const apiRequest = async (path: string, options: RequestInit = {}) => {
     let token = null;
 
     try {
-      token = await getToken({ template: "CustomerJWTBrandex" }); // ✅ اسم التمبلت
-      alert("🪪 JWT Token: " + token); // ✅ عرض التوكن لتتأكد من وجوده
+      token = await getToken({ template: "CustomerJWTBrandex" });    
     } catch (err) {
       alert("Failed to get token: " + err);
       throw new Error("Authentication failed");
     }
 
-    const res = await fetch(`http://localhost:3000${path}`, {
+    const res = await fetch(`https://brandex-admin-main.vercel.app${path}`, {
       ...options,
       headers: {
         ...(options.headers || {}),
@@ -26,7 +25,7 @@ export const useApiRequest = () => {
 
     if (!res.ok) {
       const errorText = await res.text();
-      console.error("❌ API Error:", errorText);
+      console.error("API Error:", errorText);
       throw new Error(`API Error: ${res.status}`);
     }
 

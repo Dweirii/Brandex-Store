@@ -20,7 +20,7 @@ const Summary = () => {
   const removeAll = useCart((state) => state.removeAll);
   const { getToken } = useAuth(); // ✅ Hook داخل الـ Component مباشرة
 
-  // 🎯 التعامل مع Stripe بعد العودة من الدفع
+
   useEffect(() => {
     if (searchParams.get("success")) {
       toast.success("Payment completed.");
@@ -31,7 +31,8 @@ const Summary = () => {
     if (searchParams.get("canceled")) {
       toast.error("Something went wrong.");
     }
-  }, [searchParams, removeAll]);
+  }, [searchParams, removeAll, router]);
+
 
   const totalPrice = items.reduce((total, item) => {
     return total + Number(item.price);
@@ -41,7 +42,6 @@ const Summary = () => {
   const onCheckout = async () => {
     try {
       const token = await getToken({ template: "CustomerJWTBrandex" });
-
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/checkout`,
         {
