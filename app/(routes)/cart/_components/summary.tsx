@@ -40,7 +40,7 @@ const Summary = () => {
 
   const onCheckout = async () => {
     try {
-      const token = await getToken({ template: "Customerx" });
+      const token = await getToken({ template: "CustomerJWTBrandex" });
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/checkout`,
         {

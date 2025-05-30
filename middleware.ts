@@ -1,29 +1,21 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isPublicRoute = createRouteMatcher([
+  '/',
   '/sign-in(.*)',
-  '/sign-up(.*)'
-])
+  '/sign-up(.*)',
+  '/products(.*)',
+  '/category(.*)',
+]);
 
 export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
-    await auth.protect()
+    await auth.protect();
   }
-})
+});
+
 export const config = {
   matcher: [
-
-    '/cart(.*)',
-    '/checkout(.*)',
-    '/thank-you(.*)',
-
-
-    '/api/download(.*)',
-
-
-    '/(api|trpc)(.*)',
-
-
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/((?!_next|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|gif|css|js|json|webp|ttf|woff2?)$).*)',
   ],
 };
