@@ -18,8 +18,7 @@ const Summary = () => {
   const router = useRouter();
   const items = useCart((state) => state.items);
   const removeAll = useCart((state) => state.removeAll);
-  const { getToken } = useAuth(); // ✅ Hook داخل الـ Component مباشرة
-
+  const { getToken } = useAuth();
 
   useEffect(() => {
     if (searchParams.get("success")) {
@@ -41,7 +40,7 @@ const Summary = () => {
 
   const onCheckout = async () => {
     try {
-      const token = await getToken({ template: "CustomerJWTBrandex" });
+      const token = await getToken({ template: "Customerx" });
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/checkout`,
         {

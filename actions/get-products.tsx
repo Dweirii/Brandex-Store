@@ -36,7 +36,7 @@ const getProducts = async (query: Query): Promise<Product[]> => {
 
         const processedData = data.map((product: any) => ({
             ...product,
-            images: product.image?.map((img: any) => ({ url: img.url })) || [],
+            images: product.Image?.map((img: any) => ({ url: img.url })) || [],
         }));
 
         if (query.categoryId) {

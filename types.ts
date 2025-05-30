@@ -20,10 +20,10 @@ export interface Product {
   isFeatured: boolean;
   images: Image[];
 
-  // ✅ أضف هذين السطرين:
+
   description?: string;
   keywords?: string;
-  originalPrice?: string; // إن كنت تستخدمه أيضاً
+  originalPrice?: string; 
 }
 
 

@@ -31,7 +31,7 @@ export default function ThankYouPage() {
       if (!sessionId) return
       try {
         const data = await apiRequest(
-          `/api/b32608ef-bb5e-4ad4-8ac1-2053d15102a8/checkout/session?session_id=${sessionId}`,
+          `/api/a5a89728-3d04-481d-ae07-6d4d3c209e27/checkout/session?session_id=${sessionId}`,
         )
         setOrderItems(data.orderItems || [])
       } catch (error) {

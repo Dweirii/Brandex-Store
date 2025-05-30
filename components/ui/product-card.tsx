@@ -18,6 +18,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
   const imageUrl = data.images?.[0]?.url || "/placeholder.jpg"
+  console.log(data.images)
   const router = useRouter()
   const previewModal = usePreviewModal()
   const cart = useCart();

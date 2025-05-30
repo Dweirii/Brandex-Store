@@ -20,7 +20,7 @@ const getProduct = async (id: string): Promise<Product> => {
 
         return {
             ...data,
-            images: data.image?.map((img: any) => ({ url: img.url })) || [],
+            images: data.Image?.map((img: any) => ({ url: img.url })) || [],
         };
     } catch (error) {
         console.error("Error fetching product:", error);
