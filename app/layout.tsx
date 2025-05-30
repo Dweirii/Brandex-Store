@@ -11,8 +11,8 @@ import ToastProvider from "@/providers/toast.provider";
 const font = Urbanist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Baha Store",
-  description: "Baha Store",
+  title: "Brandex",
+  description: "Brandex — Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
 };
 
 export default function RootLayout({
