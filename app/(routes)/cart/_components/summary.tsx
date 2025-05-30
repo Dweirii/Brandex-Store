@@ -39,8 +39,14 @@ const Summary = () => {
 
 
   const onCheckout = async () => {
+    if (totalPrice < 0.6) {
+      toast.error("Minimum payment amount is $0.60");
+      return;
+    }
+
     try {
       const token = await getToken({ template: "CustomerJWTBrandex" });
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/checkout`,
         {
@@ -60,6 +66,7 @@ const Summary = () => {
       toast.error("Failed to initiate checkout.");
     }
   };
+
 
   return (
     <motion.div
