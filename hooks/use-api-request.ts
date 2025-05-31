@@ -16,7 +16,7 @@ export const useApiRequest = () => {
       throw new Error("Authentication failed");
     }
 
-    const res = await fetch(`https://brandex-admin-main.vercel.app${path}`, {
+    const res = await fetch(`https://admin.wibimax.com${path}`, {
       ...options,
       headers: {
         ...(options.headers || {}),

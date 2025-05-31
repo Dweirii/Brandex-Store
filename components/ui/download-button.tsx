@@ -20,7 +20,7 @@ export const DownloadButton = ({ storeId, productId }: DownloadButtonProps) => {
       const token = await getToken({ template: "CustomerJWTBrandex" });
       if (!token) throw new Error("User not authenticated");
 
-      const res = await fetch(`https://brandex-admin-main.vercel.app/api/${storeId}/products/${productId}/download`, {
+      const res = await fetch(`https://admin.wibimax.com/api/${storeId}/products/${productId}/download`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

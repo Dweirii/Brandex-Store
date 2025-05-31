@@ -68,7 +68,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
                   </div>
                 )}
               </div>
-              <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-4">
+              <div className="mt-10 sm:mt-16 sm:px-0 lg:mt-4">
                 <Info data={product} />
               </div>
             </div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Check, Clock, AlertTriangle, Download } from "lucide-react"
-
+import useCart from "@/hooks/use-cart" 
 import Button from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
 import { useApiRequest } from "@/hooks/use-api-request"
@@ -46,6 +46,7 @@ export default function ThankYouPage() {
     return () => clearTimeout(timer)
   }, [sessionId, apiRequest])
 
+  const cart = useCart()
   // Countdown timer effect
   useEffect(() => {
     const timer = setInterval(() => {
@@ -62,10 +63,25 @@ export default function ThankYouPage() {
   }, [])
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("cart");
+    async function fetchOrderData() {
+      if (!sessionId) return
+      try {
+        const data = await apiRequest(
+          `/api/a5a89728-3d04-481d-ae07-6d4d3c209e27/checkout/session?session_id=${sessionId}`,
+        )
+        setOrderItems(data.orderItems || [])
+
+        if (data.status === "paid") {
+          cart.removeAll()
+        }
+
+      } catch (error) {
+        console.error("Failed to load order items", error)
+      }
     }
-  }, []);
+
+    fetchOrderData()
+  }, [sessionId, apiRequest, cart])
 
   // Format time display
   const formatTime = (seconds: number) => {
