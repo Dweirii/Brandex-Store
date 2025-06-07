@@ -6,7 +6,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { Check, Clock, AlertTriangle, Download } from "lucide-react"
 import useCart from "@/hooks/use-cart" 
-import Button from "@/components/ui/Button"
+import {Button} from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
 import { useApiRequest } from "@/hooks/use-api-request"
 

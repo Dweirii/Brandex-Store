@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import Image from "next/image"
 import { Tab } from "@headlessui/react"
 import { cn } from "@/lib/utils"
@@ -26,18 +25,21 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
       </div>
 
       {/* Main Image */}
-      <Tab.Panels className="aspect-square w-full bg-gray-50 rounded-xl overflow-hidden">
+      <Tab.Panels className="aspect-square w-full bg-muted rounded-xl overflow-hidden">
+        {" "}
+        {/* Changed bg-gray-50 to bg-muted */}
         {images.map((image, index) => (
           <Tab.Panel
             key={image.id}
             className={cn(
-              "outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black",
+              "outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring", // Changed focus-visible:ring-black to focus-visible:ring-ring
               "transition-opacity duration-300 ease-in-out",
               "h-full w-full",
             )}
           >
             <div className="aspect-square relative h-full w-full overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/5 to-transparent z-10" />{" "}
+              {/* Changed from-black/5 to from-background/5 */}
               <Image
                 fill
                 src={image.url || "/placeholder.svg"}
@@ -57,7 +59,10 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
           <Tab
             key={`dot-${image.id}`}
             className={({ selected }) =>
-              cn("w-2.5 h-2.5 rounded-full transition-colors", selected ? "bg-black" : "bg-gray-300 hover:bg-gray-400")
+              cn(
+                "w-2.5 h-2.5 rounded-full transition-colors",
+                selected ? "bg-primary" : "bg-muted-foreground hover:bg-foreground", // Changed bg-black to bg-primary, bg-gray-300 to bg-muted-foreground, hover:bg-gray-400 to hover:bg-foreground
+              )
             }
           >
             <span className="sr-only">Image {index + 1}</span>
@@ -69,4 +74,3 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
 }
 
 export default Gallery
-

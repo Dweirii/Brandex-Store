@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import Button from "./Button";
+import {Button} from "./Button";
 import toast from "react-hot-toast";
 
 interface DownloadButtonProps {

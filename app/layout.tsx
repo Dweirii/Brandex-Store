@@ -7,12 +7,14 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import ModalProvider from "@/providers/model-provider";
 import ToastProvider from "@/providers/toast.provider";
+import { Providers } from "@/providers/Providers"; 
 
 const font = Urbanist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Brandex",
-  description: "Brandex — Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
+  description:
+    "Brandex — Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
 };
 
 export default function RootLayout({
@@ -22,13 +24,15 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={font.className}>
-          <ModalProvider />
-          <ToastProvider />
-          <Navbar />
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${font.className} transition-colors`}>
+          <Providers>
+            <ModalProvider />
+            <ToastProvider />
+            <Navbar />
             {children}
-          <Footer />
+            <Footer />
+          </Providers>
         </body>
       </html>
     </ClerkProvider>

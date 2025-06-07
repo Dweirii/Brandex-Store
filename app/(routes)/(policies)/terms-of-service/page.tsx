@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { ChevronUp, Printer, ArrowLeft, AlertCircle, Scale, Shield, FileText } from 'lucide-react'
-import  Button  from "@/components/ui/Button"
+import  {Button}  from "@/components/ui/Button"
 import { Card } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"

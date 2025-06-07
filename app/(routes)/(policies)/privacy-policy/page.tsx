@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { ChevronUp, Printer, ArrowLeft } from "lucide-react"
-import  Button  from "@/components/ui/Button"
+import  {Button}  from "@/components/ui/Button"
 import { Card } from "@/components/ui/card"
 
 export default function PrivacyPolicy() {

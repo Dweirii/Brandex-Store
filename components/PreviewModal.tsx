@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import usePreviewModal from "@/hooks/use-preview-modal";
-import Modal from "./ui/modal";
-import Gallery from "./gallery";
-import Info from "./info";
+import usePreviewModal from "@/hooks/use-preview-modal"
+import Modal from "./ui/modal" // This is the custom Modal component
+import Gallery from "./gallery"
+import Info from "./info"
 
 const PreviewModal = () => {
-  const previewModal = usePreviewModal();
-  const product = usePreviewModal((state) => state.data);
+  const previewModal = usePreviewModal()
+  const product = usePreviewModal((state) => state.data)
 
   if (!product) {
-    return null;
+    return null
   }
 
   return (
@@ -30,7 +30,7 @@ const PreviewModal = () => {
         </div>
       </div>
     </Modal>
-  );
-};
+  )
+}
 
-export default PreviewModal;
+export default PreviewModal
