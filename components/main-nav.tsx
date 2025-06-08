@@ -42,7 +42,6 @@ const MainNav = ({ data }: MainNavProps) => {
       )}
     >
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex flex-1 justify-center items-center space-x-1 lg:space-x-4">
           {routes.map((route, index) => (
             <div
@@ -70,7 +69,7 @@ const MainNav = ({ data }: MainNavProps) => {
                     {(route.active || hoveredIndex === index) && (
                       <motion.span
                         className={cn(
-                          "absolute inset-0 rounded-full -z-0", // Changed rounded-md to rounded-full
+                          "absolute inset-0 rounded-full -z-0",
                           route.active ? "bg-primary/10" : "bg-muted/50",
                         )}
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -86,10 +85,10 @@ const MainNav = ({ data }: MainNavProps) => {
                     {(route.active || hoveredIndex === index) && (
                       <motion.span
                         className={cn(
-                          "absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-3/4 rounded-full", // Centered and rounded bottom line
+                          "absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-3/4 rounded-full",
                           route.active ? "bg-primary" : "bg-border",
                         )}
-                        initial={{ scaleX: 0, originX: 0.5 }} // Centered origin for scaleX
+                        initial={{ scaleX: 0, originX: 0.5 }} 
                         animate={{ scaleX: 1 }}
                         exit={{ scaleX: 0, originX: 0.5 }}
                         transition={{ duration: 0.2 }}
@@ -102,13 +101,12 @@ const MainNav = ({ data }: MainNavProps) => {
           ))}
         </nav>
 
-        {/* Mobile Navigation */}
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button
-                variant="ghost" // Changed to ghost variant for cleaner look
-                size="icon" // Changed to icon size
+                variant="ghost" 
+                size="icon" 
                 className="h-9 w-9 rounded-full text-foreground"
                 aria-label="Open menu"
               >
@@ -150,9 +148,9 @@ const MainNav = ({ data }: MainNavProps) => {
                       href={route.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        "group flex items-center justify-between px-6 py-4 text-base font-medium transition-all", // Increased padding and font size
+                        "group flex items-center justify-between px-6 py-4 text-base font-medium transition-all",
                         route.active
-                          ? "bg-primary/10 text-primary border-l-4 border-primary" // Thicker left border for active
+                          ? "bg-primary/10 text-primary border-l-4 border-primary" 
                           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                       )}
                       aria-current={route.active ? "page" : undefined}
@@ -164,7 +162,7 @@ const MainNav = ({ data }: MainNavProps) => {
                         transition={{ duration: 0.2 }}
                         className="text-primary"
                       >
-                        <ChevronRight className="h-5 w-5" /> {/* Larger icon */}
+                        <ChevronRight className="h-5 w-5" />
                       </motion.div>
                     </Link>
                   </motion.div>

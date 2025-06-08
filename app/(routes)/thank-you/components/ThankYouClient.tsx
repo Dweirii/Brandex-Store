@@ -20,7 +20,7 @@ interface OrderItem {
 export default function ThankYouPage() {
   const [showConfetti, setShowConfetti] = useState(false)
   const [orderItems, setOrderItems] = useState<OrderItem[]>([])
-  const [timeLeft, setTimeLeft] = useState(30 * 60) // 30 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(30 * 60)
   const searchParams = useSearchParams()
   const sessionId = searchParams.get("session_id")
 
@@ -41,13 +41,11 @@ export default function ThankYouPage() {
 
     fetchOrderData()
 
-    // Auto-trigger confetti after component mounts
     const timer = setTimeout(() => setShowConfetti(true), 500)
     return () => clearTimeout(timer)
   }, [sessionId, apiRequest])
 
   const cart = useCart()
-  // Countdown timer effect
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
@@ -83,17 +81,15 @@ export default function ThankYouPage() {
     fetchOrderData()
   }, [sessionId, apiRequest, cart])
 
-  // Format time display
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)
     const remainingSeconds = seconds % 60
     return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`
   }
 
-  // Determine urgency level
   const getUrgencyLevel = () => {
-    if (timeLeft <= 300) return "critical" // Last 5 minutes
-    if (timeLeft <= 600) return "warning" // Last 10 minutes
+    if (timeLeft <= 300) return "critical" 
+    if (timeLeft <= 600) return "warning"
     return "normal"
   }
 
@@ -101,12 +97,10 @@ export default function ThankYouPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden relative bg-white dark:bg-black">
-      {/* Monochrome Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,black_1px,transparent_1px)] bg-[length:20px_20px]" />
       </div>
 
-      {/* Monochrome Confetti Animation */}
       {showConfetti && (
         <>
           {[...Array(30)].map((_, i) => (
@@ -162,7 +156,6 @@ export default function ThankYouPage() {
       )}
 
       <div className="max-w-2xl w-full flex flex-col items-center text-center z-10 relative">
-        {/* Success Icon */}
         <motion.div
           className="relative mb-8"
           initial={{ scale: 0, rotate: -180 }}
@@ -179,7 +172,6 @@ export default function ThankYouPage() {
             </motion.div>
           </div>
 
-          {/* Pulsing ring effect */}
           <motion.div
             className="absolute inset-0 rounded-full border-4 border-green-500"
             initial={{ scale: 1, opacity: 0.8 }}
@@ -192,7 +184,6 @@ export default function ThankYouPage() {
           />
         </motion.div>
 
-        {/* Header Text */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -217,7 +208,6 @@ export default function ThankYouPage() {
           </motion.p>
         </motion.div>
 
-        {/* Countdown Timer - Prominent Alert */}
         <motion.div
           className={`w-full max-w-md p-6 rounded-2xl border-2 mb-8 ${
             urgencyLevel === "critical"
@@ -267,7 +257,6 @@ export default function ThankYouPage() {
             {timeLeft === 0 ? "Download time has expired" : "You have 30 minutes to download your files"}
           </p>
 
-          {/* Progress bar */}
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-4">
             <motion.div
               className={`h-2 rounded-full ${
@@ -284,7 +273,6 @@ export default function ThankYouPage() {
           </div>
         </motion.div>
 
-        {/* Order Items */}
         <motion.div
           className="w-full space-y-4 mb-8"
           initial={{ opacity: 0 }}
@@ -320,8 +308,6 @@ export default function ThankYouPage() {
           ))}
         </motion.div>
 
-
-        {/* Action Button */}
         <motion.div
           className="flex flex-col sm:flex-row gap-4 w-full max-w-md"
           initial={{ opacity: 0, y: 30 }}
@@ -347,7 +333,6 @@ export default function ThankYouPage() {
           </motion.div>
         </motion.div>
 
-        {/* Footer Message */}
         <motion.div
           className="mt-12 text-gray-600 dark:text-gray-400"
           initial={{ opacity: 0 }}

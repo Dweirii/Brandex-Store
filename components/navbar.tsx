@@ -4,7 +4,7 @@ import NavbarActions from "@/components/navbar-actions"
 import MainNav from "@/components/main-nav"
 import Link from "next/link"
 import Image from "next/image"
-import { ThemeToggle } from "./ThemeToggle"
+import { UserDropdown } from "./ui/user-drop-list"
 
 export const revalidate = 0
 
@@ -27,13 +27,11 @@ const Navbar = async () => {
             />
           </Link>
 
-
           <div className="flex-1 justify-center">
             <MainNav data={categories} />
           </div>
-
           <div className="flex items-center gap-4">
-            <ThemeToggle />
+            <UserDropdown/>
             <NavbarActions />
           </div>
         </div>

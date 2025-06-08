@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect } from "react"
+import Link from "next/link"
+import { useEffect, useState } from "react" 
 import { useRouter, useSearchParams } from "next/navigation"
-import { ShoppingBag, CreditCard, Heart } from "lucide-react"
-import { motion } from "framer-motion"
+import { ShoppingBag, CreditCard, Heart, Loader2 } from "lucide-react" 
+import { motion, AnimatePresence } from "framer-motion" 
 import toast from "react-hot-toast"
 import axios from "axios"
 import { useAuth } from "@clerk/nextjs"
@@ -19,6 +20,7 @@ const Summary = () => {
   const items = useCart((state) => state.items)
   const removeAll = useCart((state) => state.removeAll)
   const { getToken } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (searchParams.get("success")) {
@@ -42,6 +44,7 @@ const Summary = () => {
       return
     }
 
+    setIsLoading(true) // Set loading to true
     try {
       const token = await getToken({ template: "CustomerJWTBrandex" })
 
@@ -62,6 +65,8 @@ const Summary = () => {
     } catch (err) {
       console.error("Checkout Error:", err)
       toast.error("Failed to initiate checkout.")
+    } finally {
+      setIsLoading(false) // Set loading to false regardless of success/failure
     }
   }
 
@@ -69,56 +74,80 @@ const Summary = () => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-lg border border-border bg-card shadow-sm px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
+      className="rounded-2xl border border-border bg-card shadow-2xl px-6 py-8 sm:p-8 lg:col-span-5 lg:mt-0 lg:p-10" // Increased rounded, shadow
     >
-      <div className="flex items-center gap-2 mb-4">
-        <ShoppingBag className="h-5 w-5 text-muted-foreground" /> {/* Changed text-gray-600 to text-muted-foreground */}
-        <h2 className="text-lg font-medium text-foreground">Order Summary</h2>{" "}
-        {/* Changed text-gray-900 to text-foreground */}
+      <div className="flex items-center gap-3 mb-6 border-b border-border pb-4">
+        <ShoppingBag className="h-6 w-6 text-primary" />
+        <h2 className="text-2xl font-bold text-foreground">Order Summary</h2>
       </div>
 
-      <div className="mt-6 space-y-4">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Number of items</span>{" "}
-          {/* Changed text-gray-600 to text-muted-foreground */}
-          <span className="font-medium text-foreground">{items.length}</span> {/* Added text-foreground */}
+      <div className="mt-6 space-y-5">
+        <div className="flex items-center justify-between text-base">
+          <span className="text-muted-foreground">Number of items</span>
+          <span className="font-semibold text-foreground">{items.length}</span>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Subtotal</span> {/* Changed text-gray-600 to text-muted-foreground */}
-          <Currency value={totalPrice} />
+        <div className="flex items-center justify-between text-base">
+          <span className="text-muted-foreground">Subtotal</span>
+          <Currency value={totalPrice}/>
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-1">
-            <Heart className="h-4 w-4 text-primary" fill="currentColor" />{" "}
-            {/* Changed text-white to text-primary, fill to currentColor */}
-            <span className="text-muted-foreground">Brandex</span>{" "}
-            {/* Changed text-gray-600 to text-muted-foreground */}
+        <div className="flex items-center justify-between text-base">
+          <div className="flex items-center gap-2">
+            <Heart className="h-5 w-5 text-primary" fill="currentColor" />
+            <span className="text-muted-foreground">Brandex Loyalty</span>
           </div>
-          <span className="font-medium text-foreground">Thank you</span>{" "}
-          {/* Changed text-gray-800 to text-foreground */}
+          <span className="font-semibold text-primary">Thank you!</span>
         </div>
-        <Separator className="my-2 bg-border" /> {/* Added bg-border */}
+        <Separator className="my-4 bg-border" />
         <div className="flex items-center justify-between pt-2">
-          <div className="text-base font-medium text-foreground">Order Total</div>{" "}
-          {/* Changed text-gray-900 to text-foreground */}
+          <div className="text-xl font-bold text-foreground">Order Total</div>
           <Currency value={totalPrice} />
         </div>
       </div>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-10 space-y-4">
         <Button
           onClick={onCheckout}
-          className="w-full py-2 rounded-lg text-base font-medium flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20 transition"
+          disabled={isLoading || items.length === 0} // Disable if loading or cart is empty
+          className="w-full h-12 py-3 rounded-lg text-lg font-semibold flex items-center justify-center gap-3 bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/30 transition-all duration-300 transform hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {" "}
-          {/* Changed bg-black, added text-primary-foreground, hover:bg-primary/90, shadow-primary/20 */}
-          <CreditCard className="h-5 w-5 text-primary-foreground" /> {/* Added text-primary-foreground */}
-          Proceed to Checkout
+          <AnimatePresence mode="wait" initial={false}>
+            {isLoading ? (
+              <motion.span
+                key="loading"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-3"
+              >
+                <Loader2 className="h-6 w-6 animate-spin text-primary-foreground" />
+                Processing...
+              </motion.span>
+            ) : (
+              <motion.span
+                key="checkout"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-3"
+              >
+                <CreditCard className="h-6 w-6 text-primary-foreground" />
+                Proceed to Checkout
+              </motion.span>
+            )}
+          </AnimatePresence>
         </Button>
-        <p className="text-xs text-center text-muted-foreground px-4">
-          {" "}
-          {/* Changed text-gray-500 to text-muted-foreground */}
-          By proceeding to checkout, you agree to our terms of service and privacy policy.
+        <p className="text-xs text-center text-muted-foreground px-4 leading-relaxed">
+          By proceeding to checkout, you agree to our{" "}
+          <Link href="/terms-of-service" className="underline hover:text-primary">
+            terms of service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy-policy" className="underline hover:text-primary">
+            privacy policy
+          </Link>
+          .
         </p>
       </div>
     </motion.div>
