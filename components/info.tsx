@@ -30,7 +30,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   }
 
   return (
-    <div className="relative overflow-hidden bg-card rounded-3xl p-8 shadow-lg border border-border">
+    <div className="relative overflow-hidden bg-card rounded-2xl p-4 shadow-lg border border-border">
       {/* Background accent */}
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-muted/50 to-background rounded-full opacity-70" />
       <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-tr from-muted/50 to-background rounded-full opacity-70" />
@@ -62,6 +62,20 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             </div>
             <div className="p-6 bg-card">
               <p className="text-base leading-relaxed text-foreground">{data.description}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Keywords*/}
+        {data.keywords &&(
+          <div className="mb-8 overflow-hidden rounded-2xl border border-border shadow-sm">
+            <div className="bg-gradient-to-r from-background to-card px-6 py-3 border-b border-border">
+              <h3 className="text-sm font-semibold tracking-wider text-foreground">KEYWORDS</h3>
+            </div>
+            <div className="px-6 py-3">
+              <div className="rounded-md bg-accent/5 px-4 py-2 w-max">
+                <p className="text-sm font-semibold uppercase tracking-wider text-foreground">{data.keywords}</p>
+              </div>
             </div>
           </div>
         )}
