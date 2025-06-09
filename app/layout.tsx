@@ -8,6 +8,7 @@ import { Navbar } from "@/components/navbar";
 import ModalProvider from "@/providers/model-provider";
 import ToastProvider from "@/providers/toast.provider";
 import { Providers } from "@/providers/Providers"; 
+import { ThemeProvider } from "@/components/theme-provider";
 
 const font = Urbanist({ subsets: ["latin"] });
 
@@ -26,13 +27,15 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={`${font.className} transition-colors`}>
-          <Providers>
-            <ModalProvider />
-            <ToastProvider />
-            <Navbar />
-            {children}
-            <Footer />
-          </Providers>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Providers>
+              <ModalProvider />
+              <ToastProvider />
+              <Navbar />
+              {children}
+              <Footer />
+            </Providers>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

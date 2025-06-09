@@ -10,35 +10,38 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/Button"
-import { ThemeToggle } from "@/components/ThemeToggle"
 import { useClerk, useUser, SignInButton } from "@clerk/nextjs"
 import Link from "next/link"
-import { ShoppingCart, LogOut, User, Settings, Mail, Calendar, Palette } from "lucide-react"
+import {
+  ShoppingCart,
+  LogOut,
+  User,
+  Settings,
+  Mail,
+  Calendar,
+  Sun,
+  Moon,
+  Laptop,
+} from "lucide-react"
 import { motion } from "framer-motion"
+import { useTheme } from "next-themes"
 
 export function UserDropdown() {
   const { user, isLoaded } = useUser()
   const { signOut, openUserProfile } = useClerk()
+  const { setTheme } = useTheme()
 
-  // Show loading state while checking authentication
   if (!isLoaded) {
     return (
       <div className="flex items-center gap-2">
-        <div className="hidden sm:block">
-          <ThemeToggle />
-        </div>
         <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
       </div>
     )
   }
 
-  // If user is not logged in, show login button
   if (!user) {
     return (
       <div className="flex items-center gap-2">
-        <div className="hidden sm:block">
-          <ThemeToggle />
-        </div>
         <SignInButton mode="modal">
           <Button
             variant="default"
@@ -53,7 +56,11 @@ export function UserDropdown() {
     )
   }
 
-  // If user is logged in, show full dropdown
+  const menuItemClass =
+    "group cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 px-3 py-3 hover:bg-primary/10 focus:bg-primary/10"
+  const iconWrapperClass =
+    "p-1 rounded-md bg-primary/10 group-hover:bg-primary/20"
+
   return (
     <div className="flex items-center gap-2">
       <DropdownMenu>
@@ -79,7 +86,6 @@ export function UserDropdown() {
           align="end"
           sideOffset={8}
         >
-          {/* User Info Header */}
           <div className="px-3 py-4 bg-gradient-to-r from-primary/10 to-muted/20 rounded-lg mb-2">
             <div className="flex items-center gap-3">
               <Avatar className="h-12 w-12 border-2 border-primary/20">
@@ -112,13 +118,9 @@ export function UserDropdown() {
 
           <DropdownMenuSeparator className="bg-border my-2" />
 
-          {/* Navigation Items */}
-          <DropdownMenuItem
-            asChild
-            className="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:text-primary focus:bg-primary/10 cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 p-3"
-          >
+          <DropdownMenuItem asChild className={menuItemClass}>
             <Link href="/orders" className="flex items-center gap-3 w-full">
-              <div className="p-1 rounded-md bg-primary/10">
+              <div className={iconWrapperClass}>
                 <ShoppingCart className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
@@ -128,12 +130,9 @@ export function UserDropdown() {
             </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => openUserProfile()}
-            className="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:text-primary focus:bg-primary/10 cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 p-3"
-          >
+          <DropdownMenuItem onClick={() => openUserProfile()} className={menuItemClass}>
             <div className="flex items-center gap-3 w-full">
-              <div className="p-1 rounded-md bg-primary/10">
+              <div className={iconWrapperClass}>
                 <Settings className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
@@ -143,29 +142,47 @@ export function UserDropdown() {
             </div>
           </DropdownMenuItem>
 
-          {/* Theme Toggle - Always visible in dropdown */}
-          <DropdownMenuItem className="text-muted-foreground hover:text-primary hover:bg-primary/10 focus:text-primary focus:bg-primary/10 cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 p-3">
+          <DropdownMenuLabel className="px-3 text-xs text-muted-foreground">Theme</DropdownMenuLabel>
+
+          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("light"), 10)} className={menuItemClass}>
             <div className="flex items-center gap-3 w-full">
-              <div className="p-1 rounded-md bg-primary/10">
-                <Palette className="w-4 h-4 text-primary" />
+              <div className={iconWrapperClass}>
+                <Sun className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
-                <span className="font-medium">Theme</span>
-                <p className="text-xs text-muted-foreground">Switch appearance</p>
+                <span className="font-medium">Light</span>
+                <p className="text-xs text-muted-foreground">Bright and clear</p>
               </div>
-              <div className="ml-auto">
-                <ThemeToggle />
+            </div>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("dark"), 10)} className={menuItemClass}>
+            <div className="flex items-center gap-3 w-full">
+              <div className={iconWrapperClass}>
+                <Moon className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1">
+                <span className="font-medium">Dark</span>
+                <p className="text-xs text-muted-foreground">Dim and focused</p>
+              </div>
+            </div>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("system"), 10)} className={menuItemClass}>
+            <div className="flex items-center gap-3 w-full">
+              <div className={iconWrapperClass}>
+                <Laptop className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1">
+                <span className="font-medium">System</span>
+                <p className="text-xs text-muted-foreground">Follow device settings</p>
               </div>
             </div>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator className="bg-border my-2" />
 
-          {/* Sign Out */}
-          <DropdownMenuItem
-            onClick={() => signOut()}
-            className="text-destructive hover:bg-destructive/10 focus:bg-destructive/10 cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 p-3"
-          >
+          <DropdownMenuItem onClick={() => signOut()} className={menuItemClass + " text-destructive hover:bg-destructive/10 focus:bg-destructive/10"}>
             <div className="flex items-center gap-3 w-full">
               <div className="p-1 rounded-md bg-destructive/10">
                 <LogOut className="w-4 h-4 text-destructive" />
