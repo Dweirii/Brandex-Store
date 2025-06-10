@@ -7,7 +7,7 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import ModalProvider from "@/providers/model-provider";
 import ToastProvider from "@/providers/toast.provider";
-import { Providers } from "@/providers/Providers"; 
+import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const font = Urbanist({ subsets: ["latin"] });
@@ -25,14 +25,16 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={`${font.className} transition-colors`}>
+      <html lang="en" className="h-full" suppressHydrationWarning>
+        <body
+          className={`${font.className} h-full flex flex-col min-h-screen bg-background text-foreground transition-colors`}
+        >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Providers>
               <ModalProvider />
               <ToastProvider />
               <Navbar />
-              {children}
+              <main className="flex-1">{children}</main>
               <Footer />
             </Providers>
           </ThemeProvider>
