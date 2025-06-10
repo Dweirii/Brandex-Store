@@ -36,13 +36,6 @@ interface Order {
   orderItems: OrderItemRaw[]
 }
 
-interface NormalizedOrderItem {
-  id: string
-  price: number
-  productId: string
-  productName: string
-  storeId: string
-}
 
 export default function OrdersPage() {
   const { user } = useUser()
