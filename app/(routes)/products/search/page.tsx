@@ -62,7 +62,7 @@ export default function ProductSearchPage() {
   }, [query, storeId])
 
   return (
-    <div className="container mx-auto py-8 px-4 min-h-screen bg-background text-foreground transition-colors">
+    <div className="container mx-auto py-8 px-4 min-h-screen bg-card text-foreground transition-colors">
       <header className="mb-8 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Search Products</h1>
         <p className="text-muted-foreground">Find exactly what you&apos;re looking for.</p>

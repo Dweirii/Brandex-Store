@@ -27,7 +27,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="h-full" suppressHydrationWarning>
         <body
-          className={`${font.className} h-full flex flex-col min-h-screen bg-background text-foreground transition-colors`}
+          className={`${font.className} h-full flex flex-col min-h-screen bg-card/70 text-foreground transition-colors`}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Providers>

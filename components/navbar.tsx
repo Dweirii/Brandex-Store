@@ -32,8 +32,10 @@ const Navbar = async () => {
             <MainNav data={categories} />
           </div>
           <div className="flex gap-4">
+            <div className="top-5">
+                <SearchRedirect/>
+            </div>
             <UserDropdown/>
-            <SearchRedirect />
             <NavbarActions />
           </div>
         </div>
