@@ -5,6 +5,7 @@ import MainNav from "@/components/main-nav"
 import Link from "next/link"
 import Image from "next/image"
 import { UserDropdown } from "./ui/user-drop-list"
+import SearchRedirect from "./SearchRedirect"
 
 export const revalidate = 0
 
@@ -30,8 +31,9 @@ const Navbar = async () => {
           <div className="flex-1 justify-center">
             <MainNav data={categories} />
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex gap-4">
             <UserDropdown/>
+            <SearchRedirect />
             <NavbarActions />
           </div>
         </div>
