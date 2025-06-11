@@ -5,8 +5,8 @@ import { useAuth } from "@clerk/nextjs"
 import { Button } from "@/components/ui/Button"
 import { Download, Loader2, Lock, CheckCircle, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import toast from "react-hot-toast"
 import { cn } from "@/lib/utils"
+
 
 interface DownloadButtonProps {
   storeId: string
@@ -61,27 +61,12 @@ export const DownloadButton = ({
       window.open(url, "_blank")
 
       setDownloaded(true)
-      toast.success("Download started successfully!", {
-        icon: "🎉",
-        style: {
-          background: "black",
-          color: "hsl(var(--foreground))",
-          border: "1px solid hsl(var(--border))",
-        },
-      })
-
+      
       setTimeout(() => {
         setDownloaded(false)
       }, 3000)
     } catch (error) {
       console.error("Download Error:", error)
-      toast.error("Download failed. Please try again.", {
-        style: {
-          background: "black",
-          color: "hsl(var(--foreground))",
-          border: "1px solid hsl(var(--border))",
-        },
-      })
     } finally {
       setLoading(false)
     }
@@ -237,7 +222,7 @@ export const DownloadButton = ({
         <AnimatePresence>
           {isClicked && (
             <motion.div
-              className="absolute inset-0 bg-white/30 dark:bg-white/20 rounded-lg"
+              className="absolute inset-0 bg-white/30 dark:bg-white/20 rounded-lg text-black dark:text-white"
               initial={{ scale: 0, opacity: 1 }}
               animate={{ scale: 2, opacity: 0 }}
               exit={{ opacity: 0 }}
