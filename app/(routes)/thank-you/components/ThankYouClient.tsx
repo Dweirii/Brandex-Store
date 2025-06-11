@@ -96,7 +96,7 @@ export default function ThankYouPage() {
   const urgencyLevel = getUrgencyLevel()
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden relative bg-white dark:bg-black">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 overflow-hidden relative bg-white dark:bg-card">
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,black_1px,transparent_1px)] bg-[length:20px_20px]" />
       </div>

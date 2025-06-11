@@ -14,7 +14,6 @@ interface ProductPageProps {
   }>
 }
 
-// ✅ Generate metadata for the product page
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,7 +41,6 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-// ✅ Page component
 const ProductPage = async ({ params }: ProductPageProps) => {
   try {
     const product = await getProduct((await params).productId)
@@ -51,9 +49,8 @@ const ProductPage = async ({ params }: ProductPageProps) => {
     })
 
     return (
-      <div className="bg-background">
+      <div className="bg-card">
         {" "}
-        {/* Changed from bg-white to bg-background */}
         <Container>
           <div className="px-4 py-10 sm:px-6 lg:px-8">
             <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">

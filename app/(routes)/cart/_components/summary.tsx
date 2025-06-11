@@ -107,7 +107,7 @@ const Summary = () => {
       <div className="mt-10 space-y-4">
         <Button
           onClick={onCheckout}
-          disabled={isLoading || items.length === 0} // Disable if loading or cart is empty
+          disabled={isLoading || items.length === 0}
           className="w-full h-12 py-3 rounded-lg text-lg font-semibold flex items-center justify-center gap-3 bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/30 transition-all duration-300 transform hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <AnimatePresence mode="wait" initial={false}>

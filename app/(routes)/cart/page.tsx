@@ -10,7 +10,7 @@ const CartContent = () => {
   const cart = useCart()
 
   return (
-    <div className="bg-white dark:bg-[#020817] transition-colors">
+    <div className="bg-white dark:bg-card transition-colors">
       <Container>
         <div className="px-4 py-16 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-black dark:text-white">Shopping Cart</h1>
@@ -26,7 +26,6 @@ const CartContent = () => {
                 ))}
               </ul>
             </div>
-
             <Summary />
           </div>
         </div>
