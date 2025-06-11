@@ -237,13 +237,13 @@ export default function TermsOfService() {
                 <div className="bg-muted p-4 rounded-lg my-4">
                   <p>
                     <strong>Email:</strong>{" "}
-                    <a href="mailto:support@albahaa-store.org" className="text-primary hover:underline">
-                      support@albahaa-store.org
+                    <a href="mailto:support@Brandexme.com" className="text-primary hover:underline">
+                      support@Brandexme.com
                     </a>
                     <br />
                     <strong>Phone:</strong> +962-79-297-7707
                     <br />
-                    <strong>Business Name:</strong> Bahaa Qatamin
+                    <strong>Business Name:</strong> Brandex
                     <br />
                     <strong>Location:</strong> Amman, Jordan
                   </p>
