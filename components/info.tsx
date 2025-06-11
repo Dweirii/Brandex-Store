@@ -66,20 +66,22 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           </div>
         )}
 
-        {/* Keywords*/}
-        {data.keywords &&(
-          <div className="mb-8 overflow-hidden rounded-2xl border border-border shadow-sm">
-            <div className="bg-gradient-to-r from-background to-card px-6 py-3 border-b border-border">
-              <h3 className="text-sm font-semibold tracking-wider text-foreground">KEYWORDS</h3>
-            </div>
-            <div className="px-6 py-3">
-              <div className="rounded-md bg-accent/5 px-4 py-2 w-max">
-                <p className="text-sm font-semibold uppercase tracking-wider text-foreground">{data.keywords}</p>
-              </div>
-            </div>
+      {data.keywords && data.keywords.length > 0 && (
+        <div className="mb-8 overflow-hidden rounded-2xl border border-border shadow-sm">
+          <div className="bg-gradient-to-r from-background to-card px-6 py-3 border-b border-border">
+            <h3 className="text-sm font-semibold tracking-wider text-foreground">KEYWORDS</h3>
           </div>
-        )}
-
+          <div className="px-6 py-3 flex flex-wrap gap-2">
+            {data.keywords.map((keyword, index) => (
+              <div key={index} className="rounded-md bg-accent/5 px-4 py-2 w-max">
+                <p className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                  {keyword}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
         <hr className="my-8 border-border" />
 
         {/* Add to Cart Button */}

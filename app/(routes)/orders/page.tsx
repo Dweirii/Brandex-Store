@@ -37,6 +37,7 @@ interface Order {
 }
 
 
+
 export default function OrdersPage() {
   const { user } = useUser()
   const [orders, setOrders] = useState<Order[]>([])
@@ -197,7 +198,6 @@ export default function OrdersPage() {
                             <li key={item.id} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg">
                               <div className="flex-1 min-w-0">
                                 <p className="font-medium text-foreground truncate">{item.product?.name ?? "Unknown Product"}</p>
-                                <Currency value={item.price} />
                               </div>
                               {item.product && order.isPaid && (
                                 <DownloadButtonWrapper storeId={item.product.storeId} productId={item.productId} />

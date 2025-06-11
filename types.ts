@@ -22,7 +22,7 @@ export interface Product {
 
 
   description?: string;
-  keywords?: string;
+  keywords: string[];
   originalPrice?: string; 
 }
 
