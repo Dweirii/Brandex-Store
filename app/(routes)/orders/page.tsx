@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import { DownloadButton } from "@/components/ui/download-button"
 import Container from "@/components/ui/container"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle, Loader2, ShoppingBag, CheckCircle2, XCircle, RefreshCw, Calendar, Package } from "lucide-react"
+import { AlertCircle, Loader2, ShoppingBag, CheckCircle2, XCircle, RefreshCw, Calendar, Package, Coins } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Currency from "@/components/ui/currency"
 import { Button } from "@/components/ui/Button"
@@ -109,6 +109,7 @@ export default function OrdersPage() {
               <p className="text-sm text-muted-foreground">Items Purchased</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 text-center">
+              <Coins className='h-8 w-8 text-primary mx-auto mb-2'/>
               <Currency value={getTotalSpent()} />
               <p className="text-sm text-muted-foreground">Total Spent</p>
             </div>
