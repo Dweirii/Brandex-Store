@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ShieldCheck, Infinity, Award, CheckCircle, ArrowRight } from "lucide-react"
+import { ShieldCheck, Infinity, Award, CheckCircle } from "lucide-react"
 
 const benefits = [
   {

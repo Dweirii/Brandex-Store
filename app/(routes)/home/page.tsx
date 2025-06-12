@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/home/hero"
 import { WhatYouGetSection } from "@/components/home/what-you-get-section"
 import { WhyBuyFromBrandexSection } from "@/components/home/why-buy-from-brandex-section"
 import { CallToActionSection } from "@/components/home/cta"
+import Marquee from "@/components/home/marque"
 
 export default function HomePage() {
   return (
@@ -13,6 +14,7 @@ export default function HomePage() {
           <HeroSection />
           <WhatYouGetSection />
           <WhyBuyFromBrandexSection />
+          <Marquee/>
           <CallToActionSection />
         </div>
       </main>

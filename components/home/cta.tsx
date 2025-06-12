@@ -28,7 +28,7 @@ export function CallToActionSection() {
           </motion.div>
 
           <motion.h2
-            className="text-4xl md:text-6xl font-bold text-white leading-tight"
+            className="text-4xl md:text-6xl font-bold text-black dark:text-white leading-tight"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
