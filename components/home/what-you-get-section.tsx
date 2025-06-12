@@ -1,50 +1,59 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Palette, Package, FileText, Lightbulb, ArrowUpRight, Sparkles } from "lucide-react"
+import { Package, FileText, Lightbulb, Sparkles, Camera } from "lucide-react"
 
 const features = [
   {
-    icon: Palette,
-    title: "Design Templates",
-    description: "Customizable, high-quality designs that make your brand stand out from the competition",
-    gradient: "from-purple-500 via-pink-500 to-rose-500",
-    bgPattern: "bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20",
-    count: "500+",
-    category: "Templates",
-    features: ["Logo designs", "Brand kits", "Social media", "Print ready"],
-  },
-  {
     icon: Package,
-    title: "Marketing Kits",
-    description: "Launch-ready content bundles to accelerate your marketing efforts and boost engagement",
-    gradient: "from-blue-500 via-cyan-500 to-teal-500",
-    bgPattern: "bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20",
-    count: "200+",
-    category: "Bundles",
-    features: ["Email templates", "Ad creatives", "Landing pages", "Content plans"],
+    title: "Mockups",
+    description:
+      "High-resolution, editable PSD packaging mockups designed for premium product presentation",
+    gradient: "from-indigo-500 via-violet-500 to-fuchsia-500",
+    bgPattern:
+      "bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/20 dark:to-violet-950/20",
+    count: "300+",
+    category: "Mockups",
+    features: ["Box mockups", "Bag mockups", "Label templates", "Editable layers"],
   },
   {
     icon: FileText,
-    title: "Business Documents",
-    description: "Professional contracts, proposals, and legal templates for seamless business operations",
+    title: "Ready Packaging Art Work",
+    description:
+      "Essential design elements and identity assets to maintain brand consistency across channels",
     gradient: "from-green-500 via-emerald-500 to-teal-500",
-    bgPattern: "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20",
+    bgPattern:
+      "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20",
     count: "150+",
-    category: "Documents",
-    features: ["Contracts", "Proposals", "Invoices", "Legal forms"],
+    category: "Assets",
+    features: ["Logo kits", "Typography sets", "Color palettes", "Brand guidelines"],
+  },
+  {
+    icon: Camera,
+    title: "Product Photography",
+    description:
+      "Studio-quality product photos tailored for e-commerce, advertising, and marketing needs",
+    gradient: "from-rose-500 via-red-500 to-orange-500",
+    bgPattern:
+      "bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-950/20 dark:to-orange-950/20",
+    count: "500+",
+    category: "Photos",
+    features: ["White background", "Lifestyle shots", "Close-ups", "360° views"],
   },
   {
     icon: Lightbulb,
-    title: "Idea Starters",
-    description: "Quick-start guides and creative frameworks to spark innovation and accelerate your projects",
-    gradient: "from-orange-500 via-amber-500 to-yellow-500",
-    bgPattern: "bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/20",
+    title: "PSD",
+    description:
+      "Editable concepts and campaign kickoffs to help you rapidly prototype visual ideas",
+    gradient: "from-yellow-500 via-amber-500 to-orange-500",
+    bgPattern:
+      "bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20",
     count: "100+",
-    category: "Guides",
-    features: ["Strategy guides", "Checklists", "Frameworks", "Worksheets"],
+    category: "Starters",
+    features: ["Mood boards", "Creative briefs", "Ad concepts", "Storyboard slides"],
   },
 ]
+
 
 export function WhatYouGetSection() {
   const containerVariants = {
@@ -84,7 +93,7 @@ export function WhatYouGetSection() {
   }
 
   return (
-    <section className="py-32 bg-white dark:bg-black relative overflow-hidden">
+    <section className="py-32 bg-white dark:bg-card relative overflow-hidden">
       {/* Creative Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse" />
@@ -231,15 +240,6 @@ export function WhatYouGetSection() {
                       </motion.div>
                     ))}
                   </div>
-
-                  {/* Action Button */}
-                  <motion.div
-                    className="flex items-center gap-2 text-[#00EB02] font-semibold group-hover:gap-4 transition-all duration-300 cursor-pointer"
-                    whileHover={{ x: 5 }}
-                  >
-                    <span>Explore {feature.category.toLowerCase()}</span>
-                    <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
-                  </motion.div>
                 </div>
 
                 {/* Hover Glow Effect */}
@@ -261,7 +261,7 @@ export function WhatYouGetSection() {
         >
           <div className="inline-flex items-center gap-8 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#00EB02]/10 to-purple-500/10 border border-[#00EB02]/20">
             <div className="text-center">
-              <div className="text-3xl font-bold text-[#00EB02]">950+</div>
+              <div className="text-3xl font-bold text-[#00EB02]">30.000+</div>
               <div className="text-sm text-muted-foreground">Total Assets</div>
             </div>
             <div className="w-px h-12 bg-gradient-to-b from-transparent via-gray-300 dark:via-gray-600 to-transparent" />

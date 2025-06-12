@@ -7,25 +7,7 @@ import Link from "next/link"
 
 export function CallToActionSection() {
   return (
-    <section className="relative py-32 overflow-hidden bg-white dark:bg-black">
-      {/* Dark overlay for contrast */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#020817] via-[#0a0f1c] to-[#020817] opacity-100 dark:opacity-100 light:opacity-90" />
-
-      {/* Dot pattern background */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage: `radial-gradient(circle, #00EB02 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-          backgroundPosition: "0 0, 30px 30px",
-        }}
-      />
-
-      {/* Animated background elements */}
-      <div className="absolute top-10 left-10 w-32 h-32 bg-[#00EB02]/20 rounded-full blur-2xl animate-pulse" />
-      <div className="absolute bottom-10 right-10 w-48 h-48 bg-[#00EB02]/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#00EB02]/5 rounded-full blur-3xl animate-pulse" />
-
+    <section className="relative py-32 overflow-hidden bg-white dark:bg-card">
       <div className="container relative">
         <motion.div
           className="text-center space-y-8 max-w-4xl mx-auto"

@@ -68,7 +68,7 @@ export function WhyBuyFromBrandexSection() {
   }
 
   return (
-    <section className="py-32 bg-white dark:bg-black relative overflow-hidden">
+    <section className="py-32 bg-white dark:bg-card relative overflow-hidden">
       {/* Subtle background decoration */}
       <div className="absolute top-20 right-20 w-64 h-64 bg-[#00EB02]/5 rounded-full blur-3xl" />
       <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#00EB02]/3 rounded-full blur-3xl" />

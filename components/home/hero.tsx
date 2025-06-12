@@ -7,12 +7,7 @@ import Link from "next/link"
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white dark:bg-black">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#00EB02]/5 via-transparent to-[#00EB02]/10 dark:from-[#00EB02]/10 dark:via-transparent dark:to-[#00EB02]/5" />
-      <div className="absolute top-20 left-10 w-72 h-72 bg-[#00EB02]/10 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#00EB02]/5 rounded-full blur-3xl animate-pulse delay-1000" />
-
+    <section className="relative overflow-hidden bg-white dark:bg-card">
       <div className="container relative py-24 md:py-32 lg:py-40">
         <motion.div
           className="max-w-4xl mx-auto text-center space-y-8"
