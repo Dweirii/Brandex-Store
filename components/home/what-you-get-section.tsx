@@ -141,7 +141,7 @@ export function WhatYouGetSection() {
           </motion.div>
 
           <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-            <span className="bg-gradient-to-r from-[#020817] via-purple-600 to-[#00EB02] dark:from-white dark:via-purple-400 dark:to-[#00EB02] bg-clip-text text-transparent">
+            <span className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">
               What You Get
             </span>
             <br />
@@ -261,7 +261,7 @@ export function WhatYouGetSection() {
         >
           <div className="inline-flex items-center gap-8 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#00EB02]/10 to-purple-500/10 border border-[#00EB02]/20">
             <div className="text-center">
-              <div className="text-3xl font-bold text-[#00EB02]">30.000+</div>
+              <div className="text-3xl font-bold text-[#00EB02]">30K+</div>
               <div className="text-sm text-muted-foreground">Total Assets</div>
             </div>
             <div className="w-px h-12 bg-gradient-to-b from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
