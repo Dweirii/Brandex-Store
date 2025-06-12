@@ -143,16 +143,6 @@ export function WhyBuyFromBrandexSection() {
                     </motion.div>
                   ))}
                 </div>
-
-                {/* Call to action arrow */}
-                <motion.div
-                  className="mt-8 flex items-center gap-2 text-[#00EB02] font-semibold group cursor-pointer"
-                  whileHover={{ x: 10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <span>Discover the difference</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </motion.div>
               </div>
             </motion.div>
           ))}

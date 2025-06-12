@@ -8,7 +8,7 @@ import Link from "next/link"
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-white dark:bg-card">
-      <div className="container relative py-24 md:py-32 lg:py-40">
+      <div className="container relative px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-32">
         <motion.div
           className="max-w-4xl mx-auto text-center space-y-8"
           initial={{ opacity: 0, y: 30 }}
@@ -16,7 +16,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00EB02]/10 border border-[#00EB02]/20 text-sm font-medium text-[#00EB02] mb-6"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00EB02]/10 border border-[#00EB02]/20 text-xs sm:text-sm font-medium text-[#00EB02] mb-4 sm:mb-6"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -26,16 +26,16 @@ export function HeroSection() {
           </motion.div>
 
           <motion.h1
-            className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-gradient-to-r from-[#020817] via-[#020817] to-[#00EB02] dark:from-white dark:via-white dark:to-[#00EB02] bg-clip-text text-transparent"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-gradient-to-r from-[#020817] via-[#020817] to-[#00EB02] dark:from-white dark:via-white dark:to-[#00EB02] bg-clip-text text-transparent leading-tight sm:leading-snug"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
             Your Gateway to Premium{" "}
-            <span className="relative">
+            <span className="relative inline-block">
               Digital Products
               <motion.div
-                className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#00EB02] to-[#00C402] rounded-full"
+                className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-[#00EB02] to-[#00C402] rounded-full"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 1, duration: 0.8 }}
@@ -44,7 +44,7 @@ export function HeroSection() {
           </motion.h1>
 
           <motion.p
-            className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
@@ -54,14 +54,14 @@ export function HeroSection() {
           </motion.p>
 
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8"
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6 sm:pt-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
           >
             <Button
               size="lg"
-              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] font-semibold px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] font-semibold px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105"
               asChild
             >
               <Link href="/" className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export function HeroSection() {
             <Button
               variant="outline"
               size="lg"
-              className="px-8 py-6 text-lg rounded-xl border-2 hover:border-[#00EB02] hover:text-[#00EB02] transition-all duration-300"
+              className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 hover:border-[#00EB02] hover:text-[#00EB02] transition-all duration-300"
               asChild
             >
               <Link href="/">Learn More</Link>
