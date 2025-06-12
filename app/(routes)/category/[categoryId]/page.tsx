@@ -20,7 +20,7 @@ export default async function CategoryPage({
   ]);
 
   return (
-    <div className="bg-white dark:bg-[#020817] transition-colors">
+    <div className="bg-white dark:bg-card transition-colors">
       <Container>
         <Billboard data={category.billboard} />
         <div className="px-4 sm:px-6 lg:px-8 pb-24">

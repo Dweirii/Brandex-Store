@@ -9,7 +9,7 @@ import ModalProvider from "@/providers/model-provider";
 import ToastProvider from "@/providers/toast.provider";
 import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Analytics } from "@vercel/analytics/next"
+
 
 const font = Urbanist({ subsets: ["latin"] });
 
@@ -35,7 +35,7 @@ export default function RootLayout({
               <ModalProvider />
               <ToastProvider />
               <Navbar />
-              <main className="flex-1">{children} <Analytics/></main>
+              <main className="flex-1">{children} </main>
               <Footer />
             </Providers>
           </ThemeProvider>
