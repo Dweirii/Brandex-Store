@@ -26,25 +26,6 @@ export default function ThankYouPage() {
 
   const { apiRequest } = useApiRequest()
 
-  useEffect(() => {
-    async function fetchOrderData() {
-      if (!sessionId) return
-      try {
-        const data = await apiRequest(
-          `/api/a5a89728-3d04-481d-ae07-6d4d3c209e27/checkout/session?session_id=${sessionId}`,
-        )
-        setOrderItems(data.orderItems || [])
-      } catch (error) {
-        console.error("Failed to load order items", error)
-      }
-    }
-
-    fetchOrderData()
-
-    const timer = setTimeout(() => setShowConfetti(true), 500)
-    return () => clearTimeout(timer)
-  }, [sessionId, apiRequest])
-
   const cart = useCart()
   useEffect(() => {
     const timer = setInterval(() => {
@@ -61,12 +42,17 @@ export default function ThankYouPage() {
   }, [])
 
   useEffect(() => {
-    async function fetchOrderData() {
-      if (!sessionId) return
+    if (!sessionId) return
+
+    let isMounted = true 
+
+    const fetchOrderData = async () => {
       try {
         const data = await apiRequest(
-          `/api/a5a89728-3d04-481d-ae07-6d4d3c209e27/checkout/session?session_id=${sessionId}`,
+          `/api/a5a89728-3d04-481d-ae07-6d4d3c209e27/checkout/session?session_id=${sessionId}`
         )
+        if (!isMounted) return
+
         setOrderItems(data.orderItems || [])
 
         if (data.status === "paid") {
@@ -79,7 +65,12 @@ export default function ThankYouPage() {
     }
 
     fetchOrderData()
-  }, [sessionId, apiRequest, cart])
+
+    return () => {
+      isMounted = false
+    }
+  }, [sessionId])
+
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60)
