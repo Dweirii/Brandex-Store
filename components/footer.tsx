@@ -7,8 +7,7 @@ const Footer = () => {
   return (
     <footer className="bg-card text-foreground border-t border-border py-10 md:py-14">
       {" "}
-      {/* Changed bg-[#020817] to bg-card, text-white to text-foreground, border-gray-700 to border-border */}
-      <div className="container mx-auto px-4 max-w-x5l">
+      <div className="container mx-auto px-10 max-w-7xl">
         {/* Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
           <div>
