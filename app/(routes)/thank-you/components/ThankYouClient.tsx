@@ -18,7 +18,7 @@ interface OrderItem {
 }
 
 export default function ThankYouPage() {
-  const [showConfetti, setShowConfetti] = useState(false)
+  const [showConfetti] = useState(false)
   const [orderItems, setOrderItems] = useState<OrderItem[]>([])
   const [timeLeft, setTimeLeft] = useState(30 * 60)
   const searchParams = useSearchParams()
