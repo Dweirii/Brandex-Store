@@ -12,17 +12,27 @@ const Gallery: React.FC<GalleryProps> = ({ images }) => {
 
   if (!image) return null
 
+  const isVideo = image.url.endsWith(".mp4") || image.url.endsWith(".mov")
+
   return (
     <div className="w-full overflow-hidden bg-background shadow-md border border-border">
       <div className="relative aspect-[4/3] w-full">
-        <Image
-          src={image.url || "/placeholder.svg"}
-          alt="Product Image"
-          fill
-          priority
-          className="object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 90vw, 800px"
-        />
+        {isVideo ? (
+          <video
+            src={image.url}
+            controls
+            className="object-cover object-center w-full h-full"
+          />
+        ) : (
+          <Image
+            src={image.url || "/placeholder.svg"}
+            alt="Product Image"
+            fill
+            priority
+            className="object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 90vw, 800px"
+          />
+        )}
       </div>
     </div>
   )

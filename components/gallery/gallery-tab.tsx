@@ -11,6 +11,8 @@ interface GalleryTabProps {
 }
 
 const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
+  const isVideo = image.url.endsWith(".mp4") || image.url.endsWith(".mov")
+
   return (
     <Tab className="relative flex aspect-square cursor-pointer items-center justify-center
       bg-background-light dark:bg-background-dark outline-none 
@@ -19,19 +21,29 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
       
       {({ selected }) => (
         <div className="w-full h-full">
-          {/* Image display */}
+          {/* Media display */}
           <span className="absolute inset-0 aspect-square overflow-hidden">
-            <Image
-              fill
-              src={image.url || "/placeholder.svg"}
-              alt=""
-              className={cn(
-                "object-cover object-center transition-all duration-300",
-                "group-hover:scale-105",
-                selected ? "brightness-100" : "group-hover:brightness-90"
-              )}
-              sizes="(max-width: 768px) 25vw, 150px"
-            />
+            {isVideo ? (
+              <video
+                src={image.url}
+                className="object-cover object-center w-full h-full group-hover:scale-105 transition-transform duration-300"
+                muted
+                playsInline
+                preload="metadata"
+              />
+            ) : (
+              <Image
+                fill
+                src={image.url || "/placeholder.svg"}
+                alt=""
+                className={cn(
+                  "object-cover object-center transition-all duration-300",
+                  "group-hover:scale-105",
+                  selected ? "brightness-100" : "group-hover:brightness-90"
+                )}
+                sizes="(max-width: 768px) 25vw, 150px"
+              />
+            )}
           </span>
 
           {/* Ring indicator */}
