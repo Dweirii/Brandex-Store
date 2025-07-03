@@ -1,38 +1,33 @@
 "use client"
 
-import type { Image as ImageType } from "@/types"
+import type { Product } from "@/types"
 import Image from "next/image"
 
 interface GalleryProps {
-  images: ImageType[]
+  data:Product
 }
 
-const Gallery: React.FC<GalleryProps> = ({ images }) => {
-  const image = images[0]
+const Gallery:React.FC<GalleryProps> = ({ data }) => {
 
-  if (!image) return null
-
-  const isVideo = image.url.endsWith(".mp4") || image.url.endsWith(".mov")
 
   return (
     <div className="w-full overflow-hidden bg-background shadow-md border border-border">
       <div className="relative aspect-[4/3] w-full">
-        {isVideo ? (
-          <video
-            src={image.url}
-            controls
-            className="object-cover object-center w-full h-full"
-          />
-        ) : (
-          <Image
-            src={image.url || "/placeholder.svg"}
-            alt="Product Image"
-            fill
-            priority
-            className="object-cover object-center transition-transform duration-300 hover:scale-[1.02]"
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 90vw, 800px"
-          />
-        )}
+        {data.videoUrl ? (
+                  <video
+                    src={data.videoUrl}
+                    controls
+                    className="absolute inset-0 w-full h-full object-cover"
+                    poster={data.images?.[0]?.url || "/placeholder.jpg"}
+                  />
+                ) : (
+                  <Image
+                    src={data.images?.[0]?.url || "/placeholder.jpg"}
+                    alt={data.name}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+          )}
       </div>
     </div>
   )

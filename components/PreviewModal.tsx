@@ -20,7 +20,7 @@ const PreviewModal = () => {
         <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-12 md:gap-8">
           {/* GALLERY COLUMN - full width on mobile, proportional on larger screens */}
           <div className="col-span-1 md:col-span-5 lg:col-span-5">
-            <Gallery images={product.images} />
+            <Gallery data={product} />
           </div>
 
           {/* INFO COLUMN - full width on mobile, proportional on larger screens */}

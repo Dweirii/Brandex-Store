@@ -55,7 +55,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
             {/* Gallery on Left */}
             <div className="w-full overflow-hidden">
               {product.images && product.images.length > 0 ? (
-                <Gallery images={product.images} />
+                <Gallery data={product} />
               ) : (
                 <div className="h-96 bg-muted/10 flex items-center justify-center rounded-xl">
                   <p className="text-muted-foreground">No images available</p>
