@@ -27,20 +27,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
       {/* Media: Video if available, otherwise Image */}
       <div className="relative w-full aspect-[4/3]">
         {data.videoUrl ? (
-          <video
-            src={data.videoUrl}
-            controls
-            className="absolute inset-0 w-full h-full object-cover"
-            poster={data.images?.[0]?.url || "/placeholder.jpg"}
-          />
-        ) : (
-          <Image
-            src={data.images?.[0]?.url || "/placeholder.jpg"}
-            alt={data.name}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        )}
+  <video
+    src={data.videoUrl}
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="absolute inset-0 w-full h-full object-cover"
+    poster={data.images?.[0]?.url || "/placeholder.jpg"}
+  />
+) : (
+  <Image
+    src={data.images?.[0]?.url || "/placeholder.jpg"}
+    alt={data.name}
+    fill
+    className="object-cover transition-transform duration-300 group-hover:scale-105"
+  />
+)}
+
       </div>
 
       {/* Content */}

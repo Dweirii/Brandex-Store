@@ -33,19 +33,27 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
       onHoverEnd={() => setIsHovered(false)}
       layout
     >
-      {/* Product Image with hover effect */}
       <div className="relative h-40 w-full sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-lg overflow-hidden bg-muted self-center sm:self-start">
         {" "}
-        {/* Changed bg-gray-50 to bg-muted */}
         <motion.div className="h-full w-full" animate={{ scale: isHovered ? 1.05 : 1 }} transition={{ duration: 0.3 }}>
-          <Image
-            fill
-            src={data.images[0]?.url || "/placeholder.svg"}
-            alt={data.name}
-            className="object-cover object-center"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 128px, 144px"
-            priority
-          />
+          {data.videoUrl ? (
+              <video
+                src={data.videoUrl}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover"
+                poster={data.images?.[0]?.url || "/placeholder.jpg"}
+              />
+                  ) : (
+                    <Image
+                      src={data.images?.[0]?.url || "/placeholder.jpg"}
+                      alt={data.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+          )}
         </motion.div>
       </div>
 
@@ -54,10 +62,7 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
         <div className="flex justify-between items-start">
           <div className="space-y-1.5 pr-8">
             <h3 className="text-base font-medium text-foreground line-clamp-2">{data.name}</h3>{" "}
-            {/* Changed text-gray-900 to text-foreground */}
             <p className="text-sm text-muted-foreground line-clamp-2">{data.description}</p>{" "}
-            {/* Changed text-gray-500 to text-muted-foreground */}
-            {/* Keywords displayed as tags */}
             {Array.isArray(data.keywords) && data.keywords.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {data.keywords.map((keyword, index) => (
@@ -66,7 +71,6 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
                     className="inline-flex text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded-full"
                   >
                     {" "}
-                    {/* Changed bg-gray-100 to bg-muted, text-gray-700 to text-muted-foreground */}
                     {keyword}
                   </span>
                 ))}
@@ -80,14 +84,13 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
               icon={<X size={16} />}
               className="bg-background hover:bg-muted text-foreground shadow-sm"
             />{" "}
-            {/* Changed bg-white to bg-background, hover:bg-gray-100 to hover:bg-muted, text-gray-600 to text-foreground */}
           </motion.div>
         </div>
 
         {/* Price */}
         <div className="flex items-center justify-between mt-4">
           <motion.div
-            className="font-semibold text-foreground" // Added text-foreground
+            className="font-semibold text-foreground"
             animate={{ scale: isHovered ? 1.05 : 1 }}
             transition={{ duration: 0.2 }}
           >

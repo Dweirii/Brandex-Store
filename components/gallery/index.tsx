@@ -14,12 +14,15 @@ const Gallery:React.FC<GalleryProps> = ({ data }) => {
     <div className="w-full overflow-hidden bg-background shadow-md border border-border">
       <div className="relative aspect-[4/3] w-full">
         {data.videoUrl ? (
-                  <video
-                    src={data.videoUrl}
-                    controls
-                    className="absolute inset-0 w-full h-full object-cover"
-                    poster={data.images?.[0]?.url || "/placeholder.jpg"}
-                  />
+              <video
+                  src={data.videoUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                  poster={data.images?.[0]?.url || "/placeholder.jpg"}
+              />
                 ) : (
                   <Image
                     src={data.images?.[0]?.url || "/placeholder.jpg"}
