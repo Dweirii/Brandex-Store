@@ -1,32 +1,78 @@
-import getProduct from "@/actions/get-products";
+import { Suspense } from "react"
+import getProduct from "@/actions/get-products"
+import { HeroSection } from "@/components/hero-section"
+import ProductList from "@/components/product-list"
+import Container from "@/components/ui/container"
+import { ProductListSkeleton } from "@/components/product-list-skeleton"
+import { ScrollToTop } from "@/components/scroll-to-top"
 
-import { HeroSection } from "@/components/hero-section";
-import ProductList from "@/components/product-list";
-import Container from "@/components/ui/container";
+export const revalidate = 0
 
-export const revalidate = 0;
+interface HomePageProps {
+  searchParams: Promise<{ page?: string }>
+}
 
-const HomePage = async () => {
-    try {
-        const products = await getProduct({isFeatured: true});
+async function FeaturedProducts({ currentPage }: { currentPage: number }) {
+  try {
+    const { products, total, page, pageCount } = await getProduct({
+      isFeatured: true,
+      page: currentPage,
+      limit: 12,
+    })
 
-        return (
-            <Container>
-                <div className="space-y-10 pb-10">
-                    <HeroSection/>
-                <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8">
-                    <ProductList 
-                        title="Featured Products"
-                        items={products}
-                    />
-                </div>
-                </div>
-            </Container>
-        );
-    } catch (error) {
-        console.error("Error fetching billboard:", error);
-        return <p>Failed to load billboard.</p>;
-    }
-};
+    return (
+      <ProductList
+        title="Featured Products"
+        items={products}
+        total={total}
+        page={page}
+        pageCount={pageCount}
+      />
+    )
+  } catch (error) {
+    console.error("Error fetching featured products:", error)
+    return (
+      <div className="text-center py-12">
+        <div className="max-w-md mx-auto">
+          <div className="text-red-500 mb-4">
+            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to load products</h3>
+          <p className="text-gray-600 mb-4">We&apos;re having trouble loading the featured products. Please try again later.</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    )
+  }
+}
 
-export default HomePage;
+const HomePage = async ({ searchParams }: HomePageProps) => {
+  const { page } = await searchParams
+  const currentPage = parseInt(page || "1", 10)
+
+  return (
+    <Container>
+      <div className="space-y-10 pb-10">
+        <HeroSection />
+        <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8">
+          <Suspense 
+            key={currentPage} 
+            fallback={<ProductListSkeleton title="Featured Products" />}
+          >
+            <FeaturedProducts currentPage={currentPage} />
+          </Suspense>
+        </div>
+      </div>
+      <ScrollToTop />
+    </Container>
+  )
+}
+
+export default HomePage

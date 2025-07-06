@@ -7,7 +7,7 @@ import { ShoppingBag, CreditCard, Heart, Loader2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion" 
 import toast from "react-hot-toast"
 import axios from "axios"
-import { useAuth, useUser } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs"
 
 import { Button } from "@/components/ui/Button"
 import Currency from "@/components/ui/currency"
@@ -20,7 +20,6 @@ const Summary = () => {
   const items = useCart((state) => state.items)
   const removeAll = useCart((state) => state.removeAll)
   const { getToken } = useAuth()
-  const { user } = useUser()
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -36,7 +35,7 @@ const Summary = () => {
   }, [searchParams, removeAll, router])
 
   const totalPrice = items.reduce((total, item) => total + Number(item.price), 0)
-
+/*
   const onPayPalCheckout = async () => {
     if (totalPrice < 0.6) {
       toast.error("Minimum payment amount is $0.60")
@@ -74,7 +73,7 @@ const Summary = () => {
       setIsLoading(false)
     }
   }
-
+*/
   const onCheckout = async () => {
     if (totalPrice < 0.6) {
       toast.error("Minimum payment amount is $0.60")

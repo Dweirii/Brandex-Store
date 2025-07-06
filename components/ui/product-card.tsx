@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { useRef } from "react"
 import type { Product } from "@/types"
 import Currency from "@/components/ui/currency"
 
@@ -12,9 +13,24 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
   const router = useRouter()
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
   const handleClick = () => {
     router.push(`/products/${data.id}`)
+  }
+
+  const handleMouseEnter = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0
+      videoRef.current.play().catch(() => {}) // Avoid unhandled promise
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
   }
 
   return (
@@ -22,29 +38,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
       onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className="bg-card border border-border overflow-hidden shadow-md cursor-pointer group flex flex-col"
     >
-      {/* Media: Video if available, otherwise Image */}
       <div className="relative w-full aspect-[4/3]">
         {data.videoUrl ? (
-  <video
-    src={data.videoUrl}
-    autoPlay
-    muted
-    loop
-    playsInline
-    className="absolute inset-0 w-full h-full object-cover"
-    poster={data.images?.[0]?.url || "/placeholder.jpg"}
-  />
-) : (
-  <Image
-    src={data.images?.[0]?.url || "/placeholder.jpg"}
-    alt={data.name}
-    fill
-    className="object-cover transition-transform duration-300 group-hover:scale-105"
-  />
-)}
-
+          <video
+            ref={videoRef}
+            src={data.videoUrl}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={data.images?.[0]?.url || undefined}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <Image
+            src={data.images?.[0]?.url || "/placeholder.jpg"}
+            alt={data.name}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        )}
       </div>
 
       {/* Content */}
@@ -68,9 +85,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
           </p>
         )}
 
-        <button
-          className="text-sm font-medium text-green-500 hover:text-green-400 transition-all flex items-center gap-1"
-        >
+        <button className="text-sm font-medium text-green-500 hover:text-green-400 transition-all flex items-center gap-1">
           View Details
           <svg
             className="w-4 h-4"

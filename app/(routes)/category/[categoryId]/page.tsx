@@ -1,43 +1,84 @@
-import getCategory from "@/actions/get-category";
-import getProducts from "@/actions/get-products";
-import { HeroSection } from "@/components/hero-section";
-import Container from "@/components/ui/container";
-import NoResults from "@/components/ui/no-results";
-import ProductCard from "@/components/ui/product-card";
+// app/(routes)/category/[categoryId]/page.tsx
 
-export const revalidate = 0;
+import { Suspense } from "react"
+import getCategory from "@/actions/get-category"
+import getProducts from "@/actions/get-products"
+import { HeroSection } from "@/components/hero-section"
+import Container from "@/components/ui/container"
+import ProductList from "@/components/product-list"
+import { ProductListSkeleton } from "@/components/product-list-skeleton"
+import { ScrollToTop } from "@/components/scroll-to-top"
+import { CategoryHeader } from "@/components/category-header"
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: Promise<{ categoryId: string }>;
-}) {
-  const { categoryId } = await params;
+export const revalidate = 0
 
-  //eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [category, products] = await Promise.all([
+interface CategoryProductsWithHeaderProps {
+  categoryId: string
+  currentPage: number
+}
+
+async function CategoryProductsWithHeader({
+  categoryId,
+  currentPage,
+}: CategoryProductsWithHeaderProps) {
+  const [category, { products, total, page: current, pageCount }] = await Promise.all([
     getCategory(categoryId),
-    getProducts({ categoryId }),
-  ]);
+    getProducts({
+      categoryId,
+      page: currentPage,
+      limit: 12,
+    }),
+  ])
+
+  if (!category) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg font-semibold">Category not found</p>
+        <button onClick={() => window.history.back()} className="mt-4 px-4 py-2 bg-black text-white rounded">
+          Go Back
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-8">
+      <CategoryHeader categoryName={category.name} totalProducts={total} currentPage={current} />
+      <ProductList
+        title=""
+        items={products}
+        total={total}
+        page={current}
+        pageCount={pageCount}
+      />
+    </div>
+  )
+}
+
+export default async function EnhancedCategoryPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ categoryId: string }>
+  searchParams?: Promise<{ page?: string }>
+}) {
+  const { categoryId } = await params
+  const currentPage = parseInt((await searchParams)?.page || "1", 10)  
 
   return (
     <div className="bg-white dark:bg-card transition-colors">
       <Container>
         <HeroSection />
         <div className="px-4 sm:px-6 lg:px-8 pb-24">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-            {products.length === 0 ? (
-              <div className="col-span-full flex items-center justify-center h-[60vh]">
-                <NoResults />
-              </div>
-            ) : (
-              products.map((item) => (
-                <ProductCard key={item.id} data={item} />
-              ))
-            )}
-          </div>
+          <Suspense
+            key={`${categoryId}-${currentPage}`}
+            fallback={<ProductListSkeleton title="" />}
+          >
+            <CategoryProductsWithHeader categoryId={categoryId} currentPage={currentPage} />
+          </Suspense>
         </div>
       </Container>
+      <ScrollToTop />
     </div>
-  );
+  )
 }
