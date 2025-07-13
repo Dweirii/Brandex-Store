@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Performance optimizations for video-heavy e-commerce
+  experimental: {
+    optimizePackageImports: ['framer-motion'],
+  },
+
+  // Compiler optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+
   async redirects() {
     return [
       {
@@ -37,6 +47,29 @@ const nextConfig = {
         hostname: "image-brandex.b-cdn.net",
       },
     ],
+  },
+
+  // Video optimization headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+    ];
   },
 };
 

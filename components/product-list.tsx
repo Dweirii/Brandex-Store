@@ -1,9 +1,11 @@
 import type React from "react"
+import { memo } from "react"
 import type { Product } from "@/types"
 
 import NoResults from "@/components/ui/no-results"
 import ProductCard from "./ui/product-card"
 import Pagination from "@/components/paginatioon"
+
 interface ProductListProps {
   title: string
   items: Product[]
@@ -11,6 +13,9 @@ interface ProductListProps {
   page: number
   pageCount: number
 }
+
+// Memoize ProductCard to prevent unnecessary re-renders
+const MemoizedProductCard = memo(ProductCard)
 
 const ProductList: React.FC<ProductListProps> = ({ title, items, total, page, pageCount }) => {
   return (
@@ -24,7 +29,7 @@ const ProductList: React.FC<ProductListProps> = ({ title, items, total, page, pa
 
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((item) => (
-          <ProductCard key={item.id} data={item} />
+          <MemoizedProductCard key={item.id} data={item} />
         ))}
       </div>
 

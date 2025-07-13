@@ -165,7 +165,7 @@ function TimelineEvent({
         className="w-5/12 cursor-pointer"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={onToggle}
+        onTap={onToggle}
       >
         <div className="p-4 bg-card rounded-lg shadow-md border border-primary/10">
           <span className="font-bold text-primary">{event.year}</span>

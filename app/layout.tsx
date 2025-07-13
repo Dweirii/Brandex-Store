@@ -9,7 +9,7 @@ import ModalProvider from "@/providers/model-provider";
 import ToastProvider from "@/providers/toast.provider";
 import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
-
+import { DisableContextMenu } from "@/components/disable-context-menu";
 
 const font = Urbanist({ subsets: ["latin"] });
 
@@ -34,8 +34,9 @@ export default function RootLayout({
             <Providers>
               <ModalProvider />
               <ToastProvider />
+              <DisableContextMenu />
               <Navbar />
-              <main className="flex-1">{children} </main>
+              <main className="flex-1">{children}</main>
               <Footer />
             </Providers>
           </ThemeProvider>
