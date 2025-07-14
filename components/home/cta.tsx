@@ -17,7 +17,7 @@ export function CallToActionSection() {
           transition={{ duration: 0.8 }}
         >
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00EB02]/20 border border-[#00EB02]/30 text-sm font-medium text-[#00EB02] mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00EB02]/20 border border-[#00EB02]/30 badge-text text-[#00EB02] mb-6"
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -28,7 +28,7 @@ export function CallToActionSection() {
           </motion.div>
 
           <motion.h2
-            className="text-4xl md:text-6xl font-bold text-black dark:text-white leading-tight"
+            className="heading-section text-high-contrast"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -48,7 +48,7 @@ export function CallToActionSection() {
           </motion.h2>
 
           <motion.p
-            className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed"
+            className="text-body-large text-medium-contrast max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -67,7 +67,7 @@ export function CallToActionSection() {
           >
             <Button
               size="lg"
-              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] font-semibold px-10 py-6 text-xl rounded-xl shadow-2xl hover:shadow-[#00EB02]/25 transition-all duration-300 hover:scale-105"
+              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] button-text px-10 py-6 text-xl rounded-xl shadow-2xl hover:shadow-[#00EB02]/25 transition-all duration-300 hover:scale-105"
               asChild
             >
               <Link href="/" className="flex items-center gap-3">

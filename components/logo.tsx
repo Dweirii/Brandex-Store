@@ -6,14 +6,40 @@ import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 
 const Logo = () => {
-  const { theme } = useTheme()
+  const { theme, systemTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
-  if (!mounted) return null
+  // تحديد الثيم المناسب مع دعم النظام
+  const getLogoSrc = () => {
+    if (!mounted) {
+      // للحصول على الوضع الافتراضي للنظام قبل التحميل
+      if (typeof window !== "undefined") {
+        const systemPreference = window.matchMedia("(prefers-color-scheme: dark)").matches
+        return systemPreference ? "/Logo-white.png" : "/Logo.png"
+      }
+      return "/Logo.png" // الافتراضي
+    }
+    
+    const currentTheme = theme === "system" ? systemTheme : theme
+    return currentTheme === "dark" ? "/Logo-white.png" : "/Logo.png"
+  }
 
-  const logoSrc = theme === "dark" ? "/Logo-white.png" : "/Logo.png"
+  const logoSrc = getLogoSrc()
+
+  // لمنع الـ layout shift، نعرض skeleton بدلاً من null
+  if (!mounted) {
+    return (
+      <Link href="/" className="flex items-center gap-x-2">
+        <div 
+          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm"
+          style={{ width: 240, height: 120 }}
+          aria-label="Loading logo"
+        />
+      </Link>
+    )
+  }
 
   return (
     <Link href="/" className="flex items-center gap-x-2">
@@ -23,7 +49,11 @@ const Logo = () => {
         height={120}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-300"
+        className="transition-all duration-300 hover:scale-105 gpu-accelerated smooth-transform"
+        style={{ width: "auto", height: "auto" }}
+        sizes="(max-width: 768px) 200px, 240px"
+        placeholder="blur"
+        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
       />
     </Link>
   )

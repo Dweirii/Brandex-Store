@@ -141,11 +141,11 @@ export function WhatYouGetSection() {
           </motion.div>
 
           <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-            <span className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">
+            <span className="heading-section mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">
               What You Get
             </span>
             <br />
-            <span className="text-3xl md:text-4xl font-normal text-muted-foreground">
+            <span className="heading-subsection font-normal text-medium-contrast">
               Everything your brand needs to{" "}
               <span className="relative">
                 thrive
@@ -206,7 +206,7 @@ export function WhatYouGetSection() {
                       </div>
                       <div>
                         <div className="text-sm font-medium text-muted-foreground mb-1">{feature.category}</div>
-                        <h3 className="text-2xl lg:text-3xl font-bold text-[#020817] dark:text-white group-hover:text-[#00EB02] transition-colors duration-300">
+                        <h3 className="heading-card text-high-contrast group-hover:text-[#00EB02] transition-colors duration-300">
                           {feature.title}
                         </h3>
                       </div>
@@ -222,7 +222,7 @@ export function WhatYouGetSection() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-lg text-muted-foreground mb-8 leading-relaxed flex-grow">{feature.description}</p>
+                  <p className="text-body text-medium-contrast mb-8 flex-grow">{feature.description}</p>
 
                   {/* Features Grid */}
                   <div className="grid grid-cols-2 gap-3 mb-6">

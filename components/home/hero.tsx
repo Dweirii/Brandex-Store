@@ -16,7 +16,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00EB02]/10 border border-[#00EB02]/20 text-xs sm:text-sm font-medium text-[#00EB02] mb-4 sm:mb-6"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00EB02]/10 border border-[#00EB02]/20 badge-text text-[#00EB02] mb-4 sm:mb-6"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -26,7 +26,7 @@ export function HeroSection() {
           </motion.div>
 
           <motion.h1
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-gradient-to-r from-[#020817] via-[#020817] to-[#00EB02] dark:from-white dark:via-white dark:to-[#00EB02] bg-clip-text text-transparent leading-tight sm:leading-snug"
+            className="heading-hero bg-gradient-to-r from-[#020817] via-[#020817] to-[#00EB02] dark:from-white dark:via-white dark:to-[#00EB02] bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
@@ -44,7 +44,7 @@ export function HeroSection() {
           </motion.h1>
 
           <motion.p
-            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="text-body-large text-medium-contrast max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
@@ -61,7 +61,7 @@ export function HeroSection() {
           >
             <Button
               size="lg"
-              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] font-semibold px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] button-text px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105"
               asChild
             >
               <Link href="/" className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export function HeroSection() {
             <Button
               variant="outline"
               size="lg"
-              className="px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 hover:border-[#00EB02] hover:text-[#00EB02] transition-all duration-300"
+              className="button-text px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 hover:border-[#00EB02] hover:text-[#00EB02] transition-all duration-300"
               asChild
             >
               <Link href="/">Learn More</Link>

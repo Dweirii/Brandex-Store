@@ -81,10 +81,10 @@ export function WhyBuyFromBrandexSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">
+          <h2 className="heading-section mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">
             Why Choose Brandex
           </h2>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+          <p className="text-body-large text-medium-contrast max-w-4xl mx-auto">
             We&apos;ve built our platform around three core principles that make digital product shopping simple, secure, and
             valuable for creators and businesses worldwide.
           </p>
@@ -120,8 +120,8 @@ export function WhyBuyFromBrandexSection() {
 
               {/* Content */}
               <div className="flex-1 text-center lg:text-left">
-                <h3 className="text-3xl md:text-4xl font-bold mb-6 text-[#020817] dark:text-white">{benefit.title}</h3>
-                <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">{benefit.description}</p>
+                <h3 className="heading-subsection mb-6 text-high-contrast">{benefit.title}</h3>
+                <p className="text-body-large text-medium-contrast mb-8">{benefit.description}</p>
 
                 {/* Features List */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -137,7 +137,7 @@ export function WhyBuyFromBrandexSection() {
                       <div className={`p-1 rounded-full ${benefit.bgColor} group-hover:scale-110 transition-transform`}>
                         <CheckCircle className={`w-5 h-5 ${benefit.color}`} />
                       </div>
-                      <span className="font-medium text-[#020817] dark:text-white group-hover:text-[#00EB02] transition-colors">
+                      <span className="text-body-small text-high-contrast group-hover:text-[#00EB02] transition-colors">
                         {feature}
                       </span>
                     </motion.div>

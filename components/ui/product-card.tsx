@@ -76,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="bg-card border border-border overflow-hidden shadow-md cursor-pointer group flex flex-col"
+      className="bg-card border border-border overflow-hidden shadow-md cursor-pointer group flex flex-col gpu-accelerated hover-scale"
     >
       <div className="relative w-full aspect-[4/3]">
         {data.videoUrl ? (
@@ -116,7 +116,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ data }) => {
           </>
         ) : // Fallback to product image if no video
         data.images?.[0]?.url ? (
-          <Image src={data.images[0].url || "/placeholder.svg"} alt={data.name} fill className="object-cover" />
+          <Image 
+            src={data.images[0].url || "/placeholder.svg"} 
+            alt={data.name} 
+            fill 
+            className="object-cover"
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+          />
         ) : (
           <div className="absolute inset-0 bg-muted flex items-center justify-center">
             <span className="text-muted-foreground">No Image</span>

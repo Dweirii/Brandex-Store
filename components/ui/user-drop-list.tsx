@@ -71,6 +71,7 @@ export function UserDropdown() {
                 src={user?.imageUrl || "/placeholder.svg"}
                 alt={`${user?.firstName}'s avatar`}
                 className="object-cover"
+                loading="lazy"
               />
               <AvatarFallback className="bg-gradient-to-br from-primary/20 to-muted text-foreground font-semibold">
                 {user?.firstName?.charAt(0)?.toUpperCase() ??
@@ -89,7 +90,11 @@ export function UserDropdown() {
           <div className="px-3 py-4 bg-gradient-to-r from-primary/10 to-muted/20 rounded-lg mb-2">
             <div className="flex items-center gap-3">
               <Avatar className="h-12 w-12 border-2 border-primary/20">
-                <AvatarImage src={user?.imageUrl || "/placeholder.svg"} alt={`${user?.firstName}'s avatar`} />
+                <AvatarImage 
+                  src={user?.imageUrl || "/placeholder.svg"} 
+                  alt={`${user?.firstName}'s avatar`}
+                  loading="lazy"
+                />
                 <AvatarFallback className="bg-gradient-to-br from-primary/20 to-muted text-foreground font-semibold text-lg">
                   {user?.firstName?.charAt(0)?.toUpperCase() ??
                     user?.emailAddresses?.[0]?.emailAddress?.charAt(0)?.toUpperCase() ??
