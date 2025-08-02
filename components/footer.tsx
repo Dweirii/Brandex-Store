@@ -48,7 +48,7 @@ const Footer = () => {
                 <a href="mailto:support@brandex.com" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}
-                  support@brandex.com
+                  info@brandexme.com
                 </a>
               </li>
               <li className="flex items-center gap-2">
@@ -56,7 +56,7 @@ const Footer = () => {
                 <a href="tel:+962792977707" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}
-                  +962-79-297-7707
+                  +962-79-150-5569
                 </a>
               </li>
             </ul>

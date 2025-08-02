@@ -9,17 +9,20 @@ import ProductList from "@/components/product-list"
 import { ProductListSkeleton } from "@/components/product-list-skeleton"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import { CategoryHeader } from "@/components/category-header"
+import PriceFilter from "@/components/price-filter"
 
 export const revalidate = 0
 
 interface CategoryProductsWithHeaderProps {
   categoryId: string
   currentPage: number
+  priceFilter?: 'paid' | 'free' | 'all'
 }
 
 async function CategoryProductsWithHeader({
   categoryId,
   currentPage,
+  priceFilter,
 }: CategoryProductsWithHeaderProps) {
   const [category, { products, total, page: current, pageCount }] = await Promise.all([
     getCategory(categoryId),
@@ -27,6 +30,7 @@ async function CategoryProductsWithHeader({
       categoryId,
       page: currentPage,
       limit: 12,
+      priceFilter: priceFilter,
     }),
   ])
 
@@ -60,21 +64,28 @@ export default async function EnhancedCategoryPage({
   searchParams,
 }: {
   params: Promise<{ categoryId: string }>
-  searchParams?: Promise<{ page?: string }>
+  searchParams?: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all' }>
 }) {
   const { categoryId } = await params
-  const currentPage = parseInt((await searchParams)?.page || "1", 10)  
+  const searchParamsData = await searchParams
+  const currentPage = parseInt(searchParamsData?.page || "1", 10)
+  const priceFilter = searchParamsData?.priceFilter
 
   return (
     <div className="bg-white dark:bg-card transition-colors">
       <Container>
         <HeroSection />
         <div className="px-4 sm:px-6 lg:px-8 pb-24">
+          <PriceFilter className="mb-6" />
           <Suspense
-            key={`${categoryId}-${currentPage}`}
+            key={`${categoryId}-${currentPage}-${priceFilter || 'all'}`}
             fallback={<ProductListSkeleton title="" />}
           >
-            <CategoryProductsWithHeader categoryId={categoryId} currentPage={currentPage} />
+            <CategoryProductsWithHeader 
+              categoryId={categoryId} 
+              currentPage={currentPage} 
+              priceFilter={priceFilter}
+            />
           </Suspense>
         </div>
       </Container>

@@ -5,19 +5,21 @@ import ProductList from "@/components/product-list"
 import Container from "@/components/ui/container"
 import { ProductListSkeleton } from "@/components/product-list-skeleton"
 import { ScrollToTop } from "@/components/scroll-to-top"
+import PriceFilter from "@/components/price-filter"
 
 export const revalidate = 0
 
 interface HomePageProps {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all' }>
 }
 
-async function FeaturedProducts({ currentPage }: { currentPage: number }) {
+async function FeaturedProducts({ currentPage, priceFilter }: { currentPage: number; priceFilter?: 'paid' | 'free' | 'all' }) {
   try {
     const { products, total, page, pageCount } = await getProduct({
       isFeatured: true,
       page: currentPage,
       limit: 12,
+      priceFilter: priceFilter,
     })
 
     return (
@@ -54,7 +56,7 @@ async function FeaturedProducts({ currentPage }: { currentPage: number }) {
 }
 
 const HomePage = async ({ searchParams }: HomePageProps) => {
-  const { page } = await searchParams
+  const { page, priceFilter } = await searchParams
   const currentPage = parseInt(page || "1", 10)
 
   return (
@@ -62,11 +64,12 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
       <div className="space-y-10 pb-10">
         <HeroSection />
         <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8">
+          <PriceFilter className="mb-6" />
           <Suspense 
-            key={currentPage} 
+            key={`${currentPage}-${priceFilter || 'all'}`} 
             fallback={<ProductListSkeleton title="Featured Products" />}
           >
-            <FeaturedProducts currentPage={currentPage} />
+            <FeaturedProducts currentPage={currentPage} priceFilter={priceFilter} />
           </Suspense>
         </div>
       </div>

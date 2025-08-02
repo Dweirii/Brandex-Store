@@ -37,34 +37,38 @@ export const DownloadButton = ({
     setLoading(true)
     try {
       const token = await getToken({ template: "CustomerJWTBrandex" })
-      if (!token) {
-        throw new Error("User not authenticated")
-      }
+if (!token) {
+  throw new Error("User not authenticated")
+}
 
-      const res = await fetch(`https://admin.wibimax.com/api/${storeId}/products/${productId}/download`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+const res = await fetch(`https://admin.wibimax.com/api/${storeId}/products/${productId}/download`, {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
 
-      if (!res.ok) {
-        const errorText = await res.text()
-        throw new Error(errorText || "Download failed")
-      }
+if (!res.ok) {
+  const errorText = await res.text()
+  throw new Error(errorText || "Download failed")
+}
 
-      const { url } = await res.json()
-      if (!url) {
-        throw new Error("Signed URL not found")
-      }
+const blob = await res.blob()
+const fileName = productId + ".zip"
+const url = window.URL.createObjectURL(blob)
+const a = document.createElement("a")
+a.href = url
+a.download = fileName
+document.body.appendChild(a)
+a.click()
+a.remove()
+window.URL.revokeObjectURL(url)
 
-      window.open(url, "_blank")
+setDownloaded(true)
+setTimeout(() => {
+  setDownloaded(false)
+}, 3000)
 
-      setDownloaded(true)
-      
-      setTimeout(() => {
-        setDownloaded(false)
-      }, 3000)
     } catch (error) {
       console.error("Download Error:", error)
     } finally {
