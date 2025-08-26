@@ -54,7 +54,7 @@ if (!res.ok) {
 }
 
 const blob = await res.blob()
-const fileName = productId + ".zip"
+const fileName = productId
 const url = window.URL.createObjectURL(blob)
 const a = document.createElement("a")
 a.href = url
