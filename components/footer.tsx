@@ -1,7 +1,21 @@
 "use client"
 
 import Link from "next/link"
-import { Mail, Phone, Instagram, Twitter, Linkedin } from "lucide-react"
+import { Mail, Phone, Instagram } from "lucide-react"
+
+// أيقونة X (Twitter سابقاً) SVG
+const XIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+)
+
+// أيقونة Behance SVG
+const BehanceIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M6.5 4.5h4.5c1.58 0 2.5 1.69 2.5 2.5 0 .83-.67 1.5-1.5 1.5.83 0 1.5.67 1.5 1.5 0 .81-.92 2.5-2.5 2.5H6.5v-8zm2 3.5h2c.28 0 .5-.22.5-.5s-.22-.5-.5-.5H8.5v1zm0 3h2.5c.28 0 .5-.22.5-.5s-.22-.5-.5-.5H8.5v1zM15.5 7h3v1h-3V7zm-.5 5c-1.66 0-3 1.34-3 3s1.34 3 3 3c1.3 0 2.4-.84 2.83-2H16.5c-.28.28-.67.5-1.5.5-.83 0-1.5-.67-1.5-1.5h4.5c.28-1.66-.84-3-2.5-3zm-1.5 2.5c0-.28.22-.5.5-.5h2c-.28 0-.5.22-.5.5H13.5z"/>
+  </svg>
+)
 
 const Footer = () => {
   return (
@@ -48,7 +62,7 @@ const Footer = () => {
                 <a href="mailto:support@brandex.com" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}
-                  info@brandexme.com
+                  team@brandexme.com
                 </a>
               </li>
               <li className="flex items-center gap-2">
@@ -71,34 +85,31 @@ const Footer = () => {
             </p>
             <div className="flex gap-4">
               <a
-                href="https://instagram.com/brandex"
+                href="https://x.com/brandex"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition"
+                aria-label="Brandex on X"
               >
-                {" "}
-                {/* Added text-muted-foreground, changed hover:text-green-400 to hover:text-primary */}
+                <XIcon className="h-5 w-5" />
+              </a>
+              <a
+                href="https://www.instagram.com/brandex_llc/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition"
+                aria-label="Brandex on Instagram"
+              >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://twitter.com/brandex"
+                href="https://www.behance.net/OHGWORLD"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition"
+                aria-label="Brandex on Behance"
               >
-                {" "}
-                {/* Added text-muted-foreground, changed hover:text-green-400 to hover:text-primary */}
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a
-                href="https://linkedin.com/company/brandex"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition"
-              >
-                {" "}
-                {/* Added text-muted-foreground, changed hover:text-green-400 to hover:text-primary */}
-                <Linkedin className="h-5 w-5" />
+                <BehanceIcon className="h-5 w-5" />
               </a>
             </div>
           </div>

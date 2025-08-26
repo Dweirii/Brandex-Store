@@ -32,7 +32,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
+        hostname: "brandex.b-cdn.net",
       },
       {
         protocol: "https",

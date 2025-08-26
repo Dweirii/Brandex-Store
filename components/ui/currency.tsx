@@ -1,8 +1,8 @@
 "use client"
-;
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react"
 
+// Memoize formatter to avoid recreation on every render
 const formatter = new Intl.NumberFormat("en-US", {
     style: 'currency',
     currency: 'USD'
@@ -11,24 +11,33 @@ const formatter = new Intl.NumberFormat("en-US", {
 interface CurrencyProps {
     value?: string | number
 }
-const Currency: React.FC<CurrencyProps> =  ({
-    value,
+
+const Currency: React.FC<CurrencyProps> = memo(({
+    value = 0,
 }) => {
-    const [isMounted, setIsmounted] = useState (false);
+    const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
-        setIsmounted(true);
-    },[]);
+        setIsMounted(true)
+    }, [])
 
-    if(!isMounted) {
-        return null;
+    if (!isMounted) {
+        return (
+            <div className="font-semibold text-foreground animate-pulse">
+                <div className="h-4 bg-muted rounded w-16"></div>
+            </div>
+        )
     }
     
+    // Handle edge cases for better performance
+    const numValue = typeof value === 'string' ? parseFloat(value) || 0 : Number(value) || 0
+    
     return ( 
-        <div className="font-semibold">
-           {formatter.format(Number(value))} 
+        <div className="font-semibold text-foreground">
+           {formatter.format(numValue)} 
         </div>
-     );
-}
- 
-export default Currency;
+    )
+})
+Currency.displayName = 'Currency'
+
+export default Currency

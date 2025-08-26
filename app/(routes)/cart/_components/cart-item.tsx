@@ -69,15 +69,21 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
             <p className="text-sm text-muted-foreground line-clamp-2">{data.description}</p>{" "}
             {Array.isArray(data.keywords) && data.keywords.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mt-2">
-                {data.keywords.map((keyword, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded-full"
-                  >
-                    {" "}
-                    {keyword}
-                  </span>
-                ))}
+                {/* Handle keywords splitting if they come as comma-separated strings */}
+                {data.keywords
+                  .flatMap(keyword => 
+                    typeof keyword === 'string' 
+                      ? keyword.split(',').map(k => k.trim()).filter(k => k.length > 0)
+                      : [keyword]
+                  )
+                  .map((keyword, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex text-xs px-2 py-0.5 bg-muted text-muted-foreground rounded-full"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
               </div>
             )}
           </div>
