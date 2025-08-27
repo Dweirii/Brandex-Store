@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Urbanist } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import Script from "next/script"; // ✅ لإضافة Google Analytics
+import { Analytics } from "@vercel/analytics/react"; // ✅ لإضافة Vercel Analytics
 
 import "./globals.css";
 import { Footer } from "@/components/footer";
@@ -11,14 +13,20 @@ import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { DisableContextMenu } from "@/components/disable-context-menu";
 
-// تحسين إعدادات الخط لأداء أفضل
-const font = Urbanist({ 
+const font = Urbanist({
   subsets: ["latin"],
-  display: 'swap',
+  display: "swap",
   preload: true,
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-  variable: '--font-urbanist',
-  weight: ['400', '500', '600', '700', '800']
+  fallback: [
+    "system-ui",
+    "-apple-system",
+    "BlinkMacSystemFont",
+    "Segoe UI",
+    "Roboto",
+    "sans-serif",
+  ],
+  variable: "--font-urbanist",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -38,6 +46,20 @@ export default function RootLayout({
         <body
           className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-card/70 text-foreground transition-colors`}
         >
+          {/* Google Analytics Scripts */}
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-ZMVM2S3DNV"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-ZMVM2S3DNV');
+            `}
+          </Script>
+
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Providers>
               <ModalProvider />
@@ -48,6 +70,9 @@ export default function RootLayout({
               <Footer />
             </Providers>
           </ThemeProvider>
+
+          {/* ✅ Vercel Analytics */}
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
