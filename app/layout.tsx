@@ -1,8 +1,9 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Urbanist } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import Script from "next/script"; // ✅ لإضافة Google Analytics
-import { Analytics } from "@vercel/analytics/react"; // ✅ لإضافة Vercel Analytics
+import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
 
 import "./globals.css";
 import { Footer } from "@/components/footer";
@@ -12,6 +13,7 @@ import ToastProvider from "@/providers/toast.provider";
 import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { DisableContextMenu } from "@/components/disable-context-menu";
+import AppToaster from "@/components/ui/toaster";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -35,6 +37,9 @@ export const metadata: Metadata = {
     "Brandex — Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
 };
 
+// ✅ استخدم متغير بيئة إن وجد، وإلا القيمة الافتراضية من البريد
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-1YRZK4HX52";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -43,23 +48,27 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className="h-full" suppressHydrationWarning>
-        <body
-          className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-card/70 text-foreground transition-colors`}
-        >
-          {/* Google Analytics Scripts */}
+        <head>
+          {/* Google tag (gtag.js) - GA4 */}
           <Script
-            src="https://www.googletagmanager.com/gtag/js?id=G-ZMVM2S3DNV"
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
             strategy="afterInteractive"
           />
-          <Script id="google-analytics" strategy="afterInteractive">
+          <Script id="ga4-init" strategy="afterInteractive">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-ZMVM2S3DNV');
+              gtag('config', '${GA_ID}', {
+                anonymize_ip: true
+              });
             `}
           </Script>
+        </head>
 
+        <body
+          className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-card/70 text-foreground transition-colors`}
+        >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Providers>
               <ModalProvider />
@@ -67,6 +76,7 @@ export default function RootLayout({
               <DisableContextMenu />
               <Navbar />
               <main className="flex-1">{children}</main>
+              <AppToaster />
               <Footer />
             </Providers>
           </ThemeProvider>
