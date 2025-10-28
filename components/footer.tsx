@@ -59,18 +59,18 @@ const Footer = () => {
             <ul className="text-sm space-y-2">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" /> {/* Changed text-green-400 to text-primary */}
-                <a href="mailto:support@brandex.com" className="text-muted-foreground hover:underline">
+                <a href="mailto:m.omari@ohg.world" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}
-                  team@brandexme.com
+                  m.omari@ohg.world
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-primary" /> {/* Changed text-green-400 to text-primary */}
-                <a href="tel:+962792977707" className="text-muted-foreground hover:underline">
+                <a href="tel:+962795125912" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}
-                  +962-79-150-5569
+                  +962 7 9512 5912
                 </a>
               </li>
             </ul>
@@ -85,7 +85,7 @@ const Footer = () => {
             </p>
             <div className="flex gap-4">
               <a
-                href="https://x.com/brandex"
+                href="https://x.com/brandexme?s=21&t=ZY2A-PurYFzWTpcYQkcePw"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition"
@@ -103,7 +103,7 @@ const Footer = () => {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://www.behance.net/OHGWORLD"
+                href="https://www.behance.net/brandex-design"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition"
