@@ -21,7 +21,7 @@ export default function CategoryNav({ categories }: CategoryNavProps) {
 
   return (
     <div className="overflow-x-auto scrollbar-hide flex-1 flex justify-center">
-      <nav className="flex items-center gap-2 sm:gap-3 min-w-max h-full">
+      <nav className="flex items-center gap-1 min-w-max h-full">
         {categories.map((category) => {
           // Active if on category page OR if on homepage and this is the mockups category
           const isActive = 
@@ -33,10 +33,10 @@ export default function CategoryNav({ categories }: CategoryNavProps) {
               key={category.id}
               href={`/category/${category.id}`}
               className={cn(
-                "px-3 sm:px-4 py-1.5 sm:py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all duration-200",
+                "px-4 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-all duration-200",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-md"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  ? "text-foreground bg-muted/50"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
               )}
             >
               {category.name}

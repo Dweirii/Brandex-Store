@@ -113,7 +113,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             src={firstImageUrl!}
             alt={data.name}
             fill
-            className="object-cover transition-transform duration-200 group-hover:scale-105"
+            className="object-cover transition-all duration-200 group-hover:scale-105 group-hover:blur-sm"
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />

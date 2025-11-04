@@ -187,10 +187,10 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
         <div className="relative group">
           <Search
             className={cn(
-              "absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 transition-colors pointer-events-none z-10",
+              "absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors pointer-events-none z-10",
               isFocused 
-                ? "text-primary" 
-                : "text-muted-foreground group-hover:text-foreground"
+                ? "text-foreground" 
+                : "text-muted-foreground/60"
             )}
           />
           <Input
@@ -213,15 +213,15 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
               setTimeout(() => setShowSuggestions(false), 200)
             }}
             onKeyDown={handleKeyDown}
-            className="pl-10 sm:pl-12 pr-4 h-9 sm:h-10 w-full bg-background border border-input hover:border-ring/50 focus-visible:border-primary focus-visible:ring-primary/20 focus-visible:ring-[3px] transition-all shadow-sm hover:shadow-md focus-visible:shadow-lg text-sm sm:text-base placeholder:text-muted-foreground"
+            className="pl-14 pr-5 h-14 w-full bg-background border border-border/60 hover:border-border focus-visible:border-border focus-visible:ring-0 transition-all text-base placeholder:text-muted-foreground/50 rounded-lg"
           />
         </div>
       </form>
 
-      {/* Autocomplete Suggestions Dropdown */}
+      {/* Autocomplete Suggestions Dropdown - Unsplash Style */}
       {showSuggestions && suggestions.length > 0 && query.trim().length >= 1 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto">
-          <div className="py-1">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border/60 rounded-lg shadow-sm z-50 max-h-80 overflow-y-auto">
+          <div className="py-2">
             {suggestions.map((suggestion, index) => (
               <button
                 key={`${suggestion}-${index}`}
@@ -229,20 +229,20 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
                 onClick={() => handleSuggestionClick(suggestion)}
                 onMouseEnter={() => setSelectedIndex(index)}
                 className={cn(
-                  "w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors flex items-center justify-between",
-                  selectedIndex === index && "bg-muted"
+                  "w-full text-left px-5 py-2.5 text-sm hover:bg-muted/50 transition-colors flex items-center justify-between",
+                  selectedIndex === index && "bg-muted/50"
                 )}
               >
                 <span className="truncate">
                   {suggestion.split(new RegExp(`(${query.trim()})`, 'gi')).map((part, i) => 
                     part.toLowerCase() === query.trim().toLowerCase() ? (
-                      <span key={i} className="font-semibold text-primary">{part}</span>
+                      <span key={i} className="font-medium text-foreground">{part}</span>
                     ) : (
-                      <span key={i}>{part}</span>
+                      <span key={i} className="text-muted-foreground">{part}</span>
                     )
                   )}
                 </span>
-                <ChevronRight className="h-4 w-4 text-muted-foreground ml-2 flex-shrink-0" />
+                <ChevronRight className="h-4 w-4 text-muted-foreground/40 ml-2 flex-shrink-0" />
               </button>
             ))}
           </div>

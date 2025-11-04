@@ -2,7 +2,6 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { useTransition } from "react"
-import { Button } from "@/components/ui/Button"
 import { cn } from "@/lib/utils"
 
 interface PriceFilterProps {
@@ -42,57 +41,51 @@ export default function PriceFilter({ className }: PriceFilterProps) {
   }
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-2", className)} role="group" aria-label="Price filter">
-      <Button
-        variant={currentFilter === 'all' ? 'default' : 'outline'}
-        size="sm"
+    <div className={cn("flex flex-wrap items-center gap-1 bg-muted/30 p-1 rounded-lg", className)} role="group" aria-label="Price filter">
+      <button
         onClick={() => handleFilterChange('all')}
         disabled={isPending}
         aria-pressed={currentFilter === 'all'}
         className={cn(
-          "transition-all duration-200",
+          "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
           currentFilter === 'all' 
-            ? "bg-primary text-primary-foreground" 
-            : "hover:bg-muted",
+            ? "bg-background text-foreground shadow-sm" 
+            : "text-muted-foreground hover:text-foreground hover:bg-background/50",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         All
-      </Button>
+      </button>
       
-      <Button
-        variant={currentFilter === 'paid' ? 'default' : 'outline'}
-        size="sm"
+      <button
         onClick={() => handleFilterChange('paid')}
         disabled={isPending}
         aria-pressed={currentFilter === 'paid'}
         className={cn(
-          "transition-all duration-200",
+          "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
           currentFilter === 'paid' 
-            ? "bg-primary text-primary-foreground" 
-            : "hover:bg-muted",
+            ? "bg-background text-foreground shadow-sm" 
+            : "text-muted-foreground hover:text-foreground hover:bg-background/50",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         Paid
-      </Button>
+      </button>
       
-      <Button
-        variant={currentFilter === 'free' ? 'default' : 'outline'}
-        size="sm"
+      <button
         onClick={() => handleFilterChange('free')}
         disabled={isPending}
         aria-pressed={currentFilter === 'free'}
         className={cn(
-          "transition-all duration-200",
+          "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
           currentFilter === 'free' 
-            ? "bg-primary text-primary-foreground" 
-            : "hover:bg-muted",
+            ? "bg-background text-foreground shadow-sm" 
+            : "text-muted-foreground hover:text-foreground hover:bg-background/50",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         Free
-      </Button>
+      </button>
     </div>
   )
 } 

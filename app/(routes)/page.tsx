@@ -5,6 +5,7 @@ import Container from "@/components/ui/container"
 import { ProductListSkeleton } from "@/components/product-list-skeleton"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import PriceFilter from "@/components/price-filter"
+import SortFilter from "@/components/sort-filter"
 
 export const revalidate = 0
 
@@ -67,7 +68,10 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
                 Mockups
               </h1>
             </div>
-            <PriceFilter className="flex-shrink-0" />
+            <div className="flex flex-wrap items-center gap-3">
+              <PriceFilter className="flex-shrink-0" />
+              <SortFilter className="flex-shrink-0" />
+            </div>
           </div>
         </div>
 

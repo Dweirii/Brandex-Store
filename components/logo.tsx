@@ -11,15 +11,13 @@ const Logo = () => {
 
   useEffect(() => setMounted(true), [])
 
-  // تحديد الثيم المناسب مع دعم النظام
   const getLogoSrc = () => {
     if (!mounted) {
-      // للحصول على الوضع الافتراضي للنظام قبل التحميل
       if (typeof window !== "undefined") {
         const systemPreference = window.matchMedia("(prefers-color-scheme: dark)").matches
         return systemPreference ? "/Logo-white.png" : "/Logo.png"
       }
-      return "/Logo.png" // الافتراضي
+      return "/Logo.png"
     }
     
     const currentTheme = theme === "system" ? systemTheme : theme
@@ -28,7 +26,6 @@ const Logo = () => {
 
   const logoSrc = getLogoSrc()
 
-  // لمنع الـ layout shift، نعرض skeleton بدلاً من null
   if (!mounted) {
     return (
       <Link href="/" className="flex items-center gap-x-2">

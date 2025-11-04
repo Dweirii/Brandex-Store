@@ -13,22 +13,24 @@ const Navbar = async () => {
 
   return (
     <>
-      {/* Main Navbar - Categories */}
-      <div className="bg-card/95 backdrop-blur-sm transition-colors duration-300 sticky top-0 z-50">
+      {/* Main Navbar - Unsplash Style */}
+      <div className="bg-background/80 backdrop-blur-md border-b border-border/40 transition-colors duration-300 sticky top-0 z-50">
         <Container>
-          <div className="relative px-4 sm:px-6 lg:px-8 flex items-center gap-3 sm:gap-4 h-16">
+          <div className="relative px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
             {/* Logo - Left aligned */}
             <div className="flex-shrink-0">
               <Logo />
             </div>
 
             {/* Categories Navigation - Centered */}
-            <div className="flex-1 min-w-0 flex justify-center">
-              <CategoryNav categories={categories} />
+            <div className="flex-1 min-w-0 flex justify-center absolute left-0 right-0 pointer-events-none">
+              <div className="pointer-events-auto">
+                <CategoryNav categories={categories} />
+              </div>
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 z-10">
               <UserDropdown />
               <NavbarActions />
             </div>
@@ -36,11 +38,11 @@ const Navbar = async () => {
         </Container>
       </div>
 
-      {/* Search Bar - Below Categories */}
-      <div className="bg-card/95 backdrop-blur-sm sticky top-16 z-40">
+      {/* Search Bar - Unsplash Style */}
+      <div className="bg-background/80 backdrop-blur-md border-b border-border/40 sticky top-14 z-40">
         <Container>
-          <div className="px-4 sm:px-6 lg:px-8 py-3">
-            <div className="max-w-2xl mx-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-3xl mx-auto">
               <GlobalSearchBar />
             </div>
           </div>
