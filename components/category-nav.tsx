@@ -1,0 +1,50 @@
+"use client"
+
+import { usePathname } from "next/navigation"
+import Link from "next/link"
+import { cn } from "@/lib/utils"
+import type { Category } from "@/types"
+
+interface CategoryNavProps {
+  categories: Category[]
+}
+
+// Mockups category ID - treat "/" as this category
+const MOCKUPS_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
+
+export default function CategoryNav({ categories }: CategoryNavProps) {
+  const pathname = usePathname()
+
+  if (!categories || categories.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="overflow-x-auto scrollbar-hide flex-1 flex justify-center">
+      <nav className="flex items-center gap-2 sm:gap-3 min-w-max h-full">
+        {categories.map((category) => {
+          // Active if on category page OR if on homepage and this is the mockups category
+          const isActive = 
+            pathname === `/category/${category.id}` || 
+            (pathname === "/" && category.id === MOCKUPS_CATEGORY_ID)
+          
+          return (
+            <Link
+              key={category.id}
+              href={`/category/${category.id}`}
+              className={cn(
+                "px-3 sm:px-4 py-1.5 sm:py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-all duration-200",
+                isActive
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              )}
+            >
+              {category.name}
+            </Link>
+          )
+        })}
+      </nav>
+    </div>
+  )
+}
+
