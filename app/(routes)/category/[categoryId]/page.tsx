@@ -3,93 +3,104 @@
 import { Suspense } from "react"
 import getCategory from "@/actions/get-category"
 import getProducts from "@/actions/get-products"
-import { HeroSection } from "@/components/hero-section"
 import Container from "@/components/ui/container"
 import ProductList from "@/components/product-list"
 import { ProductListSkeleton } from "@/components/product-list-skeleton"
 import { ScrollToTop } from "@/components/scroll-to-top"
-import { CategoryHeader } from "@/components/category-header"
 import PriceFilter from "@/components/price-filter"
 
 export const revalidate = 0
 
-interface CategoryProductsWithHeaderProps {
+interface CategoryProductsProps {
   categoryId: string
   currentPage: number
   priceFilter?: 'paid' | 'free' | 'all'
+  sortBy?: string
 }
 
-async function CategoryProductsWithHeader({
+async function CategoryProducts({
   categoryId,
   currentPage,
   priceFilter,
-}: CategoryProductsWithHeaderProps) {
+  sortBy,
+}: CategoryProductsProps) {
   const [category, { products, total, page: current, pageCount }] = await Promise.all([
     getCategory(categoryId),
     getProducts({
       categoryId,
       page: currentPage,
-      limit: 12,
+      limit: 24,
       priceFilter: priceFilter,
+      sortBy: sortBy,
     }),
   ])
 
   if (!category) {
     return (
       <div className="text-center py-12">
-        <p className="text-lg font-semibold">Category not found</p>
-        <button onClick={() => window.history.back()} className="mt-4 px-4 py-2 bg-black text-white rounded">
-          Go Back
-        </button>
+        <p className="text-sm text-muted-foreground">Category not found</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      <CategoryHeader categoryName={category.name} totalProducts={total} currentPage={current} />
-      <ProductList
-        title=""
-        items={products}
-        total={total}
-        page={current}
-        pageCount={pageCount}
-      />
-    </div>
+    <ProductList
+      title=""
+      items={products}
+      total={total}
+      page={current}
+      pageCount={pageCount}
+    />
   )
 }
 
-export default async function EnhancedCategoryPage({
+export default async function CategoryPage({
   params,
   searchParams,
 }: {
   params: Promise<{ categoryId: string }>
-  searchParams?: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all' }>
+  searchParams?: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
 }) {
   const { categoryId } = await params
   const searchParamsData = await searchParams
   const currentPage = parseInt(searchParamsData?.page || "1", 10)
   const priceFilter = searchParamsData?.priceFilter
+  const sortBy = searchParamsData?.sortBy
+
+  // Fetch category name for header
+  const category = await getCategory(categoryId)
 
   return (
-    <div className="bg-white dark:bg-card transition-colors">
-      <Container>
-        <HeroSection />
-        <div className="px-4 sm:px-6 lg:px-8 pb-24">
-          <PriceFilter className="mb-6" />
+    <Container>
+      <div className="min-h-screen py-6 sm:py-8">
+        {/* Minimal Header with Filters */}
+        <div className="px-4 sm:px-6 lg:px-8 mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
+                {category?.name || "Category"}
+              </h1>
+            </div>
+            <PriceFilter className="flex-shrink-0" />
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        <div className="px-4 sm:px-6 lg:px-8">
           <Suspense
-            key={`${categoryId}-${currentPage}-${priceFilter || 'all'}`}
+            key={`${categoryId}-${currentPage}-${priceFilter || 'all'}-${sortBy || 'mostPopular'}`}
             fallback={<ProductListSkeleton title="" />}
           >
-            <CategoryProductsWithHeader 
+            <CategoryProducts 
               categoryId={categoryId} 
               currentPage={currentPage} 
               priceFilter={priceFilter}
+              sortBy={sortBy}
             />
           </Suspense>
         </div>
-      </Container>
+      </div>
       <ScrollToTop />
-    </div>
+    </Container>
   )
 }

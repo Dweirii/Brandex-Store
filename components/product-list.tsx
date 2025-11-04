@@ -27,14 +27,17 @@ const ProductList: React.FC<ProductListProps> = ({ title, items, total, page, pa
   })
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold text-3xl text-foreground">{title}</h3>
-        <span className="text-sm text-muted-foreground">{total} items</span>
-      </div>
+      {/* Only show header if title is provided */}
+      {title && (
+        <div className="flex items-center justify-between">
+          <h3 className="font-bold text-3xl text-foreground">{title}</h3>
+          <span className="text-sm text-muted-foreground">{total} items</span>
+        </div>
+      )}
 
       {visibleItems.length === 0 && <NoResults />}
 
-      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {visibleItems.map((item) => (
           <MemoizedProductCard key={item.id} data={item} />
         ))}

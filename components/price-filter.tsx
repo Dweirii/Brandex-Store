@@ -43,26 +43,21 @@ export default function PriceFilter({ className }: PriceFilterProps) {
 
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)} role="group" aria-label="Price filter">
-      <span className="text-sm font-medium text-muted-foreground mr-2" id="price-filter-label">
-        Filter by Price:
-      </span>
-      
       <Button
         variant={currentFilter === 'all' ? 'default' : 'outline'}
         size="sm"
         onClick={() => handleFilterChange('all')}
         disabled={isPending}
         aria-pressed={currentFilter === 'all'}
-        aria-describedby="price-filter-label"
         className={cn(
           "transition-all duration-200",
           currentFilter === 'all' 
-            ? "bg-primary text-primary-foreground shadow-md" 
+            ? "bg-primary text-primary-foreground" 
             : "hover:bg-muted",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
-        All Products
+        All
       </Button>
       
       <Button
@@ -71,11 +66,10 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         onClick={() => handleFilterChange('paid')}
         disabled={isPending}
         aria-pressed={currentFilter === 'paid'}
-        aria-describedby="price-filter-label"
         className={cn(
           "transition-all duration-200",
           currentFilter === 'paid' 
-            ? "bg-primary text-primary-foreground shadow-md" 
+            ? "bg-primary text-primary-foreground" 
             : "hover:bg-muted",
           isPending && "opacity-50 cursor-not-allowed"
         )}
@@ -89,33 +83,16 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         onClick={() => handleFilterChange('free')}
         disabled={isPending}
         aria-pressed={currentFilter === 'free'}
-        aria-describedby="price-filter-label"
         className={cn(
           "transition-all duration-200",
           currentFilter === 'free' 
-            ? "bg-primary text-primary-foreground shadow-md" 
+            ? "bg-primary text-primary-foreground" 
             : "hover:bg-muted",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         Free
       </Button>
-      
-      {currentFilter !== 'all' && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => handleFilterChange('all')}
-          disabled={isPending}
-          aria-label="Clear price filter"
-          className={cn(
-            "text-muted-foreground hover:text-foreground ml-2",
-            isPending && "opacity-50 cursor-not-allowed"
-          )}
-        >
-          Clear Filter ✕
-        </Button>
-      )}
     </div>
   )
 } 

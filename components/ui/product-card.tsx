@@ -5,8 +5,11 @@ import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { ShoppingCart, Eye, Download } from "lucide-react"
 import type { Product } from "@/types"
-import Currency from "@/components/ui/currency"
+import { Button } from "@/components/ui/Button"
+import { DownloadButton } from "@/components/ui/download-button"
+import useCart from "@/hooks/use-cart"
 
 interface ProductCardProps {
   data: Product
@@ -14,27 +17,50 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const router = useRouter()
+  const cart = useCart()
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
-  // Hooks يجب أن تُستدعى دائمًا
-  const handleClick = useCallback(() => {
-    router.push(`/products/${data.id}`)
-  }, [router, data.id])
+  // Check if product is free (price is 0)
+  const isFree = Number(data.price) === 0
+
+  // Hooks
+  const handleViewClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      router.push(`/products/${data.id}`)
+    },
+    [router, data.id]
+  )
+
+  const handleAddToCart = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      cart.addItem(data)
+    },
+    [cart, data]
+  )
 
   const handleMouseEnter = useCallback(() => {
-    if (!isMobile && videoRef.current && data.videoUrl) {
-      videoRef.current.play().catch(() => {})
-      setIsPlaying(true)
+    if (!isMobile) {
+      setIsHovered(true)
+      if (videoRef.current && data.videoUrl) {
+        videoRef.current.play().catch(() => {})
+        setIsPlaying(true)
+      }
     }
   }, [isMobile, data.videoUrl])
 
   const handleMouseLeave = useCallback(() => {
-    if (!isMobile && videoRef.current && data.videoUrl) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-      setIsPlaying(false)
+    if (!isMobile) {
+      setIsHovered(false)
+      if (videoRef.current && data.videoUrl) {
+        videoRef.current.pause()
+        videoRef.current.currentTime = 0
+        setIsPlaying(false)
+      }
     }
   }, [isMobile, data.videoUrl])
 
@@ -61,23 +87,23 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  // احسب الوسائط بعد استدعاء كل الـ Hooks
+  // Calculate media
   const firstImageUrl = data.images?.find((img) => img?.url)?.url
   const hasVideo = Boolean(data.videoUrl)
   const hasImage = Boolean(firstImageUrl)
 
-  // القرار النهائي للعرض بدون جعل Hooks شرطية
+  // Don't render if no media
   if (!hasVideo && !hasImage) return null
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
+      whileHover={!isMobile ? { scale: 1.02 } : {}}
       transition={{ duration: 0.2, ease: "easeOut" }}
-      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="bg-card border border-border rounded-lg overflow-hidden shadow-md hover:shadow-lg cursor-pointer group flex flex-col will-change-transform"
+      className="relative bg-card border border-border rounded-lg overflow-hidden shadow-md hover:shadow-lg cursor-pointer group will-change-transform"
     >
+      {/* Image/Video Container */}
       <div className="relative w-full aspect-[4/3]">
         {hasVideo ? (
           <>
@@ -103,7 +129,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                 </div>
               </div>
             )}
-            <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+            <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-10">
               <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5v14l11-7z" />
               </svg>
@@ -120,36 +146,130 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         )}
-      </div>
 
-      <div className="p-4 flex flex-col flex-1 justify-between">
-        <div className="flex items-start justify-between mb-2">
-          <span className="text-xs font-semibold text-green-500 uppercase tracking-wider">
-            {data.category?.name || "Product"}
-          </span>
-          <div className="text-sm font-bold text-foreground">
-            <Currency value={data.price} />
+        {/* Free Badge */}
+        {isFree && (
+          <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-md z-10">
+            Free
           </div>
-        </div>
-
-        <h3 className="text-lg font-semibold text-foreground mb-1">{data.name}</h3>
-
-        {data.description && (
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{data.description}</p>
         )}
 
-        <button className="text-sm font-medium text-green-500 hover:text-green-400 transition-all duration-200 flex items-center gap-1 group-hover:translate-x-1">
-          View Details
-          <svg
-            className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
+        {/* Desktop Hover Overlay */}
+        {!isMobile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 p-4"
+            onClick={(e) => e.stopPropagation()}
           >
-            <path d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </button>
+            {/* Product Name on Hover (Optional, minimal) */}
+            {isHovered && (
+              <motion.h3
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="text-white font-semibold text-sm text-center line-clamp-2 mb-2"
+              >
+                {data.name}
+              </motion.h3>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 w-full max-w-[200px]">
+              {isFree ? (
+                <>
+                  <DownloadButton
+                    storeId={data.storeId}
+                    productId={data.id}
+                    size="sm"
+                    variant="default"
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={handleViewClick}
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span className="hidden sm:inline">View</span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleAddToCart}
+                    size="sm"
+                    variant="default"
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    <span className="hidden sm:inline">Buy</span>
+                  </Button>
+                  <Button
+                    onClick={handleViewClick}
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span className="hidden sm:inline">View</span>
+                  </Button>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Mobile: Always Visible Buttons */}
+        {isMobile && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-3">
+            <div className="flex gap-2">
+              {isFree ? (
+                <>
+                  <DownloadButton
+                    storeId={data.storeId}
+                    productId={data.id}
+                    size="sm"
+                    variant="default"
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                  />
+                  <Button
+                    onClick={handleViewClick}
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span className="text-xs">View</span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleAddToCart}
+                    size="sm"
+                    variant="default"
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    <span className="text-xs">Add to Cart</span>
+                  </Button>
+                  <Button
+                    onClick={handleViewClick}
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span className="text-xs">View Details</span>
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   )

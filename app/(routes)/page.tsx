@@ -1,6 +1,5 @@
 import { Suspense } from "react"
 import getProduct from "@/actions/get-products"
-import { HeroSection } from "@/components/hero-section"
 import ProductList from "@/components/product-list"
 import Container from "@/components/ui/container"
 import { ProductListSkeleton } from "@/components/product-list-skeleton"
@@ -9,22 +8,34 @@ import PriceFilter from "@/components/price-filter"
 
 export const revalidate = 0
 
+// Mockups category ID
+const MOCKUPS_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
+
 interface HomePageProps {
-  searchParams: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all' }>
+  searchParams: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
 }
 
-async function FeaturedProducts({ currentPage, priceFilter }: { currentPage: number; priceFilter?: 'paid' | 'free' | 'all' }) {
+async function MockupProducts({ 
+  currentPage, 
+  priceFilter,
+  sortBy 
+}: { 
+  currentPage: number
+  priceFilter?: 'paid' | 'free' | 'all'
+  sortBy?: string
+}) {
   try {
     const { products, total, page, pageCount } = await getProduct({
-      isFeatured: true,
+      categoryId: MOCKUPS_CATEGORY_ID,
       page: currentPage,
-      limit: 12,
+      limit: 24,
       priceFilter: priceFilter,
+      sortBy: sortBy,
     })
 
     return (
       <ProductList
-        title="Featured Products"
+        title=""
         items={products}
         total={total}
         page={page}
@@ -32,44 +43,45 @@ async function FeaturedProducts({ currentPage, priceFilter }: { currentPage: num
       />
     )
   } catch (error) {
-    console.error("Error fetching featured products:", error)
+    console.error("Error fetching mockup products:", error)
     return (
       <div className="text-center py-12">
-        <div className="max-w-md mx-auto">
-          <div className="text-red-500 mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to load products</h3>
-          <p className="text-gray-600 mb-4">We&apos;re having trouble loading the featured products. Please try again later.</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
+        <p className="text-sm text-muted-foreground">Unable to load products. Please try again later.</p>
       </div>
     )
   }
 }
 
 const HomePage = async ({ searchParams }: HomePageProps) => {
-  const { page, priceFilter } = await searchParams
+  const { page, priceFilter, sortBy } = await searchParams
   const currentPage = parseInt(page || "1", 10)
 
   return (
     <Container>
-      <div className="space-y-10 pb-10">
-        <HeroSection />
-        <div className="flex flex-col gap-y-8 px-4 sm:px-6 lg:px-8">
-          <PriceFilter className="mb-6" />
+      <div className="min-h-screen py-6 sm:py-8">
+        {/* Minimal Header with Filters */}
+        <div className="px-4 sm:px-6 lg:px-8 mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
+                Mockups
+              </h1>
+            </div>
+            <PriceFilter className="flex-shrink-0" />
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        <div className="px-4 sm:px-6 lg:px-8">
           <Suspense 
-            key={`${currentPage}-${priceFilter || 'all'}`} 
-            fallback={<ProductListSkeleton title="Featured Products" />}
+            key={`${currentPage}-${priceFilter || 'all'}-${sortBy || 'mostPopular'}`} 
+            fallback={<ProductListSkeleton title="" />}
           >
-            <FeaturedProducts currentPage={currentPage} priceFilter={priceFilter} />
+            <MockupProducts 
+              currentPage={currentPage} 
+              priceFilter={priceFilter}
+              sortBy={sortBy}
+            />
           </Suspense>
         </div>
       </div>
