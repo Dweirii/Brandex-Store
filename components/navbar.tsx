@@ -3,7 +3,7 @@ import getCategories from "@/actions/get-categories"
 import NavbarActions from "@/components/navbar-actions"
 import Logo from "./logo"
 import { UserDropdown } from "./ui/user-drop-list"
-import GlobalSearchBar from "./global-search-bar"
+import SearchBarWrapper from "./search-bar-wrapper"
 import CategoryNav from "./category-nav"
 
 export const revalidate = 0
@@ -18,7 +18,7 @@ const Navbar = async () => {
         <Container>
           <div className="relative px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
             {/* Logo - Left aligned */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 -ml-4">
               <Logo />
             </div>
 
@@ -38,16 +38,8 @@ const Navbar = async () => {
         </Container>
       </div>
 
-      {/* Search Bar - Unsplash Style */}
-      <div className="bg-background/80 backdrop-blur-md border-b border-border/40 sticky top-14 z-40">
-        <Container>
-          <div className="px-4 sm:px-6 lg:px-8 py-6">
-            <div className="max-w-3xl mx-auto">
-              <GlobalSearchBar />
-            </div>
-          </div>
-        </Container>
-      </div>
+      {/* Search Bar - Conditionally rendered */}
+      <SearchBarWrapper />
     </>
   )
 }

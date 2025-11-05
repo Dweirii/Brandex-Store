@@ -54,7 +54,7 @@ export default function ProductSearchPage() {
             query: searchQuery.trim(),
             storeId,
             page,
-            limit: 24,
+            limit: 48,
           },
         })
 

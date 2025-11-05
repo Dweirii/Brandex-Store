@@ -27,7 +27,6 @@ export default function PriceFilter({ className }: PriceFilterProps) {
           params.set('priceFilter', filter)
         }
         
-        // Reset to first page when filter changes
         params.delete('page')
         
         const queryString = params.toString()

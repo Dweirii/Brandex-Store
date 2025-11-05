@@ -185,12 +185,16 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     <div ref={containerRef} className={cn("relative w-full", className)}>
       <form onSubmit={(e) => e.preventDefault()} className="relative w-full">
         <div className="relative group">
+          <div className={cn(
+            "absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-300",
+            isFocused && "opacity-100"
+          )} />
           <Search
             className={cn(
-              "absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors pointer-events-none z-10",
+              "absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-all duration-200 pointer-events-none z-10",
               isFocused 
-                ? "text-foreground" 
-                : "text-muted-foreground/60"
+                ? "text-primary scale-110" 
+                : "text-muted-foreground/50 group-hover:text-muted-foreground/70"
             )}
           />
           <Input
@@ -213,14 +217,24 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
               setTimeout(() => setShowSuggestions(false), 200)
             }}
             onKeyDown={handleKeyDown}
-            className="pl-14 pr-5 h-14 w-full bg-background border border-border/60 hover:border-border focus-visible:border-border focus-visible:ring-0 transition-all text-base placeholder:text-muted-foreground/50 rounded-lg"
+            className={cn(
+              "pl-12 pr-5 h-11 w-full bg-background/80 backdrop-blur-sm",
+              "border-2 transition-all duration-200 text-sm",
+              "placeholder:text-muted-foreground/50",
+              "rounded-xl shadow-sm",
+              "hover:border-border hover:shadow-md",
+              isFocused 
+                ? "border-primary/50 shadow-lg ring-2 ring-primary/20 bg-background" 
+                : "border-border/50",
+              "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:shadow-lg"
+            )}
           />
         </div>
       </form>
 
-      {/* Autocomplete Suggestions Dropdown - Unsplash Style */}
+      {/* Autocomplete Suggestions Dropdown - Enhanced */}
       {showSuggestions && suggestions.length > 0 && query.trim().length >= 1 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border/60 rounded-lg shadow-sm z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-3 bg-background/95 backdrop-blur-md border border-border/80 rounded-xl shadow-xl z-50 max-h-80 overflow-y-auto overflow-x-hidden">
           <div className="py-2">
             {suggestions.map((suggestion, index) => (
               <button
@@ -229,20 +243,27 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
                 onClick={() => handleSuggestionClick(suggestion)}
                 onMouseEnter={() => setSelectedIndex(index)}
                 className={cn(
-                  "w-full text-left px-5 py-2.5 text-sm hover:bg-muted/50 transition-colors flex items-center justify-between",
-                  selectedIndex === index && "bg-muted/50"
+                  "w-full text-left px-5 py-3 text-sm transition-all duration-150 flex items-center justify-between group/item",
+                  selectedIndex === index 
+                    ? "bg-primary/10 text-foreground" 
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 )}
               >
-                <span className="truncate">
+                <span className="truncate flex-1">
                   {suggestion.split(new RegExp(`(${query.trim()})`, 'gi')).map((part, i) => 
                     part.toLowerCase() === query.trim().toLowerCase() ? (
-                      <span key={i} className="font-medium text-foreground">{part}</span>
+                      <span key={i} className="font-semibold text-foreground">{part}</span>
                     ) : (
-                      <span key={i} className="text-muted-foreground">{part}</span>
+                      <span key={i}>{part}</span>
                     )
                   )}
                 </span>
-                <ChevronRight className="h-4 w-4 text-muted-foreground/40 ml-2 flex-shrink-0" />
+                <ChevronRight className={cn(
+                  "h-4 w-4 ml-3 flex-shrink-0 transition-transform duration-200",
+                  selectedIndex === index 
+                    ? "text-primary translate-x-0" 
+                    : "text-muted-foreground/40 group-hover/item:text-muted-foreground/60 group-hover/item:translate-x-0.5"
+                )} />
               </button>
             ))}
           </div>
