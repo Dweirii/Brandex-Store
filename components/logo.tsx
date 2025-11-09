@@ -30,8 +30,7 @@ const Logo = () => {
     return (
       <Link href="/" className="flex items-center gap-x-2">
         <div 
-          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm"
-          style={{ width: 240, height: 120 }}
+          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm h-12 w-24 md:h-20 md:w-40 lg:h-24 lg:w-60"
           aria-label="Loading logo"
         />
       </Link>
@@ -46,9 +45,9 @@ const Logo = () => {
         height={120}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-300 hover:scale-105 gpu-accelerated smooth-transform max-h-40 w-auto"
+        className="transition-all duration-300 hover:scale-105 gpu-accelerated smooth-transform h-12 w-auto md:h-20 lg:h-24"
         style={{ width: "auto", height: "auto" }}
-        sizes="(max-width: 768px) 200px, 240px"
+        sizes="(max-width: 640px) 120px, (max-width: 768px) 200px, 300px"
         placeholder="blur"
         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
       />

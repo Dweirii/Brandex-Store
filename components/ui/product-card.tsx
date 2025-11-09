@@ -90,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
       className="relative bg-card border border-border rounded-lg overflow-hidden shadow-md hover:shadow-lg cursor-pointer group will-change-transform"
     >
       {/* Image/Video Container */}
-      <div className="relative w-full overflow-hidden bg-muted/5">
+      <div className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4] md:aspect-auto">
         {hasVideo ? (
           <>
             <video
@@ -100,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
               loop
               playsInline
               preload="metadata"
-              className="w-full h-auto object-contain transition-all duration-200 group-hover:scale-105 group-hover:brightness-105"
+              className="w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105 group-hover:brightness-105"
             />
             <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-20">
               <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
@@ -111,13 +111,13 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
           </>
         ) : (
           <>
-            <div className="relative w-full">
+            <div className="relative w-full h-full">
               <Image
                 src={firstImageUrl!}
                 alt={data.name}
                 width={800}
                 height={1000}
-                className="w-full h-auto object-contain transition-all duration-200 group-hover:scale-105 group-hover:brightness-110 group-hover:saturate-105"
+                className="w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105 group-hover:brightness-110 group-hover:saturate-105"
                 loading="lazy"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />

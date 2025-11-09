@@ -20,7 +20,7 @@ export default function CategoryNav({ categories }: CategoryNavProps) {
   }
 
   return (
-    <div className="overflow-x-auto scrollbar-hide relative z-10 pointer-events-auto">
+    <div className="hidden md:block overflow-x-auto scrollbar-hide relative z-10 pointer-events-auto">
       <nav className="flex items-center gap-1 min-w-max h-full">
         {categories.map((category) => {
           // Active if on category page OR if on homepage and this is the mockups category

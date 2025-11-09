@@ -84,7 +84,7 @@ export default async function CategoryPage({
               <CategoryNav categories={categories} />
             </div>
             {/* Filters Bar - Right side (same place) */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-row items-center gap-3">
               <PriceFilter className="flex-shrink-0" />
               <SortFilter className="flex-shrink-0" />
             </div>

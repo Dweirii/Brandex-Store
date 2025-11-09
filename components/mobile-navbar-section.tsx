@@ -1,0 +1,32 @@
+"use client"
+
+import Logo from "./logo"
+import { UserDropdown } from "./ui/user-drop-list"
+import NavbarActions from "./navbar-actions"
+import MobileSearchButton from "./mobile-search-button"
+import CategoriesDropdown from "./categories-dropdown"
+import type { Category } from "@/types"
+
+interface MobileNavbarSectionProps {
+  categories: Category[]
+}
+
+export function MobileNavbarSection({ categories }: MobileNavbarSectionProps) {
+  return (
+    <div className="md:hidden relative px-3 sm:px-4 flex items-center justify-between h-16 gap-2">
+      {/* Logo - Mobile */}
+      <div className="flex-shrink-0 relative z-20">
+        <Logo />
+      </div>
+
+      {/* Right Actions - Mobile */}
+      <div className="flex items-center gap-2 flex-shrink-0 relative z-20">
+        <CategoriesDropdown categories={categories} />
+        <MobileSearchButton />
+        <UserDropdown />
+        <NavbarActions />
+      </div>
+    </div>
+  )
+}
+
