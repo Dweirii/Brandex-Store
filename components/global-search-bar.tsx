@@ -185,16 +185,10 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     <div ref={containerRef} className={cn("relative w-full", className)}>
       <form onSubmit={(e) => e.preventDefault()} className="relative w-full">
         <div className="relative group">
-          <div className={cn(
-            "absolute inset-0 rounded-xl bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-300",
-            isFocused && "opacity-100"
-          )} />
           <Search
             className={cn(
-              "absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 transition-all duration-200 pointer-events-none z-10",
-              isFocused 
-                ? "text-primary scale-110" 
-                : "text-muted-foreground/50 group-hover:text-muted-foreground/70"
+              "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none z-10",
+              "text-muted-foreground/40"
             )}
           />
           <Input
@@ -218,15 +212,15 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
             }}
             onKeyDown={handleKeyDown}
             className={cn(
-              "pl-12 pr-5 h-11 w-full bg-background/80 backdrop-blur-sm",
-              "border-2 transition-all duration-200 text-sm",
-              "placeholder:text-muted-foreground/50",
-              "rounded-xl shadow-sm",
-              "hover:border-border hover:shadow-md",
+              "pl-10 pr-4 h-9 w-full bg-muted/30",
+              "border border-border/30 transition-colors text-sm",
+              "placeholder:text-muted-foreground/40",
+              "rounded-md",
+              "hover:bg-muted/40 hover:border-border/50",
               isFocused 
-                ? "border-primary/50 shadow-lg ring-2 ring-primary/20 bg-background" 
-                : "border-border/50",
-              "focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:shadow-lg"
+                ? "bg-background border-border shadow-sm" 
+                : "",
+              "focus-visible:outline-none focus-visible:ring-0"
             )}
           />
         </div>

@@ -1,11 +1,13 @@
 import { Suspense } from "react"
 import getProduct from "@/actions/get-products"
+import getCategories from "@/actions/get-categories"
 import ProductList from "@/components/product-list"
 import Container from "@/components/ui/container"
 import { ProductListSkeleton } from "@/components/product-list-skeleton"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import PriceFilter from "@/components/price-filter"
 import SortFilter from "@/components/sort-filter"
+import CategoryNav from "@/components/category-nav"
 
 export const revalidate = 0
 
@@ -56,18 +58,19 @@ async function MockupProducts({
 const HomePage = async ({ searchParams }: HomePageProps) => {
   const { page, priceFilter, sortBy } = await searchParams
   const currentPage = parseInt(page || "1", 10)
+  const categories = await getCategories()
 
   return (
     <Container>
       <div className="min-h-screen py-6 sm:py-8">
-        {/* Minimal Header with Filters */}
+        {/* Header with Categories and Filters */}
         <div className="px-4 sm:px-6 lg:px-8 mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
-                Mockups
-              </h1>
+            {/* Categories Bar - Left side */}
+            <div className="flex-1 min-w-0">
+              <CategoryNav categories={categories} />
             </div>
+            {/* Filters Bar - Right side (same place) */}
             <div className="flex flex-wrap items-center gap-3">
               <PriceFilter className="flex-shrink-0" />
               <SortFilter className="flex-shrink-0" />

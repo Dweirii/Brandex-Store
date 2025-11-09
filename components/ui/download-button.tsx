@@ -24,9 +24,10 @@ interface DownloadButtonProps {
   onSuccess?: (info: { fileName: string; bytes: number }) => void
   onError?: (message: string) => void
   gaEventName?: string
+  iconOnly?: boolean
 }
 
-const API_BASE_URL = "https://admin.wibimax.com"
+const API_BASE_URL = process.env.NEXT_PUBLIC_DOWNLOAD_API_URL || process.env.NEXT_PUBLIC_API_URL || "https://admin.wibimax.com"
 const ADS_SEND_TO = process.env.NEXT_PUBLIC_GOOGLE_ADS_SEND_TO || ""
 const GA_EVENT_DEFAULT = "download_complete"
 
@@ -41,6 +42,7 @@ export const DownloadButton = ({
   onSuccess,
   onError,
   gaEventName = GA_EVENT_DEFAULT,
+  iconOnly = false,
 }: DownloadButtonProps) => {
   const [loading, setLoading] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
@@ -115,14 +117,12 @@ export const DownloadButton = ({
   const handleDownload = async () => {
     if (disabled || loading) return
 
-    // ✅ If user is not signed in: render toaster + optionally open Clerk sign-in
     if (!isSignedIn) {
       toast({
         title: "Sign in required",
         description: "You need to sign in to download your purchase.",
         variant: "destructive",
       })
-      // Optional: open Clerk’s sign-in modal (comment out if you prefer toast only)
       try {
         openSignIn?.()
       } catch {}
@@ -186,7 +186,6 @@ export const DownloadButton = ({
       vTrack("download_success", { productId, storeId, fileName: name, bytes: blob.size })
       adsConversion(1)
 
-      // Nice UX touch: success toast (optional; keep if you want)
       toast({
         title: "Download started",
         description: name,
@@ -204,7 +203,6 @@ export const DownloadButton = ({
       ga("download_error", { product_id: productId, store_id: storeId, message: msg })
       vTrack("download_error", { productId, storeId, message: msg })
 
-      // 🔔 Surface the error to the user via toast
       toast({
         title: "Download failed",
         description: msg,
@@ -222,11 +220,11 @@ export const DownloadButton = ({
   const getButtonContent = () => {
     if (loading) {
       return (
-        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-2">
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={cn("flex items-center", !iconOnly && "gap-2")}>
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}>
             <Loader2 className="h-4 w-4" aria-hidden="true" />
           </motion.div>
-          <span className="hidden sm:inline font-medium">Downloading...</span>
+          {!iconOnly && <span className="hidden sm:inline font-medium">Downloading...</span>}
         </motion.div>
       )
     }
@@ -236,39 +234,41 @@ export const DownloadButton = ({
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 500, damping: 25 }}
-          className="flex items-center gap-2"
+          className={cn("flex items-center", !iconOnly && "gap-2")}
         >
           <motion.div initial={{ scale: 0 }} animate={{ scale: [0, 1.2, 1] }} transition={{ duration: 0.5 }}>
             <CheckCircle className="h-4 w-4" aria-hidden="true" />
           </motion.div>
-          <span className="hidden sm:inline font-medium">Downloaded!</span>
-          <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2 }}>
-            <Sparkles className="h-3 w-3" aria-hidden="true" />
-          </motion.div>
+          {!iconOnly && <span className="hidden sm:inline font-medium">Downloaded!</span>}
+          {!iconOnly && (
+            <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2 }}>
+              <Sparkles className="h-3 w-3" aria-hidden="true" />
+            </motion.div>
+          )}
         </motion.div>
       )
     }
     if (disabled) {
       return (
-        <div className="flex items-center gap-2">
+        <div className={cn("flex items-center", !iconOnly && "gap-2")}>
           <Lock className="h-4 w-4" aria-hidden="true" />
-          <span className="hidden sm:inline font-medium">Locked</span>
+          {!iconOnly && <span className="hidden sm:inline font-medium">Locked</span>}
         </div>
       )
     }
     return (
-      <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+      <motion.div className={cn("flex items-center", !iconOnly && "gap-2")} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
         <Download className="h-4 w-4" aria-hidden="true" />
-        <span className="hidden sm:inline font-medium">Download</span>
+        {!iconOnly && <span className="hidden sm:inline font-medium">Download</span>}
       </motion.div>
     )
   }
 
   const getButtonClassName = () => {
     const sizeClasses: Record<ButtonSize, string> = {
-      sm: "h-8 px-3 text-xs",
-      default: "h-10 px-4 text-sm",
-      lg: "h-12 px-6 text-base",
+      sm: iconOnly ? "h-8 w-8 p-0" : "h-8 px-3 text-xs",
+      default: iconOnly ? "h-10 w-10 p-0" : "h-10 px-4 text-sm",
+      lg: iconOnly ? "h-12 w-12 p-0" : "h-12 px-6 text-base",
     }
     const baseClasses = cn(
       "relative overflow-hidden transition-all duration-300 font-medium rounded-lg",
@@ -381,7 +381,7 @@ export const DownloadButton = ({
           )}
         </AnimatePresence>
 
-        <div className="relative z-10">
+        <div className={cn("relative z-10", iconOnly && "flex items-center justify-center")}>
           <AnimatePresence mode="wait">
             <motion.div
               key={loading ? "loading" : downloaded ? "downloaded" : disabled ? "disabled" : "default"}
@@ -389,6 +389,7 @@ export const DownloadButton = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
               transition={{ duration: 0.2 }}
+              className={iconOnly ? "flex items-center justify-center" : ""}
             >
               {getButtonContent()}
             </motion.div>

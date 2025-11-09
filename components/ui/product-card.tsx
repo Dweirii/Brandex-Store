@@ -5,7 +5,7 @@ import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { ShoppingCart, Eye, Download } from "lucide-react"
+import { ShoppingCart, Eye } from "lucide-react"
 import type { Product } from "@/types"
 import { Button } from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
@@ -133,17 +133,17 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
           </div>
         )}
 
-        {/* Desktop Hover Overlay - Minimal Buttons */}
+        {/* Desktop Hover Overlay - Side Buttons */}
         {isMounted && !isMobile && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 flex items-center justify-center gap-2 z-30 pointer-events-none"
+            className="absolute inset-0 flex items-center justify-end pr-4 gap-2 z-30 pointer-events-none"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Action Buttons - Minimal */}
-            <div className="flex gap-2 pointer-events-auto">
+            {/* Action Buttons - Side with Blur Background */}
+            <div className="flex flex-col gap-2 pointer-events-auto px-3 py-4 rounded-xl backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10 shadow-xl">
               {isFree ? (
                 <>
                   <DownloadButton
@@ -151,13 +151,13 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     productId={data.id}
                     size="sm"
                     variant="default"
-                    className="bg-white/90 hover:bg-white text-black shadow-lg"
+                    iconOnly
                   />
                   <Button
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="bg-white/90 hover:bg-white text-black border-white/50 shadow-lg"
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white/90 text-black hover:text-black border-white/50 shadow-lg backdrop-blur-sm"
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
@@ -168,7 +168,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     onClick={handleAddToCart}
                     size="sm"
                     variant="default"
-                    className="bg-green-500 hover:bg-green-600 text-white shadow-lg"
+                    className="bg-green-500  text-white shadow-lg backdrop-blur-sm"
                   >
                     <ShoppingCart className="h-4 w-4" />
                   </Button>
@@ -176,7 +176,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="bg-white/90 hover:bg-white text-black border-white/50 shadow-lg"
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white/90 text-black hover:text-black border-white/50 shadow-lg backdrop-blur-sm"
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
@@ -197,13 +197,12 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     productId={data.id}
                     size="sm"
                     variant="default"
-                    className="flex-1 bg-green-500 hover:bg-green-600 text-white"
                   />
                   <Button
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                    className="flex-1 bg-white/10 border-white/20 text-white"
                   >
                     <Eye className="h-4 w-4" />
                     <span className="text-xs">View</span>
@@ -215,7 +214,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     onClick={handleAddToCart}
                     size="sm"
                     variant="default"
-                    className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                    className="flex-1 bg-green-500 text-white"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     <span className="text-xs">Add to Cart</span>
