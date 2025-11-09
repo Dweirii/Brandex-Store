@@ -27,7 +27,14 @@ interface DownloadButtonProps {
   iconOnly?: boolean
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_DOWNLOAD_API_URL || process.env.NEXT_PUBLIC_API_URL || "https://admin.wibimax.com"
+// Get the base admin URL without any API path
+const getAdminBaseUrl = () => {
+  const url = process.env.NEXT_PUBLIC_DOWNLOAD_API_URL || process.env.NEXT_PUBLIC_API_URL || "https://admin.wibimax.com"
+  // Extract just the domain, removing any /api/... path
+  const match = url.match(/^(https?:\/\/[^/]+)/)
+  return match ? match[1] : url
+}
+const ADMIN_BASE_URL = getAdminBaseUrl()
 const ADS_SEND_TO = process.env.NEXT_PUBLIC_GOOGLE_ADS_SEND_TO || ""
 const GA_EVENT_DEFAULT = "download_complete"
 
@@ -134,7 +141,7 @@ export const DownloadButton = ({
     setLoading(true)
     revokeObjectUrl()
 
-    const endpoint = `${API_BASE_URL}/api/${storeId}/products/${productId}/download`
+    const endpoint = `${ADMIN_BASE_URL}/api/${storeId}/products/${productId}/download`
     const ac = new AbortController()
     const timer = setTimeout(() => ac.abort(), timeoutMs)
 

@@ -7,7 +7,7 @@ import { ShoppingBag, CreditCard, Heart, Loader2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion" 
 import toast from "react-hot-toast"
 import axios from "axios"
-import { useAuth } from "@clerk/nextjs"
+import { useAuth, useUser } from "@clerk/nextjs"
 
 import { Button } from "@/components/ui/Button"
 import Currency from "@/components/ui/currency"
@@ -20,6 +20,7 @@ const Summary = () => {
   const items = useCart((state) => state.items)
   const removeAll = useCart((state) => state.removeAll)
   const { getToken } = useAuth()
+  const { user } = useUser()
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
@@ -74,6 +75,14 @@ const Summary = () => {
     }
   }
 */
+  // Get the base admin URL without any API path
+  const getAdminBaseUrl = () => {
+    const url = process.env.NEXT_PUBLIC_API_URL || "https://admin.wibimax.com"
+    // Extract just the domain, removing any /api/... path
+    const match = url.match(/^(https?:\/\/[^/]+)/)
+    return match ? match[1] : url
+  }
+
   const onCheckout = async () => {
     if (totalPrice < 0.6) {
       toast.error("Minimum payment amount is $0.60")
@@ -83,11 +92,21 @@ const Summary = () => {
     setIsLoading(true)
     try {
       const token = await getToken({ template: "CustomerJWTBrandex" })
+      const adminBaseUrl = getAdminBaseUrl()
+      const storeId = items[0]?.storeId // Get storeId from first item
+      const email = user?.emailAddresses?.[0]?.emailAddress || user?.primaryEmailAddress?.emailAddress || ""
+
+      if (!email) {
+        toast.error("Email address not found. Please sign in again.")
+        setIsLoading(false)
+        return
+      }
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/checkout`,
+        `${adminBaseUrl}/api/${storeId}/checkout`,
         {
           productIds: items.map((item) => item.id),
+          email: email,
         },
         {
           headers: {

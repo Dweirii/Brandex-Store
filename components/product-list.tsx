@@ -37,7 +37,7 @@ const ProductList: React.FC<ProductListProps> = ({ title, items, total, page, pa
 
       {visibleItems.length === 0 && <NoResults />}
 
-      <div className="grid grid-cols-1 md:block md:columns-3 lg:columns-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:block md:columns-3 lg:columns-4 2xl:columns-5 gap-4 sm:gap-6">
         {visibleItems.map((item) => (
           <div key={item.id} className="md:break-inside-avoid md:mb-4 md:mb-6">
             <MemoizedProductCard data={item} />

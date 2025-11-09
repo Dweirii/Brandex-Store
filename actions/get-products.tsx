@@ -27,7 +27,7 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
         categoryId: query.categoryId || undefined,
         isFeatured: query.isFeatured,
         page: query.page || 1,
-        limit: query.limit || 48,
+        limit: query.limit || 60,
         priceFilter: query.priceFilter || undefined,
         sortBy: query.sortBy || undefined,
       },
