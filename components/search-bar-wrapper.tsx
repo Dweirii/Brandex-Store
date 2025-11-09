@@ -1,7 +1,16 @@
 "use client"
 
+import { Suspense } from "react"
 import { usePathname } from "next/navigation"
 import GlobalSearchBar from "./global-search-bar"
+
+function SearchBarContent() {
+  return (
+    <div className="w-full relative z-20 pointer-events-auto">
+      <GlobalSearchBar className="w-full" />
+    </div>
+  )
+}
 
 export function SearchBarWrapper() {
   const pathname = usePathname()
@@ -16,9 +25,9 @@ export function SearchBarWrapper() {
   }
 
   return (
-    <div className="w-full relative z-20 pointer-events-auto">
-      <GlobalSearchBar className="w-full" />
-    </div>
+    <Suspense fallback={<div className="w-full h-10" />}>
+      <SearchBarContent />
+    </Suspense>
   )
 }
 

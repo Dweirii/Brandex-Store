@@ -22,6 +22,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const isMobile = useMobile()
   const [isMounted, setIsMounted] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPlaying, setIsPlaying] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 

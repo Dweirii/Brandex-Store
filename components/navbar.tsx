@@ -1,15 +1,12 @@
 import Container from "@/components/ui/container"
-import getCategories from "@/actions/get-categories"
 import NavbarActions from "@/components/navbar-actions"
 import Logo from "./logo"
 import { UserDropdown } from "./ui/user-drop-list"
-import GlobalSearchBar from "./global-search-bar"
 import { SearchBarWrapper } from "./search-bar-wrapper"
 
 export const revalidate = 0
 
 const Navbar = async () => {
-  const categories = await getCategories()
 
   return (
     <>

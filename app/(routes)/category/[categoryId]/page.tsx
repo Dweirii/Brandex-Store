@@ -70,8 +70,7 @@ export default async function CategoryPage({
   const priceFilter = searchParamsData?.priceFilter
   const sortBy = searchParamsData?.sortBy
 
-  // Fetch category name for header
-  const category = await getCategory(categoryId)
+  // Fetch categories for navigation
   const categories = await getCategories()
 
   return (
