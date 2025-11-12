@@ -169,6 +169,17 @@ export const DownloadButton = ({
 
       if (!res.ok) {
         const text = await res.text().catch(() => "")
+        
+        // Handle specific error cases
+        if (res.status === 403) {
+          const errorMsg = text || "You don't have access to this product. Purchase it or subscribe to Premium to download."
+          throw new Error(errorMsg)
+        }
+        
+        if (res.status === 401) {
+          throw new Error("Please sign in to download")
+        }
+        
         throw new Error(text || `Download failed (${res.status})`)
       }
 

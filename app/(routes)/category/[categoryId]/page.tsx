@@ -12,7 +12,8 @@ import PriceFilter from "@/components/price-filter"
 import SortFilter from "@/components/sort-filter"
 import CategoryNav from "@/components/category-nav"
 
-export const revalidate = 0
+// Cache for 60 seconds - balance freshness with performance
+export const revalidate = 60
 
 interface CategoryProductsProps {
   categoryId: string
@@ -80,11 +81,11 @@ export default async function CategoryPage({
         <div className="px-4 sm:px-6 lg:px-8 mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             {/* Categories Bar - Left side */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 overflow-hidden">
               <CategoryNav categories={categories} />
             </div>
             {/* Filters Bar - Right side (same place) */}
-            <div className="flex flex-row items-center gap-3">
+            <div className="flex flex-row items-center gap-3 flex-shrink-0">
               <PriceFilter className="flex-shrink-0" />
               <SortFilter className="flex-shrink-0" />
             </div>

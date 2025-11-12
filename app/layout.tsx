@@ -1,5 +1,6 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Urbanist } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import Script from "next/script";
@@ -74,7 +75,9 @@ export default function RootLayout({
               <ModalProvider />
               <ToastProvider />
               <DisableContextMenu />
-              <Navbar />
+              <Suspense fallback={<div className="h-20 bg-background/80 border-b border-border/40" />}>
+                <Navbar />
+              </Suspense>
               <main className="flex-1">{children}</main>
               <AppToaster />
               <Footer />

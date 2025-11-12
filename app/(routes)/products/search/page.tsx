@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import axios from "axios"
 import { useSearchParams } from "next/navigation"
 import { PackageSearch } from "lucide-react"
+import { useDebouncedCallback } from "use-debounce"
 
 import type { Product } from "@/types"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -75,15 +76,23 @@ export default function ProductSearchPage() {
     [storeId]
   )
 
+  // Debounced search to prevent excessive API calls
+  const debouncedSearch = useDebouncedCallback(
+    (searchQuery: string, page: number) => {
+      performSearch(searchQuery, page)
+    },
+    300 // Wait 300ms after user stops typing
+  )
+
   // Handle search when query param changes (from navbar search)
   useEffect(() => {
     if (queryParam.trim().length >= 2) {
-      performSearch(queryParam, pageParam)
+      debouncedSearch(queryParam, pageParam)
     } else {
       setProducts([])
       setHasSearched(false)
     }
-  }, [queryParam, pageParam, performSearch])
+  }, [queryParam, pageParam, debouncedSearch])
 
   return (
     <Container>

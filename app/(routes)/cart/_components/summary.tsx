@@ -84,6 +84,11 @@ const Summary = () => {
   }
 
   const onCheckout = async () => {
+    if (items.length === 0) {
+      toast.error("Your cart is empty.")
+      return
+    }
+
     if (totalPrice < 0.6) {
       toast.error("Minimum payment amount is $0.60")
       return
@@ -92,8 +97,21 @@ const Summary = () => {
     setIsLoading(true)
     try {
       const token = await getToken({ template: "CustomerJWTBrandex" })
+      if (!token) {
+        toast.error("Failed to get authentication token. Please sign in again.")
+        setIsLoading(false)
+        return
+      }
+
       const adminBaseUrl = getAdminBaseUrl()
       const storeId = items[0]?.storeId // Get storeId from first item
+      
+      if (!storeId) {
+        toast.error("Store ID not found. Please refresh the page.")
+        setIsLoading(false)
+        return
+      }
+
       const email = user?.emailAddresses?.[0]?.emailAddress || user?.primaryEmailAddress?.emailAddress || ""
 
       if (!email) {
@@ -102,10 +120,26 @@ const Summary = () => {
         return
       }
 
+      const productIds = items.map((item) => item.id).filter(Boolean) // Filter out any undefined/null IDs
+      
+      if (productIds.length === 0) {
+        toast.error("No valid products in cart.")
+        setIsLoading(false)
+        return
+      }
+
+      console.log("[CHECKOUT_DEBUG] Sending checkout request:", {
+        storeId,
+        productIds,
+        email,
+        adminBaseUrl,
+        url: `${adminBaseUrl}/api/${storeId}/checkout`
+      })
+
       const response = await axios.post(
         `${adminBaseUrl}/api/${storeId}/checkout`,
         {
-          productIds: items.map((item) => item.id),
+          productIds: productIds,
           email: email,
         },
         {
@@ -116,10 +150,15 @@ const Summary = () => {
         }
       )
 
-      window.location.href = response.data.url
-    } catch (err) {
+      if (response.data?.url) {
+        window.location.href = response.data.url
+      } else {
+        throw new Error("No redirect URL in response")
+      }
+    } catch (err: any) {
       console.error("Checkout Error:", err)
-      toast.error("Failed to initiate checkout.")
+      const errorMessage = err?.response?.data || err?.message || "Failed to initiate checkout."
+      toast.error(typeof errorMessage === "string" ? errorMessage : "Failed to initiate checkout.")
     } finally {
       setIsLoading(false)
     }

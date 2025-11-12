@@ -8,7 +8,7 @@ import CategoriesDropdown from "./categories-dropdown"
 import type { Category } from "@/types"
 
 interface MobileNavbarSectionProps {
-  categories: Category[]
+  categories: Category[] // Can be empty array while loading
 }
 
 export function MobileNavbarSection({ categories }: MobileNavbarSectionProps) {

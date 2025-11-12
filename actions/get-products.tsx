@@ -33,7 +33,15 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
       },
     })
 
-    const res = await fetch(url)
+    const res = await fetch(url, {
+      next: { 
+        revalidate: 60, // Cache for 60 seconds
+        tags: ['products'] // For on-demand revalidation
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
 
     if (!res.ok) {
       console.error("Failed to fetch products:", res.status, res.statusText)

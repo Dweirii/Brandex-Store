@@ -3,12 +3,17 @@
 import type React from "react"
 import type { Product } from "@/types"
 import { Button } from "@/components/ui/Button"
-import { Check, ShoppingCart } from "lucide-react"
+import { Check, ShoppingCart, Crown, Sparkles } from "lucide-react"
 import Currency from "@/components/ui/currency"
 import { useState, type MouseEventHandler } from "react"
+import { useRouter } from "next/navigation"
 import useCart from "@/hooks/use-cart"
 import { cn } from "@/lib/utils"
 import { DownloadButton } from "@/components/ui/download-button"
+import { PremiumBadge } from "@/components/ui/premium-badge"
+import { useSubscription } from "@/hooks/use-subscription"
+import { SimpleSubscriptionButton } from "@/components/subscription-button"
+import { Separator } from "@/components/ui/separator"
 
 interface InfoProps {
   data: Product
@@ -16,16 +21,37 @@ interface InfoProps {
 
 const Info: React.FC<InfoProps> = ({ data }) => {
   const cart = useCart()
+  const router = useRouter()
   const [isAdding, setIsAdding] = useState(false)
   
   // Check if product is free (price is 0)
   const isFreeProduct = Number(data.price) === 0
+  const isPaidProduct = !isFreeProduct
 
-  const handleAddToCart: MouseEventHandler<HTMLButtonElement> = (event) => {
+  // Get subscription status
+  const { isActive: hasPremium, isLoading: subscriptionLoading } = useSubscription(data.storeId)
+
+  const handleAddToCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
+    event.preventDefault()
     event.stopPropagation()
+    
+    // Prevent double-clicks
+    if (isAdding) return
+    
     setIsAdding(true)
-    cart.addItem(data)
-    setTimeout(() => setIsAdding(false), 1500)
+    try {
+      // Make sure cart.addItem is awaited if it's async
+      await Promise.resolve(cart.addItem(data))
+    } catch (error) {
+      console.error('Failed to add to cart:', error)
+    } finally {
+      // Keep the "Added" state visible for a moment
+      setTimeout(() => setIsAdding(false), 1500)
+    }
+  }
+
+  const handleUpgradeToPremium = () => {
+    router.push(`/premium?storeId=${data.storeId}&productId=${data.id}`)
   }
 
   return (
@@ -35,10 +61,15 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         <p className="text-green-500 text-sm font-semibold uppercase">{data.category.name}</p>
       )}
 
-      {/* Title */}
-      <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-        {data.name}
-      </h1>
+      {/* Title with Premium Badge */}
+      <div className="flex items-start gap-3 flex-wrap">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground flex-1 min-w-0">
+          {data.name}
+        </h1>
+        {isPaidProduct && (
+          <PremiumBadge size="lg" className="shrink-0" />
+        )}
+      </div>
 
       {/* Description */}
       {data.description && (
@@ -48,12 +79,23 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       )}
 
       {/* Price */}
-      <div className="text-3xl font-semibold text-foreground">
-        <Currency value={data.price} />
+      <div className="flex items-center gap-3">
+        <div className="text-3xl font-semibold text-foreground">
+          <Currency value={data.price} />
+        </div>
+        {isPaidProduct && hasPremium && (
+          <span className="text-sm text-green-500 font-medium flex items-center gap-1">
+            <Check className="h-4 w-4" />
+            Free with Premium
+          </span>
+        )}
       </div>
 
-      {/* Action Button - Download or Add to Cart */}
+      <Separator />
+
+      {/* Action Buttons - Download, Buy, or Premium CTA */}
       {isFreeProduct ? (
+        /* Free Product - Always show download */
         <div className="w-full">
           <DownloadButton
             storeId={data.storeId}
@@ -62,33 +104,86 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             variant="premium"
           />
         </div>
+      ) : hasPremium ? (
+        /* Paid Product + Premium User - Show Download Free */
+        <div className="w-full space-y-3">
+          <DownloadButton
+            storeId={data.storeId}
+            productId={data.id}
+            size="lg"
+            variant="premium"
+            className="w-full"
+          />
+          <p className="text-sm text-muted-foreground text-center">
+            <Crown className="h-4 w-4 inline mr-1 text-amber-500" />
+            Downloading as a Premium member
+          </p>
+        </div>
       ) : (
-        <Button
-          onClick={handleAddToCart}
-          disabled={isAdding}
-          className={cn(
-            "w-full h-12 text-base font-medium transition-all duration-300 ease-in-out",
-            "cursor-pointer", // Ensure cursor pointer for enabled state
-            isAdding
-              ? "bg-green-600 hover:bg-green-700 text-white shadow-green-300"
-              : "bg-[#00FF00] hover:bg-green-400 text-black shadow-md",
-            "transform hover:scale-[1.02] active:scale-[0.98]"
-          )}
-        >
-          <span className="flex items-center justify-center gap-x-2 text-lg font-semibold">
-            {isAdding ? (
-              <>
-                <Check className="w-5 h-5" />
-                Added
-              </>
-            ) : (
-              <>
-                Buy Now
-                <ShoppingCart className="w-5 h-5" />
-              </>
+        /* Paid Product + No Premium - Show Buy Now + Premium CTA */
+        <div className="w-full space-y-4">
+          {/* Buy Now Button */}
+          <Button
+            onClick={handleAddToCart}
+            disabled={isAdding}
+            className={cn(
+              "w-full h-12 text-base font-medium transition-all duration-300 ease-in-out",
+              "cursor-pointer",
+              isAdding
+                ? "bg-green-600 hover:bg-green-700 text-white shadow-green-300"
+                : "bg-[#00FF00] hover:bg-green-400 text-black shadow-md",
+              "transform hover:scale-[1.02] active:scale-[0.98]"
             )}
-          </span>
-        </Button>
+          >
+            <span className="flex items-center justify-center gap-x-2 text-lg font-semibold">
+              {isAdding ? (
+                <>
+                  <Check className="w-5 h-5" />
+                  Added
+                </>
+              ) : (
+                <>
+                  Buy Now
+                  <ShoppingCart className="w-5 h-5" />
+                </>
+              )}
+            </span>
+          </Button>
+
+          {/* Premium CTA */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
+          <div className="p-4 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-lg">
+            <div className="flex items-start gap-3 mb-3">
+              <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-foreground mb-1">
+                  Unlock with Premium
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Get unlimited access to all premium products for just $7/month
+                </p>
+              </div>
+            </div>
+            <SimpleSubscriptionButton
+              storeId={data.storeId}
+              size="default"
+              variant="premium"
+              className="w-full"
+            />
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              <Sparkles className="h-3 w-3 inline mr-1" />
+              7-day free trial included
+            </p>
+          </div>
+        </div>
       )}
 
       {/* Keywords / Tags */}

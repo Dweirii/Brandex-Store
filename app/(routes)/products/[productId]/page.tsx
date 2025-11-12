@@ -1,14 +1,27 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProducts from "@/actions/get-products";
-import Gallery from "@/components/gallery";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// force dynamic rendering to allow params + searchParams
-export const dynamic = "force-dynamic";
+// Code splitting: Lazy load Gallery component
+const Gallery = dynamic(() => import("@/components/gallery"), {
+  loading: () => (
+    <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
+      <div className="relative aspect-[4/3] w-full">
+        <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
+      </div>
+    </div>
+  ),
+  ssr: true,
+});
+
+
 
 // optional static metadata fallback
 export const metadata: Metadata = {
@@ -21,24 +34,50 @@ interface ProductPageProps {
   searchParams?: Promise<{ page?: string }>;
 }
 
+// Separate component for related products to enable streaming
+async function RelatedProducts({ categoryId, currentPage }: { categoryId?: string; currentPage: number }) {
+  if (!categoryId) return null;
+
+  const {
+    products: suggestedProducts,
+    total,
+    page,
+    pageCount,
+  } = await getProducts({
+    categoryId,
+    page: currentPage,
+    limit: 6,
+  });
+
+  if (suggestedProducts.length === 0) {
+    return (
+      <p className="text-center py-10 text-muted-foreground">
+        No related products found
+      </p>
+    );
+  }
+
+  return (
+    <ProductList
+      title="Related Items"
+      items={suggestedProducts}
+      total={total}
+      page={page}
+      pageCount={pageCount}
+    />
+  );
+}
+
 export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   try {
     const { productId } = await params;
+    const currentPage = parseInt((await searchParams)?.page || "1", 10);
+
+    // Fetch product first (required for page)
     const product = await getProduct(productId);
     if (!product) throw new Error("Product not found");
 
-    const currentPage = parseInt((await searchParams)?.page || "1", 10);
-
-    const {
-      products: suggestedProducts,
-      total,
-      page,
-      pageCount,
-    } = await getProducts({
-      categoryId: product.category?.id,
-      page: currentPage,
-      limit: 6,
-    });
+    // Related products can load separately (streaming)
 
     return (
       <div className="bg-card text-foreground">
@@ -48,7 +87,17 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             {/* Media */}
             <div className="w-full overflow-hidden">
               {(product.videoUrl || product.images?.length > 0) ? (
-                <Gallery data={product} />
+                <Suspense
+                  fallback={
+                    <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
+                      <div className="relative aspect-[4/3] w-full">
+                        <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
+                      </div>
+                    </div>
+                  }
+                >
+                  <Gallery data={product} />
+                </Suspense>
               ) : (
                 <div className="h-96 bg-muted/10 flex items-center justify-center rounded-xl">
                   <p className="text-muted-foreground">No media available</p>
@@ -67,20 +116,17 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         <div className="px-4 sm:px-6 lg:px-8 py-12 border-t border-border">
           <section aria-labelledby="related-products-heading" className="max-w-screen-2xl mx-auto">
             <h2 id="related-products-heading" className="sr-only">Related products</h2>
-
-            {suggestedProducts.length > 0 ? (
-              <ProductList
-                title="Related Items"
-                items={suggestedProducts}
-                total={total}
-                page={page}
-                pageCount={pageCount}
-              />
-            ) : (
-              <p className="text-center py-10 text-muted-foreground">
-                No related products found
-              </p>
-            )}
+            <Suspense
+              fallback={
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Skeleton key={i} className="h-96 rounded-lg" />
+                  ))}
+                </div>
+              }
+            >
+              <RelatedProducts categoryId={product.category?.id} currentPage={currentPage} />
+            </Suspense>
           </section>
         </div>
       </div>
