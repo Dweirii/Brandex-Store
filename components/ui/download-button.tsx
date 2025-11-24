@@ -25,6 +25,7 @@ interface DownloadButtonProps {
   onError?: (message: string) => void
   gaEventName?: string
   iconOnly?: boolean
+  className?: string
 }
 
 // Get the base admin URL without any API path
@@ -50,6 +51,7 @@ export const DownloadButton = ({
   onError,
   gaEventName = GA_EVENT_DEFAULT,
   iconOnly = false,
+  className,
 }: DownloadButtonProps) => {
   const [loading, setLoading] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
@@ -352,14 +354,14 @@ export const DownloadButton = ({
       <Button
         onClick={handleDownload}
         disabled={disabled || loading}
-        className={getButtonClassName()}
+        className={cn(getButtonClassName(), className)}
         aria-label={disabled ? "Download not available" : loading ? "Downloading..." : "Download product"}
         aria-busy={loading}
       >
         <AnimatePresence>
           {isClicked && (
             <motion.div
-              className="absolute inset-0 bg-white/30 dark:bg-white/20 rounded-lg text-black dark:text-white"
+              className="absolute inset-0 bg-white/30 dark:bg-foreground/20 rounded-lg text-foreground"
               initial={{ scale: 0, opacity: 1 }}
               animate={{ scale: 2, opacity: 0 }}
               exit={{ opacity: 0 }}

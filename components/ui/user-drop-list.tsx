@@ -22,33 +22,60 @@ import {
   Sun,
   Moon,
   Laptop,
+  Crown,
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
+import { SubscriptionModal } from "@/components/modals/subscription-modal"
 
 export function UserDropdown() {
   const { user, isLoaded } = useUser()
   const { signOut, openUserProfile } = useClerk()
   const { setTheme } = useTheme()
+  const [isMounted, setIsMounted] = useState(false)
+  const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
+  const [storeId, setStoreId] = useState<string>("")
 
-  if (!isLoaded) {
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setIsMounted(true)
+    const defaultStoreId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
+    setStoreId(defaultStoreId)
+    
+    // Auto-open modal if returning from Stripe checkout (on any page)
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search)
+      const success = urlParams.get("success")
+      const sessionId = urlParams.get("session_id")
+      
+      if (success === "true" && sessionId) {
+        // Small delay to ensure modal is ready
+        setTimeout(() => {
+          setSubscriptionModalOpen(true)
+        }, 100)
+      }
+    }
+  }, [])
+
+  if (!isMounted || !isLoaded) {
     return (
       <div className="flex items-center gap-2">
-        <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+        <div className="h-8 w-8 rounded-full bg-muted animate-pulse" role="status" aria-label="Loading user menu" />
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-shrink-0">
         <SignInButton mode="modal">
           <Button
             variant="default"
             size="sm"
-            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20 transition-all duration-200 hover:scale-105"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20 transition-all duration-200 hover:scale-105 h-8 px-2 sm:px-3"
           >
-            <User className="w-4 h-4 mr-2" />
+            <User className="w-4 h-4 sm:mr-2 flex-shrink-0" />
             <span className="hidden sm:inline">Sign In</span>
           </Button>
         </SignInButton>
@@ -57,29 +84,39 @@ export function UserDropdown() {
   }
 
   const menuItemClass =
-    "group cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 px-3 py-3 hover:bg-primary/10 focus:bg-primary/10"
+    "group cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 px-3 py-3 hover:bg-primary/20 focus:bg-primary/20"
   const iconWrapperClass =
-    "p-1 rounded-md bg-primary/10 group-hover:bg-primary/20"
+    "p-1 rounded-md bg-primary/10 group-hover:bg-primary/30"
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 flex-shrink-0">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ duration: 0.2 }}>
-            <Avatar className="cursor-pointer border-2 border-border transition-all duration-200 hover:border-primary hover:shadow-lg hover:shadow-primary/20">
-              <AvatarImage
-                src={user?.imageUrl || "/placeholder.svg"}
-                alt={`${user?.firstName}'s avatar`}
-                className="object-cover"
-                loading="lazy"
-              />
-              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-muted text-foreground font-semibold">
-                {user?.firstName?.charAt(0)?.toUpperCase() ??
-                  user?.emailAddresses?.[0]?.emailAddress?.charAt(0)?.toUpperCase() ??
-                  "U"}
-              </AvatarFallback>
-            </Avatar>
-          </motion.div>
+          <button
+            type="button"
+            className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex-shrink-0"
+            aria-label="User menu"
+          >
+            <motion.div 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }} 
+              transition={{ duration: 0.2 }}
+            >
+              <Avatar className="cursor-pointer border-2 border-border transition-all duration-200 hover:border-primary hover:shadow-lg hover:shadow-primary/20 h-8 w-8 sm:h-9 sm:w-9">
+                <AvatarImage
+                  src={user?.imageUrl || "/placeholder.svg"}
+                  alt={`${user?.firstName || 'User'}'s avatar`}
+                  className="object-cover"
+                  loading="lazy"
+                />
+                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-muted text-foreground font-semibold">
+                  {user?.firstName?.charAt(0)?.toUpperCase() ??
+                    user?.emailAddresses?.[0]?.emailAddress?.charAt(0)?.toUpperCase() ??
+                    "U"}
+                </AvatarFallback>
+              </Avatar>
+            </motion.div>
+          </button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
@@ -122,6 +159,21 @@ export function UserDropdown() {
           </div>
 
           <DropdownMenuSeparator className="bg-border my-2" />
+
+          <DropdownMenuItem 
+            onClick={() => setSubscriptionModalOpen(true)}
+            className={menuItemClass}
+          >
+            <div className="flex items-center gap-3 w-full">
+              <div className={iconWrapperClass}>
+                <Crown className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1">
+                <span className="font-medium">Premium</span>
+                <p className="text-xs text-muted-foreground">Manage subscription</p>
+              </div>
+            </div>
+          </DropdownMenuItem>
 
           <DropdownMenuItem asChild className={menuItemClass}>
             <Link href="/orders" className="flex items-center gap-3 w-full">
@@ -200,6 +252,14 @@ export function UserDropdown() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {storeId && (
+        <SubscriptionModal
+          open={subscriptionModalOpen}
+          onOpenChange={setSubscriptionModalOpen}
+          storeId={storeId}
+        />
+      )}
     </div>
   )
 }

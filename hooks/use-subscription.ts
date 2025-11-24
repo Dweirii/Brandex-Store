@@ -3,6 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useAuth } from "@clerk/nextjs"
 
+// Global request deduplication - prevents multiple components from making the same request
+const globalPendingRequests = new Map<string, Promise<SubscriptionStatus | null>>()
+const globalRequestCache = new Map<string, { data: SubscriptionStatus | null; timestamp: number }>()
+const CACHE_DURATION = 60 * 1000 // 60 seconds
+
 interface SubscriptionStatus {
   hasSubscription: boolean
   isActive: boolean
@@ -27,29 +32,6 @@ interface SubscriptionStatus {
   } | null
 }
 
-/**
- * Hook to fetch and cache subscription status
- * 
- * Features:
- * - Automatic caching of subscription state
- * - Refresh on subscription changes (via custom events)
- * - Manual refresh capability
- * - Optimistic updates support
- * 
- * @param storeId - Store ID to check subscription for
- * @param options - Optional configuration
- * @param options.autoRefresh - Enable automatic refresh on window focus (default: true)
- * @param options.refreshInterval - Interval in ms for automatic refresh (default: 5 minutes)
- * 
- * @returns Subscription status and loading state
- * 
- * @example
- * const { subscription, isActive, isLoading, refresh } = useSubscription(storeId)
- * 
- * // Trigger refresh after subscription action
- * await cancelSubscription()
- * refresh()
- */
 export function useSubscription(
   storeId: string,
   options?: {
@@ -66,49 +48,74 @@ export function useSubscription(
   const cacheKey = `subscription_${storeId}_${userId || 'anonymous'}`
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const isMountedRef = useRef(true)
-
-  // Get API base URL
-  const getAdminBaseUrl = () => {
-    if (typeof window === "undefined") return ""
-    const url = process.env.NEXT_PUBLIC_API_URL || "https://admin.wibimax.com"
-    const match = url.match(/https?:\/\/[^/]+/)
-    return match ? match[0] : url
-  }
+  const hasFetchedRef = useRef(false)
+  const pendingFetchRef = useRef<Promise<SubscriptionStatus | null> | null>(null)
 
   // Fetch subscription from API
-  const fetchSubscription = useCallback(async (showLoading = true) => {
+  const fetchSubscription = useCallback(async (showLoading = true, skipCache = false) => {
     if (!isSignedIn || !storeId) {
       setSubscription(null)
       setIsLoading(false)
       return
     }
 
-    try {
-      if (showLoading) {
-        setIsLoading(true)
-      }
-      setError(null)
-
-      const token = await getToken({ template: "CustomerJWTBrandex" })
-      if (!token) {
+    // Check global cache first (unless skipping cache)
+    if (!skipCache) {
+      const cached = globalRequestCache.get(cacheKey)
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
         if (isMountedRef.current) {
-          setSubscription(null)
+          setSubscription(cached.data)
           setIsLoading(false)
         }
         return
       }
 
-      const adminBaseUrl = getAdminBaseUrl()
-      const response = await fetch(
-        `${adminBaseUrl}/api/${storeId}/subscription/status`,
-        {
+      // Check if there's already a pending request for this cache key
+      const pendingRequest = globalPendingRequests.get(cacheKey)
+      if (pendingRequest) {
+        try {
+          const data = await pendingRequest
+          if (isMountedRef.current) {
+            setSubscription(data)
+            setIsLoading(false)
+          }
+        } catch (err) {
+          // Error will be handled by the original request
+        }
+        return
+      }
+    }
+
+    const fetchPromise = (async (): Promise<SubscriptionStatus | null> => {
+      try {
+        if (showLoading) {
+          setIsLoading(true)
+        }
+        setError(null)
+
+        const token = await getToken({ template: "CustomerJWTBrandex" })
+        if (!token) {
+          if (isMountedRef.current) {
+            setSubscription(null)
+            setIsLoading(false)
+          }
+          return null
+        }
+
+        // Use the same API URL pattern as other API calls
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL
+        if (!apiUrl) {
+          throw new Error("NEXT_PUBLIC_API_URL is not configured")
+        }
+        
+        // Use default cache strategy (allows browser/Next.js to cache)
+        const response = await fetch(`${apiUrl}/subscription/status`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          cache: "no-store",
-        }
-      )
+          // Use default cache - Next.js will respect Cache-Control headers from API
+        })
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -119,6 +126,9 @@ export function useSubscription(
             subscription: null,
           }
           
+          // Update global cache
+          globalRequestCache.set(cacheKey, { data: noSubscriptionData, timestamp: Date.now() })
+          
           if (isMountedRef.current) {
             setSubscription(noSubscriptionData)
             setIsLoading(false)
@@ -127,49 +137,50 @@ export function useSubscription(
               sessionStorage.setItem(cacheKey, JSON.stringify(noSubscriptionData))
             }
           }
-          return
+          return noSubscriptionData
         }
         throw new Error(`Failed to fetch subscription: ${response.status}`)
       }
 
       const data: SubscriptionStatus = await response.json()
 
+      // Update global cache
+      globalRequestCache.set(cacheKey, { data, timestamp: Date.now() })
+
       if (isMountedRef.current) {
         setSubscription(data)
         setIsLoading(false)
-        // Cache the subscription data
+        // Cache the subscription data in sessionStorage
         if (typeof window !== "undefined") {
           sessionStorage.setItem(cacheKey, JSON.stringify(data))
         }
       }
+
+      return data
     } catch (err) {
-      console.error("[USE_SUBSCRIPTION_ERROR]", err)
       if (isMountedRef.current) {
         setError(err instanceof Error ? err.message : "Failed to fetch subscription")
         setIsLoading(false)
       }
+      throw err
+    } finally {
+      globalPendingRequests.delete(cacheKey)
+      pendingFetchRef.current = null
+    }
+    })()
+    
+    // Store pending request globally for deduplication
+    globalPendingRequests.set(cacheKey, fetchPromise)
+    pendingFetchRef.current = fetchPromise
+    
+    try {
+      await fetchPromise
+    } catch (err) {
+      // Error already handled in promise
     }
   }, [isSignedIn, storeId, getToken, userId, cacheKey])
 
-  // Load from cache on mount
-  useEffect(() => {
-    if (typeof window !== "undefined" && isSignedIn && storeId) {
-      try {
-        const cached = sessionStorage.getItem(cacheKey)
-        if (cached) {
-          const cachedData = JSON.parse(cached) as SubscriptionStatus
-          setSubscription(cachedData)
-          setIsLoading(false)
-          // Still fetch fresh data in background
-          fetchSubscription(false)
-        }
-      } catch (err) {
-        console.error("[USE_SUBSCRIPTION_CACHE_ERROR]", err)
-      }
-    }
-  }, [cacheKey, isSignedIn, storeId, fetchSubscription])
-
-  // Initial fetch and setup
+  // Combined initialization: load from cache first, then fetch fresh data
   useEffect(() => {
     isMountedRef.current = true
     
@@ -179,19 +190,44 @@ export function useSubscription(
       return
     }
 
-    // Fetch subscription
-    fetchSubscription()
+    // Prevent duplicate fetches
+    if (hasFetchedRef.current) {
+      return
+    }
 
-    // Setup auto-refresh on window focus (if enabled)
-    const handleFocus = () => {
-      if (options?.autoRefresh !== false) {
-        fetchSubscription(false) // Don't show loading on focus refresh
+    // Try to load from sessionStorage cache first
+    if (typeof window !== "undefined") {
+      try {
+        const cached = sessionStorage.getItem(cacheKey)
+        if (cached) {
+          const cachedData = JSON.parse(cached) as SubscriptionStatus
+          setSubscription(cachedData)
+          setIsLoading(false)
+          hasFetchedRef.current = true
+          // Fetch fresh data in background (silently)
+          fetchSubscription(false, true)
+          return
+        }
+      } catch (err) {
+        // Ignore cache errors, continue to fetch
       }
     }
 
-    // Setup periodic refresh (if enabled)
-    if (options?.autoRefresh !== false) {
-      const interval = options?.refreshInterval || 5 * 60 * 1000 // Default 5 minutes
+    // No cache found, fetch immediately
+    hasFetchedRef.current = true
+    fetchSubscription(true)
+
+    // Disabled window focus refresh to reduce excessive API calls
+    // const handleFocus = () => {
+    //   if (options?.autoRefresh !== false) {
+    //     fetchSubscription(false) // Don't show loading on focus refresh
+    //   }
+    // }
+
+    // Setup periodic refresh (if explicitly enabled)
+    // Default is FALSE - no auto-refresh to reduce API calls
+    if (options?.autoRefresh === true) {
+      const interval = options?.refreshInterval || 10 * 60 * 1000 // Default 10 minutes
       refreshIntervalRef.current = setInterval(() => {
         fetchSubscription(false) // Don't show loading on periodic refresh
       }, interval)
@@ -202,18 +238,23 @@ export function useSubscription(
       fetchSubscription(false)
     }
 
-    window.addEventListener("focus", handleFocus)
+    // window.addEventListener("focus", handleFocus) // Disabled to reduce API calls
     window.addEventListener("subscription:updated", handleSubscriptionUpdate)
 
     return () => {
       isMountedRef.current = false
-      window.removeEventListener("focus", handleFocus)
+      // window.removeEventListener("focus", handleFocus) // Disabled
       window.removeEventListener("subscription:updated", handleSubscriptionUpdate)
       if (refreshIntervalRef.current) {
         clearInterval(refreshIntervalRef.current)
       }
     }
   }, [isSignedIn, storeId, fetchSubscription, options?.autoRefresh, options?.refreshInterval])
+
+  // Reset fetch flag when storeId or userId changes
+  useEffect(() => {
+    hasFetchedRef.current = false
+  }, [storeId, userId])
 
   // Manual refresh function
   const refresh = useCallback(() => {
@@ -225,6 +266,9 @@ export function useSubscription(
     if (typeof window !== "undefined") {
       sessionStorage.removeItem(cacheKey)
     }
+    // Also clear global cache
+    globalRequestCache.delete(cacheKey)
+    globalPendingRequests.delete(cacheKey)
   }, [cacheKey])
 
   return {

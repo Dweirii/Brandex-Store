@@ -81,7 +81,7 @@ export function WhyBuyFromBrandexSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="heading-section mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">
+          <h2 className="heading-section mb-6 bg-gradient-to-r from-foreground to-primary dark:from-foreground dark:to-primary bg-clip-text text-transparent">
             Why Choose Brandex
           </h2>
           <p className="text-body-large text-medium-contrast max-w-4xl mx-auto">
@@ -137,7 +137,7 @@ export function WhyBuyFromBrandexSection() {
                       <div className={`p-1 rounded-full ${benefit.bgColor} group-hover:scale-110 transition-transform`}>
                         <CheckCircle className={`w-5 h-5 ${benefit.color}`} />
                       </div>
-                      <span className="text-body-small text-high-contrast group-hover:text-[#00EB02] transition-colors">
+                      <span className="text-body-small text-high-contrast group-hover:text-primary transition-colors">
                         {feature}
                       </span>
                     </motion.div>

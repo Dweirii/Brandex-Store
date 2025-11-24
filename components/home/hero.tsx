@@ -26,7 +26,7 @@ export function HeroSection() {
           </motion.div>
 
           <motion.h1
-            className="heading-hero bg-gradient-to-r from-[#020817] via-[#020817] to-[#00EB02] dark:from-white dark:via-white dark:to-[#00EB02] bg-clip-text text-transparent"
+            className="heading-hero bg-gradient-to-r from-foreground via-foreground to-primary dark:from-foreground dark:via-foreground dark:to-primary bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
@@ -61,7 +61,7 @@ export function HeroSection() {
           >
             <Button
               size="lg"
-              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] button-text px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="group bg-primary hover:bg-primary/90 text-primary-foreground button-text px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105"
               asChild
             >
               <Link href="/" className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export function HeroSection() {
             <Button
               variant="outline"
               size="lg"
-              className="button-text px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 hover:border-[#00EB02] hover:text-[#00EB02] transition-all duration-300"
+              className="button-text px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl border-2 hover:border-primary hover:text-primary transition-all duration-300"
               asChild
             >
               <Link href="/">Learn More</Link>

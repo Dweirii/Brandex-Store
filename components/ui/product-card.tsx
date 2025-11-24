@@ -5,7 +5,7 @@ import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { ShoppingCart, Eye, Sparkles, Crown } from "lucide-react"
+import { ShoppingCart, Eye, Crown } from "lucide-react"
 import type { Product } from "@/types"
 import { Button } from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
@@ -13,6 +13,7 @@ import { PremiumBadge } from "@/components/ui/premium-badge"
 import useCart from "@/hooks/use-cart"
 import useMobile from "@/hooks/use-mobile"
 import { useSubscription } from "@/hooks/use-subscription"
+import { SubscriptionModal } from "@/components/modals/subscription-modal"
 
 interface ProductCardProps {
   data: Product
@@ -29,9 +30,12 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
+  const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
   
-  // Check subscription status
-  const { isActive: hasPremium, isLoading: subscriptionLoading } = useSubscription(data.storeId)
+  // Check subscription status (no auto-refresh to reduce API calls)
+  const { isActive: hasPremium, isLoading: subscriptionLoading } = useSubscription(data.storeId, {
+    autoRefresh: false,
+  })
 
   // Calculate media
   const firstImageUrl = data.images?.find((img) => img?.url)?.url
@@ -207,68 +211,72 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             <div className="flex flex-col gap-2 pointer-events-auto px-3 py-4 rounded-xl backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10 shadow-xl">
               {isFree ? (
                 <>
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      router.push(`/products/${data.id}`)
+                    }}
+                    size="sm"
+                    variant="outline"
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
                   <DownloadButton
                     storeId={data.storeId}
                     productId={data.id}
                     size="sm"
                     variant="default"
                     iconOnly
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
                   />
+                </>
+              ) : (
+                <>
                   <Button
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white/90 text-black hover:text-black border-white/50 shadow-lg backdrop-blur-sm"
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
-                </>
-              ) : (
-                <>
-                  {/* Hybrid model: Show both options */}
                   {hasPremium ? (
                     /* If user has Premium, show Download Free button */
                     <DownloadButton
                       storeId={data.storeId}
                       productId={data.id}
                       size="sm"
-                      variant="premium"
+                      variant="default"
                       iconOnly
+                      className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
                     />
                   ) : (
-                    /* If no Premium, show Buy Now button */
-                    <Button
-                      onClick={handleAddToCart}
-                      size="sm"
-                      variant="default"
-                      className="bg-green-500 text-white shadow-lg backdrop-blur-sm"
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                    </Button>
+                    <>
+                      {/* If no Premium, show Buy Now button */}
+                      <Button
+                        onClick={handleAddToCart}
+                        size="sm"
+                        variant="outline"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                      >
+                        <ShoppingCart className="h-4 w-4" />
+                      </Button>
+                      {/* Always show Unlock with Premium option for non-premium users */}
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setSubscriptionModalOpen(true)
+                        }}
+                        size="sm"
+                        variant="outline"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                        title="Unlock with Premium"
+                      >
+                        <Crown className="h-4 w-4" />
+                      </Button>
+                    </>
                   )}
-                  {/* Always show Unlock with Premium option for non-premium users */}
-                  {!hasPremium && (
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        router.push(`/premium?productId=${data.id}`)
-                      }}
-                      size="sm"
-                      variant="outline"
-                      className="h-8 w-8 p-0 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border-amber-400/50 text-amber-600 dark:text-amber-400 shadow-lg backdrop-blur-sm"
-                      title="Unlock with Premium"
-                    >
-                      <Crown className="h-4 w-4" />
-                    </Button>
-                  )}
-                  <Button
-                    onClick={handleViewClick}
-                    size="sm"
-                    variant="outline"
-                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white/90 text-black hover:text-black border-white/50 shadow-lg backdrop-blur-sm"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
                 </>
               )}
             </div>
@@ -281,33 +289,42 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             <div className="flex gap-2">
               {isFree ? (
                 <>
+                  <Button
+                    onClick={handleViewClick}
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span className="text-xs">View</span>
+                  </Button>
                   <DownloadButton
                     storeId={data.storeId}
                     productId={data.id}
                     size="sm"
                     variant="default"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
                   />
+                </>
+              ) : (
+                <>
                   <Button
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="flex-1 bg-white/10 border-white/20 text-white"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
                   >
                     <Eye className="h-4 w-4" />
                     <span className="text-xs">View</span>
                   </Button>
-                </>
-              ) : (
-                <>
-                  {/* Hybrid model: Show both options */}
                   {hasPremium ? (
                     /* If user has Premium, show Download Free button */
                     <DownloadButton
                       storeId={data.storeId}
                       productId={data.id}
                       size="sm"
-                      variant="premium"
-                      className="flex-1"
+                      variant="default"
+                      className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
                     />
                   ) : (
                     <>
@@ -315,42 +332,42 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                       <Button
                         onClick={handleAddToCart}
                         size="sm"
-                        variant="default"
-                        className="flex-1 bg-green-500 text-white"
+                        variant="outline"
+                        className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
                       >
                         <ShoppingCart className="h-4 w-4" />
-                        <span className="text-xs">Add to Cart</span>
+                        <span className="text-xs">Buy</span>
                       </Button>
                       {/* Show Unlock with Premium option */}
                       <Button
                         onClick={(e) => {
                           e.stopPropagation()
-                          router.push(`/premium?productId=${data.id}`)
+                          setSubscriptionModalOpen(true)
                         }}
                         size="sm"
                         variant="outline"
-                        className="flex-1 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 hover:from-amber-500/30 hover:to-yellow-500/30 border-amber-400/50 text-amber-600 dark:text-amber-400"
+                        className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
                       >
                         <Crown className="h-4 w-4" />
                         <span className="text-xs">Premium</span>
                       </Button>
                     </>
                   )}
-                  <Button
-                    onClick={handleViewClick}
-                    size="sm"
-                    variant="outline"
-                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span className="text-xs">View Details</span>
-                  </Button>
                 </>
               )}
             </div>
           </div>
         )}
       </div>
+
+      {/* Subscription Modal */}
+      {data.storeId && (
+        <SubscriptionModal
+          open={subscriptionModalOpen}
+          onOpenChange={setSubscriptionModalOpen}
+          storeId={data.storeId}
+        />
+      )}
     </motion.div>
   )
 })

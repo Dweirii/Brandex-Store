@@ -141,7 +141,7 @@ export function WhatYouGetSection() {
           </motion.div>
 
           <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-            <span className="heading-section mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">
+            <span className="heading-section mb-6 bg-gradient-to-r from-foreground to-primary dark:from-foreground dark:to-primary bg-clip-text text-transparent">
               What You Get
             </span>
             <br />
@@ -206,7 +206,7 @@ export function WhatYouGetSection() {
                       </div>
                       <div>
                         <div className="text-sm font-medium text-muted-foreground mb-1">{feature.category}</div>
-                        <h3 className="heading-card text-high-contrast group-hover:text-[#00EB02] transition-colors duration-300">
+                        <h3 className="heading-card text-high-contrast group-hover:text-primary transition-colors duration-300">
                           {feature.title}
                         </h3>
                       </div>
@@ -236,7 +236,7 @@ export function WhatYouGetSection() {
                         transition={{ delay: 0.1 * itemIndex, duration: 0.5 }}
                       >
                         <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${feature.gradient}`} />
-                        <span className="text-sm font-medium text-[#020817] dark:text-white">{item}</span>
+                        <span className="text-sm font-medium text-foreground">{item}</span>
                       </motion.div>
                     ))}
                   </div>

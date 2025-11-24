@@ -24,7 +24,7 @@ export default function MobileSearchButton() {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-md border border-border/50 bg-background/50 hover:bg-muted/50 transition-colors"
+          className="h-8 w-8 sm:h-9 sm:w-9 rounded-md border border-border/50 bg-background/50 hover:bg-muted/50 transition-colors flex-shrink-0"
           aria-label="Open search"
         >
           <Search className="h-4 w-4 text-foreground" />

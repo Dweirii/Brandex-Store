@@ -368,23 +368,64 @@ export async function cancelSubscription(
     throw new Error("Authentication token is required")
   }
 
-  const baseUrl = getAdminBaseUrl()
-  const response = await fetch(`${baseUrl}/api/${storeId}/subscription/cancel`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`Failed to cancel subscription: ${response.status} - ${errorText}`)
+  if (!storeId) {
+    throw new Error("Store ID is required")
   }
 
-  const data: SubscriptionActionResponse = await response.json()
-  if (!data.success) {
-    throw new Error(data.message || "Failed to cancel subscription")
+  const baseUrl = getAdminBaseUrl()
+  const url = `${baseUrl}/api/${storeId}/subscription/cancel`
+  
+  console.log("[CANCEL_SUBSCRIPTION] Calling:", url)
+  
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      let errorMessage = `Failed to cancel subscription: ${response.status}`
+      const contentType = response.headers.get("content-type")
+      
+      if (contentType && contentType.includes("application/json")) {
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.message || errorData.error || errorMessage
+          console.error("[CANCEL_SUBSCRIPTION_ERROR] Response not OK:", response.status, errorData)
+        } catch (e) {
+          console.error("[CANCEL_SUBSCRIPTION_ERROR] Failed to parse JSON error:", e)
+        }
+      } else {
+        try {
+          const errorText = await response.text()
+          errorMessage = errorText || errorMessage
+          console.error("[CANCEL_SUBSCRIPTION_ERROR] Response not OK (text):", response.status, errorText)
+        } catch (e) {
+          console.error("[CANCEL_SUBSCRIPTION_ERROR] Failed to read error text:", e)
+        }
+      }
+      throw new Error(errorMessage)
+    }
+
+    const data: SubscriptionActionResponse = await response.json()
+    console.log("[CANCEL_SUBSCRIPTION] Response:", data)
+    
+    if (!data.success) {
+      throw new Error(data.message || "Failed to cancel subscription")
+    }
+
+    // Verify the response contains the updated subscription data
+    if (data.subscription && !data.subscription.cancelAtPeriodEnd) {
+      console.warn("[CANCEL_SUBSCRIPTION_WARNING] Response indicates cancelAtPeriodEnd is false, but API returned success")
+    } else if (data.subscription && data.subscription.cancelAtPeriodEnd) {
+      console.log("[CANCEL_SUBSCRIPTION] Verified: cancelAtPeriodEnd is true in response")
+    }
+  } catch (error) {
+    console.error("[CANCEL_SUBSCRIPTION_ERROR] Fetch error:", error)
+    throw error
   }
 }
 

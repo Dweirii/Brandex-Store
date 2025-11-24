@@ -98,7 +98,7 @@ export default function Timeline() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="heading-section mb-6 bg-gradient-to-r from-[#020817] to-[#00EB02] dark:from-white dark:to-[#00EB02] bg-clip-text text-transparent">Our Journey</h2>
+          <h2 className="heading-section mb-6 bg-gradient-to-r from-foreground to-primary dark:from-foreground dark:to-primary bg-clip-text text-transparent">Our Journey</h2>
           <p className="mt-4 text-body text-medium-contrast">The evolution of Flowers & Saints through the years</p>
         </motion.div>
 

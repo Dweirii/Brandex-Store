@@ -36,16 +36,17 @@ export default function CategoriesDropdown({ categories }: CategoriesDropdownPro
           variant="ghost"
           size="sm"
           className={cn(
-            "gap-1.5 h-8 px-2 text-xs",
+            "gap-1 sm:gap-1.5 h-8 px-1.5 sm:px-2 text-xs",
             isCategoryPage && "text-primary bg-primary/5"
           )}
+          aria-label="Categories menu"
         >
-          <Grid3x3 className="h-3.5 w-3.5" />
-          <span className="hidden xs:inline">Categories</span>
-          <ChevronDown className="h-2.5 w-2.5 opacity-50" />
+          <Grid3x3 className="h-3.5 w-3.5 flex-shrink-0" />
+          <span className="hidden sm:inline">Categories</span>
+          <ChevronDown className="h-2.5 w-2.5 opacity-50 flex-shrink-0 hidden sm:block" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-48 max-h-[350px] overflow-y-auto">
+      <DropdownMenuContent align="start" className="w-48 max-h-[350px] overflow-y-auto bg-card border-border">
         {categories.map((category) => {
           const isActive = pathname === `/category/${category.id}`
           return (

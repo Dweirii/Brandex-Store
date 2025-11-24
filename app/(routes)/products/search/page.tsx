@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import axios from "axios"
 import { useSearchParams } from "next/navigation"
 import { PackageSearch } from "lucide-react"
@@ -76,7 +76,7 @@ export default function ProductSearchPage() {
     [storeId]
   )
 
-  // Debounced search to prevent excessive API calls
+  // Debounced search to prevent excessive API calls (only for query changes)
   const debouncedSearch = useDebouncedCallback(
     (searchQuery: string, page: number) => {
       performSearch(searchQuery, page)
@@ -84,15 +84,38 @@ export default function ProductSearchPage() {
     300 // Wait 300ms after user stops typing
   )
 
-  // Handle search when query param changes (from navbar search)
+  // Track previous values to detect what changed
+  const prevQueryRef = useRef<string>("")
+  const prevPageRef = useRef<number>(1)
+
+  // Handle search when query or page param changes
   useEffect(() => {
-    if (queryParam.trim().length >= 2) {
-      debouncedSearch(queryParam, pageParam)
+    const currentQuery = searchParams.get("query") || ""
+    const currentPage = parseInt(searchParams.get("page") || "1", 10)
+    
+    // Update currentPage state to match URL
+    setCurrentPage(currentPage)
+    
+    const queryChanged = currentQuery !== prevQueryRef.current
+    const pageChanged = currentPage !== prevPageRef.current
+    
+    // Update refs
+    prevQueryRef.current = currentQuery
+    prevPageRef.current = currentPage
+    
+    if (currentQuery.trim().length >= 2) {
+      // If only page changed, search immediately (no debounce)
+      // If query changed, use debounced search
+      if (pageChanged && !queryChanged) {
+        performSearch(currentQuery, currentPage)
+      } else {
+        debouncedSearch(currentQuery, currentPage)
+      }
     } else {
       setProducts([])
       setHasSearched(false)
     }
-  }, [queryParam, pageParam, debouncedSearch])
+  }, [searchParams, debouncedSearch, performSearch])
 
   return (
     <Container>

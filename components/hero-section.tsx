@@ -24,7 +24,7 @@ export function HeroSection() {
           </motion.div>
 
           <motion.h1
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-gradient-to-r from-[#020817] via-[#020817] to-[#00EB02] dark:from-white dark:via-white dark:to-[#00EB02] bg-clip-text text-transparent leading-tight sm:leading-snug"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground to-primary dark:from-foreground dark:via-foreground dark:to-primary bg-clip-text text-transparent leading-tight sm:leading-snug"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}

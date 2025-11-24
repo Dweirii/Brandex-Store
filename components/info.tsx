@@ -14,6 +14,7 @@ import { PremiumBadge } from "@/components/ui/premium-badge"
 import { useSubscription } from "@/hooks/use-subscription"
 import { SimpleSubscriptionButton } from "@/components/subscription-button"
 import { Separator } from "@/components/ui/separator"
+import { usePremiumModal } from "@/hooks/use-premium-modal"
 
 interface InfoProps {
   data: Product
@@ -22,14 +23,17 @@ interface InfoProps {
 const Info: React.FC<InfoProps> = ({ data }) => {
   const cart = useCart()
   const router = useRouter()
+  const premiumModal = usePremiumModal()
   const [isAdding, setIsAdding] = useState(false)
   
   // Check if product is free (price is 0)
   const isFreeProduct = Number(data.price) === 0
   const isPaidProduct = !isFreeProduct
 
-  // Get subscription status
-  const { isActive: hasPremium, isLoading: subscriptionLoading } = useSubscription(data.storeId)
+  // Get subscription status (no auto-refresh to reduce API calls)
+  const { isActive: hasPremium, isLoading: subscriptionLoading } = useSubscription(data.storeId, {
+    autoRefresh: false,
+  })
 
   const handleAddToCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
     event.preventDefault()
@@ -51,7 +55,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   }
 
   const handleUpgradeToPremium = () => {
-    router.push(`/premium?storeId=${data.storeId}&productId=${data.id}`)
+    premiumModal.onOpen(data.id)
   }
 
   return (
@@ -114,8 +118,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             variant="premium"
             className="w-full"
           />
-          <p className="text-sm text-muted-foreground text-center">
-            <Crown className="h-4 w-4 inline mr-1 text-amber-500" />
+          <p className="text-sm text-muted-foreground text-center font-medium">
+            <Crown className="h-4 w-4 inline mr-1 text-[#D4AF37]" />
             Downloading as a Premium member
           </p>
         </div>
@@ -130,8 +134,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               "w-full h-12 text-base font-medium transition-all duration-300 ease-in-out",
               "cursor-pointer",
               isAdding
-                ? "bg-green-600 hover:bg-green-700 text-white shadow-green-300"
-                : "bg-[#00FF00] hover:bg-green-400 text-black shadow-md",
+                ? "bg-primary/80 hover:bg-primary/90 text-primary-foreground shadow-primary/30"
+                : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-md",
               "transform hover:scale-[1.02] active:scale-[0.98]"
             )}
           >
@@ -160,9 +164,9 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             </div>
           </div>
 
-          <div className="p-4 bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-lg">
+          <div className="p-4 bg-gradient-to-r from-[#D4AF37]/10 to-[#B8941F]/10 border border-[#D4AF37]/20 rounded-lg">
             <div className="flex items-start gap-3 mb-3">
-              <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+              <Crown className="h-5 w-5 text-[#D4AF37] shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-foreground mb-1">
                   Unlock with Premium
@@ -172,15 +176,17 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                 </p>
               </div>
             </div>
-            <SimpleSubscriptionButton
-              storeId={data.storeId}
+            <Button
+              onClick={handleUpgradeToPremium}
               size="default"
-              variant="premium"
-              className="w-full"
-            />
+              className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-white font-bold hover:scale-105 transition-all"
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              Unlock with Premium
+            </Button>
             <p className="text-xs text-muted-foreground text-center mt-2">
-              <Sparkles className="h-3 w-3 inline mr-1" />
-              7-day free trial included
+              <Sparkles className="h-3 w-3 inline mr-1 text-[#D4AF37]" />
+              <span className="text-muted-foreground font-medium">7-day free trial included</span>
             </p>
           </div>
         </div>

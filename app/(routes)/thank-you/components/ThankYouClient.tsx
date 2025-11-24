@@ -184,7 +184,7 @@ export default function ThankYouPage() {
           className="mb-8"
         >
           <motion.h1
-            className="text-4xl md:text-5xl font-bold mb-4 text-black dark:text-white"
+            className="text-4xl md:text-5xl font-bold mb-4 text-foreground"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
@@ -219,7 +219,7 @@ export default function ThankYouPage() {
             ) : (
               <Clock className="h-6 w-6 text-green-500" />
             )}
-            <h2 className="text-lg font-bold text-black dark:text-white">
+            <h2 className="text-lg font-bold text-foreground">
               {urgencyLevel === "critical" ? "URGENT: Download Now!" : "Download Time Remaining"}
             </h2>
           </div>
@@ -288,7 +288,7 @@ export default function ThankYouPage() {
               <div className="text-left flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <Download className="h-5 w-5 text-green-500" />
-                  <p className="font-semibold text-lg text-black dark:text-white">{item.productName}</p>
+                  <p className="font-semibold text-lg text-foreground">{item.productName}</p>
                 </div>
                 <p className="text-gray-600 dark:text-gray-400">
                   {timeLeft === 0 ? "Download expired" : "Click below to download immediately"}

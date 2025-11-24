@@ -82,9 +82,20 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     if (query.trim().length >= 2) {
       debounceTimerRef.current = setTimeout(() => {
         const storeId = searchParams.get("storeId")
+        const currentQuery = searchParams.get("query") || ""
+        
+        // Only navigate if the query has actually changed
+        // This prevents wiping out the page parameter when user is just on the search page
+        if (currentQuery === query.trim() && pathname === "/products/search") {
+          // Query hasn't changed, don't update URL
+          return
+        }
+        
         const params = new URLSearchParams()
         params.set("query", query.trim())
         if (storeId) params.set("storeId", storeId)
+        // Reset to page 1 when query changes
+        params.set("page", "1")
 
         // Navigate to search page if not already there
         if (pathname !== "/products/search") {
@@ -120,6 +131,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     const params = new URLSearchParams()
     params.set("query", suggestion)
     if (storeId) params.set("storeId", storeId)
+    params.set("page", "1")
     router.push(`/products/search?${params.toString()}`)
   }, [router, searchParams])
 
@@ -141,6 +153,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
           const params = new URLSearchParams()
           params.set("query", query.trim())
           if (storeId) params.set("storeId", storeId)
+          params.set("page", "1")
           router.push(`/products/search?${params.toString()}`)
           setShowSuggestions(false)
         } else if (query.trim().length === 0) {

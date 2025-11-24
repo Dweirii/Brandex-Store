@@ -32,42 +32,22 @@ export function PremiumBadge({
   ...props
 }: PremiumBadgeProps) {
   const sizeClasses = {
-    sm: "text-[10px] px-1.5 py-0.5 gap-0.5 [&>svg]:size-2.5",
-    default: "text-xs px-2 py-1 gap-1 [&>svg]:size-3",
-    lg: "text-sm px-2.5 py-1.5 gap-1.5 [&>svg]:size-4",
+    sm: "text-[10px] px-1.5 py-0.5",
+    default: "text-xs px-2 py-1",
+    lg: "text-sm px-2.5 py-1.5",
   }
 
   return (
     <div
       className={cn(
         "inline-flex items-center justify-center rounded-md font-semibold w-fit whitespace-nowrap shrink-0",
-        "bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500",
-        "text-white shadow-lg shadow-amber-500/30",
-        "border border-amber-400/50",
-        "backdrop-blur-sm",
-        "transition-all duration-200",
-        "hover:shadow-xl hover:shadow-amber-500/40 hover:scale-105",
-        "relative overflow-hidden",
+        "bg-[#D4AF37] text-white",
         sizeClasses[size],
         className
       )}
       {...props}
     >
-      <div
-        className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"
-        aria-hidden="true"
-      />
-      
-
-      <div className="relative flex items-center gap-1">
-        {showIcon && (
-          <Sparkles
-            className="size-3 fill-current"
-            aria-hidden="true"
-          />
-        )}
-        <span className="font-semibold tracking-wide">{label}</span>
-      </div>
+      {label}
     </div>
   )
 }
@@ -91,10 +71,10 @@ export function PremiumBadgeSimple({
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center rounded-md font-semibold w-fit whitespace-nowrap shrink-0",
-        "bg-gradient-to-r from-amber-600 to-yellow-500",
-        "text-white shadow-md shadow-amber-500/20",
-        "border border-amber-400/30",
+        "inline-flex items-center justify-center rounded-md font-bold w-fit whitespace-nowrap shrink-0",
+        "bg-gradient-to-r from-green-600 to-[#00FF00]",
+        "text-black shadow-md shadow-green-500/20",
+        "border border-green-400/30",
         sizeClasses[size],
         className
       )}

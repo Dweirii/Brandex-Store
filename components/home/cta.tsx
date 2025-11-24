@@ -67,7 +67,7 @@ export function CallToActionSection() {
           >
             <Button
               size="lg"
-              className="group bg-[#00EB02] hover:bg-[#00C402] text-[#020817] button-text px-10 py-6 text-xl rounded-xl shadow-2xl hover:shadow-[#00EB02]/25 transition-all duration-300 hover:scale-105"
+              className="group bg-primary hover:bg-primary/90 text-primary-foreground button-text px-10 py-6 text-xl rounded-xl shadow-2xl hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
               asChild
             >
               <Link href="/" className="flex items-center gap-3">
