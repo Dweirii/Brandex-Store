@@ -7,25 +7,23 @@ import { Button } from "@/components/ui/Button"
 import { SubscriptionButton } from "@/components/subscription-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Crown, 
-  CheckCircle2, 
-  X,
+import {
+  Crown,
+  CheckCircle2,
   Sparkles
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { usePremiumModal } from "@/hooks/use-premium-modal"
 import { useSubscription } from "@/hooks/use-subscription"
-import { cn } from "@/lib/utils"
 
 export function PremiumModal() {
   const premiumModal = usePremiumModal()
   const { isSignedIn } = useAuth()
   const [storeId, setStoreId] = useState<string>("")
-  
+
   // Get subscription status
   // No auto-refresh to reduce API calls
-  const { isActive: hasPremium, isLoading } = useSubscription(storeId, {
+  const { isActive: hasPremium } = useSubscription(storeId, {
     autoRefresh: false,
   })
 
@@ -68,7 +66,7 @@ export function PremiumModal() {
               className="p-6 bg-green-500/10 border border-green-500/20 rounded-lg text-center"
             >
               <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <h3 className="text-xl font-bold mb-2">You're Already Premium!</h3>
+              <h3 className="text-xl font-bold mb-2">You&apos;re Already Premium!</h3>
               <p className="text-muted-foreground">
                 You have full access to all premium products and features.
               </p>

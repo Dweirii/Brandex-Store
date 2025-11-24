@@ -1,13 +1,11 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useAuth } from "@clerk/nextjs"
 
-export default function PremiumPage() {
+function PremiumPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { isSignedIn } = useAuth()
 
   useEffect(() => {
     // Redirect to home page
@@ -19,7 +17,7 @@ export default function PremiumPage() {
     if (success && sessionId) {
       // Redirect to home with the success params so modal can handle it
       router.replace(`/?success=${success}&session_id=${sessionId}${storeId ? `&storeId=${storeId}` : ''}`)
-      } else {
+    } else {
       // Just redirect to home
       router.replace("/")
     }
@@ -32,5 +30,19 @@ export default function PremiumPage() {
         <p className="text-muted-foreground">Redirecting...</p>
       </div>
     </div>
+  )
+}
+
+export default function PremiumPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <PremiumPageContent />
+    </Suspense>
   )
 }

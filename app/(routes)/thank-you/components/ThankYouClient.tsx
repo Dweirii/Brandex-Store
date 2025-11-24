@@ -7,8 +7,8 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Check, Clock, AlertTriangle, Download } from "lucide-react"
-import useCart from "@/hooks/use-cart" 
-import {Button} from "@/components/ui/Button"
+import useCart from "@/hooks/use-cart"
+import { Button } from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
 import { useApiRequest } from "@/hooks/use-api-request"
 
@@ -46,7 +46,7 @@ export default function ThankYouPage() {
   useEffect(() => {
     if (!sessionId) return
 
-    let isMounted = true 
+    let isMounted = true
 
     const fetchOrderData = async () => {
       try {
@@ -71,7 +71,7 @@ export default function ThankYouPage() {
     return () => {
       isMounted = false
     }
-  }, [sessionId])
+  }, [sessionId, apiRequest, cart])
 
 
   const formatTime = (seconds: number) => {
@@ -81,7 +81,7 @@ export default function ThankYouPage() {
   }
 
   const getUrgencyLevel = () => {
-    if (timeLeft <= 300) return "critical" 
+    if (timeLeft <= 300) return "critical"
     if (timeLeft <= 600) return "warning"
     return "normal"
   }
@@ -202,13 +202,12 @@ export default function ThankYouPage() {
         </motion.div>
 
         <motion.div
-          className={`w-full max-w-md p-6 rounded-2xl border-2 mb-8 ${
-            urgencyLevel === "critical"
+          className={`w-full max-w-md p-6 rounded-2xl border-2 mb-8 ${urgencyLevel === "critical"
               ? "bg-red-50 border-red-500 dark:bg-red-950/20 dark:border-red-500"
               : urgencyLevel === "warning"
                 ? "bg-yellow-50 border-yellow-500 dark:bg-yellow-950/20 dark:border-yellow-500"
                 : "bg-green-50 border-green-500 dark:bg-green-950/20 dark:border-green-500"
-          }`}
+            }`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.4 }}
@@ -225,13 +224,12 @@ export default function ThankYouPage() {
           </div>
 
           <motion.div
-            className={`text-4xl font-mono font-bold mb-3 ${
-              urgencyLevel === "critical"
+            className={`text-4xl font-mono font-bold mb-3 ${urgencyLevel === "critical"
                 ? "text-red-600 dark:text-red-400"
                 : urgencyLevel === "warning"
                   ? "text-yellow-600 dark:text-yellow-400"
                   : "text-green-600 dark:text-green-400"
-            }`}
+              }`}
             animate={urgencyLevel === "critical" ? { scale: [1, 1.05, 1] } : {}}
             transition={urgencyLevel === "critical" ? { duration: 1, repeat: Number.POSITIVE_INFINITY } : {}}
           >
@@ -239,26 +237,24 @@ export default function ThankYouPage() {
           </motion.div>
 
           <p
-            className={`text-sm font-medium ${
-              urgencyLevel === "critical"
+            className={`text-sm font-medium ${urgencyLevel === "critical"
                 ? "text-red-700 dark:text-red-300"
                 : urgencyLevel === "warning"
                   ? "text-yellow-700 dark:text-yellow-300"
                   : "text-green-700 dark:text-green-300"
-            }`}
+              }`}
           >
             {timeLeft === 0 ? "Download time has expired" : "You have 30 minutes to download your files"}
           </p>
 
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-4">
             <motion.div
-              className={`h-2 rounded-full ${
-                urgencyLevel === "critical"
+              className={`h-2 rounded-full ${urgencyLevel === "critical"
                   ? "bg-red-500"
                   : urgencyLevel === "warning"
                     ? "bg-yellow-500"
                     : "bg-green-500"
-              }`}
+                }`}
               initial={{ width: "100%" }}
               animate={{ width: `${(timeLeft / (30 * 60)) * 100}%` }}
               transition={{ duration: 0.5 }}
@@ -270,7 +266,7 @@ export default function ThankYouPage() {
           className="w-full space-y-4 mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.3 }} 
+          transition={{ delay: 0.3, duration: 0.3 }}
         >
           {orderItems?.map((item, index) => (
             <motion.div
@@ -279,7 +275,7 @@ export default function ThankYouPage() {
               initial={{ x: 50, opacity: 0, scale: 0.98 }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
               transition={{
-                delay: 0.4 + index * 0.1, 
+                delay: 0.4 + index * 0.1,
                 duration: 0.4,
                 ease: "easeOut",
               }}

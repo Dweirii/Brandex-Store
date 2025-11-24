@@ -38,7 +38,6 @@ export const metadata: Metadata = {
     "Brandex — Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
 };
 
-// ✅ استخدم متغير بيئة إن وجد، وإلا القيمة الافتراضية من البريد
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-1YRZK4HX52";
 
 export default function RootLayout({
@@ -50,7 +49,6 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="h-full" suppressHydrationWarning>
         <head>
-          {/* Google tag (gtag.js) - GA4 */}
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
             strategy="afterInteractive"
@@ -83,8 +81,6 @@ export default function RootLayout({
               <Footer />
             </Providers>
           </ThemeProvider>
-
-          {/* ✅ Vercel Analytics */}
           <Analytics />
         </body>
       </html>

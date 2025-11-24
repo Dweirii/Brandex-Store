@@ -6,10 +6,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/Button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Crown, 
-  CheckCircle2, 
-  X,
+import {
+  Crown,
+  CheckCircle2,
   Loader2,
   Calendar,
   Sparkles,
@@ -44,13 +43,13 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
   const { subscription, hasSubscription, isActive, isLoading, refresh, clearCache } = useSubscription(storeId, {
     autoRefresh: false, // Disabled to stop excessive API calls
   })
-  
+
   const [isVerifying, setIsVerifying] = useState(false)
   const [isCanceling, setIsCanceling] = useState(false)
   const [isResuming, setIsResuming] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly")
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
-  
+
   // Check if user ever had a trial (CANCELED status with trialEnd means they used their trial)
   const hadTrialBefore = subscription?.status === "CANCELED" && subscription?.trialEnd !== null
 
@@ -62,24 +61,24 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
   // Handle Stripe redirect after checkout
   useEffect(() => {
     if (!open) return
-    
+
     const success = searchParams.get("success")
     const sessionId = searchParams.get("session_id")
-    
+
     if (success === "true" && sessionId) {
       setIsVerifying(true)
-      
+
       const pollSubscription = async () => {
         const maxAttempts = 30
         let attempts = 0
-        
+
         const poll = async (): Promise<boolean> => {
           if (attempts >= maxAttempts) return false
-          
+
           try {
             const token = await getToken({ template: "CustomerJWTBrandex" })
             if (!token) return false
-            
+
             const adminBaseUrl = getAdminBaseUrl()
             const verifyResponse = await axios.get(
               `${adminBaseUrl}/api/${storeId}/subscription/verify-session?session_id=${sessionId}`,
@@ -87,7 +86,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                 headers: { Authorization: `Bearer ${token}` },
               }
             )
-            
+
             if (verifyResponse.data?.verified && verifyResponse.data?.hasSubscription) {
               clearCache()
               await refresh()
@@ -97,11 +96,11 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
               toast.success("Subscription activated")
               return true
             }
-            
+
             attempts++
             await new Promise(resolve => setTimeout(resolve, 1000))
             return poll()
-          } catch (error) {
+          } catch {
             attempts++
             if (attempts >= maxAttempts) {
               setIsVerifying(false)
@@ -112,13 +111,13 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
             return poll()
           }
         }
-        
+
         await poll()
       }
-      
+
       pollSubscription()
     }
-  }, [searchParams, open, storeId, getToken, refresh, router, user])
+  }, [searchParams, open, storeId, getToken, refresh, router, user, clearCache])
 
   const handleSubscribe = async () => {
     if (!isSignedIn || !user) {
@@ -170,19 +169,19 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
       }
 
       const wasTrial = subscription?.status === "TRIALING"
-      
+
       await cancelSubscription(storeId, token)
-      
+
       // Clear cache and refresh
       clearCache()
       await new Promise(resolve => setTimeout(resolve, 300))
       await refresh()
       triggerSubscriptionRefresh()
-      
-      const message = wasTrial 
-        ? "Trial canceled" 
+
+      const message = wasTrial
+        ? "Trial canceled"
         : "Subscription canceled"
-      
+
       toast.success(message)
     } catch (error) {
       console.error("[MODAL_CANCEL_ERROR] Cancel error:", error)
@@ -218,10 +217,10 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "N/A"
-    return new Date(dateString).toLocaleDateString("en-US", { 
-      year: "numeric", 
-      month: "short", 
-      day: "numeric" 
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
     })
   }
 
@@ -277,12 +276,12 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                       <span>Trial ends: {formatDate(subscription.trialEnd)}</span>
                     </div>
                   )}
-                  
+
                   {subscription.currentPeriodEnd && (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       <span>
-                        {subscription.cancelAtPeriodEnd 
+                        {subscription.cancelAtPeriodEnd
                           ? `Access until: ${formatDate(subscription.currentPeriodEnd)}`
                           : `Renews: ${formatDate(subscription.currentPeriodEnd)}`
                         }
@@ -352,11 +351,10 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setSelectedPlan("monthly")}
-                  className={`p-3 rounded-lg border-2 transition-all ${
-                    selectedPlan === "monthly"
+                  className={`p-3 rounded-lg border-2 transition-all ${selectedPlan === "monthly"
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/50"
-                  }`}
+                    }`}
                 >
                   <div className="text-left">
                     <div className="font-semibold">Monthly</div>
@@ -366,11 +364,10 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                 </button>
                 <button
                   onClick={() => setSelectedPlan("yearly")}
-                  className={`p-3 rounded-lg border-2 transition-all relative ${
-                    selectedPlan === "yearly"
+                  className={`p-3 rounded-lg border-2 transition-all relative ${selectedPlan === "yearly"
                       ? "border-primary bg-primary/5"
                       : "border-border hover:border-primary/50"
-                  }`}
+                    }`}
                 >
                   <Badge className="absolute -top-2 -right-2 text-xs">Save</Badge>
                   <div className="text-left">
@@ -399,7 +396,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
 
               {hadTrialBefore && (
                 <p className="text-xs text-center text-muted-foreground">
-                  You'll be charged immediately (no free trial)
+                  You&apos;ll be charged immediately (no free trial)
                 </p>
               )}
             </div>
@@ -413,9 +410,9 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
           <DialogHeader>
             <DialogTitle>Cancel Subscription?</DialogTitle>
             <DialogDescription>
-              {subscription?.status === "TRIALING" 
+              {subscription?.status === "TRIALING"
                 ? "Your trial will end immediately."
-                : subscription?.currentPeriodEnd 
+                : subscription?.currentPeriodEnd
                   ? `Access until ${formatDate(subscription.currentPeriodEnd)}`
                   : "You'll retain access until the billing period ends."}
             </DialogDescription>

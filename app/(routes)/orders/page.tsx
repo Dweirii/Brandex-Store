@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import axios from "axios"
 import { useUser } from "@clerk/nextjs"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { DownloadButton } from "@/components/ui/download-button"
 import Container from "@/components/ui/container"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -44,7 +44,7 @@ export default function OrdersPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     if (!user?.id) {
       setIsLoading(false)
       return
@@ -66,11 +66,11 @@ export default function OrdersPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user?.id])
 
   useEffect(() => {
     fetchOrders()
-  }, [user?.id])
+  }, [fetchOrders])
 
   const formatOrderDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -109,7 +109,7 @@ export default function OrdersPage() {
               <p className="text-sm text-muted-foreground">Items Purchased</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 text-center">
-              <Coins className='h-8 w-8 text-primary mx-auto mb-2'/>
+              <Coins className='h-8 w-8 text-primary mx-auto mb-2' />
               <Currency value={getTotalSpent()} />
               <p className="text-sm text-muted-foreground">Total Spent</p>
             </div>

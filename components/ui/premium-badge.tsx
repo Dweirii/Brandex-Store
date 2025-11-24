@@ -1,14 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface PremiumBadgeProps extends React.ComponentProps<"div"> {
 
   size?: "sm" | "default" | "lg"
-
-  showIcon?: boolean
 
   label?: string
 }
@@ -27,7 +24,6 @@ interface PremiumBadgeProps extends React.ComponentProps<"div"> {
 export function PremiumBadge({
   className,
   size = "default",
-  showIcon = true,
   label = "Premium",
   ...props
 }: PremiumBadgeProps) {

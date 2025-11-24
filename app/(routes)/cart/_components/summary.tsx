@@ -1,10 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useState } from "react" 
+import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { ShoppingBag, CreditCard, Heart, Loader2 } from "lucide-react" 
-import { motion, AnimatePresence } from "framer-motion" 
+import { ShoppingBag, CreditCard, Heart, Loader2 } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import toast from "react-hot-toast"
 import axios from "axios"
 import { useAuth, useUser } from "@clerk/nextjs"
@@ -36,45 +36,45 @@ const Summary = () => {
   }, [searchParams, removeAll, router])
 
   const totalPrice = items.reduce((total, item) => total + Number(item.price), 0)
-/*
-  const onPayPalCheckout = async () => {
-    if (totalPrice < 0.6) {
-      toast.error("Minimum payment amount is $0.60")
-      return
-    }
-
-    setIsLoading(true)
-    try {
-      const token = await getToken({ template: "CustomerJWTBrandex" })
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/paypal/checkout`,
-        {
-          productIds: items.map((item) => item.id),
-          email: user?.emailAddresses[0]?.emailAddress || "guest@brandex.com",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      )
-
-      if (!response.data?.url) {
-        toast.error("Failed to get PayPal redirect URL.")
+  /*
+    const onPayPalCheckout = async () => {
+      if (totalPrice < 0.6) {
+        toast.error("Minimum payment amount is $0.60")
         return
       }
-
-      window.location.href = response.data.url
-    } catch (err) {
-      console.error("PayPal Checkout Error:", err)
-      toast.error("Failed to initiate PayPal checkout.")
-    } finally {
-      setIsLoading(false)
+  
+      setIsLoading(true)
+      try {
+        const token = await getToken({ template: "CustomerJWTBrandex" })
+  
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/paypal/checkout`,
+          {
+            productIds: items.map((item) => item.id),
+            email: user?.emailAddresses[0]?.emailAddress || "guest@brandex.com",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        )
+  
+        if (!response.data?.url) {
+          toast.error("Failed to get PayPal redirect URL.")
+          return
+        }
+  
+        window.location.href = response.data.url
+      } catch (err) {
+        console.error("PayPal Checkout Error:", err)
+        toast.error("Failed to initiate PayPal checkout.")
+      } finally {
+        setIsLoading(false)
+      }
     }
-  }
-*/
+  */
   // Get the base admin URL without any API path
   const getAdminBaseUrl = () => {
     const url = process.env.NEXT_PUBLIC_API_URL || "https://admin.wibimax.com"
@@ -105,7 +105,7 @@ const Summary = () => {
 
       const adminBaseUrl = getAdminBaseUrl()
       const storeId = items[0]?.storeId // Get storeId from first item
-      
+
       if (!storeId) {
         toast.error("Store ID not found. Please refresh the page.")
         setIsLoading(false)
@@ -121,7 +121,7 @@ const Summary = () => {
       }
 
       const productIds = items.map((item) => item.id).filter(Boolean) // Filter out any undefined/null IDs
-      
+
       if (productIds.length === 0) {
         toast.error("No valid products in cart.")
         setIsLoading(false)
@@ -155,9 +155,11 @@ const Summary = () => {
       } else {
         throw new Error("No redirect URL in response")
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Checkout Error:", err)
-      const errorMessage = err?.response?.data || err?.message || "Failed to initiate checkout."
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = err as any
+      const errorMessage = error?.response?.data || error?.message || "Failed to initiate checkout."
       toast.error(typeof errorMessage === "string" ? errorMessage : "Failed to initiate checkout.")
     } finally {
       setIsLoading(false)
@@ -182,7 +184,7 @@ const Summary = () => {
         </div>
         <div className="flex items-center justify-between text-base">
           <span className="text-muted-foreground">Subtotal</span>
-          <Currency value={totalPrice}/>
+          <Currency value={totalPrice} />
         </div>
         <div className="flex items-center justify-between text-base">
           <div className="flex items-center gap-2">

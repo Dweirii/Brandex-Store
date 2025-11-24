@@ -28,6 +28,7 @@ import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { SubscriptionModal } from "@/components/modals/subscription-modal"
+import { useSubscription } from "@/hooks/use-subscription"
 
 export function UserDropdown() {
   const { user, isLoaded } = useUser()
@@ -37,18 +38,23 @@ export function UserDropdown() {
   const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
   const [storeId, setStoreId] = useState<string>("")
 
+  // Check subscription status
+  const { isActive: isPremium } = useSubscription(storeId, {
+    autoRefresh: false
+  })
+
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
     setIsMounted(true)
     const defaultStoreId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
     setStoreId(defaultStoreId)
-    
+
     // Auto-open modal if returning from Stripe checkout (on any page)
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get("success")
       const sessionId = urlParams.get("session_id")
-      
+
       if (success === "true" && sessionId) {
         // Small delay to ensure modal is ready
         setTimeout(() => {
@@ -97,9 +103,9 @@ export function UserDropdown() {
             className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex-shrink-0"
             aria-label="User menu"
           >
-            <motion.div 
-              whileHover={{ scale: 1.05 }} 
-              whileTap={{ scale: 0.95 }} 
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
               <Avatar className="cursor-pointer border-2 border-border transition-all duration-200 hover:border-primary hover:shadow-lg hover:shadow-primary/20 h-8 w-8 sm:h-9 sm:w-9">
@@ -127,8 +133,8 @@ export function UserDropdown() {
           <div className="px-3 py-4 bg-gradient-to-r from-primary/10 to-muted/20 rounded-lg mb-2">
             <div className="flex items-center gap-3">
               <Avatar className="h-12 w-12 border-2 border-primary/20">
-                <AvatarImage 
-                  src={user?.imageUrl || "/placeholder.svg"} 
+                <AvatarImage
+                  src={user?.imageUrl || "/placeholder.svg"}
                   alt={`${user?.firstName}'s avatar`}
                   loading="lazy"
                 />
@@ -160,7 +166,7 @@ export function UserDropdown() {
 
           <DropdownMenuSeparator className="bg-border my-2" />
 
-          <DropdownMenuItem 
+          <DropdownMenuItem
             onClick={() => setSubscriptionModalOpen(true)}
             className={menuItemClass}
           >
@@ -169,9 +175,18 @@ export function UserDropdown() {
                 <Crown className="w-4 h-4 text-primary" />
               </div>
               <div className="flex-1">
-                <span className="font-medium">Premium</span>
-                <p className="text-xs text-muted-foreground">Manage subscription</p>
+                <span className="font-medium">
+                  {isPremium ? "Premium Membership" : "Get Premium"}
+                </span>
+                <p className="text-xs text-muted-foreground">
+                  {isPremium ? "Manage subscription" : "Unlock exclusive features"}
+                </p>
               </div>
+              {isPremium && (
+                <div className="bg-green-500/10 text-green-600 text-[10px] font-bold px-1.5 py-0.5 rounded border border-green-500/20">
+                  ACTIVE
+                </div>
+              )}
             </div>
           </DropdownMenuItem>
 

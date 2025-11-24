@@ -6,13 +6,11 @@ import { Button } from "@/components/ui/Button"
 import { Check, ShoppingCart, Crown, Sparkles } from "lucide-react"
 import Currency from "@/components/ui/currency"
 import { useState, type MouseEventHandler } from "react"
-import { useRouter } from "next/navigation"
 import useCart from "@/hooks/use-cart"
 import { cn } from "@/lib/utils"
 import { DownloadButton } from "@/components/ui/download-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import { useSubscription } from "@/hooks/use-subscription"
-import { SimpleSubscriptionButton } from "@/components/subscription-button"
 import { Separator } from "@/components/ui/separator"
 import { usePremiumModal } from "@/hooks/use-premium-modal"
 
@@ -22,26 +20,25 @@ interface InfoProps {
 
 const Info: React.FC<InfoProps> = ({ data }) => {
   const cart = useCart()
-  const router = useRouter()
   const premiumModal = usePremiumModal()
   const [isAdding, setIsAdding] = useState(false)
-  
+
   // Check if product is free (price is 0)
   const isFreeProduct = Number(data.price) === 0
   const isPaidProduct = !isFreeProduct
 
   // Get subscription status (no auto-refresh to reduce API calls)
-  const { isActive: hasPremium, isLoading: subscriptionLoading } = useSubscription(data.storeId, {
+  const { isActive: hasPremium } = useSubscription(data.storeId, {
     autoRefresh: false,
   })
 
   const handleAddToCart: MouseEventHandler<HTMLButtonElement> = async (event) => {
     event.preventDefault()
     event.stopPropagation()
-    
+
     // Prevent double-clicks
     if (isAdding) return
-    
+
     setIsAdding(true)
     try {
       // Make sure cart.addItem is awaited if it's async
@@ -199,8 +196,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           <div className="flex flex-wrap gap-2">
             {/* Handle keywords splitting if they come as comma-separated strings */}
             {data.keywords
-              .flatMap(keyword => 
-                typeof keyword === 'string' 
+              .flatMap(keyword =>
+                typeof keyword === 'string'
                   ? keyword.split(',').map(k => k.trim()).filter(k => k.length > 0)
                   : [keyword]
               )

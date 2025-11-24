@@ -31,9 +31,9 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
-  
+
   // Check subscription status (no auto-refresh to reduce API calls)
-  const { isActive: hasPremium, isLoading: subscriptionLoading } = useSubscription(data.storeId, {
+  const { isActive: hasPremium } = useSubscription(data.storeId, {
     autoRefresh: false,
   })
 
@@ -56,13 +56,13 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             observer.disconnect()
           }
         },
-        { 
+        {
           rootMargin: '50px' // Start loading 50px before entering viewport
         }
       )
-      
+
       observer.observe(containerRef.current)
-      
+
       return () => observer.disconnect()
     } else if (isMobile && hasVideo) {
       // On mobile, load videos immediately but with lower priority
@@ -100,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     if (!isMobile) {
       setIsHovered(true)
       if (videoRef.current && data.videoUrl) {
-        videoRef.current.play().catch(() => {})
+        videoRef.current.play().catch(() => { })
         setIsPlaying(true)
       }
     }

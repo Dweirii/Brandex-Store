@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/Button"
 import { Sparkles, Loader2, Check } from "lucide-react"
 import toast from "react-hot-toast"
 import axios from "axios"
+import { triggerSubscriptionRefresh } from "@/hooks/use-subscription"
+
+
 
 interface SubscriptionButtonProps {
   /**
@@ -71,11 +74,11 @@ export function SubscriptionButton({
   // Get Stripe price IDs from environment
   const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID
   const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID
-  
+
   // Get pricing from environment variables (defaults to $5/month and $39.99/year)
   const monthlyPrice = parseFloat(process.env.NEXT_PUBLIC_SUBSCRIPTION_MONTHLY_PRICE || "5")
   const yearlyPrice = parseFloat(process.env.NEXT_PUBLIC_SUBSCRIPTION_YEARLY_PRICE || "39.99")
-  
+
   // Calculate savings (monthly price * 12 - yearly price)
   const monthlyYearlyTotal = monthlyPrice * 12
   const savings = monthlyYearlyTotal - yearlyPrice
@@ -109,7 +112,7 @@ export function SubscriptionButton({
 
     try {
       const token = await getToken({ template: "CustomerJWTBrandex" })
-      
+
       if (!token) {
         toast.error("Failed to get authentication token. Please sign in again.")
         setLoading(false)
@@ -143,19 +146,32 @@ export function SubscriptionButton({
       } else {
         throw new Error("No redirect URL in response")
       }
-    } catch (error: any) {
+    } catch (error) {
       // Extract detailed error message
       let errorMessage = "Failed to create subscription. Please try again."
-      
-      if (error.response?.data) {
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const err = error as any
+
+      if (err.response?.data) {
         // Try to parse JSON error response
-        const errorData = typeof error.response.data === 'string' 
-          ? JSON.parse(error.response.data) 
-          : error.response.data
-        
+        const errorData = typeof err.response.data === 'string'
+          ? JSON.parse(err.response.data)
+          : err.response.data
+
         errorMessage = errorData?.error || errorData?.message || errorMessage
-      } else if (error.message) {
-        errorMessage = error.message
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+
+      // Handle "already subscribed" error gracefully
+      if (errorMessage.includes("already have an active subscription")) {
+        toast.success("You already have an active subscription!")
+        // Force a refresh of the subscription status
+        triggerSubscriptionRefresh()
+        // Close modal if possible (this component doesn't control modal, but refreshing might trigger parent to close)
+        setLoading(false)
+        return
       }
 
       toast.error(errorMessage)
@@ -179,10 +195,9 @@ export function SubscriptionButton({
             disabled={loading}
             className={`
               flex-1 rounded-lg border-2 p-3 text-left transition-all
-              ${
-                selectedPlan === "monthly"
-                  ? "border-primary bg-primary/10 shadow-md"
-                  : "border-border bg-background hover:border-primary/50"
+              ${selectedPlan === "monthly"
+                ? "border-primary bg-primary/10 shadow-md"
+                : "border-border bg-background hover:border-primary/50"
               }
               ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
             `}
@@ -205,10 +220,9 @@ export function SubscriptionButton({
             disabled={loading}
             className={`
               flex-1 rounded-lg border-2 p-3 text-left transition-all relative
-              ${
-                selectedPlan === "yearly"
-                  ? "border-primary bg-primary/10 shadow-md"
-                  : "border-border bg-background hover:border-primary/50"
+              ${selectedPlan === "yearly"
+                ? "border-primary bg-primary/10 shadow-md"
+                : "border-border bg-background hover:border-primary/50"
               }
               ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
             `}

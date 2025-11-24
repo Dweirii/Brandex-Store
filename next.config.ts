@@ -51,6 +51,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "image-brandex.b-cdn.net",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.brandex.local",
+      }
     ],
     // Image optimization settings
     formats: ['image/avif', 'image/webp'],

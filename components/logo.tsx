@@ -19,7 +19,7 @@ const Logo = () => {
       }
       return "/Logo.png"
     }
-    
+
     const currentTheme = theme === "system" ? systemTheme : theme
     return currentTheme === "dark" ? "/Logo-white.png" : "/Logo.png"
   }
@@ -29,8 +29,8 @@ const Logo = () => {
   if (!mounted) {
     return (
       <Link href="/" className="flex items-center gap-x-2">
-        <div 
-          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm h-12 w-24 md:h-20 md:w-40 lg:h-24 lg:w-60"
+        <div
+          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm w-24 md:w-40 lg:w-60"
           aria-label="Loading logo"
         />
       </Link>
@@ -38,14 +38,14 @@ const Logo = () => {
   }
 
   return (
-    <Link href="/" className="flex items-center gap-x-2 relative z-20 pointer-events-auto">
+    <Link href="/" className="flex items-center gap-x-2 relative pointer-events-auto">
       <Image
         src={logoSrc}
         width={240}
         height={120}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-300 hover:scale-105 gpu-accelerated smooth-transform h-12 w-auto md:h-20 lg:h-24"
+        className="transition-all duration-300 hover:scale-105 gpu-accelerated smooth-transform h-10 w-auto md:h-12 lg:h-14"
         style={{ width: "auto", height: "auto" }}
         sizes="(max-width: 640px) 120px, (max-width: 768px) 200px, 300px"
         placeholder="blur"
