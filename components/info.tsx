@@ -56,145 +56,107 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   }
 
   return (
-    <div className="p-8 space-y-6">
-      {/* Category */}
-      {data.category?.name && (
-        <p className="text-green-500 text-sm font-semibold uppercase">{data.category.name}</p>
-      )}
-
-      {/* Title with Premium Badge */}
-      <div className="flex items-start gap-3 flex-wrap">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground flex-1 min-w-0">
-          {data.name}
-        </h1>
-        {isPaidProduct && (
-          <PremiumBadge size="lg" className="shrink-0" />
-        )}
+    <div className="space-y-8 px-4 sm:px-0">
+      {/* Title & Price Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col gap-4">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
+            {data.name}
+          </h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="text-3xl font-semibold text-foreground">
+                <Currency value={data.price} />
+              </div>
+              {isPaidProduct && hasPremium && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                  <Check className="h-3.5 w-3.5" />
+                  Included with Premium
+                </span>
+              )}
+            </div>
+            {isPaidProduct && <PremiumBadge />}
+          </div>
+        </div>
       </div>
+
+      <Separator className="my-6" />
 
       {/* Description */}
-      {data.description && (
-        <p className="text-base text-muted-foreground leading-relaxed">
-          {data.description}
-        </p>
-      )}
+      <div className="text-lg text-muted-foreground leading-relaxed">
+        <p>{data.description}</p>
+      </div>
 
-      {/* Price */}
-      <div className="flex items-center gap-3">
-        <div className="text-3xl font-semibold text-foreground">
-          <Currency value={data.price} />
-        </div>
-        {isPaidProduct && hasPremium && (
-          <span className="text-sm text-green-500 font-medium flex items-center gap-1">
-            <Check className="h-4 w-4" />
-            Free with Premium
-          </span>
+      {/* Actions */}
+      <div className="space-y-6 pt-2">
+        {isFreeProduct ? (
+          <DownloadButton
+            storeId={data.storeId}
+            productId={data.id}
+            size="lg"
+            variant="premium"
+            className="w-full h-14 text-lg shadow-lg shadow-green-500/20"
+          />
+        ) : hasPremium ? (
+          <div className="space-y-4">
+            <DownloadButton
+              storeId={data.storeId}
+              productId={data.id}
+              size="lg"
+              variant="premium"
+              className="w-full h-14 text-lg shadow-lg shadow-green-500/20"
+            />
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Crown className="h-4 w-4 text-[#D4AF37]" />
+              <span className="font-medium">Premium Download</span>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <Button
+              onClick={handleAddToCart}
+              disabled={isAdding}
+              className={cn(
+                "w-full h-14 text-lg font-semibold transition-all shadow-md hover:shadow-lg",
+                isAdding ? "bg-primary/80" : "bg-primary hover:bg-primary/90"
+              )}
+            >
+              {isAdding ? (
+                <span className="flex items-center gap-2">
+                  <Check className="w-5 h-5" /> Added to Cart
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  Buy Now <ShoppingCart className="w-5 h-5" />
+                </span>
+              )}
+            </Button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase tracking-wider">
+                <span className="bg-background px-2 text-muted-foreground">Or unlock with premium</span>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleUpgradeToPremium}
+              variant="outline"
+              className="w-full h-14 text-lg font-medium border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/5 hover:text-[#D4AF37] transition-colors"
+            >
+              <Sparkles className="h-5 w-5 mr-2" />
+              Get Premium Access
+            </Button>
+          </div>
         )}
       </div>
 
-      <Separator />
-
-      {/* Action Buttons - Download, Buy, or Premium CTA */}
-      {isFreeProduct ? (
-        /* Free Product - Always show download */
-        <div className="w-full">
-          <DownloadButton
-            storeId={data.storeId}
-            productId={data.id}
-            size="lg"
-            variant="premium"
-          />
-        </div>
-      ) : hasPremium ? (
-        /* Paid Product + Premium User - Show Download Free */
-        <div className="w-full space-y-3">
-          <DownloadButton
-            storeId={data.storeId}
-            productId={data.id}
-            size="lg"
-            variant="premium"
-            className="w-full"
-          />
-          <p className="text-sm text-muted-foreground text-center font-medium">
-            <Crown className="h-4 w-4 inline mr-1 text-[#D4AF37]" />
-            Downloading as a Premium member
-          </p>
-        </div>
-      ) : (
-        /* Paid Product + No Premium - Show Buy Now + Premium CTA */
-        <div className="w-full space-y-4">
-          {/* Buy Now Button */}
-          <Button
-            onClick={handleAddToCart}
-            disabled={isAdding}
-            className={cn(
-              "w-full h-12 text-base font-medium transition-all duration-300 ease-in-out",
-              "cursor-pointer",
-              isAdding
-                ? "bg-primary/80 hover:bg-primary/90 text-primary-foreground shadow-primary/30"
-                : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-md",
-              "transform hover:scale-[1.02] active:scale-[0.98]"
-            )}
-          >
-            <span className="flex items-center justify-center gap-x-2 text-lg font-semibold">
-              {isAdding ? (
-                <>
-                  <Check className="w-5 h-5" />
-                  Added
-                </>
-              ) : (
-                <>
-                  Buy Now
-                  <ShoppingCart className="w-5 h-5" />
-                </>
-              )}
-            </span>
-          </Button>
-
-          {/* Premium CTA */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Or</span>
-            </div>
-          </div>
-
-          <div className="p-4 bg-gradient-to-r from-[#D4AF37]/10 to-[#B8941F]/10 border border-[#D4AF37]/20 rounded-lg">
-            <div className="flex items-start gap-3 mb-3">
-              <Crown className="h-5 w-5 text-[#D4AF37] shrink-0 mt-0.5" />
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground mb-1">
-                  Unlock with Premium
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Get unlimited access to all premium products for just $7/month
-                </p>
-              </div>
-            </div>
-            <Button
-              onClick={handleUpgradeToPremium}
-              size="default"
-              className="w-full bg-[#D4AF37] hover:bg-[#B8941F] text-white font-bold hover:scale-105 transition-all"
-            >
-              <Sparkles className="h-4 w-4 mr-2" />
-              Unlock with Premium
-            </Button>
-            <p className="text-xs text-muted-foreground text-center mt-2">
-              <Sparkles className="h-3 w-3 inline mr-1 text-[#D4AF37]" />
-              <span className="text-muted-foreground font-medium">7-day free trial included</span>
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Keywords / Tags */}
+      {/* Tags */}
       {data.keywords?.length > 0 && (
-        <div className="pt-2">
-          <h3 className="text-lg text-foreground font-bold mb-2">Tags</h3>
+        <div className="pt-8">
           <div className="flex flex-wrap gap-2">
-            {/* Handle keywords splitting if they come as comma-separated strings */}
             {data.keywords
               .flatMap(keyword =>
                 typeof keyword === 'string'
@@ -204,7 +166,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               .map((keyword, i) => (
                 <span
                   key={i}
-                  className="bg-accent/10 text-foreground text-sm font-medium px-3 py-1 rounded-full"
+                  className="px-4 py-1.5 rounded-full border border-border bg-background hover:bg-accent hover:text-accent-foreground text-sm font-medium transition-colors cursor-default"
                 >
                   {keyword}
                 </span>

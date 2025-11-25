@@ -20,7 +20,7 @@ interface ProductResponse {
 }
 
 const getProducts = async (query: Query): Promise<ProductResponse> => {
-  try { 
+  try {
     const url = qs.stringifyUrl({
       url: URL,
       query: {
@@ -34,7 +34,7 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
     })
 
     const res = await fetch(url, {
-      next: { 
+      next: {
         revalidate: 60, // Cache for 60 seconds
         tags: ['products'] // For on-demand revalidation
       },
@@ -52,6 +52,7 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
 
     const processedProducts = data.products.map((product: Product) => ({
       ...product,
+      category: product.Category || product.category,
       images: product.Image?.map((img: { url: string }) => ({ url: img.url })) || [],
     }))
 

@@ -5,7 +5,7 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/products`;
 const getProduct = async (id: string): Promise<Product> => {
     try {
         const res = await fetch(`${URL}/${id}`, {
-            next: { 
+            next: {
                 revalidate: 60, // Cache for 60 seconds
                 tags: ['products', `product-${id}`] // For on-demand revalidation
             },
@@ -28,6 +28,7 @@ const getProduct = async (id: string): Promise<Product> => {
 
         return {
             ...data,
+            category: data.Category || data.category,
             images: data.Image?.map((img: any) => ({ url: img.url })) || [],
         };
     } catch (error) {

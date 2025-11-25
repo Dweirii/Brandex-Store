@@ -34,7 +34,7 @@ const NavbarActions = () => {
       {isPremium && (
         <button
           onClick={() => premiumModal.onOpen()}
-          className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 hover:bg-green-500/20 transition-all cursor-pointer group"
+          className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-md bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 hover:bg-green-500/20 transition-all cursor-pointer group"
         >
           <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform" />
           <span className="text-sm font-semibold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">

@@ -8,6 +8,7 @@ import ProductList from "@/components/product-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Container from "@/components/ui/container";
 
 // Code splitting: Lazy load Gallery component
 const Gallery = dynamic(() => import("@/components/gallery"), {
@@ -82,52 +83,60 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     return (
       <div className="bg-card text-foreground">
         {/* === Main Product Section === */}
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-10">
-          <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-            {/* Media */}
-            <div className="w-full overflow-hidden">
-              {(product.videoUrl || product.images?.length > 0) ? (
+        {/* === Main Product Section === */}
+        <Container>
+          <div className="px-4 sm:px-6 lg:px-8 py-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-10 items-start">
+              {/* Media */}
+              <div className="w-full overflow-hidden">
+                {(product.videoUrl || product.images?.length > 0) ? (
+                  <Suspense
+                    fallback={
+                      <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
+                        <div className="relative aspect-[4/3] w-full">
+                          <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
+                        </div>
+                      </div>
+                    }
+                  >
+                    <Gallery data={product} />
+                  </Suspense>
+                ) : (
+                  <div className="h-96 bg-muted/10 flex items-center justify-center rounded-xl">
+                    <p className="text-muted-foreground">No media available</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="w-full">
+                <Info data={product} />
+              </div>
+            </div>
+          </div>
+        </Container>
+
+        {/* === Related Products Section === */}
+        {/* === Related Products Section === */}
+        <div className="border-t border-border">
+          <Container>
+            <div className="px-4 sm:px-6 lg:px-8 py-12">
+              <section aria-labelledby="related-products-heading">
+                <h2 id="related-products-heading" className="sr-only">Related products</h2>
                 <Suspense
                   fallback={
-                    <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
-                      <div className="relative aspect-[4/3] w-full">
-                        <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
-                      </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {Array.from({ length: 6 }).map((_, i) => (
+                        <Skeleton key={i} className="h-96 rounded-lg" />
+                      ))}
                     </div>
                   }
                 >
-                  <Gallery data={product} />
+                  <RelatedProducts categoryId={product.category?.id} currentPage={currentPage} />
                 </Suspense>
-              ) : (
-                <div className="h-96 bg-muted/10 flex items-center justify-center rounded-xl">
-                  <p className="text-muted-foreground">No media available</p>
-                </div>
-              )}
+              </section>
             </div>
-
-            {/* Info */}
-            <div className="w-full">
-              <Info data={product} />
-            </div>
-          </div>
-        </div>
-
-        {/* === Related Products Section === */}
-        <div className="px-4 sm:px-6 lg:px-8 py-12 border-t border-border">
-          <section aria-labelledby="related-products-heading" className="max-w-screen-2xl mx-auto">
-            <h2 id="related-products-heading" className="sr-only">Related products</h2>
-            <Suspense
-              fallback={
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <Skeleton key={i} className="h-96 rounded-lg" />
-                  ))}
-                </div>
-              }
-            >
-              <RelatedProducts categoryId={product.category?.id} currentPage={currentPage} />
-            </Suspense>
-          </section>
+          </Container>
         </div>
       </div>
     );
