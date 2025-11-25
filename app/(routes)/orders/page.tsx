@@ -36,6 +36,23 @@ interface Order {
   orderItems: OrderItemRaw[]
 }
 
+interface OrderApiResponse {
+  id: string
+  createdAt: string
+  isPaid: boolean
+  price: number | string | null
+  OrderItem?: Array<{
+    id: string
+    price: number | string | null
+    productId: string
+    products?: {
+      id: string
+      name: string
+      storeId: string
+    } | null
+  }>
+}
+
 
 
 export default function OrdersPage() {
@@ -59,7 +76,27 @@ export default function OrdersPage() {
           "x-user-id": user.id,
         },
       })
-      setOrders(response.data)
+      const normalizedOrders: Order[] = (response.data as OrderApiResponse[]).map((order) => ({
+        id: order.id,
+        createdAt: order.createdAt,
+        isPaid: Boolean(order.isPaid),
+        price: Number(order.price ?? 0),
+        orderItems: Array.isArray(order.OrderItem)
+          ? order.OrderItem.map((item) => ({
+              id: item.id,
+              price: Number(item.price ?? 0),
+              productId: item.productId,
+              product: item.products
+                ? {
+                    id: item.products.id,
+                    name: item.products.name,
+                    storeId: item.products.storeId,
+                  }
+                : null,
+            }))
+          : [],
+      }))
+      setOrders(normalizedOrders)
     } catch (err) {
       console.error("Error fetching orders:", err)
       setError("Unable to fetch your orders. Please try again later.")
