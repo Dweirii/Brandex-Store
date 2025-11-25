@@ -129,19 +129,19 @@ export class SubscriptionApiClient {
    * 
    * @param storeId - Store ID for the subscription
    * @param priceId - Stripe Price ID (monthly or yearly)
-   * @param email - User email address
    * @returns Promise<string> - Stripe Checkout Session URL
    * @throws Error if authentication fails or API request fails
    * 
    * @example
    * const client = new SubscriptionApiClient(() => getToken({ template: "CustomerJWTBrandex" }))
-   * const checkoutUrl = await client.createSubscriptionCheckout(storeId, priceId, email)
+   * const checkoutUrl = await client.createSubscriptionCheckout(storeId, priceId)
    * window.location.href = checkoutUrl
+   * 
+   * @note Email is extracted from the authenticated user's JWT token on the server
    */
   async createSubscriptionCheckout(
     storeId: string,
-    priceId: string,
-    email: string
+    priceId: string
   ): Promise<string> {
     const token = await this.getTokenFn()
     if (!token) {
@@ -156,7 +156,6 @@ export class SubscriptionApiClient {
       },
       body: JSON.stringify({
         priceId,
-        email,
       }),
     })
 
@@ -302,20 +301,20 @@ export async function getSubscriptionStatus(
  * 
  * @param storeId - Store ID for the subscription
  * @param priceId - Stripe Price ID (monthly or yearly)
- * @param email - User email address
  * @param token - Clerk authentication token
  * @returns Promise<string> - Stripe Checkout Session URL
  * 
  * @example
  * const { getToken } = useAuth()
  * const token = await getToken({ template: "CustomerJWTBrandex" })
- * const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, email, token)
+ * const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, token)
  * window.location.href = checkoutUrl
+ * 
+ * @note Email is extracted from the authenticated user's JWT token on the server
  */
 export async function createSubscriptionCheckout(
   storeId: string,
   priceId: string,
-  email: string,
   token: string | null
 ): Promise<string> {
   if (!token) {
@@ -331,7 +330,6 @@ export async function createSubscriptionCheckout(
     },
     body: JSON.stringify({
       priceId,
-      email,
     }),
   })
 
