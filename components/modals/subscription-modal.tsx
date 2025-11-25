@@ -138,8 +138,9 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
         return
       }
 
-      // Email is now extracted from the JWT token on the server
-      const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, token)
+      // Temporarily send email as fallback until Clerk JWT template is updated
+      const email = user.emailAddresses?.[0]?.emailAddress || user.primaryEmailAddress?.emailAddress || ""
+      const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, email, token)
       window.location.href = checkoutUrl
     } catch (error) {
       console.error("Subscription error:", error)

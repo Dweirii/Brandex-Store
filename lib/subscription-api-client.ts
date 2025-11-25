@@ -129,19 +129,21 @@ export class SubscriptionApiClient {
    * 
    * @param storeId - Store ID for the subscription
    * @param priceId - Stripe Price ID (monthly or yearly)
+   * @param email - User email (temporary fallback until JWT template updated)
    * @returns Promise<string> - Stripe Checkout Session URL
    * @throws Error if authentication fails or API request fails
    * 
    * @example
    * const client = new SubscriptionApiClient(() => getToken({ template: "CustomerJWTBrandex" }))
-   * const checkoutUrl = await client.createSubscriptionCheckout(storeId, priceId)
+   * const checkoutUrl = await client.createSubscriptionCheckout(storeId, priceId, email)
    * window.location.href = checkoutUrl
    * 
-   * @note Email is extracted from the authenticated user's JWT token on the server
+   * @note Email is extracted from JWT token on server, but sent as fallback until Clerk template updated
    */
   async createSubscriptionCheckout(
     storeId: string,
-    priceId: string
+    priceId: string,
+    email?: string
   ): Promise<string> {
     const token = await this.getTokenFn()
     if (!token) {
@@ -156,6 +158,7 @@ export class SubscriptionApiClient {
       },
       body: JSON.stringify({
         priceId,
+        email, // Temporary fallback
       }),
     })
 
@@ -301,20 +304,22 @@ export async function getSubscriptionStatus(
  * 
  * @param storeId - Store ID for the subscription
  * @param priceId - Stripe Price ID (monthly or yearly)
+ * @param email - User email (temporary fallback until JWT template updated)
  * @param token - Clerk authentication token
  * @returns Promise<string> - Stripe Checkout Session URL
  * 
  * @example
  * const { getToken } = useAuth()
  * const token = await getToken({ template: "CustomerJWTBrandex" })
- * const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, token)
+ * const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, email, token)
  * window.location.href = checkoutUrl
  * 
- * @note Email is extracted from the authenticated user's JWT token on the server
+ * @note Email is extracted from JWT token on server, but sent as fallback until Clerk template updated
  */
 export async function createSubscriptionCheckout(
   storeId: string,
   priceId: string,
+  email: string,
   token: string | null
 ): Promise<string> {
   if (!token) {
@@ -330,6 +335,7 @@ export async function createSubscriptionCheckout(
     },
     body: JSON.stringify({
       priceId,
+      email, // Temporary fallback
     }),
   })
 
