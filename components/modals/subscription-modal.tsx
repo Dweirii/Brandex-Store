@@ -19,6 +19,7 @@ import { useSubscription, triggerSubscriptionRefresh } from "@/hooks/use-subscri
 import { cancelSubscription, resumeSubscription, createSubscriptionCheckout } from "@/lib/subscription-api-client"
 import toast from "react-hot-toast"
 import { useSearchParams, useRouter } from "next/navigation"
+import Link from "next/link"
 import axios from "axios"
 
 const getAdminBaseUrl = () => {
@@ -292,6 +293,12 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                 </div>
               )}
 
+              <div className="mt-2 text-center">
+                <Link href="/premium" className="text-xs text-primary hover:underline" onClick={() => onOpenChange(false)}>
+                  View Premium Benefits
+                </Link>
+              </div>
+
               <Separator className="my-4" />
 
               {subscription?.cancelAtPeriodEnd ? (
@@ -353,8 +360,8 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                 <button
                   onClick={() => setSelectedPlan("monthly")}
                   className={`p-3 rounded-lg border-2 transition-all ${selectedPlan === "monthly"
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50"
                     }`}
                 >
                   <div className="text-left">
@@ -366,8 +373,8 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                 <button
                   onClick={() => setSelectedPlan("yearly")}
                   className={`p-3 rounded-lg border-2 transition-all relative ${selectedPlan === "yearly"
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/50"
                     }`}
                 >
                   <Badge className="absolute -top-2 -right-2 text-xs">Save</Badge>
@@ -394,6 +401,12 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                 <Crown className="h-4 w-4 mr-2" />
                 {hadTrialBefore ? "Subscribe Now" : "Start Free Trial"}
               </Button>
+
+              <div className="text-center">
+                <Link href="/premium" className="text-xs text-muted-foreground hover:text-primary hover:underline" onClick={() => onOpenChange(false)}>
+                  Learn more about Premium features
+                </Link>
+              </div>
 
               {hadTrialBefore && (
                 <p className="text-xs text-center text-muted-foreground">

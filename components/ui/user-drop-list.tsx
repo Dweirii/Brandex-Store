@@ -166,11 +166,8 @@ export function UserDropdown() {
 
           <DropdownMenuSeparator className="bg-border my-2" />
 
-          <DropdownMenuItem
-            onClick={() => setSubscriptionModalOpen(true)}
-            className={menuItemClass}
-          >
-            <div className="flex items-center gap-3 w-full">
+          <DropdownMenuItem asChild className={menuItemClass}>
+            <Link href="/premium" className="flex items-center gap-3 w-full">
               <div className={iconWrapperClass}>
                 <Crown className="w-4 h-4 text-primary" />
               </div>
@@ -187,7 +184,7 @@ export function UserDropdown() {
                   ACTIVE
                 </div>
               )}
-            </div>
+            </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem asChild className={menuItemClass}>

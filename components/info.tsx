@@ -60,6 +60,14 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       {/* Title & Price Section */}
       <div className="space-y-4">
         <div className="flex flex-col gap-4">
+          {hasPremium && (
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-green-500/10 to-emerald-500/10 text-green-600 dark:text-green-400 border border-green-500/20">
+                <Crown className="h-4 w-4" />
+                Premium Member
+              </span>
+            </div>
+          )}
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-tight">
             {data.name}
           </h1>

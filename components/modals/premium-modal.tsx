@@ -15,6 +15,7 @@ import {
 import { motion } from "framer-motion"
 import { usePremiumModal } from "@/hooks/use-premium-modal"
 import { useSubscription } from "@/hooks/use-subscription"
+import Link from "next/link"
 
 export function PremiumModal() {
   const premiumModal = usePremiumModal()
@@ -70,13 +71,17 @@ export function PremiumModal() {
               <p className="text-muted-foreground">
                 You have full access to all premium products and features.
               </p>
-              <Button
-                onClick={() => premiumModal.onClose()}
-                className="mt-4"
-                variant="outline"
-              >
-                Continue Browsing
-              </Button>
+              <div className="flex flex-col gap-2 mt-4">
+                <Button
+                  onClick={() => premiumModal.onClose()}
+                  variant="outline"
+                >
+                  Continue Browsing
+                </Button>
+                <Link href="/premium" className="text-sm text-green-600 hover:underline" onClick={() => premiumModal.onClose()}>
+                  View Premium Benefits
+                </Link>
+              </div>
             </motion.div>
           ) : !isSignedIn ? (
             /* Not Signed In */
@@ -99,6 +104,11 @@ export function PremiumModal() {
               >
                 Sign In to Continue
               </Button>
+              <div className="mt-4">
+                <Link href="/premium" className="text-sm text-muted-foreground hover:text-primary hover:underline" onClick={() => premiumModal.onClose()}>
+                  Learn more about Premium
+                </Link>
+              </div>
             </motion.div>
           ) : (
             /* Show Upgrade Options */
@@ -138,11 +148,16 @@ export function PremiumModal() {
               />
 
               {/* Trial Info */}
-              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <Sparkles className="h-4 w-4 text-green-500" />
-                <span className="text-green-600 dark:text-green-400 font-medium">
-                  7-day free trial • Cancel anytime • No commitments
-                </span>
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <Sparkles className="h-4 w-4 text-green-500" />
+                  <span className="text-green-600 dark:text-green-400 font-medium">
+                    7-day free trial • Cancel anytime • No commitments
+                  </span>
+                </div>
+                <Link href="/premium" className="text-xs text-muted-foreground hover:text-primary hover:underline" onClick={() => premiumModal.onClose()}>
+                  Learn more about Premium features
+                </Link>
               </div>
             </>
           )}

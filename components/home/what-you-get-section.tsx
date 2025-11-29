@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Package, FileText, Lightbulb, Sparkles, Camera } from "lucide-react"
+import Link from "next/link"
 
 const features = [
   {
@@ -129,16 +130,18 @@ export function WhatYouGetSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <motion.div
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#00EB02]/10 to-purple-500/10 border border-[#00EB02]/20 text-sm font-medium text-[#00EB02] mb-8"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            <Sparkles className="w-4 h-4" />
-            Premium Digital Arsenal
-          </motion.div>
+          <Link href="/premium">
+            <motion.div
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#00EB02]/10 to-purple-500/10 border border-[#00EB02]/20 text-sm font-medium text-[#00EB02] mb-8 cursor-pointer hover:bg-[#00EB02]/20 transition-colors"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <Sparkles className="w-4 h-4" />
+              Premium Digital Arsenal
+            </motion.div>
+          </Link>
 
           <h2 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
             <span className="heading-section mb-6 bg-gradient-to-r from-foreground to-primary dark:from-foreground dark:to-primary bg-clip-text text-transparent">
@@ -176,9 +179,8 @@ export function WhatYouGetSection() {
               className={`group relative ${index === 0 ? "lg:col-span-2" : ""} ${index === 1 ? "lg:row-span-2" : ""}`}
             >
               <div
-                className={`relative h-full min-h-[400px] ${
-                  index === 0 ? "lg:min-h-[300px]" : ""
-                } ${index === 1 ? "lg:min-h-[600px]" : ""} 
+                className={`relative h-full min-h-[400px] ${index === 0 ? "lg:min-h-[300px]" : ""
+                  } ${index === 1 ? "lg:min-h-[600px]" : ""} 
                 rounded-3xl ${feature.bgPattern} border border-gray-100 dark:border-gray-800 
                 overflow-hidden transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl 
                 hover:shadow-purple-500/10 dark:hover:shadow-[#00EB02]/10`}
