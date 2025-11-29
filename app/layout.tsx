@@ -33,9 +33,45 @@ const font = Urbanist({
 });
 
 export const metadata: Metadata = {
-  title: "Brandex",
+  title: {
+    default: "Brandex — Premium Mockups & Design Resources",
+    template: "%s | Brandex",
+  },
   description:
     "Brandex — Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
+  keywords: "mockups, packaging design, PSD files, design resources, brand assets, premium designs",
+  authors: [{ name: "Brandex" }],
+  creator: "Brandex",
+  publisher: "Brandex",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || 
+    (process.env.NODE_ENV === "production" ? "https://brandexme.com" : "http://localhost:3000")
+  ),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Brandex",
+    title: "Brandex — Premium Mockups & Design Resources",
+    description:
+      "Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Brandex — Premium Mockups & Design Resources",
+    description:
+      "Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-1YRZK4HX52";

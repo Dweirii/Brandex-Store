@@ -1,5 +1,4 @@
-// app/(routes)/category/[categoryId]/page.tsx
-
+import { Metadata } from "next"
 import { Suspense } from "react"
 import getCategory from "@/actions/get-category"
 import getCategories from "@/actions/get-categories"
@@ -11,9 +10,40 @@ import { ScrollToTop } from "@/components/scroll-to-top"
 import PriceFilter from "@/components/price-filter"
 import SortFilter from "@/components/sort-filter"
 import CategoryNav from "@/components/category-nav"
+import {
+  generateCategoryMetadata,
+  generateBreadcrumbStructuredData,
+  getSiteUrl,
+} from "@/lib/seo"
 
-// Cache for 60 seconds - balance freshness with performance
 export const revalidate = 60
+
+// Generate dynamic metadata for category pages
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ categoryId: string }>
+}): Promise<Metadata> {
+  try {
+    const { categoryId } = await params
+    const category = await getCategory(categoryId)
+    
+    if (!category) {
+      return {
+        title: "Category Not Found | Brandex",
+        description: "The requested category could not be found.",
+      }
+    }
+
+    return generateCategoryMetadata(category, categoryId)
+  } catch (error) {
+    console.error("Error generating category metadata:", error)
+    return {
+      title: "Category | Brandex",
+      description: "Browse products in this category.",
+    }
+  }
+}
 
 interface CategoryProductsProps {
   categoryId: string
@@ -71,11 +101,32 @@ export default async function CategoryPage({
   const priceFilter = searchParamsData?.priceFilter
   const sortBy = searchParamsData?.sortBy
 
-  // Fetch categories for navigation
-  const categories = await getCategories()
+  // Fetch category and categories for navigation
+  const [category, categories] = await Promise.all([
+    getCategory(categoryId),
+    getCategories(),
+  ])
+
+  // Generate breadcrumb structured data
+  const siteUrl = getSiteUrl()
+  const breadcrumbStructuredData = category
+    ? generateBreadcrumbStructuredData([
+        { name: "Home", url: siteUrl },
+        { name: category.name, url: `${siteUrl}/category/${categoryId}` },
+      ])
+    : null
 
   return (
     <Container>
+      {/* Structured Data */}
+      {breadcrumbStructuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbStructuredData),
+          }}
+        />
+      )}
       <div className="min-h-screen py-6 sm:py-8">
         {/* Header with Categories and Filters */}
         <div className="px-4 sm:px-6 lg:px-8 mb-8">

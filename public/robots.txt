@@ -1,0 +1,30 @@
+# robots.txt for Brandex
+# https://brandexme.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private routes
+Disallow: /api/
+Disallow: /sign-in/
+Disallow: /sign-up/
+Disallow: /cart/
+Disallow: /orders/
+Disallow: /app/
+
+# Allow public pages
+Allow: /
+Allow: /products/
+Allow: /category/
+Allow: /home/
+Allow: /thank-you/
+Allow: /privacy-policy/
+Allow: /refund-policy/
+Allow: /terms-of-service/
+
+# Sitemap location
+Sitemap: https://brandexme.com/sitemap.xml
+
+# Crawl-delay (optional, adjust as needed)
+Crawl-delay: 1
+

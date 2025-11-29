@@ -9,8 +9,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Container from "@/components/ui/container";
+import {
+  generateProductMetadata,
+  generateProductStructuredData,
+  generateBreadcrumbStructuredData,
+  getSiteUrl,
+} from "@/lib/seo";
 
-// Code splitting: Lazy load Gallery component
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
     <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
@@ -22,20 +27,36 @@ const Gallery = dynamic(() => import("@/components/gallery"), {
   ssr: true,
 });
 
-
-
-// optional static metadata fallback
-export const metadata: Metadata = {
-  title: "Product Details",
-  description: "Explore details about this product.",
-};
-
 interface ProductPageProps {
   params: Promise<{ productId: string }>;
   searchParams?: Promise<{ page?: string }>;
 }
 
-// Separate component for related products to enable streaming
+
+export async function generateMetadata({
+  params,
+}: ProductPageProps): Promise<Metadata> {
+  try {
+    const { productId } = await params;
+    const product = await getProduct(productId);
+    
+    if (!product) {
+      return {
+        title: "Product Not Found | Brandex",
+        description: "The requested product could not be found.",
+      };
+    }
+
+    return generateProductMetadata(product, productId);
+  } catch (error) {
+    console.error("Error generating product metadata:", error);
+    return {
+      title: "Product Details | Brandex",
+      description: "Explore details about this product.",
+    };
+  }
+}
+
 async function RelatedProducts({ categoryId, currentPage }: { categoryId?: string; currentPage: number }) {
   if (!categoryId) return null;
 
@@ -74,16 +95,33 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
     const { productId } = await params;
     const currentPage = parseInt((await searchParams)?.page || "1", 10);
 
-    // Fetch product first (required for page)
     const product = await getProduct(productId);
     if (!product) throw new Error("Product not found");
 
-    // Related products can load separately (streaming)
+    const siteUrl = getSiteUrl();
+    const productStructuredData = generateProductStructuredData(product, productId);
+    const breadcrumbStructuredData = generateBreadcrumbStructuredData([
+      { name: "Home", url: siteUrl },
+      { name: product.category?.name || "Products", url: product.category?.id ? `${siteUrl}/category/${product.category.id}` : `${siteUrl}/home` },
+      { name: product.name, url: `${siteUrl}/products/${productId}` },
+    ]);
+
 
     return (
       <div className="bg-card text-foreground">
-        {/* === Main Product Section === */}
-        {/* === Main Product Section === */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(productStructuredData),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbStructuredData),
+          }}
+        />
+
         <Container>
           <div className="px-4 sm:px-6 lg:px-8 py-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-10 items-start">
@@ -108,7 +146,6 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                 )}
               </div>
 
-              {/* Info */}
               <div className="w-full">
                 <Info data={product} />
               </div>
@@ -116,8 +153,6 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           </div>
         </Container>
 
-        {/* === Related Products Section === */}
-        {/* === Related Products Section === */}
         <div className="border-t border-border">
           <Container>
             <div className="px-4 sm:px-6 lg:px-8 py-12">
