@@ -12,20 +12,49 @@ import { SubscriptionModal } from "@/components/modals/subscription-modal"
 import { Badge } from "@/components/ui/badge"
 
 export default function PremiumPage() {
-    const [storeId, setStoreId] = useState<string>("")
     const [open, setOpen] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
     const { isSignedIn } = useAuth()
 
-    useEffect(() => {
-        const defaultStoreId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
-        setStoreId(defaultStoreId)
-    }, [])
+    // Get storeId directly from env to avoid SSR/render issues
+    const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
 
     const { isActive: isPremium } = useSubscription(storeId, {
         autoRefresh: false
     })
 
-    if (!storeId) return null
+    useEffect(() => {
+        setIsMounted(true)
+    }, [])
+
+    // Show loading state during hydration
+    if (!isMounted) {
+        return (
+            <div className="bg-background min-h-screen py-20">
+                <Container>
+                    <div className="text-center">
+                        <div className="animate-pulse space-y-8">
+                            <div className="h-12 bg-muted rounded w-1/2 mx-auto"></div>
+                            <div className="h-6 bg-muted rounded w-1/3 mx-auto"></div>
+                        </div>
+                    </div>
+                </Container>
+            </div>
+        )
+    }
+
+    if (!storeId) {
+        return (
+            <div className="bg-background min-h-screen py-20">
+                <Container>
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-destructive">Configuration Error</h1>
+                        <p className="text-muted-foreground mt-4">Store ID is not configured. Please contact support.</p>
+                    </div>
+                </Container>
+            </div>
+        )
+    }
 
     return (
         <div className="bg-background min-h-screen py-20">
