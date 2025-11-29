@@ -17,7 +17,7 @@ export default function PremiumPage() {
     const { isSignedIn } = useAuth()
 
     // Get storeId directly from env to avoid SSR/render issues
-    const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
+    const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || "a940170f-71ea-4c2b-b0ec-e2e9e3c68567"
 
     const { isActive: isPremium } = useSubscription(storeId, {
         autoRefresh: false
