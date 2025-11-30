@@ -15,6 +15,7 @@ import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
 import { DisableContextMenu } from "@/components/disable-context-menu";
 import AppToaster from "@/components/ui/toaster";
+import { GeoInitializer } from "@/components/geo-initializer";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
   creator: "Brandex",
   publisher: "Brandex",
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || 
+    process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.NODE_ENV === "production" ? "https://brandexme.com" : "http://localhost:3000")
   ),
   openGraph: {
@@ -109,6 +110,7 @@ export default function RootLayout({
               <ModalProvider />
               <ToastProvider />
               <DisableContextMenu />
+              <GeoInitializer />
               <Suspense fallback={<div className="h-20 bg-background/80 border-b border-border/40" />}>
                 <Navbar />
               </Suspense>

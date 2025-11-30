@@ -1,12 +1,8 @@
 "use client"
 
 import { useEffect, useState, memo } from "react"
-
-// Memoize formatter to avoid recreation on every render
-const formatter = new Intl.NumberFormat("en-US", {
-    style: 'currency',
-    currency: 'USD'
-})
+import { useGeo } from "@/hooks/use-geo"
+import { CURRENCIES } from "@/lib/currency-config"
 
 interface CurrencyProps {
     value?: string | number
@@ -16,6 +12,7 @@ const Currency: React.FC<CurrencyProps> = memo(({
     value = 0,
 }) => {
     const [isMounted, setIsMounted] = useState(false)
+    const { currency } = useGeo()
 
     useEffect(() => {
         setIsMounted(true)
@@ -28,13 +25,19 @@ const Currency: React.FC<CurrencyProps> = memo(({
             </div>
         )
     }
-    
-    // Handle edge cases for better performance
+
     const numValue = typeof value === 'string' ? parseFloat(value) || 0 : Number(value) || 0
-    
-    return ( 
+    const currencyConfig = CURRENCIES[currency] || CURRENCIES.USD
+    const convertedValue = numValue * currencyConfig.rate
+
+    const formatter = new Intl.NumberFormat("en-US", {
+        style: 'currency',
+        currency: currencyConfig.code,
+    })
+
+    return (
         <div className="font-semibold text-foreground">
-           {formatter.format(numValue)} 
+            {formatter.format(convertedValue)}
         </div>
     )
 })
