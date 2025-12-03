@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { PackageSearch } from "lucide-react"
 import { useDebouncedCallback } from "use-debounce"
 
-import type { Product } from "@/types"
+import type { Product, Category } from "@/types"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
 import ProductCard from "@/components/ui/product-card"
@@ -22,10 +22,13 @@ interface SearchResponse {
   limit: number
 }
 
+const DEFAULT_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a" // MOCKUP STUDIO
+
 export default function ProductSearchPage() {
   const searchParams = useSearchParams()
   const storeId = searchParams.get("storeId") || undefined
   const queryParam = searchParams.get("query") || ""
+  const categoryIdParam = searchParams.get("categoryId") || DEFAULT_CATEGORY_ID
   const pageParam = parseInt(searchParams.get("page") || "1", 10)
 
   const [products, setProducts] = useState<Product[]>([])
@@ -34,9 +37,37 @@ export default function ProductSearchPage() {
   const [pageCount, setPageCount] = useState(1)
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("MOCKUP STUDIO")
+
+  // Fetch category name on mount and when categoryId changes
+  useEffect(() => {
+    const fetchCategoryName = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
+        const res = await fetch(`${apiUrl}/categories/${categoryIdParam}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+
+        if (res.ok) {
+          const category: Category = await res.json()
+          setSelectedCategoryName(category.name)
+        }
+      } catch (error) {
+        console.error("Failed to fetch category:", error)
+      }
+    }
+
+    if (categoryIdParam !== DEFAULT_CATEGORY_ID) {
+      fetchCategoryName()
+    } else {
+      setSelectedCategoryName("MOCKUP STUDIO")
+    }
+  }, [categoryIdParam])
 
   const performSearch = useCallback(
-    async (searchQuery: string, page: number = 1) => {
+    async (searchQuery: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID) => {
       if (!searchQuery.trim() || searchQuery.trim().length < 2) {
         setProducts([])
         setTotal(0)
@@ -50,13 +81,20 @@ export default function ProductSearchPage() {
 
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
+        const params: Record<string, string | number> = {
+          query: searchQuery.trim(),
+          storeId: storeId || "",
+          page,
+          limit: 60,
+        }
+
+        // Only add categoryId if it's not the default
+        if (categoryId !== DEFAULT_CATEGORY_ID) {
+          params.categoryId = categoryId
+        }
+
         const res = await axios.get<SearchResponse>(`${apiUrl}/products/search`, {
-          params: {
-            query: searchQuery.trim(),
-            storeId,
-            page,
-            limit: 60,
-          },
+          params,
         })
 
         const data = res.data
@@ -78,8 +116,8 @@ export default function ProductSearchPage() {
 
   // Debounced search to prevent excessive API calls (only for query changes)
   const debouncedSearch = useDebouncedCallback(
-    (searchQuery: string, page: number) => {
-      performSearch(searchQuery, page)
+    (searchQuery: string, page: number, categoryId: string) => {
+      performSearch(searchQuery, page, categoryId)
     },
     300 // Wait 300ms after user stops typing
   )
@@ -87,29 +125,33 @@ export default function ProductSearchPage() {
   // Track previous values to detect what changed
   const prevQueryRef = useRef<string>("")
   const prevPageRef = useRef<number>(1)
+  const prevCategoryIdRef = useRef<string>(DEFAULT_CATEGORY_ID)
 
-  // Handle search when query or page param changes
+  // Handle search when query, page, or categoryId param changes
   useEffect(() => {
     const currentQuery = searchParams.get("query") || ""
     const currentPage = parseInt(searchParams.get("page") || "1", 10)
+    const currentCategoryId = searchParams.get("categoryId") || DEFAULT_CATEGORY_ID
     
     // Update currentPage state to match URL
     setCurrentPage(currentPage)
     
     const queryChanged = currentQuery !== prevQueryRef.current
     const pageChanged = currentPage !== prevPageRef.current
+    const categoryChanged = currentCategoryId !== prevCategoryIdRef.current
     
     // Update refs
     prevQueryRef.current = currentQuery
     prevPageRef.current = currentPage
+    prevCategoryIdRef.current = currentCategoryId
     
     if (currentQuery.trim().length >= 2) {
       // If only page changed, search immediately (no debounce)
-      // If query changed, use debounced search
-      if (pageChanged && !queryChanged) {
-        performSearch(currentQuery, currentPage)
+      // If query or category changed, use debounced search
+      if (pageChanged && !queryChanged && !categoryChanged) {
+        performSearch(currentQuery, currentPage, currentCategoryId)
       } else {
-        debouncedSearch(currentQuery, currentPage)
+        debouncedSearch(currentQuery, currentPage, currentCategoryId)
       }
     } else {
       setProducts([])
@@ -130,6 +172,9 @@ export default function ProductSearchPage() {
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   Results for &quot;{queryParam}&quot;
+                  {categoryIdParam !== DEFAULT_CATEGORY_ID && (
+                    <span className="ml-2">in {selectedCategoryName}</span>
+                  )}
                 </p>
               </div>
               {!loading && hasSearched && (
