@@ -59,18 +59,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Error fetching categories for sitemap:", error);
   }
 
-  // Fetch all products (paginate through all pages)
+  // Fetch products with limits to prevent build timeouts
+  // Only include most recent products in sitemap for SEO
   let productPages: MetadataRoute.Sitemap = [];
   try {
+    const MAX_PAGES = 10; // Limit to 10 pages max (1000 products with limit 100)
+    const MAX_PRODUCTS = 1000; // Hard limit on total products to prevent timeout
+    const limit = 100; // Fetch in batches of 100
+    
     let page = 1;
     let hasMorePages = true;
-    const limit = 100; // Fetch in batches of 100
 
-    while (hasMorePages) {
+    while (hasMorePages && page <= MAX_PAGES && productPages.length < MAX_PRODUCTS) {
       const response = await getProducts({
         page,
         limit,
       });
+
+      if (!response.products || response.products.length === 0) {
+        break;
+      }
 
       const products = response.products.map((product) => ({
         url: `${siteUrl}/products/${product.id}`,
@@ -81,12 +89,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
       productPages = [...productPages, ...products];
 
-      // Check if there are more pages
-      hasMorePages = page < response.pageCount;
+      // Check if there are more pages and we haven't hit our limits
+      hasMorePages = page < response.pageCount && productPages.length < MAX_PRODUCTS;
       page++;
     }
   } catch (error) {
     console.error("Error fetching products for sitemap:", error);
+    // Continue with whatever products we've fetched so far
   }
 
   // Combine all pages
