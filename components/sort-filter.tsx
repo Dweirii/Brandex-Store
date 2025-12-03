@@ -36,15 +36,15 @@ export default function SortFilter({ className }: SortFilterProps) {
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
   
-  const currentSort = searchParams.get('sortBy') || 'mostPopular'
-  const currentSortLabel = sortOptions.find(opt => opt.value === currentSort)?.label || "Most Popular"
+  const currentSort = searchParams.get('sortBy') || 'newest'
+  const currentSortLabel = sortOptions.find(opt => opt.value === currentSort)?.label || "Newest"
   
   const handleSortChange = (sortValue: string) => {
     startTransition(() => {
       try {
         const params = new URLSearchParams(searchParams.toString())
         
-        if (sortValue === 'mostPopular') {
+        if (sortValue === 'newest') {
           params.delete('sortBy')
         } else {
           params.set('sortBy', sortValue)

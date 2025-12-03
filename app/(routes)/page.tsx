@@ -99,13 +99,13 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
 
         <div className="px-4 sm:px-6 lg:px-8">
           <Suspense 
-            key={`${currentPage}-${priceFilter || 'all'}-${sortBy || 'mostPopular'}`} 
+            key={`${currentPage}-${priceFilter || 'all'}-${sortBy || 'newest'}`} 
             fallback={<ProductListSkeleton title="" />}
           >
             <MockupProducts 
               currentPage={currentPage} 
               priceFilter={priceFilter}
-              sortBy={sortBy}
+              sortBy={sortBy || 'newest'}
             />
           </Suspense>
         </div>

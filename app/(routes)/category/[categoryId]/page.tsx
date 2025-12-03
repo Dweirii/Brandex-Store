@@ -146,14 +146,14 @@ export default async function CategoryPage({
         {/* Products Grid */}
         <div className="px-4 sm:px-6 lg:px-8">
           <Suspense
-            key={`${categoryId}-${currentPage}-${priceFilter || 'all'}-${sortBy || 'mostPopular'}`}
+            key={`${categoryId}-${currentPage}-${priceFilter || 'all'}-${sortBy || 'newest'}`}
             fallback={<ProductListSkeleton title="" />}
           >
             <CategoryProducts 
               categoryId={categoryId} 
               currentPage={currentPage} 
               priceFilter={priceFilter}
-              sortBy={sortBy}
+              sortBy={sortBy || 'newest'}
             />
           </Suspense>
         </div>
