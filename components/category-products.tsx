@@ -26,7 +26,7 @@ export default function CategoryProductsWithHeader({ categoryId, currentPage }: 
     setLoading(true)
     Promise.all([
       getCategory(categoryId),
-      getProducts({ categoryId, page: currentPage, limit: 12 }),
+      getProducts({ categoryId, page: currentPage, limit: 24 }),
     ]).then(([cat, prodRes]) => {
       setCategory(cat)
       setProducts(prodRes.products)

@@ -85,7 +85,7 @@ export default function ProductSearchPage() {
           query: searchQuery.trim(),
           storeId: storeId || "",
           page,
-          limit: 60,
+          limit: 24,
         }
 
         // Only add categoryId if it's not the default
@@ -214,7 +214,7 @@ export default function ProductSearchPage() {
           {!loading && products.length > 0 && (
             <div className="space-y-6">
               {/* Products Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-3 gap-4 sm:gap-6">
                 {products.map((product) => (
                   <ProductCard key={product.id} data={product} />
                 ))}

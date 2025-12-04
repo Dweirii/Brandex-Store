@@ -155,7 +155,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                   height={1000}
                   className="w-full h-full md:h-auto object-cover md:object-contain"
                   loading="lazy"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
                 />
               )
             )}
@@ -176,7 +176,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                 height={1000}
                 className="w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105 group-hover:brightness-110 group-hover:saturate-105"
                 loading="lazy"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
               />
               {/* Subtle overlay on hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />

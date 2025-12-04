@@ -38,7 +38,7 @@ async function MockupProducts({
     const { products, total, page, pageCount } = await getProduct({
       categoryId: MOCKUPS_CATEGORY_ID,
       page: currentPage,
-      limit: 60,
+      limit: 24,
       priceFilter: priceFilter,
       sortBy: sortBy,
     })
