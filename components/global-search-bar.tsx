@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { Search, ChevronRight, X } from "lucide-react"
+import { Search, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
   Select,
