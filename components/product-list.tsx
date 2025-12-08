@@ -48,13 +48,24 @@ const ProductList: React.FC<ProductListProps> = ({
   const [loading, setLoading] = useState(false)
   const observer = useRef<IntersectionObserver | null>(null)
   const lastElementRef = useRef<HTMLDivElement | null>(null)
+  
+  // Track the key combination to detect filter/sort changes
+  const filterKey = `${categoryId}-${priceFilter}-${sortBy}`
+  const prevFilterKeyRef = useRef(filterKey)
 
-  // Reset state when initial items change (e.g. filters changed)
+  // Reset state when filters change OR when initial items change
   useEffect(() => {
-    setProducts(items)
-    setPage(initialPage)
-    setHasMore(initialPage < initialPageCount)
-  }, [items, initialPage, initialPageCount])
+    // Check if filters changed
+    const filtersChanged = filterKey !== prevFilterKeyRef.current
+    prevFilterKeyRef.current = filterKey
+    
+    if (filtersChanged) {
+      // Filters changed - reset everything
+      setProducts(items)
+      setPage(initialPage)
+      setHasMore(initialPage < initialPageCount)
+    }
+  }, [filterKey, items, initialPage, initialPageCount])
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return
@@ -80,6 +91,7 @@ const ProductList: React.FC<ProductListProps> = ({
       }
     } catch (error) {
       console.error("Failed to load more products", error)
+      setHasMore(false)
     } finally {
       setLoading(false)
     }
@@ -87,12 +99,12 @@ const ProductList: React.FC<ProductListProps> = ({
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
-    if (loading) return
+    if (loading || !hasMore) return
 
     if (observer.current) observer.current.disconnect()
 
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
+      if (entries[0].isIntersecting && hasMore && !loading) {
         loadMore()
       }
     }, { rootMargin: '200px' })

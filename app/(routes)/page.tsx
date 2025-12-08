@@ -20,22 +20,20 @@ export const metadata: Metadata = generateHomeMetadata()
 const MOCKUPS_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
 
 interface HomePageProps {
-  searchParams: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
+  searchParams: Promise<{ priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
 }
 
 async function MockupProducts({ 
-  currentPage, 
   priceFilter,
   sortBy 
 }: { 
-  currentPage: number
   priceFilter?: 'paid' | 'free' | 'all'
   sortBy?: string
 }) {
   try {
     const { products, total, page, pageCount } = await getProduct({
       categoryId: MOCKUPS_CATEGORY_ID,
-      page: currentPage,
+      page: 1,
       limit: 24,
       priceFilter: priceFilter,
       sortBy: sortBy,
@@ -64,8 +62,7 @@ async function MockupProducts({
 }
 
 const HomePage = async ({ searchParams }: HomePageProps) => {
-  const { page, priceFilter, sortBy } = await searchParams
-  const currentPage = parseInt(page || "1", 10)
+  const { priceFilter, sortBy } = await searchParams
   const categories = await getCategories()
 
   const websiteStructuredData = generateWebsiteStructuredData()
@@ -100,11 +97,10 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
 
         <div className="px-4 sm:px-6 lg:px-8">
           <Suspense 
-            key={`${currentPage}-${priceFilter || 'all'}-${sortBy || 'newest'}`} 
+            key={`${priceFilter || 'all'}-${sortBy || 'newest'}`} 
             fallback={<ProductListSkeleton title="" />}
           >
             <MockupProducts 
-              currentPage={currentPage} 
               priceFilter={priceFilter}
               sortBy={sortBy || 'newest'}
             />

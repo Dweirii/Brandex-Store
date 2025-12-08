@@ -45,14 +45,12 @@ export async function generateMetadata({
 
 interface CategoryProductsProps {
   categoryId: string
-  currentPage: number
   priceFilter?: 'paid' | 'free' | 'all'
   sortBy?: string
 }
 
 async function CategoryProducts({
   categoryId,
-  currentPage,
   priceFilter,
   sortBy,
 }: CategoryProductsProps) {
@@ -60,7 +58,7 @@ async function CategoryProducts({
     getCategory(categoryId),
     getProducts({
       categoryId,
-      page: currentPage,
+      page: 1,
       limit: 24,
       priceFilter: priceFilter,
       sortBy: sortBy,
@@ -94,11 +92,10 @@ export default async function CategoryPage({
   searchParams,
 }: {
   params: Promise<{ categoryId: string }>
-  searchParams?: Promise<{ page?: string; priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
+  searchParams?: Promise<{ priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
 }) {
   const { categoryId } = await params
   const searchParamsData = await searchParams
-  const currentPage = parseInt(searchParamsData?.page || "1", 10)
   const priceFilter = searchParamsData?.priceFilter
   const sortBy = searchParamsData?.sortBy
 
@@ -147,12 +144,11 @@ export default async function CategoryPage({
         {/* Products Grid */}
         <div className="px-4 sm:px-6 lg:px-8">
           <Suspense
-            key={`${categoryId}-${currentPage}-${priceFilter || 'all'}-${sortBy || 'newest'}`}
+            key={`${categoryId}-${priceFilter || 'all'}-${sortBy || 'newest'}`}
             fallback={<ProductListSkeleton title="" />}
           >
             <CategoryProducts 
               categoryId={categoryId} 
-              currentPage={currentPage} 
               priceFilter={priceFilter}
               sortBy={sortBy || 'newest'}
             />
