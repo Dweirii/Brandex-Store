@@ -15,8 +15,6 @@ import {
   generateOrganizationStructuredData,
 } from "@/lib/seo"
 
-export const revalidate = 60
-
 export const metadata: Metadata = generateHomeMetadata()
 
 const MOCKUPS_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
@@ -119,3 +117,4 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
 }
 
 export default HomePage
+

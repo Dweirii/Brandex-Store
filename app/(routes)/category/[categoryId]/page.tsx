@@ -16,8 +16,6 @@ import {
   getSiteUrl,
 } from "@/lib/seo"
 
-export const revalidate = 60
-
 // Generate dynamic metadata for category pages
 export async function generateMetadata({
   params,
@@ -165,3 +163,4 @@ export default async function CategoryPage({
     </Container>
   )
 }
+
