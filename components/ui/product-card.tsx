@@ -9,6 +9,7 @@ import { ShoppingCart, Eye, Crown } from "lucide-react"
 import type { Product } from "@/types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { DownloadButton } from "@/components/ui/download-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import useCart from "@/hooks/use-cart"
@@ -31,6 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
+  const [mediaLoaded, setMediaLoaded] = useState(false)
   const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
 
   // Check subscription status (no auto-refresh to reduce API calls)
@@ -147,6 +149,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             )}
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
+            onLoadingComplete={() => setMediaLoaded(true)}
           />
         )}
 
@@ -164,16 +167,22 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
               hasImage ? "absolute inset-0 w-full h-full object-cover md:object-contain z-10" : "w-full h-full md:h-auto object-cover md:object-contain",
               (hasImage && !isHovered && !isMobile) ? "opacity-0" : "opacity-100"
             )}
+            onLoadedData={() => setMediaLoaded(true)}
           />
         )}
 
         {hasVideo && (
-          <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-20">
+          <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-30">
             <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
             Video
           </div>
+        )}
+
+        {/* Media skeleton overlay to prevent white flashes while loading */}
+        {!mediaLoaded && (hasVideo || hasImage) && (
+          <Skeleton className="absolute inset-0 z-20 rounded-lg bg-muted/20 animate-pulse pointer-events-none" />
         )}
 
         {/* Overlay for non-video items */}
