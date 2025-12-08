@@ -50,6 +50,9 @@ async function MockupProducts({
         total={total}
         page={page}
         pageCount={pageCount}
+        categoryId={MOCKUPS_CATEGORY_ID}
+        priceFilter={priceFilter}
+        sortBy={sortBy}
       />
     )
   } catch (error) {

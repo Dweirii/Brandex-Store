@@ -84,6 +84,9 @@ async function CategoryProducts({
       total={total}
       page={current}
       pageCount={pageCount}
+      categoryId={categoryId}
+      priceFilter={priceFilter}
+      sortBy={sortBy}
     />
   )
 }
