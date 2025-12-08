@@ -7,6 +7,7 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { ShoppingCart, Eye, Crown } from "lucide-react"
 import type { Product } from "@/types"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
@@ -57,7 +58,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
           }
         },
         {
-          rootMargin: '50px' // Start loading 50px before entering viewport
+          rootMargin: '200px' // Start loading 200px before entering viewport
         }
       )
 
@@ -133,55 +134,51 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     >
       {/* Image/Video Container */}
       <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4] md:aspect-auto">
-        {hasVideo ? (
-          <>
-            {shouldLoadVideo ? (
-              <video
-                ref={videoRef}
-                src={data.videoUrl!}
-                muted
-                loop
-                playsInline
-                preload="none" // Changed from "metadata" to "none" for better performance
-                className="w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105 group-hover:brightness-105"
-              />
-            ) : (
-              // Show placeholder image while video loads
-              firstImageUrl && (
-                <Image
-                  src={firstImageUrl}
-                  alt={data.name}
-                  width={800}
-                  height={1000}
-                  className="w-full h-full md:h-auto object-cover md:object-contain"
-                  loading="lazy"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
-                />
-              )
+        {/* Always render Image if available */}
+        {hasImage && (
+          <Image
+            src={firstImageUrl!}
+            alt={data.name}
+            width={800}
+            height={1000}
+            className={cn(
+              "w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105",
+              hasVideo ? "group-hover:brightness-105" : "group-hover:brightness-110 group-hover:saturate-105"
             )}
-            <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-20">
-              <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-              Video
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="relative w-full h-full">
-              <Image
-                src={firstImageUrl!}
-                alt={data.name}
-                width={800}
-                height={1000}
-                className="w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105 group-hover:brightness-110 group-hover:saturate-105"
-                loading="lazy"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
-              />
-              {/* Subtle overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
-            </div>
-          </>
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
+          />
+        )}
+
+        {/* Video Overlay */}
+        {hasVideo && shouldLoadVideo && (
+          <video
+            ref={videoRef}
+            src={data.videoUrl!}
+            muted
+            loop
+            playsInline
+            preload={hasImage ? "none" : "metadata"}
+            className={cn(
+              "transition-all duration-200 group-hover:scale-105 group-hover:brightness-105",
+              hasImage ? "absolute inset-0 w-full h-full object-cover md:object-contain z-10" : "w-full h-full md:h-auto object-cover md:object-contain",
+              (hasImage && !isHovered && !isMobile) ? "opacity-0" : "opacity-100"
+            )}
+          />
+        )}
+
+        {hasVideo && (
+          <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm z-20">
+            <svg className="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            Video
+          </div>
+        )}
+
+        {/* Overlay for non-video items */}
+        {!hasVideo && hasImage && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
         )}
 
         {/* Free Badge */}
