@@ -34,10 +34,7 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
     })
 
     const res = await fetch(url, {
-      next: {
-        revalidate: 60, // Cache for 60 seconds
-        tags: ['products'] // For on-demand revalidation
-      },
+      cache: "no-store",
       headers: {
         'Content-Type': 'application/json',
       }
