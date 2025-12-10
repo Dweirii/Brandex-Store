@@ -7,8 +7,10 @@ import { Download, Loader2, Lock, CheckCircle, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { track as vercelTrack } from "@vercel/analytics"
+import { toast as sonner } from "sonner"
 // ⬇️ shadcn/ui toast hook (adjust the path if your project differs)
 import { useToast } from "@/components/ui/use-toast"
+import { DownloadProgress } from "@/components/ui/download-progress"
 
 type ButtonSize = "sm" | "default" | "lg"
 type ButtonVariant = "default" | "outline" | "ghost" | "premium"
@@ -182,12 +184,69 @@ export const DownloadButton = ({
           throw new Error("Please sign in to download")
         }
 
+        // Handle CDN errors (503) with friendly message
+        if (res.status === 503 && text.startsWith("CDN_ERROR:")) {
+          const cdnMessage = text.replace("CDN_ERROR: ", "")
+          throw new Error(`CDN_ERROR:${cdnMessage}`)
+        }
+
         throw new Error(text || `Download failed (${res.status})`)
       }
 
-      const blob = await res.blob()
+      // Get file info before streaming
       const cd = res.headers.get("Content-Disposition")
       const name = extractFileName(cd, `${productId}`)
+      const contentLength = res.headers.get("Content-Length")
+      const totalBytes = contentLength ? parseInt(contentLength, 10) : 0
+
+      // Create a toast ID for progress updates
+      let toastId: string | number | undefined
+
+      // Download with progress tracking
+      const reader = res.body?.getReader()
+      if (!reader) {
+        throw new Error("Response body is not readable")
+      }
+
+      const chunks: BlobPart[] = []
+      let receivedBytes = 0
+
+      // Show initial progress toast
+      //eslint-disable-next-line @typescript-eslint/no-unused-vars
+      toastId = sonner(<DownloadProgress fileName={name} progress={0} />, {
+        duration: Infinity,
+        closeButton: false,
+      })
+
+      try {
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const { done, value } = await reader.read()
+
+          if (done) break
+
+          chunks.push(value)
+          receivedBytes += value.length
+
+          // Calculate progress
+          const progress = totalBytes > 0 ? (receivedBytes / totalBytes) * 100 : 0
+
+          // Update progress toast
+          if (toastId) {
+            sonner(<DownloadProgress fileName={name} progress={progress} />, {
+              id: toastId,
+              duration: Infinity,
+              closeButton: false,
+            })
+          }
+        }
+      } catch (streamError) {
+        console.error("[Download Stream Error]", streamError)
+        throw new Error("Download stream interrupted")
+      }
+
+      // Complete the download
+      const blob = new Blob(chunks)
       const url = URL.createObjectURL(blob)
       objectUrlRef.current = url
 
@@ -199,17 +258,21 @@ export const DownloadButton = ({
       a.click()
       a.remove()
 
+      // Show completion toast
+      if (toastId) {
+        sonner(<DownloadProgress fileName={name} progress={100} isComplete />, {
+          id: toastId,
+          duration: 3000,
+          closeButton: true,
+        })
+      }
+
       setDownloaded(true)
       setTimeout(() => setDownloaded(false), 3000)
 
       ga(gaEventName, { product_id: productId, store_id: storeId, file_name: name, bytes: blob.size })
       vTrack("download_success", { productId, storeId, fileName: name, bytes: blob.size })
       adsConversion(1)
-
-      toast({
-        title: "Download started",
-        description: name,
-      })
 
       onSuccess?.({ fileName: name, bytes: blob.size })
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -220,6 +283,24 @@ export const DownloadButton = ({
           : e?.message || "Download failed"
 
       console.error("[Download Error]", e)
+      
+      // Handle CDN errors with friendly message
+      if (msg.startsWith("CDN_ERROR:")) {
+        const friendlyMessage = msg.replace("CDN_ERROR:", "").trim()
+        
+        ga("download_error_cdn", { product_id: productId, store_id: storeId, message: friendlyMessage })
+        vTrack("download_error_cdn", { productId, storeId, message: friendlyMessage })
+        
+        toast({
+          title: "⚠️ Temporary Service Issue",
+          description: friendlyMessage,
+          variant: "default",
+        })
+        
+        onError?.(friendlyMessage)
+        return
+      }
+      
       ga("download_error", { product_id: productId, store_id: storeId, message: msg })
       vTrack("download_error", { productId, storeId, message: msg })
 
