@@ -13,7 +13,6 @@ import ModalProvider from "@/providers/model-provider";
 import ToastProvider from "@/providers/toast.provider";
 import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
-import { DisableContextMenu } from "@/components/disable-context-menu";
 import AppToaster from "@/components/ui/toaster";
 import { GeoInitializer } from "@/components/geo-initializer";
 
@@ -109,7 +108,6 @@ export default function RootLayout({
             <Providers>
               <ModalProvider />
               <ToastProvider />
-              <DisableContextMenu />
               <GeoInitializer />
               <Suspense fallback={<div className="h-20 bg-background/80 border-b border-border/40" />}>
                 <Navbar />

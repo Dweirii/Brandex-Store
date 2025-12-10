@@ -46,7 +46,7 @@ export const DownloadButton = ({
   size = "sm",
   variant = "default",
   fileNameOverride,
-  timeoutMs = 30_000,
+  timeoutMs = 30_0000,
   onSuccess,
   onError,
   gaEventName = GA_EVENT_DEFAULT,
@@ -68,14 +68,14 @@ export const DownloadButton = ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (typeof window !== "undefined" && (window as any).gtag) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(window as any).gtag("event", name, {
+        ; (window as any).gtag("event", name, {
           event_category: "download",
           event_label: productId,
           store_id: storeId,
           ...params,
         })
       }
-    } catch {}
+    } catch { }
   }
 
   const adsConversion = (value?: number) => {
@@ -84,21 +84,21 @@ export const DownloadButton = ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (typeof window !== "undefined" && (window as any).gtag) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(window as any).gtag("event", "conversion", {
+        ; (window as any).gtag("event", "conversion", {
           send_to: ADS_SEND_TO,
           value: value ?? 1,
           currency: "USD",
           items: [{ item_id: productId, item_category: "digital_asset" }],
         })
       }
-    } catch {}
+    } catch { }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const vTrack = (name: string, props?: Record<string, any>) => {
     try {
       vercelTrack?.(name, props)
-    } catch {}
+    } catch { }
   }
 
   const extractFileName = (cdHeader: string | null, fallback: string) => {
@@ -110,7 +110,7 @@ export const DownloadButton = ({
     let raw = starMatch?.[1] ?? plainMatch?.[1] ?? fallbackSafe
     try {
       raw = decodeURIComponent(raw)
-    } catch {}
+    } catch { }
     const base = raw.split(/[\\/]/).pop() || fallbackSafe
     return base.replace(/[^\w.\-()\[\]\s]+/g, "_")
   }
@@ -134,7 +134,7 @@ export const DownloadButton = ({
       })
       try {
         openSignIn?.()
-      } catch {}
+      } catch { }
       return
     }
 
@@ -171,17 +171,17 @@ export const DownloadButton = ({
 
       if (!res.ok) {
         const text = await res.text().catch(() => "")
-        
+
         // Handle specific error cases
         if (res.status === 403) {
           const errorMsg = text || "You don't have access to this product. Purchase it or subscribe to Premium to download."
           throw new Error(errorMsg)
         }
-        
+
         if (res.status === 401) {
           throw new Error("Please sign in to download")
         }
-        
+
         throw new Error(text || `Download failed (${res.status})`)
       }
 
@@ -213,7 +213,7 @@ export const DownloadButton = ({
 
       onSuccess?.({ fileName: name, bytes: blob.size })
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      catch (e: any) {
+    catch (e: any) {
       const msg =
         e?.name === "AbortError"
           ? `Request timed out after ${Math.round(timeoutMs / 1000)}s`
