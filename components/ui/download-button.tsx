@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { useAuth, useClerk } from "@clerk/nextjs"
 import { Button } from "@/components/ui/Button"
 import { Download, Loader2, Lock, CheckCircle, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { track as vercelTrack } from "@vercel/analytics"
-import { toast as sonner } from "sonner"
 // ⬇️ shadcn/ui toast hook (adjust the path if your project differs)
 import { useToast } from "@/components/ui/use-toast"
 import { DownloadProgress } from "@/components/ui/download-progress"
@@ -62,6 +62,18 @@ export const DownloadButton = ({
   const { openSignIn } = useClerk()
   const { toast } = useToast()
   const objectUrlRef = useRef<string | null>(null)
+  
+  // Progress state
+  const [showProgress, setShowProgress] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [currentFileName, setCurrentFileName] = useState("")
+  const [isComplete, setIsComplete] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
 
   // ── analytics helpers ─────────────────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -199,9 +211,6 @@ export const DownloadButton = ({
       const contentLength = res.headers.get("Content-Length")
       const totalBytes = contentLength ? parseInt(contentLength, 10) : 0
 
-      // Create a toast ID for progress updates
-      let toastId: string | number | undefined
-
       // Download with progress tracking
       const reader = res.body?.getReader()
       if (!reader) {
@@ -210,16 +219,24 @@ export const DownloadButton = ({
 
       const chunks: BlobPart[] = []
       let receivedBytes = 0
+      let lastUpdateProgress = 0
+      let lastUpdateTime = Date.now()
 
-      // Show initial progress toast
-      //eslint-disable-next-line @typescript-eslint/no-unused-vars
-      toastId = sonner(<DownloadProgress fileName={name} progress={0} />, {
-        duration: Infinity,
-        closeButton: false,
-      })
+      // Show initial progress
+      setShowProgress(true)
+      setProgress(10) // Jumpstart
+      setIsComplete(false)
+      setCurrentFileName(name)
+
+      // Fallback timer for simulated progress
+      const fallbackTimer = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 95) return prev
+          return prev + Math.random() * 3
+        })
+      }, 200)
 
       try {
-        // eslint-disable-next-line no-constant-condition
         while (true) {
           const { done, value } = await reader.read()
 
@@ -229,21 +246,30 @@ export const DownloadButton = ({
           receivedBytes += value.length
 
           // Calculate progress
-          const progress = totalBytes > 0 ? (receivedBytes / totalBytes) * 100 : 0
+          const realProgress = totalBytes > 0 ? (receivedBytes / totalBytes) * 100 : 0
+          
+          if (realProgress > 0) {
+             clearInterval(fallbackTimer)
+             
+             const now = Date.now()
+             const progressDiff = Math.abs(realProgress - lastUpdateProgress)
+             const timeDiff = now - lastUpdateTime
 
-          // Update progress toast
-          if (toastId) {
-            sonner(<DownloadProgress fileName={name} progress={progress} />, {
-              id: toastId,
-              duration: Infinity,
-              closeButton: false,
-            })
+             if (progressDiff >= 2 || timeDiff >= 100) {
+                lastUpdateProgress = realProgress
+                lastUpdateTime = now
+                setProgress(realProgress)
+             }
           }
         }
       } catch (streamError) {
+        clearInterval(fallbackTimer)
         console.error("[Download Stream Error]", streamError)
         throw new Error("Download stream interrupted")
       }
+
+      
+      clearInterval(fallbackTimer)
 
       // Complete the download
       const blob = new Blob(chunks)
@@ -258,14 +284,18 @@ export const DownloadButton = ({
       a.click()
       a.remove()
 
-      // Show completion toast
-      if (toastId) {
-        sonner(<DownloadProgress fileName={name} progress={100} isComplete />, {
-          id: toastId,
-          duration: 3000,
-          closeButton: true,
-        })
-      }
+      // Show completion
+      setProgress(100)
+      setIsComplete(true)
+      
+      // Auto hide after 3 seconds
+      setTimeout(() => {
+        setShowProgress(false)
+        setTimeout(() => {
+          setIsComplete(false)
+          setProgress(0)
+        }, 300)
+      }, 3000)
 
       setDownloaded(true)
       setTimeout(() => setDownloaded(false), 3000)
@@ -513,6 +543,19 @@ export const DownloadButton = ({
         transition={{ duration: 0.2 }}
         aria-hidden="true"
       />
+      
+      {/* Portal for Download Progress */}
+      {mounted && showProgress && createPortal(
+        <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <DownloadProgress 
+            fileName={currentFileName} 
+            progress={progress} 
+            isComplete={isComplete}
+            onDismiss={() => setShowProgress(false)}
+          />
+        </div>,
+        document.body
+      )}
     </motion.div>
   )
 }
