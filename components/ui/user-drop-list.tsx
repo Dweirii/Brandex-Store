@@ -23,6 +23,7 @@ import {
   Moon,
   Laptop,
   Crown,
+  Download,
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
@@ -195,6 +196,18 @@ export function UserDropdown() {
               <div className="flex-1">
                 <span className="font-medium">My Orders</span>
                 <p className="text-xs text-muted-foreground">View your purchase history</p>
+              </div>
+            </Link>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild className={menuItemClass}>
+            <Link href="/downloads" className="flex items-center gap-3 w-full">
+              <div className={iconWrapperClass}>
+                <Download className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1">
+                <span className="font-medium">My Downloads</span>
+                <p className="text-xs text-muted-foreground">View and re-download products</p>
               </div>
             </Link>
           </DropdownMenuItem>
