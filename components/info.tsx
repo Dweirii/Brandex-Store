@@ -3,15 +3,13 @@
 import type React from "react"
 import type { Product } from "@/types"
 import { Button } from "@/components/ui/Button"
-import { Check, ShoppingCart, Crown, Sparkles } from "lucide-react"
+import { Check, ShoppingCart, Sparkles } from "lucide-react"
 import Currency from "@/components/ui/currency"
 import { useState, type MouseEventHandler } from "react"
 import useCart from "@/hooks/use-cart"
 import { cn } from "@/lib/utils"
 import { DownloadButton } from "@/components/ui/download-button"
-import { PremiumBadge } from "@/components/ui/premium-badge"
 import { useSubscription } from "@/hooks/use-subscription"
-import { Separator } from "@/components/ui/separator"
 import { usePremiumModal } from "@/hooks/use-premium-modal"
 
 interface InfoProps {
