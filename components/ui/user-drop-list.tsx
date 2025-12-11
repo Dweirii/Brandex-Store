@@ -17,15 +17,12 @@ import {
   LogOut,
   User,
   Settings,
-  Mail,
-  Calendar,
   Sun,
   Moon,
   Laptop,
   Crown,
   Download,
 } from "lucide-react"
-import { motion } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 import { SubscriptionModal } from "@/components/modals/subscription-modal"
@@ -90,190 +87,113 @@ export function UserDropdown() {
     )
   }
 
-  const menuItemClass =
-    "group cursor-pointer transition-all duration-200 rounded-lg mx-1 my-1 px-3 py-3 hover:bg-primary/20 focus:bg-primary/20"
-  const iconWrapperClass =
-    "p-1 rounded-md bg-primary/10 group-hover:bg-primary/30"
-
   return (
     <div className="flex items-center gap-2 flex-shrink-0">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex-shrink-0"
+            className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex-shrink-0 transition-all duration-200"
             aria-label="User menu"
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Avatar className="cursor-pointer border-2 border-border transition-all duration-200 hover:border-primary hover:shadow-lg hover:shadow-primary/20 h-8 w-8 sm:h-9 sm:w-9">
-                <AvatarImage
-                  src={user?.imageUrl || "/placeholder.svg"}
-                  alt={`${user?.firstName || 'User'}'s avatar`}
-                  className="object-cover"
-                  loading="lazy"
-                />
-                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-muted text-foreground font-semibold">
-                  {user?.firstName?.charAt(0)?.toUpperCase() ??
-                    user?.emailAddresses?.[0]?.emailAddress?.charAt(0)?.toUpperCase() ??
-                    "U"}
-                </AvatarFallback>
-              </Avatar>
-            </motion.div>
+            <Avatar className="cursor-pointer border-2 border-border hover:border-primary hover:shadow-md transition-all duration-200 h-8 w-8 sm:h-9 sm:w-9">
+              <AvatarImage
+                src={user?.imageUrl || "/placeholder.svg"}
+                alt={`${user?.firstName || 'User'}'s avatar`}
+                className="object-cover"
+                loading="lazy"
+              />
+              <AvatarFallback className="bg-muted text-foreground font-semibold text-sm">
+                {user?.firstName?.charAt(0)?.toUpperCase() ??
+                  user?.emailAddresses?.[0]?.emailAddress?.charAt(0)?.toUpperCase() ??
+                  "U"}
+              </AvatarFallback>
+            </Avatar>
           </button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
-          className="w-72 bg-card/95 backdrop-blur-md text-foreground border border-border shadow-2xl rounded-xl p-2"
+          className="w-60 bg-card/95 backdrop-blur-sm text-foreground border border-border shadow-xl rounded-xl p-2"
           align="end"
           sideOffset={8}
         >
-          <div className="px-3 py-4 bg-gradient-to-r from-primary/10 to-muted/20 rounded-lg mb-2">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12 border-2 border-primary/20">
-                <AvatarImage
-                  src={user?.imageUrl || "/placeholder.svg"}
-                  alt={`${user?.firstName}'s avatar`}
-                  loading="lazy"
-                />
-                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-muted text-foreground font-semibold text-lg">
-                  {user?.firstName?.charAt(0)?.toUpperCase() ??
-                    user?.emailAddresses?.[0]?.emailAddress?.charAt(0)?.toUpperCase() ??
-                    "U"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <DropdownMenuLabel className="text-foreground font-bold text-lg p-0 leading-tight">
-                  {user?.firstName ? `Hi, ${user.firstName}!` : "Welcome!"}
-                </DropdownMenuLabel>
-                {user?.emailAddresses?.[0]?.emailAddress && (
-                  <p className="text-muted-foreground text-sm truncate flex items-center gap-1 mt-1">
-                    <Mail className="w-3 h-3 flex-shrink-0" />
-                    {user.emailAddresses[0].emailAddress}
-                  </p>
-                )}
-                {user?.createdAt && (
-                  <p className="text-muted-foreground text-xs flex items-center gap-1 mt-1">
-                    <Calendar className="w-3 h-3 flex-shrink-0" />
-                    Member since {new Date(user.createdAt).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
-            </div>
+          {/* User Info Header */}
+          <div className="px-3 py-2.5 mb-1">
+            <p className="text-sm font-semibold text-foreground">
+              {user?.firstName || "User"}
+            </p>
+            {user?.emailAddresses?.[0]?.emailAddress && (
+              <p className="text-xs text-muted-foreground truncate mt-0.5">
+                {user.emailAddresses[0].emailAddress}
+              </p>
+            )}
           </div>
 
-          <DropdownMenuSeparator className="bg-border my-2" />
+          <DropdownMenuSeparator className="bg-border/50" />
 
-          <DropdownMenuItem asChild className={menuItemClass}>
-            <Link href="/premium" className="flex items-center gap-3 w-full">
-              <div className={iconWrapperClass}>
-                <Crown className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">
-                  {isPremium ? "Premium Membership" : "Get Premium"}
-                </span>
-                <p className="text-xs text-muted-foreground">
-                  {isPremium ? "Manage subscription" : "Unlock exclusive features"}
-                </p>
-              </div>
+          {/* Premium */}
+          <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Link href="/premium" className="flex items-center gap-3 px-3 py-2.5 group">
+              <Crown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <span className="flex-1 text-sm font-medium group-hover:text-foreground transition-colors">Premium</span>
               {isPremium && (
-                <div className="bg-green-500/10 text-green-600 text-[10px] font-bold px-1.5 py-0.5 rounded border border-green-500/20">
-                  ACTIVE
-                </div>
+                <span className="text-[10px] font-semibold text-green-600 bg-green-500/10 px-2 py-0.5 rounded-md border border-green-500/20">
+                  Active
+                </span>
               )}
             </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem asChild className={menuItemClass}>
-            <Link href="/orders" className="flex items-center gap-3 w-full">
-              <div className={iconWrapperClass}>
-                <ShoppingCart className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">My Orders</span>
-                <p className="text-xs text-muted-foreground">View your purchase history</p>
-              </div>
+          {/* Orders */}
+          <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Link href="/orders" className="flex items-center gap-3 px-3 py-2.5 group">
+              <ShoppingCart className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <span className="text-sm font-medium group-hover:text-foreground transition-colors">Orders</span>
             </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem asChild className={menuItemClass}>
-            <Link href="/downloads" className="flex items-center gap-3 w-full">
-              <div className={iconWrapperClass}>
-                <Download className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">My Downloads</span>
-                <p className="text-xs text-muted-foreground">View and re-download products</p>
-              </div>
+          {/* Downloads */}
+          <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Link href="/downloads" className="flex items-center gap-3 px-3 py-2.5 group">
+              <Download className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <span className="text-sm font-medium group-hover:text-foreground transition-colors">Downloads</span>
             </Link>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => openUserProfile()} className={menuItemClass}>
-            <div className="flex items-center gap-3 w-full">
-              <div className={iconWrapperClass}>
-                <Settings className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">Account Settings</span>
-                <p className="text-xs text-muted-foreground">Manage your profile</p>
-              </div>
-            </div>
+          {/* Settings */}
+          <DropdownMenuItem onClick={() => openUserProfile()} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Settings className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mr-3" />
+            <span className="text-sm font-medium group-hover:text-foreground transition-colors">Settings</span>
           </DropdownMenuItem>
 
-          <DropdownMenuLabel className="px-3 text-xs text-muted-foreground">Theme</DropdownMenuLabel>
+          <DropdownMenuSeparator className="bg-border/50 my-1.5" />
 
-          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("light"), 10)} className={menuItemClass}>
-            <div className="flex items-center gap-3 w-full">
-              <div className={iconWrapperClass}>
-                <Sun className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">Light</span>
-                <p className="text-xs text-muted-foreground">Bright and clear</p>
-              </div>
-            </div>
+          {/* Theme Section */}
+          <DropdownMenuLabel className="px-3 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            Appearance
+          </DropdownMenuLabel>
+
+          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("light"), 10)} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Sun className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mr-3" />
+            <span className="text-sm font-medium group-hover:text-foreground transition-colors">Light</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("dark"), 10)} className={menuItemClass}>
-            <div className="flex items-center gap-3 w-full">
-              <div className={iconWrapperClass}>
-                <Moon className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">Dark</span>
-                <p className="text-xs text-muted-foreground">Dim and focused</p>
-              </div>
-            </div>
+          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("dark"), 10)} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Moon className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mr-3" />
+            <span className="text-sm font-medium group-hover:text-foreground transition-colors">Dark</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("system"), 10)} className={menuItemClass}>
-            <div className="flex items-center gap-3 w-full">
-              <div className={iconWrapperClass}>
-                <Laptop className="w-4 h-4 text-primary" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">System</span>
-                <p className="text-xs text-muted-foreground">Follow device settings</p>
-              </div>
-            </div>
+          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("system"), 10)} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Laptop className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mr-3" />
+            <span className="text-sm font-medium group-hover:text-foreground transition-colors">System</span>
           </DropdownMenuItem>
 
-          <DropdownMenuSeparator className="bg-border my-2" />
+          <DropdownMenuSeparator className="bg-border/50 my-1.5" />
 
-          <DropdownMenuItem onClick={() => signOut()} className={menuItemClass + " text-destructive hover:bg-destructive/10 focus:bg-destructive/10"}>
-            <div className="flex items-center gap-3 w-full">
-              <div className="p-1 rounded-md bg-destructive/10">
-                <LogOut className="w-4 h-4 text-destructive" />
-              </div>
-              <div className="flex-1">
-                <span className="font-medium">Sign Out</span>
-                <p className="text-xs text-destructive/70">End your session</p>
-              </div>
-            </div>
+          {/* Sign Out */}
+          <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-destructive/10 text-destructive">
+            <LogOut className="w-4 h-4 mr-3 transition-all" />
+            <span className="text-sm font-semibold">Sign out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

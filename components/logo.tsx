@@ -38,14 +38,14 @@ const Logo = () => {
   }
 
   return (
-    <Link href="/" className="flex items-center gap-x-2 relative pointer-events-auto">
+    <Link href="/" className="flex items-center gap-x-2 relative pointer-events-auto group">
       <Image
         src={logoSrc}
-        width={240}
-        height={120}
+        width={100}
+        height={40}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-300 hover:scale-105 gpu-accelerated smooth-transform h-10 w-auto md:h-12 lg:h-14"
+        className="transition-all duration-200 group-hover:opacity-80 h-8 w-auto md:h-10"
         style={{ width: "auto", height: "auto" }}
         sizes="(max-width: 640px) 120px, (max-width: 768px) 200px, 300px"
         placeholder="blur"

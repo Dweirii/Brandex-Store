@@ -13,14 +13,14 @@ interface MobileNavbarSectionProps {
 
 export function MobileNavbarSection({ categories }: MobileNavbarSectionProps) {
   return (
-    <div className="md:hidden relative px-2 sm:px-4 flex items-center justify-between h-16 gap-1 sm:gap-2 min-w-0">
+    <div className="md:hidden relative px-3 sm:px-4 flex items-center justify-between h-14 gap-2 min-w-0">
       {/* Logo - Mobile */}
       <div className="flex-shrink-0 relative z-20 min-w-0">
         <Logo />
       </div>
 
       {/* Right Actions - Mobile */}
-      <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0 relative z-20">
+      <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 relative z-20">
         <CategoriesDropdown categories={categories} />
         <MobileSearchButton />
         <UserDropdown />

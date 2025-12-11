@@ -29,14 +29,14 @@ const NavbarActions = () => {
   }
 
   return (
-    <div className="ml-auto flex items-center gap-4">
+    <div className="ml-auto flex items-center gap-3">
       {isPremium && (
         <Link
           href="/premium"
-          className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-md bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 hover:bg-green-500/20 transition-all cursor-pointer group"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 hover:bg-green-500/15 transition-all cursor-pointer group"
         >
-          <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform" />
-          <span className="text-sm font-semibold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+          <Sparkles className="h-3.5 w-3.5 text-green-600 dark:text-green-400 group-hover:rotate-12 transition-transform" />
+          <span className="text-xs font-semibold text-green-600 dark:text-green-400">
             Premium
           </span>
         </Link>
@@ -44,12 +44,12 @@ const NavbarActions = () => {
 
       <button
         onClick={() => router.push("/cart")}
-        className="relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-md border border-border/50 bg-background/50 hover:bg-muted/50 transition-colors"
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted/50 transition-all duration-200"
         aria-label={`Shopping cart with ${cart.items.length} items`}
       >
         <ShoppingBag className="h-4 w-4 text-foreground" />
         {cart.items.length > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground px-1">
+          <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground px-1 shadow-sm">
             {cart.items.length > 99 ? '99+' : cart.items.length}
           </span>
         )}

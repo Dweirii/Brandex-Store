@@ -109,7 +109,7 @@ export default function RootLayout({
               <ModalProvider />
               <ToastProvider />
               <GeoInitializer />
-              <Suspense fallback={<div className="h-20 bg-background/80 border-b border-border/40" />}>
+              <Suspense fallback={<div className="h-20 shadow-[0_0_10px_0_rgba(0,0,0,0.6)]" />}>
                 <Navbar />
               </Suspense>
               <main className="flex-1">{children}</main>
