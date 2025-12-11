@@ -32,7 +32,6 @@ interface ProductPageProps {
   searchParams?: Promise<{ page?: string }>;
 }
 
-
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
@@ -106,9 +105,8 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       { name: product.name, url: `${siteUrl}/products/${productId}` },
     ]);
 
-
     return (
-      <div className="bg-card text-foreground">
+      <div className="bg-background">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -123,10 +121,10 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         />
 
         <Container>
-          <div className="px-4 sm:px-6 lg:px-8 py-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-10 items-start">
-              {/* Media */}
-              <div className="w-full overflow-hidden">
+          <div className="px-4 py-10 sm:px-6 lg:px-8">
+            <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
+              {/* Gallery */}
+              <div className="w-full">
                 {(product.videoUrl || product.images?.length > 0) ? (
                   <Suspense
                     fallback={
@@ -146,30 +144,28 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                 )}
               </div>
 
-              <div className="w-full">
+              {/* Product Info */}
+              <div className="mt-10 lg:mt-0">
                 <Info data={product} />
               </div>
             </div>
           </div>
         </Container>
 
-        <div className="border-t border-border">
+        <div className="mt-8 border-t">
           <Container>
-            <div className="px-4 sm:px-6 lg:px-8 py-12">
-              <section aria-labelledby="related-products-heading">
-                <h2 id="related-products-heading" className="sr-only">Related products</h2>
-                <Suspense
-                  fallback={
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <Skeleton key={i} className="h-96 rounded-lg" />
-                      ))}
-                    </div>
-                  }
-                >
-                  <RelatedProducts categoryId={product.category?.id} currentPage={currentPage} />
-                </Suspense>
-              </section>
+            <div className="px-4 py-12 sm:px-6 lg:px-8">
+              <Suspense
+                fallback={
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <Skeleton key={i} className="h-96 rounded-lg" />
+                    ))}
+                  </div>
+                }
+              >
+                <RelatedProducts categoryId={product.category?.id} currentPage={currentPage} />
+              </Suspense>
             </div>
           </Container>
         </div>
