@@ -47,6 +47,7 @@ const ProductList: React.FC<ProductListProps> = ({
   const [page, setPage] = useState(initialPage)
   const [hasMore, setHasMore] = useState(initialPage < initialPageCount)
   const [loading, setLoading] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filtering, setFiltering] = useState(false)
   const observer = useRef<IntersectionObserver | null>(null)
   const lastElementRef = useRef<HTMLDivElement | null>(null)

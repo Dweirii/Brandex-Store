@@ -56,7 +56,7 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
 
     // Client-side fallback: Filter out products with all 404 images
     // This acts as a safety net if API filtering fails
-    const validProducts = await filterProductsWithValidMedia(processedProducts)
+    const validProducts = await filterProductsWithValidMedia(processedProducts) as Product[]
 
     return {
       products: validProducts,
