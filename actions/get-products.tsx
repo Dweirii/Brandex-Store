@@ -1,5 +1,6 @@
 import qs from "query-string"
 import { Product } from "@/types"
+import { filterProductsWithValidMedia } from "@/lib/check-image-url"
 
 const URL = `${process.env.NEXT_PUBLIC_API_URL}/products`
 
@@ -53,11 +54,15 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
       images: product.Image?.map((img: { url: string }) => ({ url: img.url })) || [],
     }))
 
+    // Client-side fallback: Filter out products with all 404 images
+    // This acts as a safety net if API filtering fails
+    const validProducts = await filterProductsWithValidMedia(processedProducts)
+
     return {
-      products: processedProducts,
-      total: data.total,
+      products: validProducts,
+      total: validProducts.length, // Update total to reflect filtered count
       page: data.page,
-      pageCount: data.pageCount,
+      pageCount: Math.ceil(validProducts.length / (query.limit || 24)),
     }
   } catch (error) {
     console.error("Error fetching products:", error)

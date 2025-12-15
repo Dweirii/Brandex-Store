@@ -7,6 +7,7 @@ import { loadMoreProducts } from "@/actions/load-more-products"
 import NoResults from "@/components/ui/no-results"
 import ProductCard from "./ui/product-card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { filterProductsWithValidMedia } from "@/lib/check-image-url"
 
 interface ProductListProps {
   title: string
@@ -46,6 +47,7 @@ const ProductList: React.FC<ProductListProps> = ({
   const [page, setPage] = useState(initialPage)
   const [hasMore, setHasMore] = useState(initialPage < initialPageCount)
   const [loading, setLoading] = useState(false)
+  const [filtering, setFiltering] = useState(false)
   const observer = useRef<IntersectionObserver | null>(null)
   const lastElementRef = useRef<HTMLDivElement | null>(null)
   
@@ -53,19 +55,45 @@ const ProductList: React.FC<ProductListProps> = ({
   const filterKey = `${categoryId}-${priceFilter}-${sortBy}`
   const prevFilterKeyRef = useRef(filterKey)
 
-  // Reset state when filters change OR when initial items change
+  // Client-side fallback: Filter products with 404 images asynchronously when items change
+  useEffect(() => {
+    const filterInvalidProducts = async () => {
+      // Only filter if we have items to check
+      if (items.length === 0) {
+        setProducts([])
+        return
+      }
+      
+      setFiltering(true)
+      try {
+        const validProducts = await filterProductsWithValidMedia(items)
+        // Update products with filtered list (fallback safety)
+        setProducts(validProducts)
+      } catch (error) {
+        console.error("Error filtering products:", error)
+        // If filtering fails, use original items (graceful degradation)
+        setProducts(items)
+      } finally {
+        setFiltering(false)
+      }
+    }
+
+    filterInvalidProducts()
+  }, [items]) // Re-filter when items change
+
+  // Reset state when filters change
   useEffect(() => {
     // Check if filters changed
     const filtersChanged = filterKey !== prevFilterKeyRef.current
     prevFilterKeyRef.current = filterKey
     
     if (filtersChanged) {
-      // Filters changed - reset everything
-      setProducts(items)
+      // Filters changed - reset pagination state
       setPage(initialPage)
       setHasMore(initialPage < initialPageCount)
+      // Products will be updated by the items filtering effect above
     }
-  }, [filterKey, items, initialPage, initialPageCount])
+  }, [filterKey, initialPage, initialPageCount])
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return
