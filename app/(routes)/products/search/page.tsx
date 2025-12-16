@@ -13,7 +13,6 @@ import ProductCard from "@/components/ui/product-card"
 import NoResults from "@/components/ui/no-results"
 import Pagination from "@/components/paginatioon"
 import Container from "@/components/ui/container"
-import { filterProductsWithValidMedia } from "@/lib/check-image-url"
 
 interface SearchResponse {
   results: Product[]
@@ -99,15 +98,10 @@ export default function ProductSearchPage() {
         })
 
         const data = res.data
-        const searchResults = data.results || []
-        
-        // Client-side fallback: Filter out products with all 404 images
-        const validProducts = await filterProductsWithValidMedia(searchResults)
-        
-        setProducts(validProducts)
-        setTotal(validProducts.length) // Update total to reflect filtered count
+        setProducts(data.results || [])
+        setTotal(data.total || 0)
         setCurrentPage(data.page || 1)
-        setPageCount(Math.ceil(validProducts.length / 24)) // Recalculate page count
+        setPageCount(data.pageCount || 1)
       } catch (error) {
         console.error("Search failed:", error)
         setProducts([])

@@ -1,5 +1,4 @@
 import { Product } from "@/types";
-import { hasValidMedia } from "@/lib/check-image-url";
 
 const URL = `${process.env.NEXT_PUBLIC_API_URL}/products`;
 
@@ -27,20 +26,11 @@ const getProduct = async (id: string): Promise<Product> => {
             throw new Error("Invalid product data");
         }
 
-        const product = {
+        return {
             ...data,
             category: data.Category || data.category,
             images: data.Image?.map((img: any) => ({ url: img.url })) || [],
         };
-
-        // Client-side fallback: Check if product has valid media
-        // If all images are 404, throw error (will be caught and handled as 404)
-        const hasValid = await hasValidMedia(product.images, product.videoUrl || null);
-        if (!hasValid) {
-            throw new Error("Product not found - all images are invalid");
-        }
-
-        return product;
     } catch (error) {
         console.error("Error fetching product:", error);
         throw error;
