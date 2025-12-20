@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 
+// Force Node.js runtime (Sharp does not work on Edge)
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const imageUrl = searchParams.get("url");

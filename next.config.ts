@@ -4,7 +4,13 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['framer-motion', 'lucide-react', '@radix-ui/react-*'],
     optimizeCss: true,
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
+
+  // Ensure strict bundling of external packages for production
+  serverExternalPackages: ['sharp'],
 
   // Compiler optimizations
   compiler: {
