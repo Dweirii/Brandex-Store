@@ -87,8 +87,6 @@ export async function GET(req: NextRequest) {
     return new NextResponse(processedImageBuffer as unknown as BodyInit, {
       headers: {
         "Content-Type": contentType,
-        // Disable caching to ensure the watermarked version is always fetched
-        // providing an immediate fix for the "missing watermark" issue
         "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
         "Pragma": "no-cache",
         "Expires": "0",
