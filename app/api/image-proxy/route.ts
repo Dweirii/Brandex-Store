@@ -16,8 +16,6 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Fetch the original image
-    // Add cache buster to ensure we get fresh image if needed
     const response = await fetch(imageUrl, { cache: 'no-store' });
     if (!response.ok) {
       return new NextResponse("Failed to fetch image", { status: response.status });
@@ -89,7 +87,11 @@ export async function GET(req: NextRequest) {
     return new NextResponse(processedImageBuffer as unknown as BodyInit, {
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=31536000, immutable",
+        // Disable caching to ensure the watermarked version is always fetched
+        // providing an immediate fix for the "missing watermark" issue
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
       },
     });
   } catch (error) {

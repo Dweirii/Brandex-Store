@@ -10,5 +10,7 @@ export const getDisplayImageUrl = (originalUrl: string | undefined, isFree: bool
 
     // Return the proxy URL
     // We use encodeURIComponent to ensure the URL is safely passed
-    return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`;
+    // We add a cache-busting param (v=2) to force browsers to re-request the image
+    // instead of using the cached non-watermarked version.
+    return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}&v=2`;
 };
