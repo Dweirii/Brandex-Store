@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
 
   try {
     // Fetch the original image
-    const response = await fetch(imageUrl);
+    // Add cache buster to ensure we get fresh image if needed
+    const response = await fetch(imageUrl, { cache: 'no-store' });
     if (!response.ok) {
       return new NextResponse("Failed to fetch image", { status: response.status });
     }

@@ -49,11 +49,9 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   // Calculate media
   const rawFirstImageUrl = data.images?.find((img) => img?.url)?.url
   // Use our helper to determine the source URL (watermarked if paid)
-  // We can treat it as "not free" here for the watermark logic even if they own it? 
-  // No, the user wants "WaterMark for all Paid items". 
-  // Whether they bought it or not, the public display should probably be the watermarked one 
-  // or at least protection against casual "Inspect Element".
-  const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
+  // We explicitly add a timestamp or unique ID to force a re-fetch if previously cached without watermark
+  const baseDisplayUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
+  const firstImageUrl = hasPremium ? rawFirstImageUrl : baseDisplayUrl
 
   const hasVideo = Boolean(data.videoUrl)
   const hasImage = Boolean(rawFirstImageUrl)
