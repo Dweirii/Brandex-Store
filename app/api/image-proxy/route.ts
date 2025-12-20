@@ -64,7 +64,6 @@ export async function GET(req: NextRequest) {
       .toBuffer();
 
     // Determine content type
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const contentType = response.headers.get("content-type") || "image/jpeg";
 
     return new NextResponse(processedImageBuffer as unknown as BodyInit, {
