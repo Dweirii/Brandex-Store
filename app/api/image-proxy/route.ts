@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 
     // 3. Prepare the Watermark (Use local Logo file to avoid Font issues in Prod)
     // We try to find the logo file in the public directory
-    const logoName = "Logo-white.png"; // Use white logo for better watermark contrast
+    const logoName = "Logo.png"; // Use white logo for better watermark contrast
     const logoPath = path.join(process.cwd(), "public", logoName);
 
     let watermarkBuffer: Buffer;
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
         console.warn("Watermark logo not found at:", logoPath);
         throw new Error("Logo not found");
       }
-    } catch (e) {
+    } catch {
       // Fallback SVG if file loading fails
       const fontSize = Math.floor(width * 0.15);
       const svgWatermark = `
