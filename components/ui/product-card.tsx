@@ -17,12 +17,15 @@ import useMobile from "@/hooks/use-mobile"
 import { useSubscription } from "@/hooks/use-subscription"
 import { SubscriptionModal } from "@/components/modals/subscription-modal"
 
+import { getDisplayImageUrl } from "@/lib/image-utils"
+
 interface ProductCardProps {
   data: Product
 }
 
 const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const router = useRouter()
+  // ... (previous hooks) ...
   const cart = useCart()
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -35,15 +38,25 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [mediaLoaded, setMediaLoaded] = useState(false)
   const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
 
-  // Check subscription status (no auto-refresh to reduce API calls)
+  // Check subscription status
   const { isActive: hasPremium } = useSubscription(data.storeId, {
     autoRefresh: false,
   })
 
+  // Check if product is free
+  const isFree = Number(data.price) === 0
+
   // Calculate media
-  const firstImageUrl = data.images?.find((img) => img?.url)?.url
+  const rawFirstImageUrl = data.images?.find((img) => img?.url)?.url
+  // Use our helper to determine the source URL (watermarked if paid)
+  // We can treat it as "not free" here for the watermark logic even if they own it? 
+  // No, the user wants "WaterMark for all Paid items". 
+  // Whether they bought it or not, the public display should probably be the watermarked one 
+  // or at least protection against casual "Inspect Element".
+  const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
+
   const hasVideo = Boolean(data.videoUrl)
-  const hasImage = Boolean(firstImageUrl)
+  const hasImage = Boolean(rawFirstImageUrl)
 
   useEffect(() => {
     setIsMounted(true)
@@ -73,8 +86,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     }
   }, [isMobile, hasVideo])
 
-  // Check if product is free (price is 0)
-  const isFree = Number(data.price) === 0
+  // CHECK IF PRODUCT IS FREE variable already calculated at top level
+  // const isFree = Number(data.price) === 0 // Removed redeclaration
 
   // Hooks
   const handleViewClick = useCallback(
@@ -144,14 +157,24 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             width={800}
             height={1000}
             className={cn(
-              "w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105",
+              "w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105 select-none pointer-events-none",
               hasVideo ? "group-hover:brightness-105" : "group-hover:brightness-110 group-hover:saturate-105"
             )}
+            onContextMenu={(e) => e.preventDefault()}
+            draggable={false}
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
             onLoadingComplete={() => setMediaLoaded(true)}
           />
         )}
+
+        {/* Protection Layer - Prevents direct interaction with media */}
+        <div
+          className="absolute inset-0 z-20 bg-transparent"
+          onContextMenu={(e) => e.preventDefault()}
+        />
+
+        {/* Client-side watermark removed (handled by server proxy) */}
 
         {/* Video Overlay */}
         {hasVideo && shouldLoadVideo && (

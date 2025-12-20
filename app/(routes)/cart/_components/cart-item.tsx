@@ -10,6 +10,8 @@ import Currency from "@/components/ui/currency"
 import useCart from "@/hooks/use-cart"
 import type { Product } from "@/types"
 
+import { getDisplayImageUrl } from "@/lib/image-utils"
+
 interface CartItemProps {
   data: Product
 }
@@ -22,6 +24,10 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
     cart.removeItem(data.id)
   }
 
+  // Determine display URL
+  const isPaid = Number(data.price) > 0
+  const displayImageUrl = getDisplayImageUrl(data.images?.[0]?.url, !isPaid)
+
   return (
     <motion.li
       className="flex flex-col sm:flex-row py-6 gap-4 border-b border-border relative" // Added border-border
@@ -33,30 +39,34 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
       onHoverEnd={() => setIsHovered(false)}
       layout
     >
-      <div className="relative h-40 w-full sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-lg overflow-hidden bg-muted self-center sm:self-start">
-        {" "}
-        <motion.div className="h-full w-full" animate={{ scale: isHovered ? 1.05 : 1 }} transition={{ duration: 0.3 }}>
+      <div className="relative h-40 w-full sm:h-28 sm:w-28 md:h-32 md:w-32 rounded-lg overflow-hidden bg-muted self-center sm:self-start group-item">
+        <div
+          className="absolute inset-0 z-20 bg-transparent"
+          onContextMenu={(e) => e.preventDefault()}
+        />
+        {/* Client-side watermark removed (handled by server proxy) */}
+        <motion.div className="h-full w-full pointer-events-none select-none" animate={{ scale: isHovered ? 1.05 : 1 }} transition={{ duration: 0.3 }}>
           {data.videoUrl ? (
-              <video
-                src={data.videoUrl}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-                poster={data.images?.[0]?.url || "/placeholder.jpg"}
-              />
-                  ) : (
-                    <Image
-                      src={data.images?.[0]?.url || "/placeholder.jpg"}
-                      alt={data.name}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                      sizes="(max-width: 768px) 100vw, 200px"
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                    />
+            <video
+              src={data.videoUrl}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+              poster={displayImageUrl}
+            />
+          ) : (
+            <Image
+              src={displayImageUrl}
+              alt={data.name}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 200px"
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+            />
           )}
         </motion.div>
       </div>
@@ -71,8 +81,8 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {/* Handle keywords splitting if they come as comma-separated strings */}
                 {data.keywords
-                  .flatMap(keyword => 
-                    typeof keyword === 'string' 
+                  .flatMap(keyword =>
+                    typeof keyword === 'string'
                       ? keyword.split(',').map(k => k.trim()).filter(k => k.length > 0)
                       : [keyword]
                   )
