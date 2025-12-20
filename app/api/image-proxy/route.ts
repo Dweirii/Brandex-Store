@@ -2,34 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 
 export async function GET(req: NextRequest) {
-    const { searchParams } = new URL(req.url);
-    const imageUrl = searchParams.get("url");
+  const { searchParams } = new URL(req.url);
+  const imageUrl = searchParams.get("url");
 
-    if (!imageUrl) {
-        return new NextResponse("Missing url parameter", { status: 400 });
+  if (!imageUrl) {
+    return new NextResponse("Missing url parameter", { status: 400 });
+  }
+
+  try {
+    // Fetch the original image
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      return new NextResponse("Failed to fetch image", { status: response.status });
     }
 
-    try {
-        // Fetch the original image
-        const response = await fetch(imageUrl);
-        if (!response.ok) {
-            return new NextResponse("Failed to fetch image", { status: response.status });
-        }
+    const arrayBuffer = await response.arrayBuffer();
+    const inputBuffer = Buffer.from(arrayBuffer);
 
-        const arrayBuffer = await response.arrayBuffer();
-        const inputBuffer = Buffer.from(arrayBuffer);
+    // Get metadata to determine dimensions
+    const metadata = await sharp(inputBuffer).metadata();
+    const width = metadata.width || 800;
+    const height = metadata.height || 600;
 
-        // Get metadata to determine dimensions
-        const metadata = await sharp(inputBuffer).metadata();
-        const width = metadata.width || 800;
-        const height = metadata.height || 600;
+    // Create SVG watermark
+    // We want a diagonal "BRANDEX" text
+    // Adjust font size based on image width
+    const fontSize = Math.floor(width * 0.15); // 15% of width
 
-        // Create SVG watermark
-        // We want a diagonal "BRANDEX" text
-        // Adjust font size based on image width
-        const fontSize = Math.floor(width * 0.15); // 15% of width
-
-        const svgWatermark = `
+    const svgWatermark = `
       <svg width="${width}" height="${height}">
         <style>
           .watermark { 
@@ -52,28 +52,29 @@ export async function GET(req: NextRequest) {
       </svg>
     `;
 
-        // Composite watermark over original image
-        const processedImageBuffer = await sharp(inputBuffer)
-            .composite([
-                {
-                    input: Buffer.from(svgWatermark),
-                    top: 0,
-                    left: 0,
-                },
-            ])
-            .toBuffer();
+    // Composite watermark over original image
+    const processedImageBuffer = await sharp(inputBuffer)
+      .composite([
+        {
+          input: Buffer.from(svgWatermark),
+          top: 0,
+          left: 0,
+        },
+      ])
+      .toBuffer();
 
-        // Determine content type
-        let contentType = response.headers.get("content-type") || "image/jpeg";
+    // Determine content type
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const contentType = response.headers.get("content-type") || "image/jpeg";
 
-        return new NextResponse(processedImageBuffer as unknown as BodyInit, {
-            headers: {
-                "Content-Type": contentType,
-                "Cache-Control": "public, max-age=31536000, immutable",
-            },
-        });
-    } catch (error) {
-        console.error("Error processing image:", error);
-        return new NextResponse("Internal Server Error", { status: 500 });
-    }
+    return new NextResponse(processedImageBuffer as unknown as BodyInit, {
+      headers: {
+        "Content-Type": contentType,
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
+    });
+  } catch (error) {
+    console.error("Error processing image:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
 }
