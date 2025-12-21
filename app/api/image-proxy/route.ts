@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
+import fs from "fs";
 import path from "path";
-import { promises as fs } from "fs";
 
 // Force Node.js runtime (Sharp does not work on Edge)
 export const runtime = 'nodejs';
@@ -29,46 +29,46 @@ export async function GET(req: NextRequest) {
     const width = metadata.width || 800;
     const height = metadata.height || 600;
 
-    let watermarkBuffer;
+    // Read and embed the font as base64 (required for production environments)
+    const fontPath = path.join(process.cwd(), 'assets/fonts/Inter-Bold.ttf');
+    const fontBase64 = fs.readFileSync(fontPath).toString('base64');
 
-    try {
-      // PROD FIX: Use the actual Brandex Logo file instead of text rendering
-      // Text rendering relies on system fonts which are often missing in Serverless environments
-      const logoPath = path.join(process.cwd(), 'public', 'Logo-white.png');
-      const logoFile = await fs.readFile(logoPath);
-
-      // Calculate logo size (e.g., 40% of image width)
-      const targetLogoWidth = Math.floor(width * 0.4);
-
-      watermarkBuffer = await sharp(logoFile)
-        .resize({ width: targetLogoWidth })
-        .rotate(-12, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
-        .ensureAlpha(0.3) // Make it semi-transparent
-        .toBuffer();
-
-    } catch (e) {
-      console.warn("Could not load logo file for watermark, using text fallback:", e);
-      // Fallback to SVG text if file read fails
-      const fontSize = Math.floor(width * 0.15);
-      const svgWatermark = `
-        <svg width="${width}" height="${height}">
+    // Create minimal semi-transparent text watermark with embedded font
+    const fontSize = Math.floor(width * 0.08); // Smaller, more minimal size
+    const svgWatermark = `
+      <svg width="${width}" height="${height}">
+        <defs>
           <style>
-            .watermark { 
-              fill: rgba(251, 191, 36, 0.5); 
-              font-size: ${fontSize}px; 
-              font-weight: 900;
-              font-family: 'Verdana', 'Arial', 'Helvetica', sans-serif; 
-              text-anchor: middle;
-              dominant-baseline: middle;
+            @font-face {
+              font-family: 'Inter';
+              src: url(data:font/ttf;base64,${fontBase64}) format('truetype');
+              font-weight: bold;
             }
           </style>
-          <text x="50%" y="50%" class="watermark" transform="rotate(-12, ${width / 2}, ${height / 2})">
-            BRANDEX
-          </text>
-        </svg>
-      `;
-      watermarkBuffer = Buffer.from(svgWatermark);
-    }
+          <filter id="shadow">
+            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="rgba(0,0,0,0.3)"/>
+          </filter>
+        </defs>
+        <style>
+          .watermark { 
+            fill: rgba(255, 255, 255, 0.6); 
+            font-size: ${fontSize}px; 
+            font-weight: bold;
+            font-family: 'Inter', sans-serif; 
+            text-anchor: middle;
+            dominant-baseline: middle;
+            letter-spacing: 0.05em;
+            stroke: rgba(0, 0, 0, 0.2);
+            stroke-width: 1px;
+            filter: url(#shadow);
+          }
+        </style>
+        <text x="50%" y="50%" class="watermark" transform="rotate(-15, ${width / 2}, ${height / 2})">
+          Brandex
+        </text>
+      </svg>
+    `;
+    const watermarkBuffer = Buffer.from(svgWatermark);
 
     // Composite watermark over original image
     const processedImageBuffer = await sharp(inputBuffer)
@@ -81,7 +81,6 @@ export async function GET(req: NextRequest) {
       ])
       .toBuffer();
 
-    // Determine content type
     const contentType = response.headers.get("content-type") || "image/jpeg";
 
     return new NextResponse(processedImageBuffer as unknown as BodyInit, {

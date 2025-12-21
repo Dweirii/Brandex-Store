@@ -25,7 +25,7 @@ export async function generateMetadata({
   try {
     const { categoryId } = await params
     const category = await getCategory(categoryId)
-    
+
     if (!category) {
       return {
         title: "Category Not Found | Brandex",
@@ -109,9 +109,9 @@ export default async function CategoryPage({
   const siteUrl = getSiteUrl()
   const breadcrumbStructuredData = category
     ? generateBreadcrumbStructuredData([
-        { name: "Home", url: siteUrl },
-        { name: category.name, url: `${siteUrl}/category/${categoryId}` },
-      ])
+      { name: "Home", url: siteUrl },
+      { name: category.name, url: `${siteUrl}/category/${categoryId}` },
+    ])
     : null
 
   return (
@@ -147,8 +147,8 @@ export default async function CategoryPage({
             key={`${categoryId}-${priceFilter || 'all'}-${sortBy || 'newest'}`}
             fallback={<ProductListSkeleton title="" />}
           >
-            <CategoryProducts 
-              categoryId={categoryId} 
+            <CategoryProducts
+              categoryId={categoryId}
               priceFilter={priceFilter}
               sortBy={sortBy || 'newest'}
             />
