@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
-import fs from "fs";
 import path from "path";
 
 // Force Node.js runtime (Sharp does not work on Edge)
@@ -27,48 +26,20 @@ export async function GET(req: NextRequest) {
     // Get metadata to determine dimensions
     const metadata = await sharp(inputBuffer).metadata();
     const width = metadata.width || 800;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const height = metadata.height || 600;
 
-    // Read and embed the font as base64 (required for production environments)
-    const fontPath = path.join(process.cwd(), 'assets/fonts/Inter-Bold.ttf');
-    const fontBase64 = fs.readFileSync(fontPath).toString('base64');
+    // Use pre-rendered watermark PNG (avoids fontconfig dependency in production)
+    const watermarkPath = path.join(process.cwd(), 'public/water-mark.png');
 
-    // Create minimal semi-transparent text watermark with embedded font
-    const fontSize = Math.floor(width * 0.08); // Smaller, more minimal size
-    const svgWatermark = `
-      <svg width="${width}" height="${height}">
-        <defs>
-          <style>
-            @font-face {
-              font-family: 'Inter';
-              src: url(data:font/ttf;base64,${fontBase64}) format('truetype');
-              font-weight: bold;
-            }
-          </style>
-          <filter id="shadow">
-            <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="rgba(0,0,0,0.3)"/>
-          </filter>
-        </defs>
-        <style>
-          .watermark { 
-            fill: rgba(255, 255, 255, 0.6); 
-            font-size: ${fontSize}px; 
-            font-weight: bold;
-            font-family: 'Inter', sans-serif; 
-            text-anchor: middle;
-            dominant-baseline: middle;
-            letter-spacing: 0.05em;
-            stroke: rgba(0, 0, 0, 0.2);
-            stroke-width: 1px;
-            filter: url(#shadow);
-          }
-        </style>
-        <text x="50%" y="50%" class="watermark" transform="rotate(-15, ${width / 2}, ${height / 2})">
-          Brandex
-        </text>
-      </svg>
-    `;
-    const watermarkBuffer = Buffer.from(svgWatermark);
+    // Calculate watermark size (proportional to image)
+    const watermarkWidth = Math.floor(width * 0.3); // 30% of image width
+
+    // Resize and rotate the watermark
+    const watermarkBuffer = await sharp(watermarkPath)
+      .resize({ width: watermarkWidth })
+      .rotate(-15, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .toBuffer();
 
     // Composite watermark over original image
     const processedImageBuffer = await sharp(inputBuffer)

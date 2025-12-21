@@ -49,9 +49,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   // Calculate media
   const rawFirstImageUrl = data.images?.find((img) => img?.url)?.url
   // Use our helper to determine the source URL (watermarked if paid)
-  // We explicitly add a timestamp or unique ID to force a re-fetch if previously cached without watermark
-  const baseDisplayUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
-  const firstImageUrl = hasPremium ? rawFirstImageUrl : baseDisplayUrl
+  // Always use watermark for paid products to protect content
+  const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
 
   const hasVideo = Boolean(data.videoUrl)
   const hasImage = Boolean(rawFirstImageUrl)
