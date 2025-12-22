@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     const watermarkPath = path.join(process.cwd(), 'public/water-mark.png');
 
     // Calculate watermark size (proportional to image)
-    const watermarkWidth = Math.floor(width * 0.14); // 14% of image width for tiling
+    const watermarkWidth = Math.floor(width * 0.10); // 10% of image width for tiling
 
     // Resize and rotate the watermark
     const watermarkBase = await sharp(watermarkPath)
@@ -48,8 +48,8 @@ export async function GET(req: NextRequest) {
 
     const paddedWatermark = await sharp({
       create: {
-        width: Math.floor(wmWidth * 1.3),
-        height: Math.floor(wmHeight * 1.3),
+        width: Math.floor(wmWidth * 1.0), // Reduced multiplier
+        height: Math.floor(wmHeight * 1.0), // Reduced multiplier
         channels: 4,
         background: { r: 0, g: 0, b: 0, alpha: 0 }
       }

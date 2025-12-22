@@ -210,16 +210,15 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
         )}
 
-        {/* Global Card Watermark for paid products - covers everything including video */}
         {!isFree && (
           <div
-            className="absolute inset-[-50%] z-20 pointer-events-none opacity-[0.06] select-none"
+            className="absolute inset-[-50%] z-30 pointer-events-none opacity-[0.06] select-none"
             style={{
               backgroundImage: `url('/water-mark.png')`,
               backgroundRepeat: 'repeat',
-              backgroundSize: '100px',
+              backgroundSize: '40px',
               transform: 'rotate(30deg)',
-              filter: 'brightness(0) invert(1)', // Make it white/visible on dark backgrounds if needed, or adjust based on your watermark
+              filter: 'brightness(0) invert(1)',
             }}
           />
         )}

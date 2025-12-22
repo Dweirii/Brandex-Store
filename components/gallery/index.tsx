@@ -77,7 +77,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
             style={{
               backgroundImage: `url('/water-mark.png')`,
               backgroundRepeat: 'repeat',
-              backgroundSize: '120px',
+              backgroundSize: '50px',
               transform: 'rotate(30deg)',
               filter: 'brightness(0) invert(1)',
             }}

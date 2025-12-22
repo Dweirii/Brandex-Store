@@ -98,7 +98,10 @@ export default function ProductSearchPage() {
         })
 
         const data = res.data
-        setProducts(data.results || [])
+        // De-duplicate results by ID to prevent key warnings
+        const uniqueResults = data.results?.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i) || []
+
+        setProducts(uniqueResults)
         setTotal(data.total || 0)
         setCurrentPage(data.page || 1)
         setPageCount(data.pageCount || 1)
@@ -132,19 +135,19 @@ export default function ProductSearchPage() {
     const currentQuery = searchParams.get("query") || ""
     const currentPage = parseInt(searchParams.get("page") || "1", 10)
     const currentCategoryId = searchParams.get("categoryId") || DEFAULT_CATEGORY_ID
-    
+
     // Update currentPage state to match URL
     setCurrentPage(currentPage)
-    
+
     const queryChanged = currentQuery !== prevQueryRef.current
     const pageChanged = currentPage !== prevPageRef.current
     const categoryChanged = currentCategoryId !== prevCategoryIdRef.current
-    
+
     // Update refs
     prevQueryRef.current = currentQuery
     prevPageRef.current = currentPage
     prevCategoryIdRef.current = currentCategoryId
-    
+
     if (currentQuery.trim().length >= 2) {
       // If only page changed, search immediately (no debounce)
       // If query or category changed, use debounced search
@@ -198,7 +201,7 @@ export default function ProductSearchPage() {
           {loading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
-                <Card key={i} className="p-4">
+                <Card key={`skeleton-${i}`} className="p-4">
                   <Skeleton className="w-full h-48 rounded-lg mb-4 bg-gray-500" />
                   <Skeleton className="h-6 w-3/4 mb-2 bg-gray-500" />
                   <Skeleton className="h-4 w-1/2 mb-2 bg-gray-500" />

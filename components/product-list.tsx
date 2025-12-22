@@ -31,11 +31,11 @@ const breakpointColumnsObj = {
   500: 1
 }
 
-const ProductList: React.FC<ProductListProps> = ({ 
-  title, 
-  items, 
-  total, 
-  page: initialPage = 1, 
+const ProductList: React.FC<ProductListProps> = ({
+  title,
+  items,
+  total,
+  page: initialPage = 1,
   pageCount: initialPageCount = 1,
   categoryId,
   priceFilter,
@@ -48,7 +48,7 @@ const ProductList: React.FC<ProductListProps> = ({
   const [loading, setLoading] = useState(false)
   const observer = useRef<IntersectionObserver | null>(null)
   const lastElementRef = useRef<HTMLDivElement | null>(null)
-  
+
   // Track the key combination to detect filter/sort changes
   const filterKey = `${categoryId}-${priceFilter}-${sortBy}`
   const prevFilterKeyRef = useRef(filterKey)
@@ -58,7 +58,7 @@ const ProductList: React.FC<ProductListProps> = ({
     // Check if filters changed
     const filtersChanged = filterKey !== prevFilterKeyRef.current
     prevFilterKeyRef.current = filterKey
-    
+
     if (filtersChanged) {
       // Filters changed - reset everything
       setProducts(items)
@@ -83,7 +83,11 @@ const ProductList: React.FC<ProductListProps> = ({
       })
 
       if (response.products.length > 0) {
-        setProducts(prev => [...prev, ...response.products])
+        setProducts(prev => {
+          const existingIds = new Set(prev.map(p => p.id))
+          const newProducts = response.products.filter(p => !existingIds.has(p.id))
+          return [...prev, ...newProducts]
+        })
         setPage(response.page)
         setHasMore(response.page < response.pageCount)
       } else {
@@ -148,11 +152,11 @@ const ProductList: React.FC<ProductListProps> = ({
             <MemoizedProductCard data={item} />
           </div>
         ))}
-        
+
         {/* Loading Skeletons */}
         {loading && Array.from({ length: 4 }).map((_, i) => (
           <div key={`skeleton-${i}`} className="mb-4 sm:mb-6">
-             <Skeleton className="aspect-[3/4] w-full rounded-xl" />
+            <Skeleton className="aspect-[3/4] w-full rounded-xl" />
           </div>
         ))}
       </Masonry>
