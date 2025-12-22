@@ -69,6 +69,20 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
           className="absolute inset-0 z-40 bg-transparent"
           onContextMenu={(e) => e.preventDefault()}
         />
+
+        {/* Global Gallery Watermark for paid products */}
+        {isPaid && (
+          <div
+            className="absolute inset-[-50%] z-30 pointer-events-none opacity-[0.06] select-none"
+            style={{
+              backgroundImage: `url('/water-mark.png')`,
+              backgroundRepeat: 'repeat',
+              backgroundSize: '120px',
+              transform: 'rotate(30deg)',
+              filter: 'brightness(0) invert(1)',
+            }}
+          />
+        )}
       </div>
     </div>
   )

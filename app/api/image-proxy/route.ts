@@ -33,20 +33,37 @@ export async function GET(req: NextRequest) {
     const watermarkPath = path.join(process.cwd(), 'public/water-mark.png');
 
     // Calculate watermark size (proportional to image)
-    const watermarkWidth = Math.floor(width * 0.3); // 30% of image width
+    const watermarkWidth = Math.floor(width * 0.14); // 14% of image width for tiling
 
     // Resize and rotate the watermark
-    const watermarkBuffer = await sharp(watermarkPath)
+    const watermarkBase = await sharp(watermarkPath)
       .resize({ width: watermarkWidth })
-      .rotate(-15, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .rotate(25, { background: { r: 0, g: 0, b: 0, alpha: 0 } }) // Changed to +30
       .toBuffer();
 
-    // Composite watermark over original image
+    // Add padding to the watermark to space it out when tiled
+    const wmMetadata = await sharp(watermarkBase).metadata();
+    const wmWidth = wmMetadata.width || watermarkWidth;
+    const wmHeight = wmMetadata.height || Math.floor(watermarkWidth * 0.5);
+
+    const paddedWatermark = await sharp({
+      create: {
+        width: Math.floor(wmWidth * 1.3),
+        height: Math.floor(wmHeight * 1.3),
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 0 }
+      }
+    })
+      .composite([{ input: watermarkBase, gravity: 'center' }])
+      .png()
+      .toBuffer();
+
+    // Composite watermark over original image with tiling
     const processedImageBuffer = await sharp(inputBuffer)
       .composite([
         {
-          input: watermarkBuffer,
-          gravity: 'center', // Center the watermark
+          input: paddedWatermark,
+          tile: true,
           blend: 'over'
         },
       ])
