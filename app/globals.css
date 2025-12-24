@@ -90,6 +90,11 @@
   --sidebar-accent-foreground: #020817;
   --sidebar-border: #dee2e6;
   --sidebar-ring: #00EB02;
+
+  /* Christmas Theme Colors */
+  --christmas-red: #D42426;
+  --christmas-gold: #FFD700;
+  --christmas-green: #165B33;
 }
 
 .dark {
@@ -135,12 +140,18 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #262626;
   --sidebar-ring: #00EB02;
+
+  /* Christmas Theme Colors */
+  --christmas-red: #8B0000;
+  --christmas-gold: #DAA520;
+  --christmas-green: #0A3D22;
 }
 
 @layer base {
   * {
     @apply border-border outline-none;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -150,6 +161,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -157,6 +169,7 @@
 
 /* Typography improvements for better readability */
 @layer components {
+
   /* Enhanced heading styles */
   .heading-hero {
     @apply text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold;
@@ -345,6 +358,7 @@
       opacity: 0;
       transform: translateZ(0);
     }
+
     to {
       opacity: 1;
       transform: translateZ(0);
@@ -356,6 +370,7 @@
       opacity: 0;
       transform: translateY(20px) translateZ(0);
     }
+
     to {
       opacity: 1;
       transform: translateY(0) translateZ(0);
@@ -367,6 +382,7 @@
       opacity: 0;
       transform: scale(0.9) translateZ(0);
     }
+
     to {
       opacity: 1;
       transform: scale(1) translateZ(0);
@@ -378,8 +394,40 @@
     scroll-behavior: smooth;
   }
 
+  /* Snowfall Animation */
+  @keyframes snowfall {
+    0% {
+      transform: translateY(-10vh) translateX(0);
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 1;
+    }
+
+    90% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(100vh) translateX(20px);
+      opacity: 0;
+    }
+  }
+
+  .snowflake {
+    position: fixed;
+    top: -10vh;
+    color: white;
+    user-select: none;
+    z-index: 9999;
+    pointer-events: none;
+    animation: snowfall linear infinite;
+  }
+
   /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
+
     .gpu-accelerated,
     .smooth-transform,
     .smooth-opacity,
