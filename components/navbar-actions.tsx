@@ -44,7 +44,7 @@ const NavbarActions = () => {
 
       <button
         onClick={() => router.push("/cart")}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted/50 transition-all duration-200"
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted/50 transition-all duration-200 group"
         aria-label={`Shopping cart with ${cart.items.length} items`}
       >
         <ShoppingBag className="h-4 w-4 text-foreground" />

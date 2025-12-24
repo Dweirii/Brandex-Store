@@ -58,7 +58,7 @@ const MainNav = ({ data }: MainNavProps) => {
                 <Link
                   href={route.href}
                   className={cn(
-                    "relative block px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-full", // Changed px-3 py-2 to px-4 py-2, rounded-md to rounded-full
+                    "relative block px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-full group", // Added group
                     route.active ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary",
                   )}
                   aria-current={route.active ? "page" : undefined}

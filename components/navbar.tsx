@@ -42,7 +42,15 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="bg-background/95 backdrop-blur-lg border-b border-border/50 sticky top-0 z-50 shadow-sm">
+      <div className="bg-background/95 backdrop-blur-lg border-b border-border/50 sticky top-0 z-50 shadow-sm overflow-visible pt-10 pb-5">
+        <ul className="christmas-lights">
+          {Array.from({ length: 40 }).map((_, i) => (
+            <li key={i} className="hidden sm:block" />
+          ))}
+          {Array.from({ length: 15 }).map((_, i) => (
+            <li key={i} className="sm:hidden" />
+          ))}
+        </ul>
         <Container>
           <Suspense fallback={<div className="md:hidden h-16" />}>
             <MobileNavbarSection categories={categories} />

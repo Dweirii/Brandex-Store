@@ -146,6 +146,12 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     >
       {/* Image/Video Container */}
       <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4] md:aspect-auto">
+        {/* Frosty Reveal Overlay */}
+        {!isMobile && (
+          <div className="frost-overlay">
+            <div className="frost-texture" />
+          </div>
+        )}
         {/* Always render Image if available */}
         {hasImage && (
           <Image
