@@ -89,6 +89,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   // Hooks
   const handleViewClick = useCallback(
     (e: React.MouseEvent) => {
+      e.preventDefault()
       e.stopPropagation()
       router.push(`/products/${data.id}`)
     },
@@ -330,7 +331,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
         {/* Mobile: Always Visible Buttons */}
         {isMounted && isMobile && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-3">
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-3 z-40">
             <div className="flex gap-2">
               {isFree ? (
                 <>
@@ -386,6 +387,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                       {/* Show Unlock with Premium option */}
                       <Button
                         onClick={(e) => {
+                          e.preventDefault()
                           e.stopPropagation()
                           setSubscriptionModalOpen(true)
                         }}
