@@ -137,7 +137,10 @@ export const DownloadButton = ({
   }
 
   // ── main handler ──────────────────────────────────────────────────────────
-  const handleDownload = async () => {
+  const handleDownload = async (e?: React.MouseEvent) => {
+    e?.preventDefault()
+    e?.stopPropagation()
+    
     if (disabled || loading) return
 
     if (!isSignedIn) {
@@ -355,7 +358,7 @@ export const DownloadButton = ({
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}>
             <Loader2 className="h-4 w-4" aria-hidden="true" />
           </motion.div>
-          {!iconOnly && <span className="hidden sm:inline font-medium">Downloading...</span>}
+          {!iconOnly && <span className="font-medium">Downloading...</span>}
         </motion.div>
       )
     }
@@ -370,7 +373,7 @@ export const DownloadButton = ({
           <motion.div initial={{ scale: 0 }} animate={{ scale: [0, 1.2, 1] }} transition={{ duration: 0.5 }}>
             <CheckCircle className="h-4 w-4" aria-hidden="true" />
           </motion.div>
-          {!iconOnly && <span className="hidden sm:inline font-medium">Downloaded!</span>}
+          {!iconOnly && <span className="font-medium">Downloaded!</span>}
           {!iconOnly && (
             <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2 }}>
               <Sparkles className="h-3 w-3" aria-hidden="true" />
@@ -383,14 +386,14 @@ export const DownloadButton = ({
       return (
         <div className={cn("flex items-center", !iconOnly && "gap-2")}>
           <Lock className="h-4 w-4" aria-hidden="true" />
-          {!iconOnly && <span className="hidden sm:inline font-medium">Locked</span>}
+          {!iconOnly && <span className="font-medium">Locked</span>}
         </div>
       )
     }
     return (
       <motion.div className={cn("flex items-center", !iconOnly && "gap-2")} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
         <Download className="h-4 w-4" aria-hidden="true" />
-        {!iconOnly && <span className="hidden sm:inline font-medium">Download</span>}
+        {!iconOnly && <span className="font-medium">Download</span>}
       </motion.div>
     )
   }
@@ -463,6 +466,7 @@ export const DownloadButton = ({
       data-product-id={productId}
     >
       <Button
+        type="button"
         onClick={handleDownload}
         disabled={disabled || loading}
         className={cn(getButtonClassName(), className)}
