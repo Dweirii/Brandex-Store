@@ -5,7 +5,7 @@ import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { ShoppingCart, Eye, Crown } from "lucide-react"
+import { ShoppingCart, Eye, Crown, Heart } from "lucide-react"
 import type { Product } from "@/types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
@@ -14,6 +14,7 @@ import { DownloadButton } from "@/components/ui/download-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import useCart from "@/hooks/use-cart"
 import useMobile from "@/hooks/use-mobile"
+import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import { useSubscription } from "@/hooks/use-subscription"
 import { SubscriptionModal } from "@/components/modals/subscription-modal"
 
@@ -45,6 +46,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
   // Check if product is free
   const isFree = Number(data.price) === 0
+
+  const favorites = useFavoritesWithAuth()
+  const isLiked = favorites.items.some((item) => item.id === data.id)
+
+  const toggleFavorite = useCallback(async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (isLiked) {
+      await favorites.removeItem(data.id)
+    } else {
+      await favorites.addItem(data)
+    }
+  }, [favorites, data, isLiked])
 
   // Calculate media
   const rawFirstImageUrl = data.images?.find((img) => img?.url)?.url
@@ -276,6 +289,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     iconOnly
                     className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
                   />
+                  <Button
+                    onClick={toggleFavorite}
+                    size="sm"
+                    variant="outline"
+                    className={cn(
+                      "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
+                      isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50 border-red-200"
+                    )}
+                    title={isLiked ? "Remove from favorites" : "Add to favorites"}
+                  >
+                    <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+                  </Button>
                 </>
               ) : (
                 <>
@@ -289,14 +314,28 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                   </Button>
                   {hasPremium ? (
                     /* If user has Premium, show Download Free button */
-                    <DownloadButton
-                      storeId={data.storeId}
-                      productId={data.id}
-                      size="sm"
-                      variant="default"
-                      iconOnly
-                      className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
-                    />
+                    <>
+                      <DownloadButton
+                        storeId={data.storeId}
+                        productId={data.id}
+                        size="sm"
+                        variant="default"
+                        iconOnly
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                      />
+                      <Button
+                        onClick={toggleFavorite}
+                        size="sm"
+                        variant="outline"
+                        className={cn(
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
+                          isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50 border-red-200"
+                        )}
+                        title={isLiked ? "Remove from favorites" : "Add to favorites"}
+                      >
+                        <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+                      </Button>
+                    </>
                   ) : (
                     <>
                       {/* If no Premium, show Buy Now button */}
@@ -320,6 +359,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         title="Unlock with Premium"
                       >
                         <Crown className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        onClick={toggleFavorite}
+                        size="sm"
+                        variant="outline"
+                        className={cn(
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
+                          isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50 border-red-200"
+                        )}
+                        title={isLiked ? "Remove from favorites" : "Add to favorites"}
+                      >
+                        <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
                       </Button>
                     </>
                   )}
@@ -397,6 +448,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                       >
                         <Crown className="h-4 w-4" />
                         <span className="text-xs">Premium</span>
+                      </Button>
+                      <Button
+                        onClick={toggleFavorite}
+                        size="sm"
+                        variant="outline"
+                        className={cn(
+                          "flex-1 bg-white/90 hover:bg-white text-foreground border-border/50",
+                          isLiked && "text-red-500 hover:text-red-500 bg-red-50 border-red-200"
+                        )}
+                      >
+                        <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+                        {/* <span className="text-xs">Like</span> */}
                       </Button>
                     </>
                   )}

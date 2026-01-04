@@ -1,7 +1,6 @@
-"use client"
-
 import useCart from "@/hooks/use-cart"
-import { ShoppingBag, Sparkles } from "lucide-react"
+import { useFavoritesWithAuth } from "@/hooks/use-favorites"
+import { ShoppingBag, Sparkles, Heart } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -10,6 +9,7 @@ import { useSubscription } from "@/hooks/use-subscription"
 const NavbarActions = () => {
   const [isMounted, setIsMounted] = useState(false)
   const cart = useCart()
+  const favorites = useFavoritesWithAuth()
   const router = useRouter()
 
   // Get storeId from env
@@ -41,6 +41,19 @@ const NavbarActions = () => {
           </span>
         </Link>
       )}
+
+      <button
+        onClick={() => router.push("/favorites")}
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted/50 transition-all duration-200 group"
+        aria-label={`Favorites with ${favorites.items.length} items`}
+      >
+        <Heart className="h-4 w-4 text-foreground" />
+        {favorites.items.length > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground px-1 shadow-sm">
+            {favorites.items.length > 99 ? '99+' : favorites.items.length}
+          </span>
+        )}
+      </button>
 
       <button
         onClick={() => router.push("/cart")}
