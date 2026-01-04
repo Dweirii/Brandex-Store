@@ -36,7 +36,7 @@ export default function FavoritesPage() {
             <Skeleton className="h-10 w-64" />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-[3/4] w-full rounded-lg" />
+                <Skeleton key={i} className="aspect-3/4 w-full rounded-lg" />
               ))}
             </div>
           </div>
@@ -71,7 +71,7 @@ export default function FavoritesPage() {
               No favorites yet
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md">
-              Start exploring and add products you love to your favorites. They'll be saved here for easy access.
+              Start exploring and add products you love to your favorites. They&apos;ll be saved here for easy access.
             </p>
             <Button onClick={() => router.push('/')} variant="default">
               Browse Products
