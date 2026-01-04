@@ -62,7 +62,7 @@ export const DownloadButton = ({
   const { openSignIn } = useClerk()
   const { toast } = useToast()
   const objectUrlRef = useRef<string | null>(null)
-  
+
   // Progress state
   const [showProgress, setShowProgress] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -140,7 +140,7 @@ export const DownloadButton = ({
   const handleDownload = async (e?: React.MouseEvent) => {
     e?.preventDefault()
     e?.stopPropagation()
-    
+
     if (disabled || loading) return
 
     if (!isSignedIn) {
@@ -250,19 +250,19 @@ export const DownloadButton = ({
 
           // Calculate progress
           const realProgress = totalBytes > 0 ? (receivedBytes / totalBytes) * 100 : 0
-          
-          if (realProgress > 0) {
-             clearInterval(fallbackTimer)
-             
-             const now = Date.now()
-             const progressDiff = Math.abs(realProgress - lastUpdateProgress)
-             const timeDiff = now - lastUpdateTime
 
-             if (progressDiff >= 2 || timeDiff >= 100) {
-                lastUpdateProgress = realProgress
-                lastUpdateTime = now
-                setProgress(realProgress)
-             }
+          if (realProgress > 0) {
+            clearInterval(fallbackTimer)
+
+            const now = Date.now()
+            const progressDiff = Math.abs(realProgress - lastUpdateProgress)
+            const timeDiff = now - lastUpdateTime
+
+            if (progressDiff >= 2 || timeDiff >= 100) {
+              lastUpdateProgress = realProgress
+              lastUpdateTime = now
+              setProgress(realProgress)
+            }
           }
         }
       } catch (streamError) {
@@ -271,7 +271,7 @@ export const DownloadButton = ({
         throw new Error("Download stream interrupted")
       }
 
-      
+
       clearInterval(fallbackTimer)
 
       // Complete the download
@@ -290,7 +290,7 @@ export const DownloadButton = ({
       // Show completion
       setProgress(100)
       setIsComplete(true)
-      
+
       // Auto hide after 3 seconds
       setTimeout(() => {
         setShowProgress(false)
@@ -316,24 +316,24 @@ export const DownloadButton = ({
           : e?.message || "Download failed"
 
       console.error("[Download Error]", e)
-      
+
       // Handle CDN errors with friendly message
       if (msg.startsWith("CDN_ERROR:")) {
         const friendlyMessage = msg.replace("CDN_ERROR:", "").trim()
-        
+
         ga("download_error_cdn", { product_id: productId, store_id: storeId, message: friendlyMessage })
         vTrack("download_error_cdn", { productId, storeId, message: friendlyMessage })
-        
+
         toast({
           title: "⚠️ Temporary Service Issue",
           description: friendlyMessage,
           variant: "default",
         })
-        
+
         onError?.(friendlyMessage)
         return
       }
-      
+
       ga("download_error", { product_id: productId, store_id: storeId, message: msg })
       vTrack("download_error", { productId, storeId, message: msg })
 
@@ -355,7 +355,7 @@ export const DownloadButton = ({
     if (loading) {
       return (
         <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className={cn("flex items-center", !iconOnly && "gap-2")}>
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}>
+          <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" as const }}>
             <Loader2 className="h-4 w-4" aria-hidden="true" />
           </motion.div>
           {!iconOnly && <span className="font-medium">Downloading...</span>}
@@ -480,7 +480,7 @@ export const DownloadButton = ({
               initial={{ scale: 0, opacity: 1 }}
               animate={{ scale: 2, opacity: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: "easeOut" as const }}
               aria-hidden="true"
             />
           )}
@@ -494,7 +494,7 @@ export const DownloadButton = ({
                 initial={{ scale: 0, opacity: 1 }}
                 animate={{ scale: 1.5, opacity: 0 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 0.8, ease: "easeOut" as const }}
                 aria-hidden="true"
               />
               {[...Array(6)].map((_, i) => (
@@ -508,7 +508,7 @@ export const DownloadButton = ({
                     scale: [0, 1, 0],
                     opacity: [1, 1, 0],
                   }}
-                  transition={{ duration: 1.2, delay: i * 0.1, ease: "easeOut" }}
+                  transition={{ duration: 1.2, delay: i * 0.1, ease: "easeOut" as const }}
                   aria-hidden="true"
                 />
               ))}
@@ -547,13 +547,13 @@ export const DownloadButton = ({
         transition={{ duration: 0.2 }}
         aria-hidden="true"
       />
-      
+
       {/* Portal for Download Progress */}
       {mounted && showProgress && createPortal(
         <div className="fixed bottom-4 right-4 z-50 w-full max-w-sm animate-in slide-in-from-bottom-5 fade-in duration-300">
-          <DownloadProgress 
-            fileName={currentFileName} 
-            progress={progress} 
+          <DownloadProgress
+            fileName={currentFileName}
+            progress={progress}
             isComplete={isComplete}
             onDismiss={() => setShowProgress(false)}
           />

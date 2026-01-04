@@ -15,7 +15,6 @@ import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
 import AppToaster from "@/components/ui/toaster";
 import { GeoInitializer } from "@/components/geo-initializer";
-import ChristmasDecorations from "@/components/christmas-decorations";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -110,7 +109,6 @@ export default function RootLayout({
               <ModalProvider />
               <ToastProvider />
               <GeoInitializer />
-              <ChristmasDecorations />
               <Suspense fallback={<div className="h-20 shadow-[0_0_10px_0_rgba(0,0,0,0.6)]" />}>
                 <Navbar />
               </Suspense>

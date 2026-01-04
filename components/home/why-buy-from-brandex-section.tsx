@@ -62,7 +62,7 @@ export function WhyBuyFromBrandexSection() {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
   }
@@ -101,9 +101,8 @@ export function WhyBuyFromBrandexSection() {
             <motion.div
               key={benefit.title}
               variants={itemVariants}
-              className={`flex flex-col lg:flex-row items-center gap-12 ${
-                index % 2 === 1 ? "lg:flex-row-reverse" : ""
-              }`}
+              className={`flex flex-col lg:flex-row items-center gap-12 ${index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                }`}
             >
               {/* Icon and Visual Element */}
               <div className="flex-shrink-0 relative">

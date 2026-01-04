@@ -13,7 +13,7 @@ export function HeroSection() {
           className="max-w-4xl mx-auto text-center space-y-8"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: "easeOut" as const }}
         >
           <motion.div
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00EB02]/10 border border-[#00EB02]/20 badge-text text-[#00EB02] mb-4 sm:mb-6"

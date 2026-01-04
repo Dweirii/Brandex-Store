@@ -74,7 +74,7 @@ export function DownloadProgress({ fileName, progress, isComplete = false, onDis
             animate={{ width: `${progressPercent}%` }}
             transition={{
               duration: 0.3,
-              ease: [0.4, 0, 0.2, 1],
+              ease: [0.4, 0, 0.2, 1] as const,
             }}
           />
           {/* Shimmer effect while downloading */}
@@ -87,7 +87,7 @@ export function DownloadProgress({ fileName, progress, isComplete = false, onDis
               transition={{
                 duration: 1.5,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
+                ease: "linear" as const,
               }}
               style={{ width: `${progressPercent}%` }}
             />

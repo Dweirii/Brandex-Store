@@ -137,7 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   return (
     <motion.div
       whileHover={isMounted && !isMobile ? { scale: 1.02 } : {}}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+      transition={{ duration: 0.2, ease: "easeOut" as const }}
       onMouseEnter={() => {
         handleMouseEnter()
         handleMouseEnterCard()
