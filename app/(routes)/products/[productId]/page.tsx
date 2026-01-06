@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProducts from "@/actions/get-products";
+import { getRelatedProductsWithAI } from "@/lib/ai-recommender";
+import type { Product } from "@/types";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -38,7 +40,7 @@ export async function generateMetadata({
   try {
     const { productId } = await params;
     const product = await getProduct(productId);
-    
+
     if (!product) {
       return {
         title: "Product Not Found | Brandex",
@@ -56,21 +58,53 @@ export async function generateMetadata({
   }
 }
 
-async function RelatedProducts({ categoryId, currentPage }: { categoryId?: string; currentPage: number }) {
+async function RelatedProducts({ currentProduct }: { currentProduct: Product }) {
+  const categoryId = currentProduct.category?.id;
   if (!categoryId) return null;
 
-  const {
-    products: suggestedProducts,
-    total,
-    page,
-    pageCount,
-  } = await getProducts({
+  // 1. Fetch more products from the same category to find better matches
+  const { products: allInCategory } = await getProducts({
     categoryId,
-    page: currentPage,
-    limit: 6,
+    limit: 50, // Get a larger pool for better matching
   });
 
-  if (suggestedProducts.length === 0) {
+  // Filter out current product
+  const candidates = allInCategory.filter((item) => item.id !== currentProduct.id);
+
+  // 2. Try AI Recommender first
+  let relatedItems: Product[] = [];
+
+  // Only attempt AI if key is present
+  if (process.env.AI_GATEWAY_API_KEY) {
+    const aiRecommendedIds = await getRelatedProductsWithAI(currentProduct, candidates);
+
+    if (aiRecommendedIds.length > 0) {
+      // Map IDs back to product objects and maintain AI's order
+      relatedItems = aiRecommendedIds
+        .map(id => candidates.find(c => c.id === id))
+        .filter((p): p is Product => !!p)
+        .slice(0, 8);
+    }
+  }
+
+  // 3. Fallback to keyword matching if AI fails or keys are missing
+  if (relatedItems.length === 0) {
+    const currentKeywords = currentProduct.keywords || [];
+
+    relatedItems = candidates
+      .map((item) => {
+        const itemKeywords = item.keywords || [];
+        const intersection = itemKeywords.filter((k) => currentKeywords.includes(k));
+        return {
+          ...item,
+          score: intersection.length,
+        };
+      })
+      .sort((a, b) => b.score - a.score) // Sort by highest keyword match
+      .slice(0, 8);
+  }
+
+  if (relatedItems.length === 0) {
     return (
       <p className="text-center py-10 text-muted-foreground">
         No related products found
@@ -81,18 +115,18 @@ async function RelatedProducts({ categoryId, currentPage }: { categoryId?: strin
   return (
     <ProductList
       title="Related Items"
-      items={suggestedProducts}
-      total={total}
-      page={page}
-      pageCount={pageCount}
+      items={relatedItems}
+      total={relatedItems.length}
+      page={1}
+      pageCount={1}
+      variant="related"
     />
   );
 }
 
-export default async function ProductPage({ params, searchParams }: ProductPageProps) {
+export default async function ProductPage({ params }: ProductPageProps) {
   try {
     const { productId } = await params;
-    const currentPage = parseInt((await searchParams)?.page || "1", 10);
 
     const product = await getProduct(productId);
     if (!product) throw new Error("Product not found");
@@ -164,7 +198,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                   </div>
                 }
               >
-                <RelatedProducts categoryId={product.category?.id} currentPage={currentPage} />
+                <RelatedProducts currentProduct={product} />
               </Suspense>
             </div>
           </Container>

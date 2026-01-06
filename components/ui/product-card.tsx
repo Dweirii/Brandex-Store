@@ -17,6 +17,7 @@ import useMobile from "@/hooks/use-mobile"
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import { useSubscription } from "@/hooks/use-subscription"
 import { SubscriptionModal } from "@/components/modals/subscription-modal"
+import usePreviewModal from "@/hooks/use-preview-modal"
 
 import { getDisplayImageUrl } from "@/lib/image-utils"
 
@@ -38,6 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [mediaLoaded, setMediaLoaded] = useState(false)
   const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
+  const previewModal = usePreviewModal()
 
   // Check subscription status
   const { isActive: hasPremium } = useSubscription(data.storeId, {
@@ -104,9 +106,9 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     (e: React.MouseEvent) => {
       e.preventDefault()
       e.stopPropagation()
-      router.push(`/products/${data.id}`)
+      previewModal.onOpen(data)
     },
-    [router, data.id]
+    [previewModal, data]
   )
 
   // Prefetch product page on hover
@@ -156,6 +158,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
         handleMouseEnterCard()
       }}
       onMouseLeave={handleMouseLeave}
+      onClick={() => router.push(`/products/${data.id}`)}
       className="relative bg-card border border-border rounded-lg overflow-hidden shadow-md hover:shadow-lg cursor-pointer group will-change-transform"
     >
       {/* Image/Video Container */}
@@ -271,10 +274,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
               {isFree ? (
                 <>
                   <Button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/products/${data.id}`)
-                    }}
+                    onClick={handleViewClick}
                     size="sm"
                     variant="outline"
                     className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"

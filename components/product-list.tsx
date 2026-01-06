@@ -6,6 +6,7 @@ import type { Product } from "@/types"
 import { loadMoreProducts } from "@/actions/load-more-products"
 import NoResults from "@/components/ui/no-results"
 import ProductCard from "./ui/product-card"
+import RelatedProductCard from "./ui/related-product-card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface ProductListProps {
@@ -18,6 +19,7 @@ interface ProductListProps {
   priceFilter?: 'paid' | 'free' | 'all'
   sortBy?: string
   isFeatured?: boolean
+  variant?: 'default' | 'related'
 }
 
 // Memoize ProductCard to prevent unnecessary re-renders
@@ -40,7 +42,8 @@ const ProductList: React.FC<ProductListProps> = ({
   categoryId,
   priceFilter,
   sortBy,
-  isFeatured
+  isFeatured,
+  variant = 'default'
 }) => {
   const [products, setProducts] = useState<Product[]>(items)
   const [page, setPage] = useState(initialPage)
@@ -75,7 +78,7 @@ const ProductList: React.FC<ProductListProps> = ({
       const nextPage = page + 1
       const response = await loadMoreProducts({
         page: nextPage,
-        limit: 24,
+        limit: 48,
         categoryId,
         priceFilter,
         sortBy,
@@ -149,7 +152,11 @@ const ProductList: React.FC<ProductListProps> = ({
       >
         {visibleItems.map((item) => (
           <div key={item.id} className="mb-4 sm:mb-6">
-            <MemoizedProductCard data={item} />
+            {variant === 'related' ? (
+              <RelatedProductCard data={item} />
+            ) : (
+              <MemoizedProductCard data={item} />
+            )}
           </div>
         ))}
 

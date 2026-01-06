@@ -2,14 +2,15 @@
 
 import { useEffect, useState, useCallback, useRef } from "react"
 import axios from "axios"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { PackageSearch } from "lucide-react"
 import { useDebouncedCallback } from "use-debounce"
+import Masonry from "react-masonry-css"
 
 import type { Product, Category } from "@/types"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Card } from "@/components/ui/card"
-import ProductCard from "@/components/ui/product-card"
+import RelatedProductCard from "@/components/ui/related-product-card"
+import SearchCategoryNav from "@/components/search-category-nav"
 import NoResults from "@/components/ui/no-results"
 import Pagination from "@/components/paginatioon"
 import Container from "@/components/ui/container"
@@ -22,9 +23,18 @@ interface SearchResponse {
   limit: number
 }
 
-const DEFAULT_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a" // MOCKUP STUDIO
+const DEFAULT_CATEGORY_ID = "all"
+
+const breakpointColumnsObj = {
+  default: 4,
+  1536: 4,
+  1024: 3,
+  640: 2,
+  500: 1
+}
 
 export default function ProductSearchPage() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const storeId = searchParams.get("storeId") || undefined
   const queryParam = searchParams.get("query") || ""
@@ -37,38 +47,46 @@ export default function ProductSearchPage() {
   const [pageCount, setPageCount] = useState(1)
   const [loading, setLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
-  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("MOCKUP STUDIO")
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>("All Categories")
+  const [categories, setCategories] = useState<Category[]>([])
 
-  // Fetch category name on mount and when categoryId changes
+  // Fetch categories on mount
   useEffect(() => {
-    const fetchCategoryName = async () => {
+    const fetchCategories = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
-        const res = await fetch(`${apiUrl}/categories/${categoryIdParam}`, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-
+        const res = await fetch(`${apiUrl}/categories`)
         if (res.ok) {
-          const category: Category = await res.json()
-          setSelectedCategoryName(category.name)
+          const data = await res.json()
+          setCategories(data)
         }
       } catch (error) {
-        console.error("Failed to fetch category:", error)
+        console.error("Failed to fetch categories:", error)
       }
     }
+    fetchCategories()
+  }, [])
 
-    if (categoryIdParam !== DEFAULT_CATEGORY_ID) {
-      fetchCategoryName()
-    } else {
-      setSelectedCategoryName("MOCKUP STUDIO")
+  // Update active category name from fetched categories list
+  useEffect(() => {
+    if (categoryIdParam === DEFAULT_CATEGORY_ID) {
+      setSelectedCategoryName("All Categories")
+      return
     }
-  }, [categoryIdParam])
+
+    if (categories.length > 0) {
+      const category = categories.find(c => c.id === categoryIdParam)
+      if (category) {
+        setSelectedCategoryName(category.name)
+      }
+    }
+  }, [categoryIdParam, categories])
 
   const performSearch = useCallback(
     async (searchQuery: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID) => {
-      if (!searchQuery.trim() || searchQuery.trim().length < 2) {
+      // Allow searching even if query is short if a specific category is selected
+      // But for global search, we still want a minimum query length
+      if (!searchQuery.trim() && categoryId === DEFAULT_CATEGORY_ID) {
         setProducts([])
         setTotal(0)
         setPageCount(1)
@@ -85,11 +103,11 @@ export default function ProductSearchPage() {
           query: searchQuery.trim(),
           storeId: storeId || "",
           page,
-          limit: 24,
+          limit: 100,
         }
 
-        // Only add categoryId if it's not the default
-        if (categoryId !== DEFAULT_CATEGORY_ID) {
+        // Only add categoryId if it's not the default "all"
+        if (categoryId !== DEFAULT_CATEGORY_ID && categoryId) {
           params.categoryId = categoryId
         }
 
@@ -156,11 +174,19 @@ export default function ProductSearchPage() {
       } else {
         debouncedSearch(currentQuery, currentPage, currentCategoryId)
       }
-    } else {
+    } else if (currentQuery.trim().length === 0 && currentCategoryId === DEFAULT_CATEGORY_ID) {
       setProducts([])
       setHasSearched(false)
     }
   }, [searchParams, debouncedSearch, performSearch])
+
+  // Function to handle category changes from the SearchCategoryNav
+  const handleCategoryNavChange = useCallback((newCategoryId: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set("categoryId", newCategoryId)
+    params.set("page", "1") // Reset to page 1
+    router.push(`/products/search?${params.toString()}`)
+  }, [router, searchParams])
 
   return (
     <Container>
@@ -175,7 +201,7 @@ export default function ProductSearchPage() {
                 </h1>
                 <p className="text-sm text-muted-foreground">
                   Results for &quot;{queryParam}&quot;
-                  {categoryIdParam !== DEFAULT_CATEGORY_ID && (
+                  {categoryIdParam !== DEFAULT_CATEGORY_ID && selectedCategoryName && selectedCategoryName !== "All Categories" && (
                     <span className="ml-2">in {selectedCategoryName}</span>
                   )}
                 </p>
@@ -188,10 +214,17 @@ export default function ProductSearchPage() {
             </div>
           )}
 
-          {!queryParam && (
-            <div className="text-center py-12 text-muted-foreground">
-              <PackageSearch className="mx-auto h-12 w-12 mb-4" />
-              <p className="text-lg">Use the search bar above to find products.</p>
+          {/* Search Category Navigation Filter */}
+          <SearchCategoryNav
+            categories={categories}
+            selectedCategoryId={categoryIdParam}
+            onCategoryChange={handleCategoryNavChange}
+          />
+
+          {!queryParam && !hasSearched && (
+            <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl bg-muted/5">
+              <PackageSearch className="mx-auto h-12 w-12 mb-4 opacity-20" />
+              <p className="text-lg">Select a category or use the search bar to find products.</p>
             </div>
           )}
         </div>
@@ -199,29 +232,35 @@ export default function ProductSearchPage() {
         {/* Results */}
         <div className="px-4 sm:px-6 lg:px-8">
           {loading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className="flex w-auto -ml-4 sm:-ml-6"
+              columnClassName="pl-4 sm:pl-6 bg-clip-padding"
+            >
               {Array.from({ length: 8 }).map((_, i) => (
-                <Card key={`skeleton-${i}`} className="p-4">
-                  <Skeleton className="w-full h-48 rounded-lg mb-4 bg-gray-500" />
-                  <Skeleton className="h-6 w-3/4 mb-2 bg-gray-500" />
-                  <Skeleton className="h-4 w-1/2 mb-2 bg-gray-500" />
-                  <Skeleton className="h-4 w-full mb-3 bg-gray-500" />
-                  <Skeleton className="h-5 w-1/4 bg-gray-500" />
-                </Card>
+                <div key={`skeleton-${i}`} className="mb-4 sm:mb-6">
+                  <Skeleton className="aspect-[3/4] w-full rounded-2xl bg-muted/20 animate-pulse" />
+                </div>
               ))}
-            </div>
+            </Masonry>
           )}
 
           {!loading && products.length === 0 && hasSearched && <NoResults />}
 
           {!loading && products.length > 0 && (
             <div className="space-y-6">
-              {/* Products Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-3 gap-4 sm:gap-6">
+              {/* Products Grid with Masonry */}
+              <Masonry
+                breakpointCols={breakpointColumnsObj}
+                className="flex w-auto -ml-4 sm:-ml-6"
+                columnClassName="pl-4 sm:pl-6 bg-clip-padding"
+              >
                 {products.map((product) => (
-                  <ProductCard key={product.id} data={product} />
+                  <div key={product.id} className="mb-4 sm:mb-6">
+                    <RelatedProductCard data={product} />
+                  </div>
                 ))}
-              </div>
+              </Masonry>
 
               {/* Pagination */}
               {pageCount > 1 && (

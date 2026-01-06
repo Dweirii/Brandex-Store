@@ -23,10 +23,10 @@ interface HomePageProps {
   searchParams: Promise<{ priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
 }
 
-async function MockupProducts({ 
+async function MockupProducts({
   priceFilter,
-  sortBy 
-}: { 
+  sortBy
+}: {
   priceFilter?: 'paid' | 'free' | 'all'
   sortBy?: string
 }) {
@@ -34,7 +34,7 @@ async function MockupProducts({
     const { products, total, page, pageCount } = await getProduct({
       categoryId: MOCKUPS_CATEGORY_ID,
       page: 1,
-      limit: 24,
+      limit: 48,
       priceFilter: priceFilter,
       sortBy: sortBy,
     })
@@ -96,11 +96,11 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
         </div>
 
         <div className="px-4 sm:px-6 lg:px-8">
-          <Suspense 
-            key={`${priceFilter || 'all'}-${sortBy || 'newest'}`} 
+          <Suspense
+            key={`${priceFilter || 'all'}-${sortBy || 'newest'}`}
             fallback={<ProductListSkeleton title="" />}
           >
-            <MockupProducts 
+            <MockupProducts
               priceFilter={priceFilter}
               sortBy={sortBy || 'newest'}
             />

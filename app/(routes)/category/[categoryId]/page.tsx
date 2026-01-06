@@ -59,7 +59,7 @@ async function CategoryProducts({
     getProducts({
       categoryId,
       page: 1,
-      limit: 24,
+      limit: 48,
       priceFilter: priceFilter,
       sortBy: sortBy,
     }),
