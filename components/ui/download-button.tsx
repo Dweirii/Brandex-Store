@@ -191,6 +191,17 @@ export const DownloadButton = ({
 
         // Handle specific error cases
         if (res.status === 403) {
+          // Try to parse JSON error response from new tier system
+          try {
+            const errorData = JSON.parse(text)
+            if (errorData.error) {
+              // Show upgrade-specific error with detailed reason
+              throw new Error(`UPGRADE_REQUIRED: ${errorData.error}`)
+            }
+          } catch {
+            // If not JSON, use the text as-is
+          }
+          
           const errorMsg = text || "You don't have access to this product. Purchase it or subscribe to Premium to download."
           throw new Error(errorMsg)
         }
@@ -316,6 +327,30 @@ export const DownloadButton = ({
           : e?.message || "Download failed"
 
       console.error("[Download Error]", e)
+
+      // Handle upgrade required errors with specific messaging
+      if (msg.startsWith("UPGRADE_REQUIRED:")) {
+        const upgradeMessage = msg.replace("UPGRADE_REQUIRED:", "").trim()
+
+        ga("download_error_upgrade_required", { product_id: productId, store_id: storeId, message: upgradeMessage })
+        vTrack("download_error_upgrade_required", { productId, storeId, message: upgradeMessage })
+
+        toast({
+          title: "Upgrade Required",
+          description: upgradeMessage,
+          variant: "default",
+          action: {
+            label: "View Plans",
+            onClick: () => {
+              // Redirect to subscription page or open subscription modal
+              window.location.href = "/?subscription=true"
+            },
+          },
+        })
+
+        onError?.(upgradeMessage)
+        return
+      }
 
       // Handle CDN errors with friendly message
       if (msg.startsWith("CDN_ERROR:")) {

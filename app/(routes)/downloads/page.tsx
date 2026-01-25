@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Select,
   SelectContent,
@@ -22,6 +23,8 @@ import {
 import { useSearchParams, useRouter } from "next/navigation"
 
 const DownloadButtonWrapper = dynamic(() => import('@/components/orders/DownloadButtonWrapper'), { ssr: false })
+import { useSubscription } from "@/hooks/use-subscription"
+import { DownloadUsage } from "@/components/download-usage"
 
 interface DownloadRecord {
   id: string
@@ -33,6 +36,7 @@ interface DownloadRecord {
   isFree: boolean
   createdAt: string
   price: number
+  imageUrl: string | null
 }
 
 interface Category {
@@ -52,7 +56,20 @@ function DownloadsPageContent() {
   const selectedCategoryId = searchParams.get("category") || ""
 
   const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
+  
+  // Get user's subscription info
+  const { subscription } = useSubscription(storeId, { autoRefresh: false })
+  const planTier = subscription?.planTier || "FREE"
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  
+  // Debug logging
+  useEffect(() => {
+    console.log("Download Usage Debug:", { 
+      planTier, 
+      subscription: subscription ? "exists" : "null",
+      shouldShowUsage: planTier === "STARTER"
+    })
+  }, [planTier, subscription])
 
   // Log environment variables in development
   if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
@@ -119,7 +136,7 @@ function DownloadsPageContent() {
           "x-user-id": user.id,
         },
       })
-      setDownloads(response.data || [])
+      const data = response.data; setDownloads(Array.isArray(data) ? data : (data?.downloads || []))
     } catch (err) {
       const error = err as AxiosError<{ message?: string }> | Error
       console.error("Error fetching downloads:", error)
@@ -217,6 +234,27 @@ function DownloadsPageContent() {
             View and re-download your purchased digital products
           </motion.p>
         </div>
+
+        {/* Debug: Show plan tier */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mb-4 p-3 bg-muted rounded text-xs text-muted-foreground">
+            Current Plan: <strong>{planTier}</strong> | Subscription: {subscription ? "Active" : "None"} | Should show usage: {planTier === "STARTER" ? "YES" : "NO"}
+          </div>
+        )}
+        
+        {/* Download Usage for Starter Plan - TEMPORARILY SHOWING FOR ALL TO TEST */}
+        {/* TODO: Change back to: planTier === "STARTER" */}
+        {true && (
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <DownloadUsage storeId={storeId} planTier="STARTER" />
+          </motion.div>
+        )}
+
 
         {/* Stats */}
         {!isLoading && !error && downloads.length > 0 && (
@@ -359,55 +397,70 @@ function DownloadsPageContent() {
                   return (
                     <motion.div 
                       key={download.id} 
-                      className="border border-border rounded-2xl p-6 shadow-lg bg-card hover:shadow-xl transition-shadow" 
+                      className="border border-border rounded-2xl overflow-hidden shadow-lg bg-card hover:shadow-xl transition-shadow" 
                       initial={{ opacity: 0, scale: 0.95, y: 20 }} 
                       animate={{ opacity: 1, scale: 1, y: 0 }} 
                       transition={{ duration: 0.3, delay: index * 0.05 }}
                     >
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-bold text-foreground mb-2 truncate" title={download.productName}>
-                            {download.productName}
-                          </h3>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                            <Calendar className="h-4 w-4" />
-                            <span>{date} at {time}</span>
+                      {/* Product Image */}
+                      {download.imageUrl && (
+                        <div className="relative w-full h-48 bg-muted">
+                          <Image
+                            src={download.imageUrl}
+                            alt={download.productName}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        </div>
+                      )}
+
+                      <div className="p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-bold text-foreground mb-2 truncate" title={download.productName}>
+                              {download.productName}
+                            </h3>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                              <Calendar className="h-4 w-4" />
+                              <span>{date} at {time}</span>
+                            </div>
+                            <Badge 
+                              variant="outline" 
+                              className="bg-primary/10 text-primary border-primary/20 mb-2"
+                            >
+                              {download.categoryName}
+                            </Badge>
                           </div>
-                          <Badge 
-                            variant="outline" 
-                            className="bg-primary/10 text-primary border-primary/20 mb-2"
-                          >
-                            {download.categoryName}
-                          </Badge>
                         </div>
-                      </div>
 
-                      <Separator className="bg-border mb-4" />
+                        <Separator className="bg-border mb-4" />
 
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Badge
-                            variant={download.isFree ? "default" : "secondary"}
-                            className={
-                              download.isFree
-                                ? "bg-green-500/10 text-green-500 border-green-500/20"
-                                : "bg-purple-500/10 text-purple-500 border-purple-500/20"
-                            }
-                          >
-                            {download.isFree ? (
-                              <>
-                                <Package className="h-3 w-3 mr-1" />
-                                Free
-                              </>
-                            ) : (
-                              <>
-                                <DollarSign className="h-3 w-3 mr-1" />
-                                Paid
-                              </>
-                            )}
-                          </Badge>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Badge
+                              variant={download.isFree ? "default" : "secondary"}
+                              className={
+                                download.isFree
+                                  ? "bg-primary/10 text-primary border-primary/20"
+                                  : "bg-purple-500/10 text-purple-500 border-purple-500/20"
+                              }
+                            >
+                              {download.isFree ? (
+                                <>
+                                  <Package className="h-3 w-3 mr-1" />
+                                  Free
+                                </>
+                              ) : (
+                                <>
+                                  <DollarSign className="h-3 w-3 mr-1" />
+                                  Premium
+                                </>
+                              )}
+                            </Badge>
+                          </div>
+                          <DownloadButtonWrapper storeId={download.storeId} productId={download.productId} />
                         </div>
-                        <DownloadButtonWrapper storeId={download.storeId} productId={download.productId} />
                       </div>
                     </motion.div>
                   )
@@ -439,4 +492,3 @@ export default function DownloadsPage() {
     </Suspense>
   )
 }
-

@@ -182,7 +182,7 @@ export function SubscriptionButton({
   // Premium variant styling
   const premiumClasses =
     variant === "premium"
-      ? "bg-gradient-to-r from-green-500 via-[#00FF00] to-green-500 text-black font-bold border-green-400/50 shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 hover:scale-105"
+      ? "bg-gradient-to-r from-green-500 via-[#00FF00] to-green-500 text-white font-bold border-green-400/50 shadow-lg shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40 hover:scale-105"
       : ""
 
   return (
@@ -272,10 +272,7 @@ export function SubscriptionButton({
             <span>Processing...</span>
           </>
         ) : (
-          <>
-            <Sparkles className="h-4 w-4" />
-            <span>Upgrade to Premium</span>
-          </>
+          <span>Upgrade to Premium</span>
         )}
       </Button>
 

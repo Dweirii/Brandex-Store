@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Loader2,
   Calendar,
-  Sparkles,
   XCircle,
   RefreshCw
 } from "lucide-react"
@@ -48,16 +47,16 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
   const [isVerifying, setIsVerifying] = useState(false)
   const [isCanceling, setIsCanceling] = useState(false)
   const [isResuming, setIsResuming] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly")
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
-  // Check if user ever had a trial (CANCELED status with trialEnd means they used their trial)
-  const hadTrialBefore = subscription?.status === "CANCELED" && subscription?.trialEnd !== null
-
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID
-  const monthlyPrice = parseFloat(process.env.NEXT_PUBLIC_SUBSCRIPTION_MONTHLY_PRICE || "5")
-  const yearlyPrice = parseFloat(process.env.NEXT_PUBLIC_SUBSCRIPTION_YEARLY_PRICE || "39.99")
+  // Plan pricing IDs
+  const starterMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID
+  const proMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID
+  const proYearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID
+  
+  // Legacy support
+  const legacyMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID
+  const legacyYearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID
 
   // Handle Stripe redirect after checkout
   useEffect(() => {
@@ -120,13 +119,27 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
     }
   }, [searchParams, open, storeId, getToken, refresh, router, user, clearCache])
 
-  const handleSubscribe = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSubscribe = async (planTier: "STARTER" | "PRO", interval: "monthly" | "yearly" = "monthly") => {
     if (!isSignedIn || !user) {
       toast.error("Please sign in to subscribe")
       return
     }
 
-    const priceId = selectedPlan === "monthly" ? monthlyPriceId : yearlyPriceId
+    // Determine price ID based on plan tier and interval
+    let priceId: string | undefined
+    
+    if (planTier === "STARTER") {
+      priceId = starterMonthlyPriceId
+    } else if (planTier === "PRO") {
+      priceId = interval === "monthly" ? proMonthlyPriceId : proYearlyPriceId
+    }
+    
+    // Fallback to legacy IDs if new ones aren't configured
+    if (!priceId && planTier === "PRO") {
+      priceId = interval === "monthly" ? legacyMonthlyPriceId : legacyYearlyPriceId
+    }
+
     if (!priceId) {
       toast.error("Subscription pricing not configured")
       return
@@ -348,72 +361,20 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            {/* No Subscription - Upgrade */}
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">
-                {hadTrialBefore ? "Subscribe to premium" : "Get unlimited access to all premium content"}
-              </p>
-
-              {/* Plan Selection */}
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => setSelectedPlan("monthly")}
-                  className={`p-3 rounded-lg border-2 transition-all ${selectedPlan === "monthly"
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/50"
-                    }`}
-                >
-                  <div className="text-left">
-                    <div className="font-semibold">Monthly</div>
-                    <div className="text-2xl font-bold">${monthlyPrice}</div>
-                    <div className="text-xs text-muted-foreground">per month</div>
-                  </div>
-                </button>
-                <button
-                  onClick={() => setSelectedPlan("yearly")}
-                  className={`p-3 rounded-lg border-2 transition-all relative ${selectedPlan === "yearly"
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/50"
-                    }`}
-                >
-                  <Badge className="absolute -top-2 -right-2 text-xs">Save</Badge>
-                  <div className="text-left">
-                    <div className="font-semibold">Yearly</div>
-                    <div className="text-2xl font-bold">${yearlyPrice}</div>
-                    <div className="text-xs text-muted-foreground">per year</div>
-                  </div>
-                </button>
-              </div>
-
-              {!hadTrialBefore && (
-                <div className="flex items-center gap-2 text-xs text-primary justify-center">
-                  <Sparkles className="h-3 w-3" />
-                  <span>7-day free trial • Cancel anytime</span>
-                </div>
-              )}
-
-              <Button
-                onClick={handleSubscribe}
-                className="w-full"
-                size="lg"
-              >
-                <Crown className="h-4 w-4 mr-2" />
-                {hadTrialBefore ? "Subscribe Now" : "Start Free Trial"}
-              </Button>
-
-              <div className="text-center">
-                <Link href="/premium" className="text-xs text-muted-foreground hover:text-primary hover:underline" onClick={() => onOpenChange(false)}>
-                  Learn more about Premium features
-                </Link>
-              </div>
-
-              {hadTrialBefore && (
-                <p className="text-xs text-center text-muted-foreground">
-                  You&apos;ll be charged immediately (no free trial)
-                </p>
-              )}
-            </div>
+          <div className="space-y-4 text-center py-6">
+            {/* No Subscription - Redirect to Pricing Page */}
+            <Crown className="h-12 w-12 text-primary mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Upgrade to Premium</h3>
+            <p className="text-sm text-muted-foreground mb-6">
+              Get unlimited access to premium content with our Starter or Pro plans
+            </p>
+            <Button
+              onClick={() => window.location.href = "/premium"}
+              className="w-full"
+              size="lg"
+            >
+              View Plans & Pricing
+            </Button>
           </div>
         )}
       </DialogContent>

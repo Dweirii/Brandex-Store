@@ -136,29 +136,6 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           </>
         )}
       </div>
-
-      {/* Tags */}
-      {data.keywords?.length > 0 && (
-        <div className="pt-6 border-t border-border">
-          <div className="flex flex-wrap gap-2">
-            {data.keywords
-              .flatMap(keyword =>
-                typeof keyword === 'string'
-                  ? keyword.split(',').map(k => k.trim()).filter(k => k.length > 0)
-                  : [keyword]
-              )
-              .slice(0, 8)
-              .map((keyword, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 rounded-md border border-border bg-muted/50 text-xs font-medium text-muted-foreground"
-                >
-                  {keyword}
-                </span>
-              ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

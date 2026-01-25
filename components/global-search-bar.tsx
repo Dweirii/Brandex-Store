@@ -6,6 +6,7 @@ import { Search, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import axios from "axios"
+import { ImageSearchButton } from "./image-search-button"
 
 interface GlobalSearchBarProps {
   className?: string
@@ -110,7 +111,9 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
       }, 500) // 500ms debounce
     } else if (query.trim().length === 0) {
       // If query is empty, navigate back to home page
-      if (pathname === "/products/search") {
+      // BUT don't redirect if it's an image search!
+      const isImageSearch = searchParams.get("imageSearch") === "true"
+      if (pathname === "/products/search" && !isImageSearch) {
         debounceTimerRef.current = setTimeout(() => {
           router.push("/")
         }, 300)
@@ -144,6 +147,8 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     router.push(`/products/search?${params.toString()}`)
   }, [router, searchParams])
 
+  // Image search is now handled directly in ImageSearchButton component
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
@@ -172,8 +177,11 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
           router.push(`/products/search?${params.toString()}`)
           setShowSuggestions(false)
         } else if (query.trim().length === 0) {
-          // If empty, go to home page
-          router.push("/")
+          // If empty, go to home page (but not during image search)
+          const isImageSearch = searchParams.get("imageSearch") === "true"
+          if (!isImageSearch) {
+            router.push("/")
+          }
           setShowSuggestions(false)
         }
       } else if (e.key === "ArrowDown") {
@@ -188,7 +196,9 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
         setShowSuggestions(false)
         setSelectedIndex(-1)
         // If on search page and query is empty, go to home
-        if (pathname === "/products/search" && query.trim().length === 0) {
+        // BUT don't redirect if it's an image search!
+        const isImageSearch = searchParams.get("imageSearch") === "true"
+        if (pathname === "/products/search" && query.trim().length === 0 && !isImageSearch) {
           router.push("/")
         }
       }
@@ -213,7 +223,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     <div ref={containerRef} className={cn("relative w-full", className)}>
       <form onSubmit={(e) => e.preventDefault()} className="relative w-full">
         {/* Category Selector and Search Input - Side by side, visually connected */}
-        <div className="flex items-center gap-0">
+        <div className="flex items-center gap-2">
           {/* Search Input - Standalone */}
           <div className="relative flex-1">
             <Search
@@ -254,6 +264,13 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
               )}
             />
           </div>
+          
+          {/* Image Search Button - Only show if enabled */}
+          {process.env.NEXT_PUBLIC_ENABLE_IMAGE_SEARCH === 'true' && (
+            <ImageSearchButton 
+              className="flex-shrink-0"
+            />
+          )}
         </div>
       </form>
 

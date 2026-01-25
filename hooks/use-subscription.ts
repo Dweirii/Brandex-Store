@@ -23,6 +23,8 @@ interface SubscriptionStatus {
     cancelAtPeriodEnd: boolean
     stripeSubscriptionId: string | null
     stripeCustomerId: string | null
+    planTier: 'FREE' | 'STARTER' | 'PRO'
+    monthlyDownloadLimit: number | null
     createdAt: string
     updatedAt: string
     store: {

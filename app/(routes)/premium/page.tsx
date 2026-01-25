@@ -4,30 +4,80 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Check, Crown, X } from "lucide-react"
 import { useSubscription } from "@/hooks/use-subscription"
-import { useAuth } from "@clerk/nextjs"
+import { useAuth, useUser } from "@clerk/nextjs"
 import Container from "@/components/ui/container"
 import { Button } from "@/components/ui/Button"
 import { cn } from "@/lib/utils"
-import { SubscriptionModal } from "@/components/modals/subscription-modal"
 import { Badge } from "@/components/ui/badge"
+import { createSubscriptionCheckout } from "@/lib/subscription-api-client"
+import toast from "react-hot-toast"
 
 export default function PremiumPage() {
-    const [open, setOpen] = useState(false)
     const [isMounted, setIsMounted] = useState(false)
-    const { isSignedIn } = useAuth()
+    const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly")
+    const [loading, setLoading] = useState<string | null>(null)
+    const { isSignedIn, getToken } = useAuth()
+    const { user } = useUser()
 
-    // Get storeId directly from env to avoid SSR/render issues
     const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || "a940170f-71ea-4c2b-b0ec-e2e9e3c68567"
 
     const { isActive: isPremium } = useSubscription(storeId, {
         autoRefresh: false
     })
 
+    // Pricing
+    const starterPrice = parseFloat(process.env.NEXT_PUBLIC_STARTER_PLAN_PRICE || "4.99")
+    const proMonthlyPrice = parseFloat(process.env.NEXT_PUBLIC_PRO_MONTHLY_PRICE || "14.99")
+    const proYearlyPrice = parseFloat(process.env.NEXT_PUBLIC_PRO_YEARLY_PRICE || "149.00")
+    const proYearlySavings = (proMonthlyPrice * 12 - proYearlyPrice).toFixed(0)
+
+    // Price IDs
+    const starterMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID
+    const proMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID
+    const proYearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID
+
     useEffect(() => {
         setIsMounted(true)
     }, [])
 
-    // Show loading state during hydration
+    const handleSubscribe = async (planTier: "STARTER" | "PRO", interval: "monthly" | "yearly" = "monthly") => {
+        if (!isSignedIn || !user) {
+            window.location.href = "/sign-in"
+            return
+        }
+
+        setLoading(planTier)
+
+        try {
+            const token = await getToken({ template: "CustomerJWTBrandex" })
+            if (!token) {
+                toast.error("Authentication failed")
+                return
+            }
+
+            let priceId: string | undefined
+            if (planTier === "STARTER") {
+                priceId = starterMonthlyPriceId
+            } else if (planTier === "PRO") {
+                priceId = interval === "monthly" ? proMonthlyPriceId : proYearlyPriceId
+            }
+
+            if (!priceId) {
+                toast.error("Pricing not configured")
+                return
+            }
+
+            const email = user.emailAddresses?.[0]?.emailAddress || user.primaryEmailAddress?.emailAddress || ""
+            const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, email, token)
+            window.location.href = checkoutUrl
+        } catch (error) {
+            console.error("Subscription error:", error)
+            toast.error(error instanceof Error ? error.message : "Failed to start checkout")
+        } finally {
+            setLoading(null)
+        }
+    }
+
     if (!isMounted) {
         return (
             <div className="bg-background min-h-screen py-20">
@@ -49,7 +99,7 @@ export default function PremiumPage() {
                 <Container>
                     <div className="text-center">
                         <h1 className="text-2xl font-bold text-destructive">Configuration Error</h1>
-                        <p className="text-muted-foreground mt-4">Store ID is not configured. Please contact support.</p>
+                        <p className="text-muted-foreground mt-4">Store ID is not configured.</p>
                     </div>
                 </Container>
             </div>
@@ -58,153 +108,382 @@ export default function PremiumPage() {
 
     return (
         <div className="bg-background min-h-screen py-20">
-            <SubscriptionModal
-                open={open}
-                onOpenChange={setOpen}
-                storeId={storeId}
-            />
-
             <Container>
                 <div className="text-center mb-16">
-                    <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4">
-                        Simple, Transparent Pricing
-                    </h1>
-                    <p className="text-lg text-muted-foreground">
-                        Choose the plan that fits your needs
-                    </p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <h1 className="text-5xl font-bold tracking-tight mb-4">
+                            Simple Pricing
+                        </h1>
+                        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                            Choose the plan that works for you
+                        </p>
+                    </motion.div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {/* Free Plan */}
                     <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
                         className={cn(
-                            "rounded-2xl border bg-card p-8 shadow-sm flex flex-col relative",
-                            !isPremium ? "border-primary/50 ring-1 ring-primary/20" : "border-border"
+                            "rounded-xl border bg-card p-8 flex flex-col relative",
+                            !isPremium ? "border-primary/50" : "border-border"
                         )}
                     >
                         {!isPremium && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                                <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
-                                    Current Plan
-                                </Badge>
-                            </div>
+                            <Badge variant="outline" className="absolute -top-3 left-1/2 -translate-x-1/2 bg-background">
+                                Current
+                            </Badge>
                         )}
 
-                        <div className="mb-6">
-                            <h3 className="text-2xl font-bold text-foreground">Free</h3>
-                            <div className="mt-2 flex items-baseline gap-1">
-                                <span className="text-4xl font-bold tracking-tight">$0</span>
-                                <span className="text-muted-foreground">/month</span>
+                        <div className="mb-8">
+                            <h3 className="text-xl font-semibold mb-2">Free</h3>
+                            <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-4xl font-bold">$0</span>
+                                <span className="text-muted-foreground">/mo</span>
                             </div>
-                            <p className="mt-4 text-muted-foreground">
-                                Perfect for getting started with our collection.
+                            <p className="text-sm text-muted-foreground">
+                                For exploring our collection
                             </p>
                         </div>
 
-                        <div className="flex-1 space-y-4 mb-8">
-                            <FeatureItem text="Unlimited Free Downloads" />
-                            <FeatureItem text="Download History" />
-                            <FeatureItem text="Standard Support" />
-                            <FeatureItem text="Premium Assets" included={false} />
-                            <FeatureItem text="Commercial License" included={false} />
+                        <ul className="space-y-3 mb-8 flex-1">
+                            <Feature text="Free products only" />
+                            <Feature text="Standard resolution" />
+                            <Feature text="Download history" />
+                            <Feature text="Premium downloads" included={false} />
+                        </ul>
+
+                        <Button variant="outline" disabled className="w-full">
+                            {!isPremium ? "Current Plan" : "Downgrade"}
+                        </Button>
+                    </motion.div>
+
+                    {/* Starter Plan */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="rounded-xl border border-border bg-card p-8 flex flex-col relative hover:border-primary/50 transition-colors"
+                    >
+                        <div className="mb-8">
+                            <h3 className="text-xl font-semibold mb-2">Starter</h3>
+                            <div className="flex items-baseline gap-1 mb-4">
+                                <span className="text-4xl font-bold">${starterPrice}</span>
+                                <span className="text-muted-foreground">/mo</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                For regular users
+                            </p>
                         </div>
 
+                        <ul className="space-y-3 mb-8 flex-1">
+                            <Feature text="25 premium downloads/month" />
+                            <Feature text="Full resolution" />
+                            <Feature text="All categories" />
+                            <Feature text="Download history" />
+                        </ul>
+
                         <Button
-                            disabled={isPremium}
-                            variant="outline"
-                            className="w-full h-12 text-lg font-medium"
-                            onClick={() => !isSignedIn && (window.location.href = "/sign-in")}
+                            onClick={() => handleSubscribe("STARTER", "monthly")}
+                            disabled={loading === "STARTER"}
+                            className="w-full"
                         >
-                            {!isSignedIn ? "Sign In" : !isPremium ? "Current Plan" : "Downgrade"}
+                            {loading === "STARTER" ? "Loading..." : "Get Started"}
                         </Button>
                     </motion.div>
 
                     {/* Pro Plan */}
                     <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                        className={cn(
-                            "relative rounded-2xl border-2 bg-card p-8 shadow-xl flex flex-col",
-                            isPremium ? "border-green-500 bg-green-500/5" : "border-green-500"
-                        )}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="rounded-xl border-2 border-primary bg-card p-8 flex flex-col relative shadow-lg"
                     >
-                        {isPremium ? (
-                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg">
-                                <Check className="w-4 h-4" />
-                                CURRENT PLAN
-                            </div>
-                        ) : (
-                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-1 rounded-full text-sm font-bold flex items-center gap-1 shadow-lg">
-                                <Crown className="w-4 h-4" />
-                                MOST POPULAR
-                            </div>
-                        )}
+                        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
+                            <Crown className="h-3 w-3 mr-1" />
+                            Recommended
+                        </Badge>
 
                         <div className="mb-6">
-                            <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                            <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                                <Crown className="h-5 w-5 text-primary" />
                                 Pro
                             </h3>
-                            <div className="mt-2 flex items-baseline gap-1">
-                                <span className="text-4xl font-bold tracking-tight">$5</span>
-                                <span className="text-muted-foreground">/month</span>
+
+                            {/* Interval Toggle */}
+                            <div className="flex gap-1 p-1 bg-muted rounded-lg mb-4">
+                                <button
+                                    onClick={() => setSelectedPlan("monthly")}
+                                    className={cn(
+                                        "flex-1 px-3 py-1.5 rounded text-sm font-medium transition",
+                                        selectedPlan === "monthly" 
+                                            ? "bg-primary text-primary-foreground" 
+                                            : "hover:bg-background"
+                                    )}
+                                >
+                                    Monthly
+                                </button>
+                                <button
+                                    onClick={() => setSelectedPlan("yearly")}
+                                    className={cn(
+                                        "flex-1 px-3 py-1.5 rounded text-sm font-medium transition",
+                                        selectedPlan === "yearly" 
+                                            ? "bg-primary text-primary-foreground" 
+                                            : "hover:bg-background"
+                                    )}
+                                >
+                                    Yearly
+                                </button>
                             </div>
-                            <p className="mt-4 text-muted-foreground">
-                                Unlock the full potential of your creativity.
+
+                            <div className="flex items-baseline gap-1 mb-2">
+                                <span className="text-4xl font-bold">
+                                    ${selectedPlan === "monthly" ? proMonthlyPrice : proYearlyPrice}
+                                </span>
+                                <span className="text-muted-foreground">
+                                    /{selectedPlan === "monthly" ? "mo" : "yr"}
+                                </span>
+                            </div>
+                            {selectedPlan === "yearly" && (
+                                <p className="text-sm text-primary font-medium mb-4">
+                                    Save ${proYearlySavings}/year
+                                </p>
+                            )}
+                            <p className="text-sm text-muted-foreground">
+                                For professionals
                             </p>
                         </div>
 
-                        <div className="flex-1 space-y-4 mb-8">
-                            <FeatureItem text="Everything in Free" />
-                            <FeatureItem text="Unlimited Paid Downloads" highlighted />
-                            <FeatureItem text="Priority Support" highlighted />
-                            <FeatureItem text="Commercial License" />
-                            <FeatureItem text="Early Access to New Items" />
-                        </div>
+                        <ul className="space-y-3 mb-8 flex-1">
+                            <Feature text="Unlimited downloads" />
+                            <Feature text="Commercial license" />
+                            <Feature text="PSD + Smart Objects" />
+                            <Feature text="Early access" />
+                            <Feature text=" 7-day free trial" />
+                            <Feature text="Cancel anytime" />
+                        </ul>
 
                         <Button
-                            onClick={() => setOpen(true)}
-                            className={cn(
-                                "w-full h-12 text-lg font-medium transition-all",
-                                isPremium
-                                    ? "bg-background text-foreground border border-border hover:bg-muted"
-                                    : "bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/20"
-                            )}
+                            onClick={() => handleSubscribe("PRO", selectedPlan)}
+                            disabled={loading === "PRO"}
+                            className="w-full"
                         >
-                            {isPremium ? "Manage Subscription" : "Upgrade to Pro"}
+                            {loading === "PRO" ? "Loading..." : "Get Started"}
                         </Button>
                     </motion.div>
                 </div>
+
+                {/* Comparison Table */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                    className="mt-24"
+                >
+                    <h2 className="text-3xl font-bold text-center mb-12">Compare All Features</h2>
+                    
+                    <div className="rounded-xl border border-border overflow-hidden bg-card shadow-lg">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-border bg-muted/50">
+                                    <th className="text-left p-6 font-semibold text-foreground">Features</th>
+                                    <th className="text-center p-6 font-semibold text-foreground w-1/4">Free</th>
+                                    <th className="text-center p-6 font-semibold text-foreground w-1/4">Starter</th>
+                                    <th className="text-center p-6 font-semibold text-foreground w-1/4">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Crown className="h-4 w-4 text-primary" />
+                                            Pro
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <TableSection title="Downloads" />
+                                <TableRow 
+                                    feature="Free product downloads" 
+                                    free={true} 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="Premium downloads per month" 
+                                    free="—" 
+                                    starter="25" 
+                                    pro="Unlimited" 
+                                />
+                                <TableRow 
+                                    feature="Download history & tracking" 
+                                    free={true} 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                
+                                <TableSection title="Resolution & Quality" />
+                                <TableRow 
+                                    feature="Standard resolution" 
+                                    free={true} 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="Full high-resolution assets" 
+                                    free={false} 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="PSD files with layers" 
+                                    free={false} 
+                                    starter={false} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="Smart Objects" 
+                                    free={false} 
+                                    starter={false} 
+                                    pro={true} 
+                                />
+                                
+                                <TableSection title="License & Usage" />
+                                <TableRow 
+                                    feature="Personal use license" 
+                                    free={true} 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="Commercial use license" 
+                                    free={false} 
+                                    starter={false} 
+                                    pro={true} 
+                                />
+                                
+                                <TableSection title="Content Access" />
+                                <TableRow 
+                                    feature="All product categories" 
+                                    free="Free only" 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="Premium & exclusive content" 
+                                    free={false} 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="Early-release products" 
+                                    free={false} 
+                                    starter={false} 
+                                    pro={true} 
+                                />
+                                
+                                <TableSection title="Support" />
+                                <TableRow 
+                                    feature="Community support" 
+                                    free={true} 
+                                    starter={true} 
+                                    pro={true} 
+                                />
+                                <TableRow 
+                                    feature="Priority email support" 
+                                    free={false} 
+                                    starter={false} 
+                                    pro={true} 
+                                />
+                            </tbody>
+                        </table>
+                    </div>
+                </motion.div>
+
+                {/* Manage Subscription Link */}
+                {isPremium && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="text-center mt-12"
+                    >
+                        <a href="/downloads" className="text-sm text-primary hover:underline">
+                            Manage your subscription →
+                        </a>
+                    </motion.div>
+                )}
             </Container>
         </div>
     )
 }
 
-function FeatureItem({ text, included = true, highlighted = false }: { text: string, included?: boolean, highlighted?: boolean }) {
+function Feature({ text, included = true }: { text: string; included?: boolean }) {
     return (
-        <div className="flex items-center gap-3">
+        <li className="flex items-center gap-2 text-sm">
             {included ? (
-                <div className={cn(
-                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
-                    highlighted ? "bg-green-500 text-white" : "bg-primary/10 text-primary"
-                )}>
-                    <Check className="h-4 w-4" />
-                </div>
+                <Check className="h-4 w-4 text-primary shrink-0" />
             ) : (
-                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                    <X className="h-4 w-4" />
-                </div>
+                <X className="h-4 w-4 text-muted-foreground shrink-0" />
             )}
-            <span className={cn(
-                "text-sm",
-                included ? "text-foreground" : "text-muted-foreground",
-                highlighted && "font-semibold text-green-600 dark:text-green-400"
-            )}>
+            <span className={included ? "text-foreground" : "text-muted-foreground"}>
                 {text}
             </span>
-        </div>
+        </li>
+    )
+}
+
+function TableSection({ title }: { title: string }) {
+    return (
+        <tr className="bg-muted/30">
+            <td colSpan={4} className="p-4 font-semibold text-sm text-foreground">
+                {title}
+            </td>
+        </tr>
+    )
+}
+
+function TableRow({ 
+    feature, 
+    free, 
+    starter, 
+    pro 
+}: { 
+    feature: string
+    free: boolean | string
+    starter: boolean | string
+    pro: boolean | string
+}) {
+    const renderCell = (value: boolean | string, highlight = false) => {
+        if (typeof value === "boolean") {
+            return (
+                <div className="flex justify-center">
+                    {value ? (
+                        <Check className={cn("h-5 w-5", highlight ? "text-primary" : "text-primary/70")} />
+                    ) : (
+                        <X className="h-5 w-5 text-muted-foreground/40" />
+                    )}
+                </div>
+            )
+        }
+        return (
+            <span className={cn(
+                "text-sm font-medium",
+                highlight ? "text-primary" : "text-foreground"
+            )}>
+                {value}
+            </span>
+        )
+    }
+
+    return (
+        <tr className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+            <td className="p-4 text-sm text-foreground">{feature}</td>
+            <td className="p-4 text-center">{renderCell(free)}</td>
+            <td className="p-4 text-center">{renderCell(starter)}</td>
+            <td className="p-4 text-center bg-primary/5">{renderCell(pro, true)}</td>
+        </tr>
     )
 }
