@@ -42,7 +42,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="bg-background/95 backdrop-blur-lg border-b border-border/50 sticky top-0 z-50 shadow-sm overflow-visible pt-10 pb-5">
+      <div className="bg-background/95 backdrop-blur-lg sticky top-0 z-50  overflow-visible pt-10 pb-5">
         <Container>
           <Suspense fallback={<div className="md:hidden h-16" />}>
             <MobileNavbarSection categories={categories} />

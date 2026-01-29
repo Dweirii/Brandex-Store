@@ -111,10 +111,10 @@ export function DownloadUsage({ storeId, planTier, className }: DownloadUsagePro
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Download className={`h-5 w-5 ${isAtLimit ? 'text-destructive' : 'text-primary'}`} />
-            <span className="font-semibold">Premium Downloads</span>
+            <span className="font-semibold">Monthly Downloads</span>
           </div>
           <Badge variant={isAtLimit ? "destructive" : "secondary"}>
-            Starter Plan
+            {planTier === "STARTER" ? "Starter" : planTier === "PRO" ? "Pro" : "Free"}
           </Badge>
         </div>
 

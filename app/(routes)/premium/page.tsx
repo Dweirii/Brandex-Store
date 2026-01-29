@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Check, Crown, X } from "lucide-react"
-import { useSubscription } from "@/hooks/use-subscription"
+import { useSubscription, triggerSubscriptionRefresh } from "@/hooks/use-subscription"
 import { useAuth, useUser } from "@clerk/nextjs"
 import Container from "@/components/ui/container"
 import { Button } from "@/components/ui/Button"
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { createSubscriptionCheckout } from "@/lib/subscription-api-client"
 import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
 
 export default function PremiumPage() {
     const [isMounted, setIsMounted] = useState(false)
@@ -18,12 +19,15 @@ export default function PremiumPage() {
     const [loading, setLoading] = useState<string | null>(null)
     const { isSignedIn, getToken } = useAuth()
     const { user } = useUser()
+    const router = useRouter()
 
     const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || "a940170f-71ea-4c2b-b0ec-e2e9e3c68567"
 
-    const { isActive: isPremium } = useSubscription(storeId, {
+    const { subscription, refresh, clearCache } = useSubscription(storeId, {
         autoRefresh: false
     })
+    
+    const currentPlanTier = subscription?.planTier || "FREE"
 
     // Pricing
     const starterPrice = parseFloat(process.env.NEXT_PUBLIC_STARTER_PLAN_PRICE || "4.99")
@@ -43,6 +47,12 @@ export default function PremiumPage() {
     const handleSubscribe = async (planTier: "STARTER" | "PRO", interval: "monthly" | "yearly" = "monthly") => {
         if (!isSignedIn || !user) {
             window.location.href = "/sign-in"
+            return
+        }
+
+        // Check if user is already on this plan
+        if (currentPlanTier === planTier) {
+            toast.error(`You are already on the ${planTier === "STARTER" ? "Starter" : "Pro"} plan`)
             return
         }
 
@@ -68,8 +78,21 @@ export default function PremiumPage() {
             }
 
             const email = user.emailAddresses?.[0]?.emailAddress || user.primaryEmailAddress?.emailAddress || ""
-            const checkoutUrl = await createSubscriptionCheckout(storeId, priceId, email, token)
-            window.location.href = checkoutUrl
+            const redirectUrl = await createSubscriptionCheckout(storeId, priceId, email, token)
+            
+            // Check if this is an instant upgrade (contains upgrade=success) or a checkout URL
+            if (redirectUrl.includes("upgrade=success")) {
+                // Instant upgrade - refresh subscription and show success
+                clearCache()
+                await new Promise(resolve => setTimeout(resolve, 500))
+                await refresh()
+                triggerSubscriptionRefresh()
+                toast.success("Successfully upgraded to Pro!")
+                router.refresh()
+            } else {
+                // Redirect to Stripe checkout
+                window.location.href = redirectUrl
+            }
         } catch (error) {
             console.error("Subscription error:", error)
             toast.error(error instanceof Error ? error.message : "Failed to start checkout")
@@ -132,10 +155,10 @@ export default function PremiumPage() {
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className={cn(
                             "rounded-xl border bg-card p-8 flex flex-col relative",
-                            !isPremium ? "border-primary/50" : "border-border"
+                            currentPlanTier === "FREE" ? "border-primary/50" : "border-border"
                         )}
                     >
-                        {!isPremium && (
+                        {currentPlanTier === "FREE" && (
                             <Badge variant="outline" className="absolute -top-3 left-1/2 -translate-x-1/2 bg-background">
                                 Current
                             </Badge>
@@ -159,8 +182,12 @@ export default function PremiumPage() {
                             <Feature text="Premium downloads" included={false} />
                         </ul>
 
-                        <Button variant="outline" disabled className="w-full">
-                            {!isPremium ? "Current Plan" : "Downgrade"}
+                        <Button 
+                            variant="outline" 
+                            disabled={currentPlanTier === "FREE"}
+                            className="w-full"
+                        >
+                            {currentPlanTier === "FREE" ? "Current Plan" : "Free Plan"}
                         </Button>
                     </motion.div>
 
@@ -169,8 +196,17 @@ export default function PremiumPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
-                        className="rounded-xl border border-border bg-card p-8 flex flex-col relative hover:border-primary/50 transition-colors"
+                        className={cn(
+                            "rounded-xl border bg-card p-8 flex flex-col relative",
+                            currentPlanTier === "STARTER" ? "border-primary/50" : "border-border hover:border-primary/50 transition-colors"
+                        )}
                     >
+                        {currentPlanTier === "STARTER" && (
+                            <Badge variant="outline" className="absolute -top-3 left-1/2 -translate-x-1/2 bg-background">
+                                Current
+                            </Badge>
+                        )}
+
                         <div className="mb-8">
                             <h3 className="text-xl font-semibold mb-2">Starter</h3>
                             <div className="flex items-baseline gap-1 mb-4">
@@ -190,11 +226,12 @@ export default function PremiumPage() {
                         </ul>
 
                         <Button
-                            onClick={() => handleSubscribe("STARTER", "monthly")}
+                            onClick={() => currentPlanTier === "STARTER" ? router.push("/downloads") : handleSubscribe("STARTER", "monthly")}
                             disabled={loading === "STARTER"}
+                            variant={currentPlanTier === "STARTER" ? "outline" : "default"}
                             className="w-full"
                         >
-                            {loading === "STARTER" ? "Loading..." : "Get Started"}
+                            {loading === "STARTER" ? "Loading..." : currentPlanTier === "STARTER" ? "Manage Plan" : "Get Started"}
                         </Button>
                     </motion.div>
 
@@ -205,10 +242,16 @@ export default function PremiumPage() {
                         transition={{ duration: 0.5, delay: 0.3 }}
                         className="rounded-xl border-2 border-primary bg-card p-8 flex flex-col relative shadow-lg"
                     >
-                        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <Crown className="h-3 w-3 mr-1" />
-                            Recommended
-                        </Badge>
+                        {currentPlanTier === "PRO" ? (
+                            <Badge variant="outline" className="absolute -top-3 left-1/2 -translate-x-1/2 bg-background">
+                                Current
+                            </Badge>
+                        ) : (
+                            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
+                                <Crown className="h-3 w-3 mr-1" />
+                                Recommended
+                            </Badge>
+                        )}
 
                         <div className="mb-6">
                             <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
@@ -270,11 +313,18 @@ export default function PremiumPage() {
                         </ul>
 
                         <Button
-                            onClick={() => handleSubscribe("PRO", selectedPlan)}
+                            onClick={() => currentPlanTier === "PRO" ? router.push("/downloads") : handleSubscribe("PRO", selectedPlan)}
                             disabled={loading === "PRO"}
+                            variant={currentPlanTier === "PRO" ? "outline" : "default"}
                             className="w-full"
                         >
-                            {loading === "PRO" ? "Loading..." : "Get Started"}
+                            {loading === "PRO" 
+                                ? "Loading..." 
+                                : currentPlanTier === "PRO" 
+                                    ? "Manage Plan" 
+                                    : currentPlanTier === "STARTER" 
+                                        ? "Upgrade to Pro" 
+                                        : "Get Started"}
                         </Button>
                     </motion.div>
                 </div>
@@ -403,7 +453,7 @@ export default function PremiumPage() {
                 </motion.div>
 
                 {/* Manage Subscription Link */}
-                {isPremium && (
+                {(currentPlanTier === "STARTER" || currentPlanTier === "PRO") && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}

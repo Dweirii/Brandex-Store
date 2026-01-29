@@ -31,7 +31,12 @@ export interface SubscriptionStatus {
  * Subscription Checkout Response Interface
  */
 export interface SubscriptionCheckoutResponse {
-  url: string
+  url?: string
+  success?: boolean
+  message?: string
+  redirectUrl?: string
+  reused?: boolean
+  sessionId?: string
 }
 
 /**
@@ -345,6 +350,13 @@ export async function createSubscriptionCheckout(
   }
 
   const data: SubscriptionCheckoutResponse = await response.json()
+  
+  // Handle upgrade response (direct subscription update)
+  if (data.success && data.redirectUrl) {
+    return data.redirectUrl
+  }
+  
+  // Handle checkout session response (new subscription)
   if (!data.url) {
     throw new Error("No checkout URL received from server")
   }

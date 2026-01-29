@@ -34,7 +34,7 @@ const font = Urbanist({
 
 export const metadata: Metadata = {
   title: {
-    default: "Brandex — Premium Mockups & Design Resources",
+    default: "Brandex Premium Mockups & Design Resources",
     template: "%s | Brandex",
   },
   description:

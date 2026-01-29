@@ -48,6 +48,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
   const [isCanceling, setIsCanceling] = useState(false)
   const [isResuming, setIsResuming] = useState(false)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [isUpgrading, setIsUpgrading] = useState(false)
 
   // Plan pricing IDs
   const starterMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID
@@ -64,6 +65,16 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
 
     const success = searchParams.get("success")
     const sessionId = searchParams.get("session_id")
+    const upgrade = searchParams.get("upgrade")
+
+    // Handle instant upgrade success
+    if (upgrade === "success") {
+      clearCache()
+      refresh()
+      triggerSubscriptionRefresh()
+      router.replace(window.location.pathname, { scroll: false })
+      return
+    }
 
     if (success === "true" && sessionId) {
       setIsVerifying(true)
@@ -239,13 +250,55 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
     })
   }
 
+  // Get the current plan tier from subscription
+  const currentPlanTier = subscription?.planTier || "FREE"
+
+  const handleUpgradeToPro = async () => {
+    setIsUpgrading(true)
+    try {
+      const token = await getToken({ template: "CustomerJWTBrandex" })
+      if (!token) {
+        toast.error("Authentication failed")
+        return
+      }
+
+      const email = user?.emailAddresses?.[0]?.emailAddress || user?.primaryEmailAddress?.emailAddress || ""
+      const priceId = proMonthlyPriceId || legacyMonthlyPriceId
+      
+      if (!priceId) {
+        toast.error("Pro plan not configured")
+        return
+      }
+
+      const redirectUrl = await createSubscriptionCheckout(storeId, priceId, email, token)
+      
+      // Check if this is an instant upgrade (contains upgrade=success) or a checkout URL
+      if (redirectUrl.includes("upgrade=success")) {
+        // Instant upgrade - refresh subscription and show success
+        clearCache()
+        await new Promise(resolve => setTimeout(resolve, 500))
+        await refresh()
+        triggerSubscriptionRefresh()
+        toast.success("Successfully upgraded to Pro!")
+      } else {
+        // Redirect to Stripe checkout
+        window.location.href = redirectUrl
+      }
+    } catch (error) {
+      console.error("Upgrade error:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to upgrade. Please try again.")
+    } finally {
+      setIsUpgrading(false)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md p-6">
         <DialogHeader className="space-y-2">
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Crown className="h-5 w-5 text-primary" />
-            Premium Subscription
+            Subscription
           </DialogTitle>
         </DialogHeader>
 
@@ -279,12 +332,19 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                   <span className="font-semibold">Active</span>
                 </div>
                 <Badge variant="default" className="bg-primary">
-                  Premium
+                  {currentPlanTier === "STARTER" ? "Starter" : currentPlanTier === "PRO" ? "Pro" : "Free"}
                 </Badge>
               </div>
 
               {subscription && (
                 <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Current Plan:</span>
+                    <span className="text-muted-foreground">
+                      {currentPlanTier === "STARTER" ? "Starter" : currentPlanTier === "PRO" ? "Pro" : "Free"}
+                    </span>
+                  </div>
+
                   {subscription.status === "TRIALING" && subscription.trialEnd && (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Calendar className="h-4 w-4" />
@@ -308,11 +368,40 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
 
               <div className="mt-2 text-center">
                 <Link href="/premium" className="text-xs text-primary hover:underline" onClick={() => onOpenChange(false)}>
-                  View Premium Benefits
+                  View All Plans
                 </Link>
               </div>
 
               <Separator className="my-4" />
+
+              {/* Upgrade to Pro for Starter users */}
+              {currentPlanTier === "STARTER" && !subscription?.cancelAtPeriodEnd && (
+                <div className="space-y-3 mb-4">
+                  <p className="text-sm font-medium">Upgrade to Pro</p>
+                  <p className="text-xs text-muted-foreground">
+                    Get access to advanced features and unlimited content
+                  </p>
+                  <Button
+                    onClick={handleUpgradeToPro}
+                    disabled={isUpgrading}
+                    className="w-full"
+                    variant="default"
+                  >
+                    {isUpgrading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <Crown className="h-4 w-4 mr-2" />
+                        Upgrade to Pro
+                      </>
+                    )}
+                  </Button>
+                  <Separator className="my-4" />
+                </div>
+              )}
 
               {subscription?.cancelAtPeriodEnd ? (
                 <div className="space-y-3">
@@ -353,7 +442,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                   ) : (
                     <>
                       <XCircle className="h-4 w-4 mr-2" />
-                      Cancel Subscription
+                      {currentPlanTier === "PRO" ? "Downgrade / Cancel" : "Cancel Subscription"}
                     </>
                   )}
                 </Button>

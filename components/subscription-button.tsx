@@ -272,7 +272,7 @@ export function SubscriptionButton({
             <span>Processing...</span>
           </>
         ) : (
-          <span>Upgrade to Premium</span>
+          <span>Choose Plan</span>
         )}
       </Button>
 

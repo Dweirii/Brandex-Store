@@ -25,6 +25,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 const DownloadButtonWrapper = dynamic(() => import('@/components/orders/DownloadButtonWrapper'), { ssr: false })
 import { useSubscription } from "@/hooks/use-subscription"
 import { DownloadUsage } from "@/components/download-usage"
+import { SubscriptionModal } from "@/components/modals/subscription-modal"
 
 interface DownloadRecord {
   id: string
@@ -53,6 +54,7 @@ function DownloadsPageContent() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
   const selectedCategoryId = searchParams.get("category") || ""
 
   const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
@@ -235,23 +237,54 @@ function DownloadsPageContent() {
           </motion.p>
         </div>
 
-        {/* Debug: Show plan tier */}
-        {process.env.NODE_ENV === "development" && (
-          <div className="mb-4 p-3 bg-muted rounded text-xs text-muted-foreground">
-            Current Plan: <strong>{planTier}</strong> | Subscription: {subscription ? "Active" : "None"} | Should show usage: {planTier === "STARTER" ? "YES" : "NO"}
-          </div>
+        {/* Subscription Management Card */}
+        {(planTier === "STARTER" || planTier === "PRO") && (
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 p-3 rounded-lg">
+                    <Calendar className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {planTier === "STARTER" ? "Starter Plan" : "Pro Plan"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {subscription?.cancelAtPeriodEnd 
+                        ? `Cancels ${subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString() : "soon"}`
+                        : subscription?.currentPeriodEnd 
+                          ? `Renews ${new Date(subscription.currentPeriodEnd).toLocaleDateString()}`
+                          : "Active subscription"}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => setShowSubscriptionModal(true)}
+                  variant="outline"
+                  size="sm"
+                >
+                  Manage Subscription
+                </Button>
+              </div>
+            </div>
+          </motion.div>
         )}
         
-        {/* Download Usage for Starter Plan - TEMPORARILY SHOWING FOR ALL TO TEST */}
-        {/* TODO: Change back to: planTier === "STARTER" */}
-        {true && (
+        {/* Download Usage for Starter Plan only */}
+        {planTier === "STARTER" && (
           <motion.div
             className="mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <DownloadUsage storeId={storeId} planTier="STARTER" />
+            <DownloadUsage storeId={storeId} planTier={planTier} />
           </motion.div>
         )}
 
@@ -470,6 +503,13 @@ function DownloadsPageContent() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Subscription Management Modal */}
+      <SubscriptionModal
+        open={showSubscriptionModal}
+        onOpenChange={setShowSubscriptionModal}
+        storeId={storeId}
+      />
     </Container>
   )
 }

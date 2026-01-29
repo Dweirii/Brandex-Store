@@ -16,9 +16,12 @@ const NavbarActions = () => {
   const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
 
   // Check subscription status
-  const { isActive: isPremium } = useSubscription(storeId, {
+  const { isActive: isPremium, subscription } = useSubscription(storeId, {
     autoRefresh: false
   })
+  
+  const currentPlanTier = subscription?.planTier || "FREE"
+  const planDisplayName = currentPlanTier === "STARTER" ? "Starter" : currentPlanTier === "PRO" ? "Pro" : "Free"
 
   useEffect(() => {
     setIsMounted(true)
@@ -37,7 +40,7 @@ const NavbarActions = () => {
         >
           <Sparkles className="h-3.5 w-3.5 text-green-600 dark:text-green-400 group-hover:rotate-12 transition-transform" />
           <span className="text-xs font-semibold text-green-600 dark:text-green-400">
-            Premium
+            {planDisplayName}
           </span>
         </Link>
       )}

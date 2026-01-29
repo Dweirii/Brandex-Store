@@ -5,7 +5,6 @@ import { useAuth } from "@clerk/nextjs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/Button"
 import { SubscriptionButton } from "@/components/subscription-button"
-import { PremiumBadge } from "@/components/ui/premium-badge"
 import { Separator } from "@/components/ui/separator"
 import {
   Crown,
@@ -24,9 +23,11 @@ export function PremiumModal() {
 
   // Get subscription status
   // No auto-refresh to reduce API calls
-  const { isActive: hasPremium } = useSubscription(storeId, {
+  const { subscription } = useSubscription(storeId, {
     autoRefresh: false,
   })
+  
+  const currentPlanTier = subscription?.planTier || "FREE"
 
   // Get storeId from env
   useEffect(() => {
@@ -48,26 +49,29 @@ export function PremiumModal() {
         <DialogHeader>
           <DialogTitle className="flex items-center justify-center gap-3 text-center">
             <Crown className="h-8 w-8 text-green-500" />
-            <span className="text-3xl font-bold">Brandex Premium</span>
-            <PremiumBadge size="lg" />
+            <span className="text-3xl font-bold">Brandex Plans</span>
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Description */}
           <p className="text-center text-lg text-muted-foreground">
-            Get unlimited access to all premium content with a 7-day free trial
+            {currentPlanTier === "STARTER" 
+              ? "Upgrade to Pro for unlimited downloads and advanced features"
+              : currentPlanTier === "PRO"
+              ? "You have access to all premium content and features"
+              : "Get access to premium content with Starter or Pro plans"}
           </p>
 
-          {hasPremium ? (
-            /* Already Premium */
+          {currentPlanTier === "PRO" ? (
+            /* Already on Pro Plan */
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="p-6 bg-green-500/10 border border-green-500/20 rounded-lg text-center"
             >
               <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <h3 className="text-xl font-bold mb-2">You&apos;re Already Premium!</h3>
+              <h3 className="text-xl font-bold mb-2">You&apos;re on Pro!</h3>
               <p className="text-muted-foreground">
                 You have full access to all premium products and features.
               </p>
@@ -79,10 +83,34 @@ export function PremiumModal() {
                   Continue Browsing
                 </Button>
                 <Link href="/premium" className="text-sm text-green-600 hover:underline" onClick={() => premiumModal.onClose()}>
-                  View Premium Benefits
+                  View All Plans
                 </Link>
               </div>
             </motion.div>
+          ) : currentPlanTier === "STARTER" ? (
+            /* On Starter - Show Upgrade to Pro */
+            <>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-6 bg-primary/5 border border-primary/20 rounded-lg text-center"
+              >
+                <Crown className="h-12 w-12 text-primary mx-auto mb-3" />
+                <h3 className="text-xl font-bold mb-2">You&apos;re on Starter</h3>
+                <p className="text-muted-foreground mb-4">
+                  Upgrade to Pro for unlimited downloads and advanced features
+                </p>
+                <Link href="/premium">
+                  <Button
+                    onClick={() => premiumModal.onClose()}
+                    className="w-full"
+                  >
+                    <Crown className="h-4 w-4 mr-2" />
+                    Upgrade to Pro
+                  </Button>
+                </Link>
+              </motion.div>
+            </>
           ) : !isSignedIn ? (
             /* Not Signed In */
             <motion.div
@@ -93,7 +121,7 @@ export function PremiumModal() {
               <Crown className="h-12 w-12 text-green-500 mx-auto mb-3" />
               <h3 className="text-xl font-bold mb-2">Sign In Required</h3>
               <p className="text-muted-foreground mb-4">
-                Please sign in to subscribe to Brandex Premium
+                Please sign in to view and subscribe to plans
               </p>
               <Button
                 onClick={() => {
@@ -106,7 +134,7 @@ export function PremiumModal() {
               </Button>
               <div className="mt-4">
                 <Link href="/premium" className="text-sm text-muted-foreground hover:text-primary hover:underline" onClick={() => premiumModal.onClose()}>
-                  Learn more about Premium
+                  View all plans
                 </Link>
               </div>
             </motion.div>
@@ -156,7 +184,7 @@ export function PremiumModal() {
                   </span>
                 </div>
                 <Link href="/premium" className="text-xs text-muted-foreground hover:text-primary hover:underline" onClick={() => premiumModal.onClose()}>
-                  Learn more about Premium features
+                  View all plans and features
                 </Link>
               </div>
             </>
