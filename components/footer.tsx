@@ -54,13 +54,16 @@ const Footer = () => {
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4 text-foreground">Contact</h3> {/* Ensured text-foreground */}
+            <p className="text-sm text-muted-foreground mb-3">
+              Need help? Email us and we&apos;ll get back to you soon.
+            </p>
             <ul className="text-sm space-y-2">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" /> {/* Changed text-green-400 to text-primary */}
-                <a href="mailto:m.omari@ohg.world" className="text-muted-foreground hover:underline">
+                <a href="mailto:team@brandexme.com" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}
-                  m.omari@ohg.world
+                  team@brandexme.com
                 </a>
               </li>
               <li className="flex items-center gap-2">

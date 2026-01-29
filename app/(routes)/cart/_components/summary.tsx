@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button"
 import Currency from "@/components/ui/currency"
 import { Separator } from "@/components/ui/separator"
 import useCart from "@/hooks/use-cart"
+import { TrustBadges } from "@/components/trust-badges"
 
 const Summary = () => {
   const searchParams = useSearchParams()
@@ -187,6 +188,10 @@ const Summary = () => {
           <Currency value={totalPrice} />
         </div>
         <div className="flex items-center justify-between text-base">
+          <span className="text-muted-foreground">Tax</span>
+          <Currency value={0.30} />
+        </div>
+        <div className="flex items-center justify-between text-base">
           <div className="flex items-center gap-2">
             <Heart className="h-5 w-5 text-primary" fill="currentColor" />
             <span className="text-muted-foreground">Brandex Loyalty</span>
@@ -200,7 +205,9 @@ const Summary = () => {
         </div>
       </div>
 
-      <div className="mt-10 space-y-4">
+      <TrustBadges />
+
+      <div className="mt-6 space-y-4">
         <Button
           onClick={onCheckout}
           disabled={isLoading}

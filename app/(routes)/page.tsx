@@ -9,6 +9,7 @@ import { ScrollToTop } from "@/components/scroll-to-top"
 import PriceFilter from "@/components/price-filter"
 import SortFilter from "@/components/sort-filter"
 import CategoryNav from "@/components/category-nav"
+import { RecentlyViewed } from "@/components/recently-viewed"
 import {
   generateHomeMetadata,
   generateWebsiteStructuredData,
@@ -107,6 +108,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
           </Suspense>
         </div>
       </div>
+      <RecentlyViewed />
       <ScrollToTop />
     </Container>
   )

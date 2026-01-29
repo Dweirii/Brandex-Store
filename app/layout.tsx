@@ -15,6 +15,9 @@ import { Providers } from "@/providers/Providers";
 import { ThemeProvider } from "@/components/theme-provider";
 import AppToaster from "@/components/ui/toaster";
 import { GeoInitializer } from "@/components/geo-initializer";
+import { HelpWidget } from "@/components/help-widget";
+import { BackToTop } from "@/components/back-to-top";
+import { CompareButton } from "@/components/compare-button";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -115,6 +118,9 @@ export default function RootLayout({
               <main className="flex-1">{children}</main>
               <AppToaster />
               <Footer />
+              <HelpWidget />
+              <BackToTop />
+              <CompareButton />
             </Providers>
           </ThemeProvider>
           <Analytics />

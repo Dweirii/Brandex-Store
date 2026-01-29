@@ -1,6 +1,7 @@
 import useCart from "@/hooks/use-cart"
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
-import { ShoppingBag, Sparkles, Heart } from "lucide-react"
+import useRecentlyViewed from "@/hooks/use-recently-viewed"
+import { ShoppingBag, Sparkles, Heart, Clock } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -10,6 +11,7 @@ const NavbarActions = () => {
   const [isMounted, setIsMounted] = useState(false)
   const cart = useCart()
   const favorites = useFavoritesWithAuth()
+  const recentlyViewed = useRecentlyViewed()
   const router = useRouter()
 
   // Get storeId from env
@@ -54,6 +56,29 @@ const NavbarActions = () => {
         {favorites.items.length > 0 && (
           <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground px-1 shadow-sm">
             {favorites.items.length > 99 ? '99+' : favorites.items.length}
+          </span>
+        )}
+      </button>
+
+      <button
+        onClick={() => {
+          // Scroll to recently viewed section on home page
+          if (window.location.pathname === '/' || window.location.pathname === '/home') {
+            const recentlyViewedSection = document.querySelector('[data-recently-viewed]')
+            if (recentlyViewedSection) {
+              recentlyViewedSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
+          } else {
+            router.push('/#recently-viewed')
+          }
+        }}
+        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted/50 transition-all duration-200 group"
+        aria-label={`Recently viewed ${recentlyViewed.items.length} products`}
+      >
+        <Clock className="h-4 w-4 text-foreground" />
+        {recentlyViewed.items.length > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground px-1 shadow-sm">
+            {recentlyViewed.items.length > 99 ? '99+' : recentlyViewed.items.length}
           </span>
         )}
       </button>

@@ -5,7 +5,7 @@ import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { ShoppingCart, Eye, Crown, Heart } from "lucide-react"
+import { ShoppingCart, Eye, Crown, Heart, GitCompareArrows } from "lucide-react"
 import type { Product } from "@/types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
@@ -18,6 +18,7 @@ import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import { useSubscription } from "@/hooks/use-subscription"
 import { SubscriptionModal } from "@/components/modals/subscription-modal"
 import usePreviewModal from "@/hooks/use-preview-modal"
+import useCompare from "@/hooks/use-compare"
 
 import { getDisplayImageUrl } from "@/lib/image-utils"
 
@@ -51,6 +52,9 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
   const favorites = useFavoritesWithAuth()
   const isLiked = favorites.items.some((item) => item.id === data.id)
+  
+  const compare = useCompare()
+  const isInCompare = compare.isInCompare(data.id)
 
   const toggleFavorite = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -123,6 +127,19 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
       cart.addItem(data)
     },
     [cart, data]
+  )
+
+  const handleCompare = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      if (isInCompare) {
+        compare.removeItem(data.id)
+      } else {
+        compare.addItem(data)
+      }
+    },
+    [compare, data, isInCompare]
   )
 
   const handleMouseEnter = useCallback(() => {
@@ -301,6 +318,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                   >
                     <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
                   </Button>
+                  <Button
+                    onClick={handleCompare}
+                    size="sm"
+                    variant="outline"
+                    className={cn(
+                      "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
+                      isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10 border-primary/50"
+                    )}
+                    title={isInCompare ? "Remove from compare" : "Add to compare"}
+                  >
+                    <GitCompareArrows className="h-4 w-4" />
+                  </Button>
                 </>
               ) : (
                 <>
@@ -334,6 +363,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         title={isLiked ? "Remove from favorites" : "Add to favorites"}
                       >
                         <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+                      </Button>
+                      <Button
+                        onClick={handleCompare}
+                        size="sm"
+                        variant="outline"
+                        className={cn(
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
+                          isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10 border-primary/50"
+                        )}
+                        title={isInCompare ? "Remove from compare" : "Add to compare"}
+                      >
+                        <GitCompareArrows className="h-4 w-4" />
                       </Button>
                     </>
                   ) : (
@@ -371,6 +412,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         title={isLiked ? "Remove from favorites" : "Add to favorites"}
                       >
                         <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+                      </Button>
+                      <Button
+                        onClick={handleCompare}
+                        size="sm"
+                        variant="outline"
+                        className={cn(
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
+                          isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10 border-primary/50"
+                        )}
+                        title={isInCompare ? "Remove from compare" : "Add to compare"}
+                      >
+                        <GitCompareArrows className="h-4 w-4" />
                       </Button>
                     </>
                   )}

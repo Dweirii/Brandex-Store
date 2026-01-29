@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface Subcategory {
@@ -12,12 +11,10 @@ interface Subcategory {
 
 interface SubcategoryFilterProps {
   subcategories: Subcategory[];
-  categoryId: string;
 }
 
 export const SubcategoryFilter: React.FC<SubcategoryFilterProps> = ({
   subcategories,
-  categoryId,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();

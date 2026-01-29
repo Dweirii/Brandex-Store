@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { DownloadButton } from "@/components/ui/download-button"
 import { useSubscription } from "@/hooks/use-subscription"
 import { usePremiumModal } from "@/hooks/use-premium-modal"
+import { ProductShare } from "@/components/product-share"
 
 interface InfoProps {
   data: Product
@@ -52,9 +53,12 @@ const Info: React.FC<InfoProps> = ({ data }) => {
     <div className="space-y-6">
 
       {/* Title */}
-      <h1 className="text-3xl font-bold text-foreground">
-        {data.name}
-      </h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-3xl font-bold text-foreground flex-1">
+          {data.name}
+        </h1>
+        <ProductShare productId={data.id} productName={data.name} />
+      </div>
 
       {/* Description */}
       {data.description && (

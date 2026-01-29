@@ -11,6 +11,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Container from "@/components/ui/container";
+import { ProductBackButton } from "@/components/product-back-button";
+import { ProductViewCounter } from "@/components/product-view-counter";
+import { ProductViewTracker } from "@/components/product-view-tracker";
+import { ProductReviews } from "@/components/product-reviews";
 import {
   generateProductMetadata,
   generateProductStructuredData,
@@ -155,7 +159,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
 
         <Container>
+          <ProductViewTracker product={product} />
           <div className="px-4 py-10 sm:px-6 lg:px-8">
+            <ProductBackButton />
             <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
               {/* Gallery */}
               <div className="w-full">
@@ -181,12 +187,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {/* Product Info */}
               <div className="mt-10 lg:mt-0">
                 <Info data={product} />
+                <ProductViewCounter productId={productId} />
               </div>
             </div>
           </div>
         </Container>
 
+        {/* Reviews Section */}
         <div className="mt-8 border-t">
+          <Container>
+            <div className="px-4 py-12 sm:px-6 lg:px-8">
+              <ProductReviews productId={productId} />
+            </div>
+          </Container>
+        </div>
+
+        {/* Related Products */}
+        <div className="border-t">
           <Container>
             <div className="px-4 py-12 sm:px-6 lg:px-8">
               <Suspense

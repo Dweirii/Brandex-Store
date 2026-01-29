@@ -23,13 +23,25 @@ interface CartStore {
         }
   
         set({ items: [...get().items, data] });
-        toast.success("Item added to cart.");
+        
+        // Show success toast with duration
+        toast.success(`${data.name} added to cart`, {
+          duration: 4000,
+          icon: '🛒',
+        });
       },
       removeItem: (id: string) => {
+        const removedItem = get().items.find((item) => item.id === id)
+        
         set({
           items: get().items.filter((item) => item.id !== id),
         });
-        toast.success("Item removed from the cart.");
+        
+        if (removedItem) {
+          toast.success(`${removedItem.name} removed from cart`, {
+            duration: 4000,
+          });
+        }
       },
       removeAll: () => set({ items: [] }),
     }), {
