@@ -266,7 +266,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
       const priceId = proMonthlyPriceId || legacyMonthlyPriceId
       
       if (!priceId) {
-        toast.error("Pro plan not configured")
+        toast.error("Premium Pro plan not configured")
         return
       }
 
@@ -279,7 +279,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
         await new Promise(resolve => setTimeout(resolve, 500))
         await refresh()
         triggerSubscriptionRefresh()
-        toast.success("Successfully upgraded to Pro!")
+        toast.success("Successfully upgraded to Premium Pro!")
       } else {
         // Redirect to Stripe checkout
         window.location.href = redirectUrl
@@ -332,7 +332,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                   <span className="font-semibold">Active</span>
                 </div>
                 <Badge variant="default" className="bg-primary">
-                  {currentPlanTier === "STARTER" ? "Starter" : currentPlanTier === "PRO" ? "Pro" : "Free"}
+                  {currentPlanTier === "STARTER" ? "Premium" : currentPlanTier === "PRO" ? "Premium Pro" : "Basic"}
                 </Badge>
               </div>
 
@@ -341,7 +341,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                   <div className="flex items-center gap-2">
                     <span className="font-medium">Current Plan:</span>
                     <span className="text-muted-foreground">
-                      {currentPlanTier === "STARTER" ? "Starter" : currentPlanTier === "PRO" ? "Pro" : "Free"}
+                      {currentPlanTier === "STARTER" ? "Premium" : currentPlanTier === "PRO" ? "Premium Pro" : "Basic"}
                     </span>
                   </div>
 
@@ -374,12 +374,12 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
 
               <Separator className="my-4" />
 
-              {/* Upgrade to Pro for Starter users */}
+              {/* Upgrade to Premium Pro for Premium users */}
               {currentPlanTier === "STARTER" && !subscription?.cancelAtPeriodEnd && (
                 <div className="space-y-3 mb-4">
-                  <p className="text-sm font-medium">Upgrade to Pro</p>
+                  <p className="text-sm font-medium">Upgrade to Premium Pro</p>
                   <p className="text-xs text-muted-foreground">
-                    Get access to advanced features and unlimited content
+                    Get unlimited credits and priority support
                   </p>
                   <Button
                     onClick={handleUpgradeToPro}
@@ -395,7 +395,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
                     ) : (
                       <>
                         <Crown className="h-4 w-4 mr-2" />
-                        Upgrade to Pro
+                        Upgrade to Premium Pro
                       </>
                     )}
                   </Button>
@@ -455,7 +455,7 @@ export function SubscriptionModal({ open, onOpenChange, storeId }: SubscriptionM
             <Crown className="h-12 w-12 text-primary mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Upgrade to Premium</h3>
             <p className="text-sm text-muted-foreground mb-6">
-              Get unlimited access to premium content with our Starter or Pro plans
+              Get unlimited access to premium content with our Premium or Premium Pro plans
             </p>
             <Button
               onClick={() => window.location.href = "/premium"}

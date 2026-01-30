@@ -4,8 +4,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@clerk/nextjs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/Button"
-import { SubscriptionButton } from "@/components/subscription-button"
-import { Separator } from "@/components/ui/separator"
+import Link from "next/link"
 import {
   Crown,
   CheckCircle2,
@@ -14,7 +13,6 @@ import {
 import { motion } from "framer-motion"
 import { usePremiumModal } from "@/hooks/use-premium-modal"
 import { useSubscription } from "@/hooks/use-subscription"
-import Link from "next/link"
 
 export function PremiumModal() {
   const premiumModal = usePremiumModal()
@@ -56,24 +54,23 @@ export function PremiumModal() {
         <div className="space-y-6 py-4">
           {/* Description */}
           <p className="text-center text-lg text-muted-foreground">
-            {currentPlanTier === "STARTER" 
-              ? "Upgrade to Pro for unlimited downloads and advanced features"
+            {currentPlanTier === "STARTER"
+              ? "Upgrade to Premium Pro for unlimited credits and priority support"
               : currentPlanTier === "PRO"
-              ? "You have access to all premium content and features"
-              : "Get access to premium content with Starter or Pro plans"}
+              ? "You have unlimited credits and full access to all premium content"
+              : "Explore free content. Upgrade to unlock premium downloads with credits."}
           </p>
 
           {currentPlanTier === "PRO" ? (
-            /* Already on Pro Plan */
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="p-6 bg-green-500/10 border border-green-500/20 rounded-lg text-center"
             >
               <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-3" />
-              <h3 className="text-xl font-bold mb-2">You&apos;re on Pro!</h3>
+              <h3 className="text-xl font-bold mb-2">You&apos;re on Premium Pro!</h3>
               <p className="text-muted-foreground">
-                You have full access to all premium products and features.
+                You have unlimited credits and full access to all premium products.
               </p>
               <div className="flex flex-col gap-2 mt-4">
                 <Button
@@ -88,29 +85,26 @@ export function PremiumModal() {
               </div>
             </motion.div>
           ) : currentPlanTier === "STARTER" ? (
-            /* On Starter - Show Upgrade to Pro */
-            <>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="p-6 bg-primary/5 border border-primary/20 rounded-lg text-center"
-              >
-                <Crown className="h-12 w-12 text-primary mx-auto mb-3" />
-                <h3 className="text-xl font-bold mb-2">You&apos;re on Starter</h3>
-                <p className="text-muted-foreground mb-4">
-                  Upgrade to Pro for unlimited downloads and advanced features
-                </p>
-                <Link href="/premium">
-                  <Button
-                    onClick={() => premiumModal.onClose()}
-                    className="w-full"
-                  >
-                    <Crown className="h-4 w-4 mr-2" />
-                    Upgrade to Pro
-                  </Button>
-                </Link>
-              </motion.div>
-            </>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="p-6 bg-primary/5 border border-primary/20 rounded-lg text-center"
+            >
+              <Crown className="h-12 w-12 text-primary mx-auto mb-3" />
+              <h3 className="text-xl font-bold mb-2">You&apos;re on Premium</h3>
+              <p className="text-muted-foreground mb-4">
+                You have 50 credits per month. Upgrade to Premium Pro for unlimited credits and priority support.
+              </p>
+              <Link href="/premium">
+                <Button
+                  onClick={() => premiumModal.onClose()}
+                  className="w-full"
+                >
+                  <Crown className="h-4 w-4 mr-2" />
+                  Upgrade to Premium Pro
+                </Button>
+              </Link>
+            </motion.div>
           ) : !isSignedIn ? (
             /* Not Signed In */
             <motion.div
@@ -139,19 +133,19 @@ export function PremiumModal() {
               </div>
             </motion.div>
           ) : (
-            /* Show Upgrade Options */
-            <>
-              {/* Benefits Grid */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[
-                  "All paid mockups for free",
-                  "Unlimited downloads",
+                  "Use credits to unlock premium downloads",
+                  "Unlimited free downloads",
+                  "50 credits per month (Premium) or unlimited (Premium Pro)",
                   "Access to all categories",
-                  "Exclusive premium-only products",
-                  "Commercial license included",
-                  "Early access to new releases",
                   "Download library & history",
-                  "Priority support",
+                  "Priority support (Premium Pro)",
                 ].map((benefit, index) => (
                   <motion.div
                     key={benefit}
@@ -165,29 +159,18 @@ export function PremiumModal() {
                   </motion.div>
                 ))}
               </div>
-
-              <Separator />
-
-              {/* Subscription Button */}
-              <SubscriptionButton
-                storeId={storeId}
-                size="lg"
-                variant="premium"
-              />
-
-              {/* Trial Info */}
-              <div className="flex flex-col items-center gap-2">
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <Sparkles className="h-4 w-4 text-green-500" />
-                  <span className="text-green-600 dark:text-green-400 font-medium">
-                    7-day free trial • Cancel anytime • No commitments
-                  </span>
-                </div>
-                <Link href="/premium" className="text-xs text-muted-foreground hover:text-primary hover:underline" onClick={() => premiumModal.onClose()}>
-                  View all plans and features
+              <div className="flex flex-col gap-3">
+                <Link href="/premium" onClick={() => premiumModal.onClose()}>
+                  <Button size="lg" className="w-full">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    View plans & pricing
+                  </Button>
                 </Link>
+                <p className="text-center text-xs text-muted-foreground">
+                  Cancel anytime • No commitments
+                </p>
               </div>
-            </>
+            </motion.div>
           )}
         </div>
       </DialogContent>

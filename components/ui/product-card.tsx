@@ -5,14 +5,13 @@ import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { ShoppingCart, Eye, Crown, Heart, GitCompareArrows } from "lucide-react"
+import { Eye, Crown, Heart, GitCompareArrows } from "lucide-react"
 import type { Product } from "@/types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DownloadButton } from "@/components/ui/download-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
-import useCart from "@/hooks/use-cart"
 import useMobile from "@/hooks/use-mobile"
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import { useSubscription } from "@/hooks/use-subscription"
@@ -28,8 +27,6 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const router = useRouter()
-  // ... (previous hooks) ...
-  const cart = useCart()
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const isMobile = useMobile()
@@ -119,15 +116,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const handleMouseEnterCard = useCallback(() => {
     router.prefetch(`/products/${data.id}`)
   }, [router, data.id])
-
-  const handleAddToCart = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      cart.addItem(data)
-    },
-    [cart, data]
-  )
 
   const handleCompare = useCallback(
     (e: React.MouseEvent) => {
@@ -379,16 +367,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     </>
                   ) : (
                     <>
-                      {/* If no Premium, show Buy Now button */}
-                      <Button
-                        onClick={handleAddToCart}
-                        size="sm"
-                        variant="outline"
-                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
-                      >
-                        <ShoppingCart className="h-4 w-4" />
-                      </Button>
-                      {/* Always show Unlock with Premium option for non-premium users */}
                       <Button
                         onClick={(e) => {
                           e.stopPropagation()
@@ -478,17 +456,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     />
                   ) : (
                     <>
-                      {/* If no Premium, show Buy Now button */}
-                      <Button
-                        onClick={handleAddToCart}
-                        size="sm"
-                        variant="outline"
-                        className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
-                      >
-                        <ShoppingCart className="h-4 w-4" />
-                        <span className="text-xs">Buy</span>
-                      </Button>
-                      {/* Show Unlock with Premium option */}
                       <Button
                         onClick={(e) => {
                           e.preventDefault()

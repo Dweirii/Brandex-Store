@@ -1,7 +1,6 @@
-import useCart from "@/hooks/use-cart"
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import useRecentlyViewed from "@/hooks/use-recently-viewed"
-import { ShoppingBag, Sparkles, Heart, Clock } from "lucide-react"
+import { Sparkles, Heart, Clock } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -9,7 +8,6 @@ import { useSubscription } from "@/hooks/use-subscription"
 
 const NavbarActions = () => {
   const [isMounted, setIsMounted] = useState(false)
-  const cart = useCart()
   const favorites = useFavoritesWithAuth()
   const recentlyViewed = useRecentlyViewed()
   const router = useRouter()
@@ -23,7 +21,7 @@ const NavbarActions = () => {
   })
   
   const currentPlanTier = subscription?.planTier || "FREE"
-  const planDisplayName = currentPlanTier === "STARTER" ? "Starter" : currentPlanTier === "PRO" ? "Pro" : "Free"
+  const planDisplayName = currentPlanTier === "STARTER" ? "Premium" : currentPlanTier === "PRO" ? "Premium Pro" : "Basic"
 
   useEffect(() => {
     setIsMounted(true)
@@ -79,19 +77,6 @@ const NavbarActions = () => {
         {recentlyViewed.items.length > 0 && (
           <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground px-1 shadow-sm">
             {recentlyViewed.items.length > 99 ? '99+' : recentlyViewed.items.length}
-          </span>
-        )}
-      </button>
-
-      <button
-        onClick={() => router.push("/cart")}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted/50 transition-all duration-200 group"
-        aria-label={`Shopping cart with ${cart.items.length} items`}
-      >
-        <ShoppingBag className="h-4 w-4 text-foreground" />
-        {cart.items.length > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground px-1 shadow-sm">
-            {cart.items.length > 99 ? '99+' : cart.items.length}
           </span>
         )}
       </button>

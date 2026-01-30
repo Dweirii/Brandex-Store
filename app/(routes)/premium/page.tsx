@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation"
 
 export default function PremiumPage() {
     const [isMounted, setIsMounted] = useState(false)
-    const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly")
     const [loading, setLoading] = useState<string | null>(null)
     const { isSignedIn, getToken } = useAuth()
     const { user } = useUser()
@@ -29,22 +28,19 @@ export default function PremiumPage() {
     
     const currentPlanTier = subscription?.planTier || "FREE"
 
-    // Pricing
-    const starterPrice = parseFloat(process.env.NEXT_PUBLIC_STARTER_PLAN_PRICE || "4.99")
-    const proMonthlyPrice = parseFloat(process.env.NEXT_PUBLIC_PRO_MONTHLY_PRICE || "14.99")
-    const proYearlyPrice = parseFloat(process.env.NEXT_PUBLIC_PRO_YEARLY_PRICE || "149.00")
-    const proYearlySavings = (proMonthlyPrice * 12 - proYearlyPrice).toFixed(0)
+    // Pricing (monthly only)
+    const premiumPrice = parseFloat(process.env.NEXT_PUBLIC_STARTER_PLAN_PRICE || "4.99")
+    const premiumProPrice = parseFloat(process.env.NEXT_PUBLIC_PRO_MONTHLY_PRICE || "9.99")
 
     // Price IDs
     const starterMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_STARTER_MONTHLY_PRICE_ID
     const proMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID
-    const proYearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID
 
     useEffect(() => {
         setIsMounted(true)
     }, [])
 
-    const handleSubscribe = async (planTier: "STARTER" | "PRO", interval: "monthly" | "yearly" = "monthly") => {
+    const handleSubscribe = async (planTier: "STARTER" | "PRO") => {
         if (!isSignedIn || !user) {
             window.location.href = "/sign-in"
             return
@@ -52,7 +48,7 @@ export default function PremiumPage() {
 
         // Check if user is already on this plan
         if (currentPlanTier === planTier) {
-            toast.error(`You are already on the ${planTier === "STARTER" ? "Starter" : "Pro"} plan`)
+            toast.error(`You are already on the ${planTier === "STARTER" ? "Premium" : "Premium Pro"} plan`)
             return
         }
 
@@ -69,7 +65,7 @@ export default function PremiumPage() {
             if (planTier === "STARTER") {
                 priceId = starterMonthlyPriceId
             } else if (planTier === "PRO") {
-                priceId = interval === "monthly" ? proMonthlyPriceId : proYearlyPriceId
+                priceId = proMonthlyPriceId
             }
 
             if (!priceId) {
@@ -87,7 +83,7 @@ export default function PremiumPage() {
                 await new Promise(resolve => setTimeout(resolve, 500))
                 await refresh()
                 triggerSubscriptionRefresh()
-                toast.success("Successfully upgraded to Pro!")
+                toast.success("Successfully upgraded to Premium Pro!")
                 router.refresh()
             } else {
                 // Redirect to Stripe checkout
@@ -165,21 +161,21 @@ export default function PremiumPage() {
                         )}
 
                         <div className="mb-8">
-                            <h3 className="text-xl font-semibold mb-2">Free</h3>
+                            <h3 className="text-xl font-semibold mb-2">Basic</h3>
                             <div className="flex items-baseline gap-1 mb-4">
                                 <span className="text-4xl font-bold">$0</span>
                                 <span className="text-muted-foreground">/mo</span>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                For exploring our collection
+                                Explore and download free content with no commitment.
                             </p>
                         </div>
 
                         <ul className="space-y-3 mb-8 flex-1">
-                            <Feature text="Free products only" />
-                            <Feature text="Standard resolution" />
+                            <Feature text="Unlimited free downloads" />
+                            <Feature text="Access to the full product library" />
                             <Feature text="Download history" />
-                            <Feature text="Premium downloads" included={false} />
+                            <Feature text="No credits included" included={false} />
                         </ul>
 
                         <Button 
@@ -187,7 +183,7 @@ export default function PremiumPage() {
                             disabled={currentPlanTier === "FREE"}
                             className="w-full"
                         >
-                            {currentPlanTier === "FREE" ? "Current Plan" : "Free Plan"}
+                            {currentPlanTier === "FREE" ? "Current Plan" : "Basic Plan"}
                         </Button>
                     </motion.div>
 
@@ -208,25 +204,25 @@ export default function PremiumPage() {
                         )}
 
                         <div className="mb-8">
-                            <h3 className="text-xl font-semibold mb-2">Starter</h3>
+                            <h3 className="text-xl font-semibold mb-2">Premium</h3>
                             <div className="flex items-baseline gap-1 mb-4">
-                                <span className="text-4xl font-bold">${starterPrice}</span>
+                                <span className="text-4xl font-bold">${premiumPrice}</span>
                                 <span className="text-muted-foreground">/mo</span>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                For regular users
+                                The easiest way to unlock premium downloads.
                             </p>
                         </div>
 
                         <ul className="space-y-3 mb-8 flex-1">
-                            <Feature text="25 premium downloads/month" />
-                            <Feature text="Full resolution" />
-                            <Feature text="All categories" />
+                            <Feature text="50 credits per month" />
+                            <Feature text="Unlimited free downloads" />
+                            <Feature text="Use credits to unlock premium downloads" />
                             <Feature text="Download history" />
                         </ul>
 
                         <Button
-                            onClick={() => currentPlanTier === "STARTER" ? router.push("/downloads") : handleSubscribe("STARTER", "monthly")}
+                            onClick={() => currentPlanTier === "STARTER" ? router.push("/downloads") : handleSubscribe("STARTER")}
                             disabled={loading === "STARTER"}
                             variant={currentPlanTier === "STARTER" ? "outline" : "default"}
                             className="w-full"
@@ -256,64 +252,29 @@ export default function PremiumPage() {
                         <div className="mb-6">
                             <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
                                 <Crown className="h-5 w-5 text-primary" />
-                                Pro
+                                Premium Pro
                             </h3>
-
-                            {/* Interval Toggle */}
-                            <div className="flex gap-1 p-1 bg-muted rounded-lg mb-4">
-                                <button
-                                    onClick={() => setSelectedPlan("monthly")}
-                                    className={cn(
-                                        "flex-1 px-3 py-1.5 rounded text-sm font-medium transition",
-                                        selectedPlan === "monthly" 
-                                            ? "bg-primary text-primary-foreground" 
-                                            : "hover:bg-background"
-                                    )}
-                                >
-                                    Monthly
-                                </button>
-                                <button
-                                    onClick={() => setSelectedPlan("yearly")}
-                                    className={cn(
-                                        "flex-1 px-3 py-1.5 rounded text-sm font-medium transition",
-                                        selectedPlan === "yearly" 
-                                            ? "bg-primary text-primary-foreground" 
-                                            : "hover:bg-background"
-                                    )}
-                                >
-                                    Yearly
-                                </button>
-                            </div>
 
                             <div className="flex items-baseline gap-1 mb-2">
                                 <span className="text-4xl font-bold">
-                                    ${selectedPlan === "monthly" ? proMonthlyPrice : proYearlyPrice}
+                                    ${premiumProPrice}
                                 </span>
-                                <span className="text-muted-foreground">
-                                    /{selectedPlan === "monthly" ? "mo" : "yr"}
-                                </span>
+                                <span className="text-muted-foreground">/mo</span>
                             </div>
-                            {selectedPlan === "yearly" && (
-                                <p className="text-sm text-primary font-medium mb-4">
-                                    Save ${proYearlySavings}/year
-                                </p>
-                            )}
                             <p className="text-sm text-muted-foreground">
-                                For professionals
+                                Unlimited premium downloads, no monthly limits.
                             </p>
                         </div>
 
                         <ul className="space-y-3 mb-8 flex-1">
-                            <Feature text="Unlimited downloads" />
-                            <Feature text="Commercial license" />
-                            <Feature text="PSD + Smart Objects" />
-                            <Feature text="Early access" />
-                            <Feature text=" 7-day free trial" />
+                            <Feature text="Unlimited credits" />
+                            <Feature text="Unlimited free downloads" />
+                            <Feature text="Priority access and support" />
                             <Feature text="Cancel anytime" />
                         </ul>
 
                         <Button
-                            onClick={() => currentPlanTier === "PRO" ? router.push("/downloads") : handleSubscribe("PRO", selectedPlan)}
+                            onClick={() => currentPlanTier === "PRO" ? router.push("/downloads") : handleSubscribe("PRO")}
                             disabled={loading === "PRO"}
                             variant={currentPlanTier === "PRO" ? "outline" : "default"}
                             className="w-full"
@@ -323,7 +284,7 @@ export default function PremiumPage() {
                                 : currentPlanTier === "PRO" 
                                     ? "Manage Plan" 
                                     : currentPlanTier === "STARTER" 
-                                        ? "Upgrade to Pro" 
+                                        ? "Upgrade to Premium Pro" 
                                         : "Get Started"}
                         </Button>
                     </motion.div>
@@ -343,12 +304,12 @@ export default function PremiumPage() {
                             <thead>
                                 <tr className="border-b border-border bg-muted/50">
                                     <th className="text-left p-6 font-semibold text-foreground">Features</th>
-                                    <th className="text-center p-6 font-semibold text-foreground w-1/4">Free</th>
-                                    <th className="text-center p-6 font-semibold text-foreground w-1/4">Starter</th>
+                                    <th className="text-center p-6 font-semibold text-foreground w-1/4">Basic</th>
+                                    <th className="text-center p-6 font-semibold text-foreground w-1/4">Premium</th>
                                     <th className="text-center p-6 font-semibold text-foreground w-1/4">
                                         <div className="flex items-center justify-center gap-2">
                                             <Crown className="h-4 w-4 text-primary" />
-                                            Pro
+                                            Premium Pro
                                         </div>
                                     </th>
                                 </tr>
@@ -362,9 +323,9 @@ export default function PremiumPage() {
                                     pro={true} 
                                 />
                                 <TableRow 
-                                    feature="Premium downloads per month" 
+                                    feature="Credits per month" 
                                     free="—" 
-                                    starter="25" 
+                                    starter="50" 
                                     pro="Unlimited" 
                                 />
                                 <TableRow 
@@ -450,6 +411,34 @@ export default function PremiumPage() {
                             </tbody>
                         </table>
                     </div>
+                </motion.div>
+
+                {/* How Credits Work */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                    className="mt-24 max-w-2xl mx-auto"
+                >
+                    <h2 className="text-2xl font-bold text-center mb-6">How Credits Work</h2>
+                    <ul className="space-y-3 text-muted-foreground">
+                        <li className="flex items-start gap-2">
+                            <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                            <span>Credits are used to unlock premium downloads</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                            <span>1 premium download = 1 credit</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                            <span>Credits reset every month</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                            <span>Unused credits do not roll over</span>
+                        </li>
+                    </ul>
                 </motion.div>
 
                 {/* Manage Subscription Link */}

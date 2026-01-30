@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Mail, X, HelpCircle } from "lucide-react"
+import { Mail, Phone, X, HelpCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const HelpWidget = () => {
@@ -28,15 +28,24 @@ const HelpWidget = () => {
               </button>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Have questions or need assistance? Email us and we&apos;ll get back to you as soon as possible!
+              Have questions or need assistance? Email or call us and we&apos;ll get back to you as soon as possible!
             </p>
-            <a
-              href="mailto:team@brandexme.com"
-              className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2.5 rounded-md text-sm font-medium w-full justify-center"
-            >
-              <Mail className="h-4 w-4" />
-              team@brandexme.com
-            </a>
+            <div className="flex flex-col gap-2">
+              <a
+                href="mailto:team@brandexme.com"
+                className="flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors px-4 py-2.5 rounded-md text-sm font-medium w-full justify-center"
+              >
+                <Mail className="h-4 w-4" />
+                team@brandexme.com
+              </a>
+              <a
+                href="tel:+18554042726"
+                className="flex items-center gap-2 border border-border bg-muted/50 hover:bg-muted transition-colors px-4 py-2.5 rounded-md text-sm font-medium w-full justify-center"
+              >
+                <Phone className="h-4 w-4" />
+                +1 (855) 404-2726
+              </a>
+            </div>
           </div>
         )}
 

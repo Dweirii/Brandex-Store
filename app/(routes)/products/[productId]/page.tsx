@@ -193,14 +193,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         </Container>
 
-        {/* Reviews Section */}
-        <div className="mt-8 border-t">
-          <Container>
-            <div className="px-4 py-12 sm:px-6 lg:px-8">
-              <ProductReviews productId={productId} />
-            </div>
-          </Container>
-        </div>
+        {/* Reviews Section - hidden for now */}
+        {false && (
+          <div className="mt-8 border-t">
+            <Container>
+              <div className="px-4 py-12 sm:px-6 lg:px-8">
+                <ProductReviews productId={productId} />
+              </div>
+            </Container>
+          </div>
+        )}
 
         {/* Related Products */}
         <div className="border-t">

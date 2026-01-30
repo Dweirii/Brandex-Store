@@ -93,7 +93,7 @@ const ProductShare = ({ productId, productName }: ProductShareProps) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {navigator.share && (
+        {typeof navigator !== 'undefined' && 'share' in navigator && (
           <DropdownMenuItem onClick={handleNativeShare}>
             <Share2 className="h-4 w-4 mr-2" />
             Share...

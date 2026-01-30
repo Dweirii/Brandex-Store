@@ -28,6 +28,8 @@ interface DownloadButtonProps {
   gaEventName?: string
   iconOnly?: boolean
   className?: string
+  customText?: string // Custom button text to display
+  customIcon?: React.ComponentType<{ className?: string }> // Custom icon to display
 }
 
 // Get the base admin URL without any API path
@@ -54,6 +56,8 @@ export const DownloadButton = ({
   gaEventName = GA_EVENT_DEFAULT,
   iconOnly = false,
   className,
+  customText,
+  customIcon,
 }: DownloadButtonProps) => {
   const [loading, setLoading] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
@@ -425,10 +429,11 @@ export const DownloadButton = ({
         </div>
       )
     }
+    const IconComponent = customIcon || Download
     return (
       <motion.div className={cn("flex items-center", !iconOnly && "gap-2")} whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
-        <Download className="h-4 w-4" aria-hidden="true" />
-        {!iconOnly && <span className="font-medium">Download</span>}
+        <IconComponent className="h-4 w-4" aria-hidden="true" />
+        {!iconOnly && <span className="font-medium">{customText || "Download"}</span>}
       </motion.div>
     )
   }

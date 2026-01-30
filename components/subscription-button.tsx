@@ -4,7 +4,7 @@ import * as React from "react"
 import { useState } from "react"
 import { useAuth, useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/Button"
-import { Sparkles, Loader2, Check } from "lucide-react"
+import { Sparkles, Loader2 } from "lucide-react"
 import toast from "react-hot-toast"
 import axios from "axios"
 import { triggerSubscriptionRefresh } from "@/hooks/use-subscription"
@@ -63,7 +63,6 @@ export function SubscriptionButton({
   const { getToken, isSignedIn } = useAuth()
   const { user } = useUser()
   const [loading, setLoading] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly")
 
   // Get API URL - NEXT_PUBLIC_API_URL already includes the store path
   const getApiUrl = () => {
@@ -71,17 +70,8 @@ export function SubscriptionButton({
     return process.env.NEXT_PUBLIC_API_URL || ""
   }
 
-  // Get Stripe price IDs from environment
+  // Get Stripe price IDs from environment (monthly only)
   const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_MONTHLY_PRICE_ID
-  const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PREMIUM_YEARLY_PRICE_ID
-
-  // Get pricing from environment variables (defaults to $5/month and $39.99/year)
-  const monthlyPrice = parseFloat(process.env.NEXT_PUBLIC_SUBSCRIPTION_MONTHLY_PRICE || "5")
-  const yearlyPrice = parseFloat(process.env.NEXT_PUBLIC_SUBSCRIPTION_YEARLY_PRICE || "39.99")
-
-  // Calculate savings (monthly price * 12 - yearly price)
-  const monthlyYearlyTotal = monthlyPrice * 12
-  const savings = monthlyYearlyTotal - yearlyPrice
 
   const handleSubscribe = async () => {
     if (!isSignedIn) {
@@ -94,7 +84,7 @@ export function SubscriptionButton({
       return
     }
 
-    const priceId = selectedPlan === "monthly" ? monthlyPriceId : yearlyPriceId
+    const priceId = monthlyPriceId
 
     if (!priceId) {
       toast.error("Subscription pricing not configured. Please contact support.")
@@ -187,68 +177,6 @@ export function SubscriptionButton({
 
   return (
     <div className={className}>
-      {showPricing && (
-        <div className="mb-4 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setSelectedPlan("monthly")}
-            disabled={loading}
-            className={`
-              flex-1 rounded-lg border-2 p-3 text-left transition-all
-              ${selectedPlan === "monthly"
-                ? "border-primary bg-primary/10 shadow-md"
-                : "border-border bg-background hover:border-primary/50"
-              }
-              ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-            `}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-semibold text-sm">Monthly</div>
-                <div className="text-2xl font-bold">${monthlyPrice.toFixed(monthlyPrice % 1 === 0 ? 0 : 2)}</div>
-                <div className="text-xs text-muted-foreground">per month</div>
-              </div>
-              {selectedPlan === "monthly" && (
-                <Check className="h-5 w-5 text-primary" />
-              )}
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setSelectedPlan("yearly")}
-            disabled={loading}
-            className={`
-              flex-1 rounded-lg border-2 p-3 text-left transition-all relative
-              ${selectedPlan === "yearly"
-                ? "border-primary bg-primary/10 shadow-md"
-                : "border-border bg-background hover:border-primary/50"
-              }
-              ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-            `}
-          >
-            <div className="absolute -top-2 -right-2 bg-green-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-              SAVE
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-semibold text-sm">Yearly</div>
-                <div className="text-2xl font-bold">${yearlyPrice.toFixed(yearlyPrice % 1 === 0 ? 0 : 2)}</div>
-                <div className="text-xs text-muted-foreground">per year</div>
-                {savings > 0 && (
-                  <div className="text-xs text-green-600 dark:text-green-400 font-medium mt-1">
-                    Save ${savings.toFixed(2)}/year
-                  </div>
-                )}
-              </div>
-              {selectedPlan === "yearly" && (
-                <Check className="h-5 w-5 text-primary" />
-              )}
-            </div>
-          </button>
-        </div>
-      )}
-
       {showTrialInfo && (
         <div className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
           <div className="flex items-center gap-2 text-sm">

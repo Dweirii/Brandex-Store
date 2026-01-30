@@ -11,10 +11,10 @@ import useCompare from "@/hooks/use-compare"
 import useCart from "@/hooks/use-cart"
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import Container from "@/components/ui/container"
-import Currency from "@/components/ui/currency"
 import { Button } from "@/components/ui/Button"
 import { getDisplayImageUrl } from "@/lib/image-utils"
 import { ImageLightbox } from "@/components/image-lightbox"
+import { Crown } from "lucide-react"
 
 const ComparePage = () => {
   const [isMounted, setIsMounted] = useState(false)
@@ -116,12 +116,21 @@ const ComparePage = () => {
               </tr>
             </thead>
             <tbody>
-              {/* Price */}
+              {/* Product Type (Free/Premium) */}
               <tr>
-                <td className="p-4 border-b border-border bg-muted/10 font-medium text-foreground">Price</td>
+                <td className="p-4 border-b border-border bg-muted/10 font-medium text-foreground">Type</td>
                 {items.map((product) => (
                   <td key={product.id} className="p-4 border-b border-l border-border">
-                    <Currency value={product.price} />
+                    {Number(product.price) === 0 ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-semibold bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20">
+                        Free
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
+                        <Crown className="h-3 w-3" />
+                        Premium
+                      </span>
+                    )}
                   </td>
                 ))}
               </tr>
@@ -241,8 +250,17 @@ const ComparePage = () => {
 
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Price:</span> 
-                  <Currency value={product.price} />
+                  <span className="text-sm text-muted-foreground">Type:</span> 
+                  {Number(product.price) === 0 ? (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20">
+                      Free
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                      <Crown className="h-3 w-3" />
+                      Premium
+                    </span>
+                  )}
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Category:</span>

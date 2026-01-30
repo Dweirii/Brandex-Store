@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/Button"
 import { useClerk, useUser, SignInButton } from "@clerk/nextjs"
 import Link from "next/link"
 import {
-  ShoppingCart,
   LogOut,
   User,
   Settings,
@@ -142,14 +141,6 @@ export function UserDropdown() {
                   Active
                 </span>
               )}
-            </Link>
-          </DropdownMenuItem>
-
-          {/* Orders */}
-          <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
-            <Link href="/orders" className="flex items-center gap-3 px-3 py-2.5 group">
-              <ShoppingCart className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <span className="text-sm font-medium group-hover:text-foreground transition-colors">Orders</span>
             </Link>
           </DropdownMenuItem>
 

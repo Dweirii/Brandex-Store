@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react"
 import { Star, ThumbsUp, CheckCircle, MessageSquare, Trash2 } from "lucide-react"
 import { useUser, useAuth } from "@clerk/nextjs"
-import Image from "next/image"
 import { Button } from "@/components/ui/Button"
 import { Textarea } from "@/components/ui/textarea"
-import { Avatar } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { ProductRating } from "@/components/product-rating"
 import { cn } from "@/lib/utils"
 import toast from "react-hot-toast"
@@ -307,19 +306,14 @@ const ProductReviews = ({ productId }: ProductReviewsProps) => {
             {reviews.map((review) => (
               <div key={review.id} className="border border-border rounded-lg p-6 bg-card">
                 <div className="flex items-start gap-4">
-                  <Avatar className="h-10 w-10 relative overflow-hidden">
-                    {review.userImageUrl ? (
-                      <Image
-                        src={review.userImageUrl}
-                        alt={review.userName}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full w-full bg-primary text-primary-foreground font-semibold">
-                        {review.userName.charAt(0).toUpperCase()}
-                      </div>
-                    )}
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage 
+                      src={review.userImageUrl || undefined} 
+                      alt={review.userName}
+                    />
+                    <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                      {review.userName.charAt(0).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   
                   <div className="flex-1">
