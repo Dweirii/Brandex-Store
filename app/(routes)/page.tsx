@@ -10,6 +10,7 @@ import PriceFilter from "@/components/price-filter"
 import SortFilter from "@/components/sort-filter"
 import CategoryNav from "@/components/category-nav"
 import { RecentlyViewed } from "@/components/recently-viewed"
+import { shuffle } from "@/lib/utils"
 import {
   generateHomeMetadata,
   generateWebsiteStructuredData,
@@ -32,6 +33,7 @@ async function MockupProducts({
   sortBy?: string
 }) {
   try {
+    // Fetch first page with more items for initial display
     const { products, total, page, pageCount } = await getProduct({
       categoryId: MOCKUPS_CATEGORY_ID,
       page: 1,
@@ -40,10 +42,13 @@ async function MockupProducts({
       sortBy: sortBy,
     })
 
+    // Shuffle the initial products for variety on each visit
+    const shuffledProducts = shuffle(products)
+
     return (
       <ProductList
         title=""
-        items={products}
+        items={shuffledProducts}
         total={total}
         page={page}
         pageCount={pageCount}

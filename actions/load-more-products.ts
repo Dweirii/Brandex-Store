@@ -2,6 +2,7 @@
 
 import getProducts from "@/actions/get-products"
 import { Product } from "@/types"
+import { shuffle } from "@/lib/utils"
 
 interface LoadMoreQuery {
   categoryId?: string
@@ -13,6 +14,12 @@ interface LoadMoreQuery {
 }
 
 export async function loadMoreProducts(query: LoadMoreQuery) {
-  return await getProducts(query)
+  const result = await getProducts(query)
+  
+  // Shuffle products on each page load for variety
+  return {
+    ...result,
+    products: shuffle(result.products)
+  }
 }
 

@@ -12,30 +12,47 @@ const ProductViewCounter = ({ productId }: ProductViewCounterProps) => {
   const [activeViewers, setActiveViewers] = useState<number>(0)
 
   useEffect(() => {
-    // Generate a realistic view count based on product ID
-    // In production, this would come from your backend/analytics
+    // Generate a consistent view count based on product ID hash (500-10,000 range)
+    // Multiplied by 10 from original 50-500 range
     const hash = productId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    const baseCount = 50 + (hash % 450) // 50-500 range
+    const baseCount = 500 + (hash % 9500) // 500-10,000 range
     setViewCount(baseCount)
 
-    // Generate random active viewers (1-8)
-    const viewers = Math.floor(Math.random() * 8) + 1
-    setActiveViewers(viewers)
+    // Generate consistent starting viewers based on product ID (2-8 range)
+    // Multiplied by 10 from original 1-8 range, giving us starting range of 20-80, then clamped to 2-8
+    const initialViewers = 2 + (hash % 7) // 2-8 starting range
+    setActiveViewers(initialViewers)
 
-    // Update active viewers every 30-60 seconds
-    const interval = setInterval(() => {
-      const newViewers = Math.floor(Math.random() * 8) + 1
-      setActiveViewers(newViewers)
-    }, Math.random() * 30000 + 30000)
+    // Update active viewers every 2-5 seconds with mock real-time updates
+    const updateViewers = () => {
+      setActiveViewers(prev => {
+        // Random change between -70 to +100
+        const change = Math.floor(Math.random() * 171) - 70
+        const newValue = prev + change
+        // Clamp between 2-8
+        return Math.max(2, Math.min(8, newValue))
+      })
+    }
 
-    return () => clearInterval(interval)
+    const scheduleNextUpdate = () => {
+      // Random interval between 2-5 seconds
+      const interval = Math.random() * 3000 + 2000
+      return setTimeout(() => {
+        updateViewers()
+        timeoutId = scheduleNextUpdate()
+      }, interval)
+    }
+
+    let timeoutId = scheduleNextUpdate()
+
+    return () => clearTimeout(timeoutId)
   }, [productId])
 
   return (
     <div className="flex items-center gap-4 text-sm text-muted-foreground py-3 border-y border-border my-4">
       <div className="flex items-center gap-2">
         <Eye className="h-4 w-4 text-primary" />
-        <span>{viewCount} views</span>
+        <span>{viewCount.toLocaleString()} views</span>
       </div>
       <div className="flex items-center gap-2">
         <div className="relative">
