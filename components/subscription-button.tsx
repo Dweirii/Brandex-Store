@@ -56,7 +56,7 @@ export function SubscriptionButton({
   storeId,
   size = "default",
   variant = "default",
-  showPricing = true,
+  showPricing: _showPricing = true,
   showTrialInfo = true,
   className,
 }: SubscriptionButtonProps) {
