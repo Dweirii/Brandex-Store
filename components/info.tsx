@@ -5,8 +5,6 @@ import type { Product } from "@/types"
 import { Button } from "@/components/ui/Button"
 import { Check, Sparkles, Download, Unlock, Loader2 } from "lucide-react"
 import { DownloadButton } from "@/components/ui/download-button"
-import { useProductAccess } from "@/hooks/use-product-access"
-import { useSubscription } from "@/hooks/use-subscription"
 import { usePremiumModal } from "@/hooks/use-premium-modal"
 import { ProductShare } from "@/components/product-share"
 
@@ -20,34 +18,11 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const isFreeProduct = Number(data.price) === 0
   const isPremiumProduct = !isFreeProduct
 
-  // Also get subscription status directly for better reliability
-  const { isActive: hasActiveSubDirect, subscription } = useSubscription(data.storeId, {
-    autoRefresh: false,
-  })
-  const directPlanTier = subscription?.planTier || 'FREE'
-
-  const { 
-    hasDownloaded, 
-    hasCredits, 
-    creditsRemaining,
-    planTier,
-    hasActiveSubscription,
-    isLoading 
-  } = useProductAccess(data.storeId, data.id, isFreeProduct)
-
-  // Use direct subscription data as fallback if product access is still loading
-  const effectivePlanTier = isLoading ? directPlanTier : planTier
-  const effectiveHasSubscription = isLoading ? hasActiveSubDirect : hasActiveSubscription
-
   // Debug logging
   console.log('[Info Component]', {
     productId: data.id,
     productName: data.name,
     isFree: isFreeProduct,
-    isLoading,
-    planTier,
-    directPlanTier,
-    effectivePlanTier,
     hasActiveSubscription,
     hasActiveSubDirect,
     effectiveHasSubscription,

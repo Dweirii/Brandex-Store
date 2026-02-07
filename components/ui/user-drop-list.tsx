@@ -19,47 +19,22 @@ import {
   Sun,
   Moon,
   Laptop,
-  Crown,
+  Coins,
   Download,
   Trophy,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { SubscriptionModal } from "@/components/modals/subscription-modal"
-import { useSubscription } from "@/hooks/use-subscription"
 
 export function UserDropdown() {
   const { user, isLoaded } = useUser()
   const { signOut, openUserProfile } = useClerk()
   const { setTheme } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
-  const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
-  const [storeId, setStoreId] = useState<string>("")
-
-  // Check subscription status
-  const { isActive: isPremium } = useSubscription(storeId, {
-    autoRefresh: false
-  })
 
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
     setIsMounted(true)
-    const defaultStoreId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
-    setStoreId(defaultStoreId)
-
-    // Auto-open modal if returning from Stripe checkout (on any page)
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search)
-      const success = urlParams.get("success")
-      const sessionId = urlParams.get("session_id")
-
-      if (success === "true" && sessionId) {
-        // Small delay to ensure modal is ready
-        setTimeout(() => {
-          setSubscriptionModalOpen(true)
-        }, 100)
-      }
-    }
   }, [])
 
   if (!isMounted || !isLoaded) {
@@ -131,16 +106,11 @@ export function UserDropdown() {
 
           <DropdownMenuSeparator className="bg-border/50" />
 
-          {/* Premium */}
+          {/* Credits */}
           <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
-            <Link href="/premium" className="flex items-center gap-3 px-3 py-2.5 group">
-              <Crown className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <span className="flex-1 text-sm font-medium group-hover:text-foreground transition-colors">Premium</span>
-              {isPremium && (
-                <span className="text-[10px] font-semibold text-green-600 bg-green-500/10 px-2 py-0.5 rounded-md border border-green-500/20">
-                  Active
-                </span>
-              )}
+            <Link href="/credits" className="flex items-center gap-3 px-3 py-2.5 group">
+              <Coins className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <span className="flex-1 text-sm font-medium group-hover:text-foreground transition-colors">Credits</span>
             </Link>
           </DropdownMenuItem>
 
@@ -197,14 +167,6 @@ export function UserDropdown() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      {storeId && (
-        <SubscriptionModal
-          open={subscriptionModalOpen}
-          onOpenChange={setSubscriptionModalOpen}
-          storeId={storeId}
-        />
-      )}
     </div>
   )
 }

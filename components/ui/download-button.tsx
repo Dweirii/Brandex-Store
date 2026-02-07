@@ -332,27 +332,24 @@ export const DownloadButton = ({
 
       console.error("[Download Error]", e)
 
-      // Handle upgrade required errors with specific messaging
-      if (msg.startsWith("UPGRADE_REQUIRED:")) {
-        const upgradeMessage = msg.replace("UPGRADE_REQUIRED:", "").trim()
-
-        ga("download_error_upgrade_required", { product_id: productId, store_id: storeId, message: upgradeMessage })
-        vTrack("download_error_upgrade_required", { productId, storeId, message: upgradeMessage })
+      // Handle insufficient credits errors
+      if (msg.includes("Insufficient credits") || msg.includes("credits")) {
+        ga("download_error_insufficient_credits", { product_id: productId, store_id: storeId, message: msg })
+        vTrack("download_error_insufficient_credits", { productId, storeId, message: msg })
 
         toast({
-          title: "Upgrade Required",
-          description: upgradeMessage,
+          title: "Insufficient Credits",
+          description: msg,
           variant: "default",
           action: {
-            label: "View Plans",
+            label: "Buy Credits",
             onClick: () => {
-              // Redirect to subscription page or open subscription modal
-              window.location.href = "/?subscription=true"
+              window.location.href = "/credits"
             },
           },
         })
 
-        onError?.(upgradeMessage)
+        onError?.(msg)
         return
       }
 

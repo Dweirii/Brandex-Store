@@ -1,27 +1,24 @@
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import useRecentlyViewed from "@/hooks/use-recently-viewed"
-import { Sparkles, Heart, Clock } from "lucide-react"
+import { Coins, Heart, Clock } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { useSubscription } from "@/hooks/use-subscription"
+import { useAuth } from "@clerk/nextjs"
+import { useCredits } from "@/hooks/use-credits"
 
 const NavbarActions = () => {
   const [isMounted, setIsMounted] = useState(false)
   const favorites = useFavoritesWithAuth()
   const recentlyViewed = useRecentlyViewed()
   const router = useRouter()
+  const { isSignedIn } = useAuth()
 
   // Get storeId from env
   const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
 
-  // Check subscription status
-  const { isActive: isPremium, subscription } = useSubscription(storeId, {
-    autoRefresh: false
-  })
-  
-  const currentPlanTier = subscription?.planTier || "FREE"
-  const planDisplayName = currentPlanTier === "STARTER" ? "Premium" : currentPlanTier === "PRO" ? "Premium Pro" : "Basic"
+  // Get credit balance
+  const { balance } = useCredits(storeId)
 
   useEffect(() => {
     setIsMounted(true)
@@ -33,14 +30,14 @@ const NavbarActions = () => {
 
   return (
     <div className="ml-auto flex items-center gap-3">
-      {isPremium && (
+      {isSignedIn && (
         <Link
-          href="/premium"
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/20 hover:bg-green-500/15 transition-all cursor-pointer group"
+          href="/credits"
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-all cursor-pointer group"
         >
-          <Sparkles className="h-3.5 w-3.5 text-green-600 dark:text-green-400 group-hover:rotate-12 transition-transform" />
-          <span className="text-xs font-semibold text-green-600 dark:text-green-400">
-            {planDisplayName}
+          <Coins className="h-3.5 w-3.5 text-primary group-hover:rotate-12 transition-transform" />
+          <span className="text-xs font-semibold text-primary">
+            {balance} Credits
           </span>
         </Link>
       )}

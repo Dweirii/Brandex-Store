@@ -23,9 +23,6 @@ import {
 import { useSearchParams, useRouter } from "next/navigation"
 
 const DownloadButtonWrapper = dynamic(() => import('@/components/orders/DownloadButtonWrapper'), { ssr: false })
-import { useSubscription } from "@/hooks/use-subscription"
-import { DownloadUsage } from "@/components/download-usage"
-import { SubscriptionModal } from "@/components/modals/subscription-modal"
 
 interface DownloadRecord {
   id: string
@@ -54,24 +51,10 @@ function DownloadsPageContent() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingCategories, setIsLoadingCategories] = useState(true)
-  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
   const selectedCategoryId = searchParams.get("category") || ""
 
   const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
-  
-  // Get user's subscription info
-  const { subscription } = useSubscription(storeId, { autoRefresh: false })
-  const planTier = subscription?.planTier || "FREE"
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
-  
-  // Debug logging
-  useEffect(() => {
-    console.log("Download Usage Debug:", { 
-      planTier, 
-      subscription: subscription ? "exists" : "null",
-      shouldShowUsage: planTier === "STARTER"
-    })
-  }, [planTier, subscription])
 
   // Log environment variables in development
   if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
@@ -265,7 +248,7 @@ function DownloadsPageContent() {
                   </div>
                 </div>
                 <Button
-                  onClick={() => setShowSubscriptionModal(true)}
+                  onClick={() => router.push('/credits')}
                   variant="outline"
                   size="sm"
                 >
@@ -276,17 +259,6 @@ function DownloadsPageContent() {
           </motion.div>
         )}
         
-        {/* Download Usage for Starter Plan only */}
-        {planTier === "STARTER" && (
-          <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <DownloadUsage storeId={storeId} planTier={planTier} />
-          </motion.div>
-        )}
 
 
         {/* Stats */}
@@ -504,12 +476,6 @@ function DownloadsPageContent() {
         </AnimatePresence>
       </div>
 
-      {/* Subscription Management Modal */}
-      <SubscriptionModal
-        open={showSubscriptionModal}
-        onOpenChange={setShowSubscriptionModal}
-        storeId={storeId}
-      />
     </Container>
   )
 }

@@ -14,8 +14,6 @@ import { DownloadButton } from "@/components/ui/download-button"
 import { PremiumBadge } from "@/components/ui/premium-badge"
 import useMobile from "@/hooks/use-mobile"
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
-import { useSubscription } from "@/hooks/use-subscription"
-import { SubscriptionModal } from "@/components/modals/subscription-modal"
 import usePreviewModal from "@/hooks/use-preview-modal"
 import useCompare from "@/hooks/use-compare"
 
@@ -36,13 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [mediaLoaded, setMediaLoaded] = useState(false)
-  const [subscriptionModalOpen, setSubscriptionModalOpen] = useState(false)
   const previewModal = usePreviewModal()
-
-  // Check subscription status
-  const { isActive: hasPremium } = useSubscription(data.storeId, {
-    autoRefresh: false,
-  })
 
   // Check if product is free
   const isFree = Number(data.price) === 0
@@ -329,8 +321,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
-                  {hasPremium ? (
-                    /* If user has Premium, show Download Free button */
+                  {isFree ? (
+                    /* If product is free, show Download button */
                     <>
                       <DownloadButton
                         storeId={data.storeId}
@@ -491,13 +483,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
       </div>
 
       {/* Subscription Modal */}
-      {data.storeId && (
-        <SubscriptionModal
-          open={subscriptionModalOpen}
-          onOpenChange={setSubscriptionModalOpen}
-          storeId={data.storeId}
-        />
-      )}
     </motion.div>
   )
 })
