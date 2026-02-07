@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { useCredits } from "@/hooks/use-credits";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || "a940170f-71ea-4c2b-b0ec-e2e9e3c68567";
 
@@ -161,7 +162,7 @@ export default function CreditsPage() {
               </Button>
             </div>
             <p className="text-sm opacity-75">
-              Each premium download costs 5 credits. Free products don't require credits.
+              Each premium download costs 5 credits. Free products don&apos;t require credits.
             </p>
           </div>
         </motion.div>
@@ -333,9 +334,11 @@ export default function CreditsPage() {
                     className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 transition-colors"
                   >
                     {download.productImage && (
-                      <img
+                      <Image
                         src={download.productImage}
                         alt={download.productName}
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded object-cover"
                       />
                     )}
