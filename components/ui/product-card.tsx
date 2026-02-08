@@ -5,7 +5,7 @@ import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Eye, Crown, Heart, GitCompareArrows } from "lucide-react"
+import { Eye, Coins, Heart, GitCompareArrows } from "lucide-react"
 import type { Product } from "@/types"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/Button"
@@ -362,14 +362,14 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                       <Button
                         onClick={(e) => {
                           e.stopPropagation()
-                          setSubscriptionModalOpen(true)
+                          router.push('/credits')
                         }}
                         size="sm"
                         variant="outline"
                         className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
-                        title="Unlock with Premium"
+                        title="Buy Credits"
                       >
-                        <Crown className="h-4 w-4" />
+                        <Coins className="h-4 w-4" />
                       </Button>
                       <Button
                         onClick={toggleFavorite}
@@ -437,44 +437,25 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     <Eye className="h-4 w-4" />
                     <span className="text-xs">View</span>
                   </Button>
-                  {hasPremium ? (
-                    /* If user has Premium, show Download Free button */
-                    <DownloadButton
-                      storeId={data.storeId}
-                      productId={data.id}
-                      size="sm"
-                      variant="default"
-                      className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
-                    />
-                  ) : (
-                    <>
-                      <Button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          setSubscriptionModalOpen(true)
-                        }}
-                        size="sm"
-                        variant="outline"
-                        className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
-                      >
-                        <Crown className="h-4 w-4" />
-                        <span className="text-xs">Premium</span>
-                      </Button>
-                      <Button
-                        onClick={toggleFavorite}
-                        size="sm"
-                        variant="outline"
-                        className={cn(
-                          "flex-1 bg-white/90 hover:bg-white text-foreground border-border/50",
-                          isLiked && "text-red-500 hover:text-red-500 bg-red-50 border-red-200"
-                        )}
-                      >
-                        <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
-                        {/* <span className="text-xs">Like</span> */}
-                      </Button>
-                    </>
-                  )}
+                  <DownloadButton
+                    storeId={data.storeId}
+                    productId={data.id}
+                    size="sm"
+                    variant="default"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
+                    customText={isFree ? "Free" : "5 Credits"}
+                  />
+                  <Button
+                    onClick={toggleFavorite}
+                    size="sm"
+                    variant="outline"
+                    className={cn(
+                      "flex-1 bg-white/90 hover:bg-white text-foreground border-border/50",
+                      isLiked && "text-red-500 hover:text-red-500 bg-red-50 border-red-200"
+                    )}
+                  >
+                    <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+                  </Button>
                 </>
               )}
             </div>

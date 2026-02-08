@@ -220,44 +220,6 @@ function DownloadsPageContent() {
           </motion.p>
         </div>
 
-        {/* Subscription Management Card */}
-        {(planTier === "STARTER" || planTier === "PRO") && (
-          <motion.div
-            className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <div className="bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20 rounded-xl p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="bg-primary/10 p-3 rounded-lg">
-                    <Calendar className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">
-                      {planTier === "STARTER" ? "Starter Plan" : "Pro Plan"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {subscription?.cancelAtPeriodEnd 
-                        ? `Cancels ${subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString() : "soon"}`
-                        : subscription?.currentPeriodEnd 
-                          ? `Renews ${new Date(subscription.currentPeriodEnd).toLocaleDateString()}`
-                          : "Active subscription"}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => router.push('/credits')}
-                  variant="outline"
-                  size="sm"
-                >
-                  Manage Subscription
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
         
 
 

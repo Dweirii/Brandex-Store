@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -13,7 +13,7 @@ import Image from "next/image";
 
 const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || "a940170f-71ea-4c2b-b0ec-e2e9e3c68567";
 
-export default function CreditsPage() {
+function CreditsPageContent() {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -365,5 +365,17 @@ export default function CreditsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CreditsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <CreditsPageContent />
+    </Suspense>
   );
 }
