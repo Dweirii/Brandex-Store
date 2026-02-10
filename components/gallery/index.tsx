@@ -73,13 +73,14 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
         {/* Global Gallery Watermark for paid products */}
         {isPaid && (
           <div
-            className="absolute inset-[-50%] z-30 pointer-events-none opacity-[0.06] select-none"
+            className="absolute inset-[-50%] z-30 pointer-events-none opacity-[0.07] select-none"
             style={{
-              backgroundImage: `url('/water-mark.png')`,
+              backgroundImage: `url('/water-mark.png'), url('/water-mark.png'), url('/water-mark.png')`,
               backgroundRepeat: 'repeat',
-              backgroundSize: '50px',
-              transform: 'rotate(30deg)',
-              filter: 'brightness(0) invert(1)',
+              backgroundSize: '65px',
+              backgroundPosition: '0 0, 22px 15px, 44px 7px',
+              transform: 'rotate(-35deg)',
+              filter: 'grayscale(1) brightness(0) invert(1)',
             }}
           />
         )}
