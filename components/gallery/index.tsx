@@ -39,7 +39,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
               autoPlay
               preload="metadata"
               poster={displayImageUrl}
-              className="absolute inset-0 w-full h-full object-cover rounded-xl"
+              className="absolute inset-0 w-full h-full object-contain rounded-xl"
               onLoadedData={() => { }}
             />
             {/* Video indicator badge */}
@@ -55,7 +55,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
             src={displayImageUrl}
             alt={data.name}
             fill
-            className="object-cover rounded-xl"
+            className="object-contain rounded-xl"
             priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             placeholder="blur"
