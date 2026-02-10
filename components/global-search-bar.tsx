@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { Search, ChevronRight } from "lucide-react"
+import { Search, ChevronRight, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import axios from "axios"
@@ -29,6 +29,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [isSearching, setIsSearching] = useState(false)
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   const suggestionsTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -46,6 +47,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     }
 
     if (query.trim().length >= 1) {
+      setIsSearching(true)
       suggestionsTimerRef.current = setTimeout(async () => {
         try {
           const storeId = searchParams.get("storeId")
@@ -62,11 +64,14 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
         } catch (error) {
           console.error("Autocomplete failed:", error)
           setSuggestions([])
+        } finally {
+          setIsSearching(false)
         }
       }, 300) // 300ms debounce for suggestions
     } else {
       setSuggestions([])
       setShowSuggestions(false)
+      setIsSearching(false)
     }
 
     return () => {
@@ -226,12 +231,18 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
         <div className="flex items-center gap-2">
           {/* Search Input - Standalone */}
           <div className="relative flex-1">
-            <Search
-              className={cn(
-                "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none z-10",
-                "text-muted-foreground/40"
-              )}
-            />
+            {isSearching ? (
+              <Loader2
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none z-10 text-primary animate-spin"
+              />
+            ) : (
+              <Search
+                className={cn(
+                  "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none z-10",
+                  "text-muted-foreground/40"
+                )}
+              />
+            )}
             <Input
               type="search"
               placeholder="Search products..."

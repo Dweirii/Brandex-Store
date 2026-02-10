@@ -19,26 +19,24 @@ const ProductViewCounter = ({ productId }: ProductViewCounterProps) => {
     setViewCount(baseCount)
 
     // Generate consistent starting viewers based on product ID (2-8 range)
-    // Multiplied by 10 from original 1-8 range, giving us starting range of 20-80, then clamped to 2-8
     const initialViewers = 2 + (hash % 7) // 2-8 starting range
     setActiveViewers(initialViewers)
 
-    // Update active viewers every 2-5 seconds with mock real-time updates
-    const updateViewers = () => {
-      setActiveViewers(prev => {
-        // Random change between -70 to +100
-        const change = Math.floor(Math.random() * 171) - 70
-        const newValue = prev + change
-        // Clamp between 2-8
-        return Math.max(2, Math.min(8, newValue))
-      })
-    }
-
+    // Smoothly step active viewers by ±1 at a time so every number between 2-8 is hit
     const scheduleNextUpdate = () => {
-      // Random interval between 2-5 seconds
-      const interval = Math.random() * 3000 + 2000
+      // Random interval between 1.5-3.5 seconds per step
+      const interval = Math.random() * 2000 + 1500
       return setTimeout(() => {
-        updateViewers()
+        setActiveViewers(prev => {
+          // 35% chance to stay the same (adds natural pauses)
+          if (Math.random() < 0.35) return prev
+
+          // Move by exactly 1 in a random direction
+          const direction = Math.random() > 0.5 ? 1 : -1
+          const newValue = prev + direction
+          // Clamp between 2-8
+          return Math.max(2, Math.min(8, newValue))
+        })
         timeoutId = scheduleNextUpdate()
       }, interval)
     }
