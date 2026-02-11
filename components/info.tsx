@@ -5,6 +5,7 @@ import type { Product } from "@/types"
 import { Sparkles, Download, Coins } from "lucide-react"
 import { DownloadButton } from "@/components/ui/download-button"
 import { ProductShare } from "@/components/product-share"
+import Image from "next/image"
 
 interface InfoProps {
   data: Product
@@ -71,6 +72,23 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           </p>
         )}
       </div>
+
+      {/* Full Artwork — Packaging category only */}
+      {data.category?.id === "fd995552-baa8-4b86-bf7e-0acbefd43fd6" && (
+        <div className="pt-2">
+          <p className="text-xs font-medium tracking-wide uppercase text-muted-foreground mb-3">
+            Full Artwork
+          </p>
+          <Image
+            src="/Icon.png"
+            alt="Full Artwork — PSD, Vector, Layers, Smart Object"
+            width={1024}
+            height={100}
+            className="w-full h-auto opacity-60"
+            priority={false}
+          />
+        </div>
+      )}
     </div>
   )
 }
