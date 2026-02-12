@@ -5,7 +5,6 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { Search, ChevronRight, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import axios from "axios"
 import { ImageSearchButton } from "./image-search-button"
 
 interface GlobalSearchBarProps {
@@ -33,6 +32,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   const suggestionsTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const autocompleteControllerRef = useRef<AbortController | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Update query when URL changes (e.g., back/forward navigation)
@@ -40,7 +40,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     setQuery(queryParam)
   }, [queryParam])
 
-  // Fetch autocomplete suggestions
+  // Fetch autocomplete suggestions with request cancellation
   useEffect(() => {
     if (suggestionsTimerRef.current) {
       clearTimeout(suggestionsTimerRef.current)
@@ -49,25 +49,40 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     if (query.trim().length >= 1) {
       setIsSearching(true)
       suggestionsTimerRef.current = setTimeout(async () => {
+        // Cancel previous autocomplete request
+        autocompleteControllerRef.current?.abort()
+        const controller = new AbortController()
+        autocompleteControllerRef.current = controller
+
         try {
           const storeId = searchParams.get("storeId")
           const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
-          const res = await axios.get<AutocompleteResponse>(`${apiUrl}/products/search/autocomplete`, {
-            params: {
-              query: query.trim(),
-              storeId,
-              limit: 8,
-            },
+          const params = new URLSearchParams({
+            query: query.trim(),
+            limit: "6",
           })
-          setSuggestions(res.data.suggestions || [])
-          setShowSuggestions(true)
-        } catch (error) {
+          if (storeId) params.set("storeId", storeId)
+
+          const res = await fetch(`${apiUrl}/products/search/autocomplete?${params}`, {
+            signal: controller.signal,
+          })
+          if (!res.ok) throw new Error("Autocomplete failed")
+          const data: AutocompleteResponse = await res.json()
+
+          if (!controller.signal.aborted) {
+            setSuggestions(data.suggestions || [])
+            setShowSuggestions(true)
+          }
+        } catch (error: any) {
+          if (error.name === "AbortError") return
           console.error("Autocomplete failed:", error)
           setSuggestions([])
         } finally {
-          setIsSearching(false)
+          if (!controller.signal.aborted) {
+            setIsSearching(false)
+          }
         }
-      }, 300) // 300ms debounce for suggestions
+      }, 150) // 150ms debounce for suggestions (fast feedback)
     } else {
       setSuggestions([])
       setShowSuggestions(false)
@@ -78,10 +93,11 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
       if (suggestionsTimerRef.current) {
         clearTimeout(suggestionsTimerRef.current)
       }
+      autocompleteControllerRef.current?.abort()
     }
   }, [query, searchParams])
 
-  // Debounced search - updates URL as user types
+  // Debounced URL update as user types - triggers the search page
   useEffect(() => {
     // Clear existing timer
     if (debounceTimerRef.current) {
@@ -113,7 +129,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
           router.push(`/products/search?${params.toString()}`, { scroll: false })
         }
         setShowSuggestions(false)
-      }, 500) // 500ms debounce
+      }, 300) // 300ms debounce (search page fires immediately on URL change)
     } else if (query.trim().length === 0) {
       // If query is empty, navigate back to home page
       // BUT don't redirect if it's an image search!
@@ -279,7 +295,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
           {/* Image Search Button - Only show if enabled */}
           {process.env.NEXT_PUBLIC_ENABLE_IMAGE_SEARCH === 'true' && (
             <ImageSearchButton 
-              className="flex-shrink-0"
+              className="shrink-0"
             />
           )}
         </div>
@@ -312,7 +328,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
                   )}
                 </span>
                 <ChevronRight className={cn(
-                  "h-4 w-4 ml-3 flex-shrink-0 transition-transform duration-200",
+                  "h-4 w-4 ml-3 shrink-0 transition-transform duration-200",
                   selectedIndex === index
                     ? "text-primary translate-x-0"
                     : "text-muted-foreground/40 group-hover/item:text-muted-foreground/60 group-hover/item:translate-x-0.5"

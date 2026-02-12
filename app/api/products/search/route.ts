@@ -38,32 +38,50 @@ export async function GET(req: NextRequest) {
     if (limit) adminUrl.searchParams.set("limit", limit);
 
     // Forward request to admin API (which uses Typesense)
-    const response = await fetch(adminUrl.toString(), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store", // Always get fresh results
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    try {
+      const response = await fetch(adminUrl.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      console.error(`Admin API error: ${response.status} ${response.statusText}`);
-      return NextResponse.json(
-        { error: "Search failed" },
-        { status: response.status }
-      );
+      if (!response.ok) {
+        console.error(`Admin API error: ${response.status} ${response.statusText}`);
+        return NextResponse.json(
+          { error: "Search failed" },
+          { status: response.status }
+        );
+      }
+
+      const data = await response.json();
+
+      // Return the response with CORS + cache headers
+      // Cache search results for 30 seconds to speed up repeated/back-nav searches
+      return NextResponse.json(data, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        },
+      });
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId);
+      if (fetchError.name === 'AbortError') {
+        console.error("Typesense search timeout:", fetchError);
+        return NextResponse.json(
+          { error: "Search timeout - please try again" },
+          { status: 504 }
+        );
+      }
+      throw fetchError;
     }
-
-    const data = await response.json();
-
-    // Return the response with CORS headers
-    return NextResponse.json(data, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    });
   } catch (error) {
     console.error("Search proxy error:", error);
     return NextResponse.json(

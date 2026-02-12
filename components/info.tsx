@@ -76,7 +76,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       {/* Full Artwork — Packaging category only */}
       {data.category?.id === "fd995552-baa8-4b86-bf7e-0acbefd43fd6" && (
         <div className="pt-2">
-          <p className="text-xs font-medium tracking-wide uppercase text-muted-foreground mb-3">
+          <p className="text-xl md:text-black font-medium tracking-wide uppercase text-muted-foreground mb-3">
             Full Artwork
           </p>
           <Image
@@ -84,7 +84,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             alt="Full Artwork — PSD, Vector, Layers, Smart Object"
             width={1024}
             height={100}
-            className="w-full h-auto opacity-60"
+            className="w-full md:w-2/3 lg:w-1/2 h-auto mx-auto opacity-90"
             priority={false}
           />
         </div>

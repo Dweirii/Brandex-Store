@@ -1,21 +1,19 @@
 "use client"
 
 import { useEffect, useState, useCallback, useRef } from "react"
-import axios from "axios"
 import { useSearchParams, useRouter } from "next/navigation"
 import { PackageSearch, ImageIcon } from "lucide-react"
-import { useDebouncedCallback } from "use-debounce"
 import Masonry from "react-masonry-css"
 import { toast } from "sonner"
 
 import type { Product, Category } from "@/types"
-import { Skeleton } from "@/components/ui/skeleton"
 import RelatedProductCard from "@/components/ui/related-product-card"
 import SearchCategoryNav from "@/components/search-category-nav"
 import NoResults from "@/components/ui/no-results"
 import Pagination from "@/components/paginatioon"
 import Container from "@/components/ui/container"
 import { getStoredImageData } from "@/components/image-search-button"
+import { SearchLoadingState } from "@/components/search-loading-state"
 
 interface SearchResponse {
   results: Product[]
@@ -28,6 +26,7 @@ interface SearchResponse {
 }
 
 const DEFAULT_CATEGORY_ID = "all"
+const RESULTS_PER_PAGE = 24
 
 const breakpointColumnsObj = {
   default: 4,
@@ -55,6 +54,9 @@ export default function ProductSearchPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [isImageSearch, setIsImageSearch] = useState(false)
   const [searchInfo, setSearchInfo] = useState<string | null>(null)
+
+  // AbortController ref to cancel stale requests
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   // Fetch categories on mount
   useEffect(() => {
@@ -90,6 +92,11 @@ export default function ProductSearchPage() {
 
   const performImageSearch = useCallback(
     async (base64Image: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID) => {
+      // Cancel any in-flight request
+      abortControllerRef.current?.abort()
+      const controller = new AbortController()
+      abortControllerRef.current = controller
+
       setLoading(true)
       setHasSearched(true)
       setIsImageSearch(true)
@@ -108,18 +115,24 @@ export default function ProductSearchPage() {
           formData.append('categoryId', categoryId)
         }
         formData.append('page', page.toString())
-        formData.append('limit', '250') // Increased for more results per page
+        formData.append('limit', RESULTS_PER_PAGE.toString())
         
-        const res = await axios.post<SearchResponse>(
-          `${apiUrl}/products/search-by-image`,
-          formData,
+        const params = new URLSearchParams({ storeId: storeId || "" })
+        const res = await fetch(
+          `${apiUrl}/products/search-by-image?${params}`,
           {
-            params: { storeId: storeId || "" },
-            headers: { 'Content-Type': 'multipart/form-data' },
+            method: "POST",
+            body: formData,
+            signal: controller.signal,
           }
         )
 
-        const data = res.data
+        if (!res.ok) throw new Error(`Search failed: ${res.status}`)
+        const data: SearchResponse = await res.json()
+        
+        // Don't update state if this request was cancelled
+        if (controller.signal.aborted) return
+
         const uniqueResults = data.results?.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i) || []
 
         setProducts(uniqueResults)
@@ -132,7 +145,8 @@ export default function ProductSearchPage() {
         if (data.info && uniqueResults.length === 0) {
           toast.info(data.info, { duration: 8000 })
         }
-      } catch (error) {
+      } catch (error: any) {
+        if (error.name === "AbortError") return // Silently ignore cancelled requests
         console.error("Image search failed:", error)
         toast.error("Image search failed. Please try uploading the image again.")
         setProducts([])
@@ -140,7 +154,9 @@ export default function ProductSearchPage() {
         setPageCount(1)
         setSearchInfo(null)
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
       }
     },
     [storeId]
@@ -159,29 +175,39 @@ export default function ProductSearchPage() {
         return
       }
 
+      // Cancel any in-flight request
+      abortControllerRef.current?.abort()
+      const controller = new AbortController()
+      abortControllerRef.current = controller
+
       setLoading(true)
       setHasSearched(true)
       setIsImageSearch(false)
 
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
-        const params: Record<string, string | number> = {
+        const params = new URLSearchParams({
           query: searchQuery.trim(),
           storeId: storeId || "",
-          page,
-          limit: 250, // Increased for more results per page
-        }
+          page: page.toString(),
+          limit: RESULTS_PER_PAGE.toString(),
+        })
 
         // Only add categoryId if it's not the default "all"
         if (categoryId !== DEFAULT_CATEGORY_ID && categoryId) {
-          params.categoryId = categoryId
+          params.set("categoryId", categoryId)
         }
 
-        const res = await axios.get<SearchResponse>(`${apiUrl}/products/search`, {
-          params,
+        const res = await fetch(`${apiUrl}/products/search?${params}`, {
+          signal: controller.signal,
         })
 
-        const data = res.data
+        if (!res.ok) throw new Error(`Search failed: ${res.status}`)
+        const data: SearchResponse = await res.json()
+
+        // Don't update state if this request was cancelled
+        if (controller.signal.aborted) return
+
         // De-duplicate results by ID to prevent key warnings
         const uniqueResults = data.results?.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i) || []
 
@@ -189,32 +215,22 @@ export default function ProductSearchPage() {
         setTotal(data.total || 0)
         setCurrentPage(data.page || 1)
         setPageCount(data.pageCount || 1)
-      } catch (error) {
+      } catch (error: any) {
+        if (error.name === "AbortError") return // Silently ignore cancelled requests
         console.error("Search failed:", error)
         setProducts([])
         setTotal(0)
         setPageCount(1)
       } finally {
-        setLoading(false)
+        if (!controller.signal.aborted) {
+          setLoading(false)
+        }
       }
     },
     [storeId]
   )
 
-  // Debounced search to prevent excessive API calls (only for query changes)
-  const debouncedSearch = useDebouncedCallback(
-    (searchQuery: string, page: number, categoryId: string) => {
-      performSearch(searchQuery, page, categoryId)
-    },
-    300 // Wait 300ms after user stops typing
-  )
-
-  // Track previous values to detect what changed
-  const prevQueryRef = useRef<string>("")
-  const prevPageRef = useRef<number>(1)
-  const prevCategoryIdRef = useRef<string>(DEFAULT_CATEGORY_ID)
-
-  // Handle search when query, page, or categoryId param changes
+  // Fire search immediately when URL params change (search bar already debounces)
   useEffect(() => {
     const currentQuery = searchParams.get("query") || ""
     const currentPage = parseInt(searchParams.get("page") || "1", 10)
@@ -229,9 +245,6 @@ export default function ProductSearchPage() {
     if (imageSearchParam === "true" && imageId) {
       // Get the image data from sessionStorage
       const base64Image = getStoredImageData(imageId)
-      
-      console.log('Image search detected. ImageId:', imageId)
-      console.log('Base64 image found:', !!base64Image)
       
       if (base64Image) {
         performImageSearch(base64Image, currentPage, currentCategoryId)
@@ -248,29 +261,20 @@ export default function ProductSearchPage() {
       return
     }
 
-    const queryChanged = currentQuery !== prevQueryRef.current
-    const pageChanged = currentPage !== prevPageRef.current
-    const categoryChanged = currentCategoryId !== prevCategoryIdRef.current
-
-    // Update refs
-    prevQueryRef.current = currentQuery
-    prevPageRef.current = currentPage
-    prevCategoryIdRef.current = currentCategoryId
-
     if (currentQuery.trim().length >= 2) {
-      // If only page changed, search immediately (no debounce)
-      // If query or category changed, use debounced search
-      if (pageChanged && !queryChanged && !categoryChanged) {
-        performSearch(currentQuery, currentPage, currentCategoryId)
-      } else {
-        debouncedSearch(currentQuery, currentPage, currentCategoryId)
-      }
+      // No debounce here - the search bar already debounces before updating the URL
+      performSearch(currentQuery, currentPage, currentCategoryId)
     } else if (currentQuery.trim().length === 0 && currentCategoryId === DEFAULT_CATEGORY_ID) {
       setProducts([])
       setHasSearched(false)
       setIsImageSearch(false)
     }
-  }, [searchParams, debouncedSearch, performSearch, performImageSearch])
+
+    // Cleanup: cancel in-flight request when params change
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [searchParams, performSearch, performImageSearch])
 
   // Function to handle category changes from the SearchCategoryNav
   const handleCategoryNavChange = useCallback((newCategoryId: string) => {
@@ -331,17 +335,9 @@ export default function ProductSearchPage() {
         {/* Results */}
         <div className="px-4 sm:px-6 lg:px-8">
           {loading && (
-            <Masonry
-              breakpointCols={breakpointColumnsObj}
-              className="flex w-auto -ml-4 sm:-ml-6"
-              columnClassName="pl-4 sm:pl-6 bg-clip-padding"
-            >
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={`skeleton-${i}`} className="mb-4 sm:mb-6">
-                  <Skeleton className="aspect-[3/4] w-full rounded-2xl bg-muted/20 animate-pulse" />
-                </div>
-              ))}
-            </Masonry>
+            <div className="py-12">
+              <SearchLoadingState isImageSearch={isImageSearch} />
+            </div>
           )}
 
           {!loading && products.length === 0 && hasSearched && (

@@ -30,7 +30,7 @@ const Logo = () => {
     return (
       <Link href="/" className="flex items-center gap-x-2">
         <div
-          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm w-24 md:w-40 lg:w-60"
+          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm w-32 md:w-48 lg:w-72"
           aria-label="Loading logo"
         />
       </Link>
@@ -45,7 +45,7 @@ const Logo = () => {
         height={26}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-200 group-hover:opacity-80 h-6 w-auto md:h-8"
+        className="transition-all duration-200 group-hover:opacity-80 h-8 w-auto md:h-12"
         style={{ width: "auto", height: "auto" }}
         sizes="(max-width: 640px) 100px, (max-width: 768px) 200px, 300px"
         placeholder="blur"

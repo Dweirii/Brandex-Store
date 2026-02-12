@@ -33,29 +33,43 @@ export async function GET(req: NextRequest) {
     if (limit) adminUrl.searchParams.set("limit", limit);
 
     // Forward request to admin API (which uses Typesense)
-    const response = await fetch(adminUrl.toString(), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store", // Always get fresh suggestions
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout for autocomplete
+    
+    try {
+      const response = await fetch(adminUrl.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      console.error(`Admin API error: ${response.status} ${response.statusText}`);
+      if (!response.ok) {
+        console.error(`Admin API error: ${response.status} ${response.statusText}`);
+        return NextResponse.json({ suggestions: [] });
+      }
+
+      const data = await response.json();
+
+      // Return the response with CORS + cache headers
+      // Cache autocomplete for 60 seconds - suggestions don't change often
+      return NextResponse.json(data, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      });
+    } catch (fetchError: any) {
+      clearTimeout(timeoutId);
+      if (fetchError.name === 'AbortError') {
+        console.error("Autocomplete timeout - returning empty suggestions");
+      }
       return NextResponse.json({ suggestions: [] });
     }
-
-    const data = await response.json();
-
-    // Return the response with CORS headers
-    return NextResponse.json(data, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    });
   } catch (error) {
     console.error("Autocomplete proxy error:", error);
     return NextResponse.json({ suggestions: [] });
