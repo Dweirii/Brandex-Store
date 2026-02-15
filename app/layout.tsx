@@ -18,6 +18,7 @@ import { GeoInitializer } from "@/components/geo-initializer";
 import { HelpWidget } from "@/components/help-widget";
 import { BackToTop } from "@/components/back-to-top";
 import { CompareButton } from "@/components/compare-button";
+import { StudioAnnouncementBanner } from "@/components/studio-announcement-banner";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -113,7 +114,10 @@ export default function RootLayout({
               <ToastProvider />
               <GeoInitializer />
               <Suspense fallback={<div className="h-20 shadow-[0_0_10px_0_rgba(0,0,0,0.6)]" />}>
-                <Navbar />
+                <header className="sticky top-0 z-50 flex flex-col">
+                  <StudioAnnouncementBanner />
+                  <Navbar />
+                </header>
               </Suspense>
               <main className="flex-1">{children}</main>
               <AppToaster />

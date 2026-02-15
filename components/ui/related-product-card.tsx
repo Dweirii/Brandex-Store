@@ -91,7 +91,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={() => router.push(`/products/${data.id}`)}
-            className="relative aspect-[3/4] bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer group"
+            className="relative aspect-[3/4] bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer group"
         >
             {/* Media Layer */}
             <div className="absolute inset-0 z-0">
@@ -153,7 +153,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
                     </h4>
                     <button
                         onClick={handleViewClick}
-                        className="p-2 bg-white/20 hover:bg-white/40 backdrop-blur-md border border-white/30 rounded-full text-white transition-colors"
+                        className="p-2 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full text-white transition-colors"
                     >
                         <Eye className="w-4 h-4" />
                     </button>

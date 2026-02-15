@@ -156,7 +156,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
       }}
       onMouseLeave={handleMouseLeave}
       onClick={() => router.push(`/products/${data.id}`)}
-      className="relative bg-card border border-border rounded-lg overflow-hidden shadow-md hover:shadow-lg cursor-pointer group will-change-transform"
+      className="relative bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg cursor-pointer group will-change-transform"
     >
       {/* Image/Video Container */}
       <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4] md:aspect-auto">
@@ -267,14 +267,14 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Action Buttons - Side with Blur Background */}
-            <div className="flex flex-col gap-2 pointer-events-auto px-3 py-4 rounded-xl backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10 shadow-xl">
+            <div className="flex flex-col gap-2 pointer-events-auto px-3 py-4 rounded-xl backdrop-blur-md bg-white/20 dark:bg-black/20 shadow-xl">
               {isFree ? (
                 <>
                   <Button
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm"
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
@@ -284,15 +284,15 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     size="sm"
                     variant="default"
                     iconOnly
-                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm"
                   />
                   <Button
                     onClick={toggleFavorite}
                     size="sm"
                     variant="outline"
                     className={cn(
-                      "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
-                      isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50 border-red-200"
+                      "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm",
+                      isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50"
                     )}
                     title={isLiked ? "Remove from favorites" : "Add to favorites"}
                   >
@@ -303,8 +303,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     size="sm"
                     variant="outline"
                     className={cn(
-                      "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
-                      isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10 border-primary/50"
+                      "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm",
+                      isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10"
                     )}
                     title={isInCompare ? "Remove from compare" : "Add to compare"}
                   >
@@ -317,7 +317,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                    className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm"
                   >
                     <Eye className="h-4 w-4" />
                   </Button>
@@ -330,15 +330,15 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         size="sm"
                         variant="default"
                         iconOnly
-                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm"
                       />
                       <Button
                         onClick={toggleFavorite}
                         size="sm"
                         variant="outline"
                         className={cn(
-                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
-                          isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50 border-red-200"
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm",
+                          isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50"
                         )}
                         title={isLiked ? "Remove from favorites" : "Add to favorites"}
                       >
@@ -349,8 +349,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         size="sm"
                         variant="outline"
                         className={cn(
-                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
-                          isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10 border-primary/50"
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm",
+                          isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10"
                         )}
                         title={isInCompare ? "Remove from compare" : "Add to compare"}
                       >
@@ -366,7 +366,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         }}
                         size="sm"
                         variant="outline"
-                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm"
                         title="Buy Credits"
                       >
                         <Coins className="h-4 w-4" />
@@ -376,8 +376,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         size="sm"
                         variant="outline"
                         className={cn(
-                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
-                          isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50 border-red-200"
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm",
+                          isLiked && "text-red-500 hover:text-red-500 bg-red-50/90 hover:bg-red-50"
                         )}
                         title={isLiked ? "Remove from favorites" : "Add to favorites"}
                       >
@@ -388,8 +388,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                         size="sm"
                         variant="outline"
                         className={cn(
-                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-border/50 shadow-lg backdrop-blur-sm",
-                          isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10 border-primary/50"
+                          "h-8 w-8 p-0 bg-white/90 hover:bg-white text-foreground hover:text-foreground border-0 shadow-lg backdrop-blur-sm",
+                          isInCompare && "text-primary hover:text-primary bg-primary/10 hover:bg-primary/10"
                         )}
                         title={isInCompare ? "Remove from compare" : "Add to compare"}
                       >
@@ -413,7 +413,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-0"
                   >
                     <Eye className="h-4 w-4" />
                     <span className="text-xs">View</span>
@@ -423,7 +423,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     productId={data.id}
                     size="sm"
                     variant="default"
-                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-0"
                   />
                 </>
               ) : (
@@ -432,7 +432,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     onClick={handleViewClick}
                     size="sm"
                     variant="outline"
-                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-0"
                   >
                     <Eye className="h-4 w-4" />
                     <span className="text-xs">View</span>
@@ -442,7 +442,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     productId={data.id}
                     size="sm"
                     variant="default"
-                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-border/50"
+                    className="flex-1 bg-white/90 hover:bg-white text-foreground border-0"
                     customText={isFree ? "Free" : "5 Credits"}
                   />
                   <Button
@@ -450,8 +450,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                     size="sm"
                     variant="outline"
                     className={cn(
-                      "flex-1 bg-white/90 hover:bg-white text-foreground border-border/50",
-                      isLiked && "text-red-500 hover:text-red-500 bg-red-50 border-red-200"
+                      "flex-1 bg-white/90 hover:bg-white text-foreground border-0",
+                      isLiked && "text-red-500 hover:text-red-500 bg-red-50"
                     )}
                   >
                     <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />

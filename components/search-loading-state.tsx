@@ -28,6 +28,8 @@ const loadingStages = {
 
 export function SearchLoadingState({ isImageSearch = false, className, variant = "minimal" }: SearchLoadingStateProps) {
   const [messageIndex, setMessageIndex] = useState(0)
+  const [currentStage, setCurrentStage] = useState(0)
+  const [progress, setProgress] = useState(0)
 
   const loadingMessages = isImageSearch
     ? [
@@ -45,6 +47,8 @@ export function SearchLoadingState({ isImageSearch = false, className, variant =
         "Almost done...",
       ]
 
+  const stages = isImageSearch ? loadingStages.image : loadingStages.text
+
   useEffect(() => {
     const interval = setInterval(() => {
       setMessageIndex((prev) => (prev + 1) % loadingMessages.length)
@@ -52,6 +56,45 @@ export function SearchLoadingState({ isImageSearch = false, className, variant =
 
     return () => clearInterval(interval)
   }, [loadingMessages.length])
+
+  useEffect(() => {
+    // Reset when search type changes
+    setCurrentStage(0)
+    setProgress(0)
+  }, [isImageSearch])
+
+  useEffect(() => {
+    // Progress through stages
+    if (currentStage < stages.length) {
+      const stage = stages[currentStage]
+      const timer = setTimeout(() => {
+        setCurrentStage((prev) => Math.min(prev + 1, stages.length))
+      }, stage.duration)
+
+      return () => clearTimeout(timer)
+    }
+  }, [currentStage, stages])
+
+  useEffect(() => {
+    // Smooth progress bar animation
+    const targetProgress = ((currentStage + 1) / stages.length) * 100
+    const increment = (targetProgress - progress) / 20
+
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        const next = prev + increment
+        if (
+          (increment > 0 && next >= targetProgress) ||
+          (increment < 0 && next <= targetProgress)
+        ) {
+          return targetProgress
+        }
+        return next
+      })
+    }, 50)
+
+    return () => clearInterval(interval)
+  }, [currentStage, stages.length, progress])
 
   // For minimal variant, show simple loading
   if (variant === "minimal") {
@@ -146,49 +189,6 @@ export function SearchLoadingState({ isImageSearch = false, className, variant =
   }
 
   // Full variant with stages
-  const [currentStage, setCurrentStage] = useState(0)
-  const [progress, setProgress] = useState(0)
-  const stages = isImageSearch ? loadingStages.image : loadingStages.text
-
-  useEffect(() => {
-    // Reset when search type changes
-    setCurrentStage(0)
-    setProgress(0)
-  }, [isImageSearch])
-
-  useEffect(() => {
-    // Progress through stages
-    if (currentStage < stages.length) {
-      const stage = stages[currentStage]
-      const timer = setTimeout(() => {
-        setCurrentStage((prev) => Math.min(prev + 1, stages.length))
-      }, stage.duration)
-
-      return () => clearTimeout(timer)
-    }
-  }, [currentStage, stages])
-
-  useEffect(() => {
-    // Smooth progress bar animation
-    const targetProgress = ((currentStage + 1) / stages.length) * 100
-    const increment = (targetProgress - progress) / 20
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + increment
-        if (
-          (increment > 0 && next >= targetProgress) ||
-          (increment < 0 && next <= targetProgress)
-        ) {
-          return targetProgress
-        }
-        return next
-      })
-    }, 50)
-
-    return () => clearInterval(interval)
-  }, [currentStage, stages.length, progress])
-
   return (
     <div className={cn("w-full max-w-2xl mx-auto", className)}>
       {/* Main loading card */}

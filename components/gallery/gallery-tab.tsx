@@ -15,7 +15,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
 
   return (
     <Tab className="relative flex aspect-square cursor-pointer items-center justify-center
-      bg-background-light dark:bg-background-dark outline-none 
+      bg-background outline-none 
       focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 
       overflow-hidden group transition-all duration-200">
       

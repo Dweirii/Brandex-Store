@@ -30,7 +30,7 @@ const Logo = () => {
     return (
       <Link href="/" className="flex items-center gap-x-2">
         <div
-          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm w-32 md:w-48 lg:w-72"
+          className="bg-muted/20 animate-pulse transition-all duration-300 rounded-sm w-20 md:w-24 h-5 md:h-6"
           aria-label="Loading logo"
         />
       </Link>
@@ -41,13 +41,13 @@ const Logo = () => {
     <Link href="/" className="flex items-center gap-x-2 relative pointer-events-auto group">
       <Image
         src={logoSrc}
-        width={60}
-        height={26}
+        width={50}
+        height={20}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-200 group-hover:opacity-80 h-8 w-auto md:h-12"
+        className="transition-all duration-200 group-hover:opacity-80 h-5 w-auto md:h-6"
         style={{ width: "auto", height: "auto" }}
-        sizes="(max-width: 640px) 100px, (max-width: 768px) 200px, 300px"
+        sizes="(max-width: 640px) 80px, (max-width: 768px) 150px, 200px"
         placeholder="blur"
         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
       />

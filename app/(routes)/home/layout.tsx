@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { HomeNavbar } from "@/components/home/home-navbar"
 
 export const metadata: Metadata = {
     title: "Brandex - Premium Design Assets & Mockups",
@@ -12,6 +13,7 @@ export default function HomeLayout({
 }) {
     return (
         <div className="flex flex-col min-h-screen">
+            <HomeNavbar />
             {children}
         </div>
     )

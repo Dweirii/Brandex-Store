@@ -94,31 +94,31 @@
 
 
 .dark {
-  /* Enhanced dark mode with sophisticated colors */
-  --background: #0f0f0f;
+  /* Main dark color: #0F1113 - all backgrounds use this base */
+  --background: #0F1113;
   --foreground: #f5f5f5;
 
-  --card: #1a1a1a;
+  --card: #0F1113;
   --card-foreground: #f0f0f0;
 
-  --popover: #1a1a1a;
+  --popover: #0F1113;
   --popover-foreground: #f0f0f0;
 
   /* Keep your signature green untouched! */
   --primary: #00EB02;
-  --primary-foreground: #0f0f0f;
+  --primary-foreground: #0F1113;
 
   /* Improved secondary: warm gray-taupe for better contrast */
   --secondary: #b8b8b8;
-  --secondary-foreground: #0f0f0f;
+  --secondary-foreground: #0F1113;
 
-  /* Better muted colors for depth */
-  --muted: #2a2a2a;
+  /* Muted surfaces - same base for consistency */
+  --muted: #0F1113;
   --muted-foreground: #a0a0a0;
 
   /* Keep accent as your green */
   --accent: #00EB02;
-  --accent-foreground: #0f0f0f;
+  --accent-foreground: #0F1113;
 
   /* Better destructive red for dark mode */
   --destructive: #ff5252;
@@ -136,12 +136,12 @@
   --chart-4: #00a300;
   --chart-5: #66ff66;
 
-  /* Sidebar improvements */
-  --sidebar: #141414;
+  /* Sidebar - main dark color */
+  --sidebar: #0F1113;
   --sidebar-foreground: #f0f0f0;
   --sidebar-primary: #00EB02;
-  --sidebar-primary-foreground: #0f0f0f;
-  --sidebar-accent: #1f1f1f;
+  --sidebar-primary-foreground: #0F1113;
+  --sidebar-accent: #0F1113;
   --sidebar-accent-foreground: #e8e8e8;
   --sidebar-border: #2d2d2d;
   --sidebar-ring: #00EB02;
@@ -396,4 +396,63 @@
   }
 
 
+}
+
+@keyframes banner-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Studio announcement banner background animations */
+@keyframes banner-gradient-flow {
+  0%, 100% {
+    opacity: 1;
+    background-position: 0% 50%;
+  }
+  50% {
+    opacity: 1;
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes banner-glow-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.15);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(150%) skewX(-15deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 235, 2, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 8px rgba(0, 235, 2, 0.2);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
