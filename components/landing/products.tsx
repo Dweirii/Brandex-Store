@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react"
 import { Heart, ArrowUpRight } from "lucide-react"
+import Link from "next/link"
 
 interface GalleryVideo {
   id: string
@@ -145,13 +146,13 @@ function GalleryCell({ item }: { item: GalleryVideo }) {
       {/* View all CTA overlay */}
       {item.showCta && (
         <div className="absolute inset-0 flex items-end justify-end p-4">
-          <a
+          <Link
             href="/products"
             className="flex items-center gap-2 rounded-full bg-[#00EB02]/20 px-4 py-2 backdrop-blur-sm border border-[#00EB02]/30 text-[#00EB02] text-sm font-medium hover:bg-[#00EB02]/30 transition-colors"
           >
             {"View All Products"}
             <ArrowUpRight className="h-4 w-4" />
-          </a>
+          </Link>
         </div>
       )}
     </div>
@@ -205,12 +206,12 @@ export default function ExclusiveGallery() {
           </p>
 
           <div className="flex flex-col gap-3 mt-2">
-            <a href="/products" className="w-full text-center rounded-full bg-[#00EB02] px-6 py-3.5 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+            <Link href="/products" className="w-full text-center rounded-full bg-[#00EB02] px-6 py-3.5 text-sm font-bold text-white hover:opacity-90 transition-opacity">
               Browse Products
-            </a>
-            <a href="/category/free" className="w-full text-center rounded-full bg-transparent px-6 py-3.5 text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border">
+            </Link>
+            <Link href="/category/free" className="w-full text-center rounded-full bg-transparent px-6 py-3.5 text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border">
               Free Assets
-            </a>
+            </Link>
           </div>
         </div>
 

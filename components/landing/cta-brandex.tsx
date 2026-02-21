@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useEffect } from "react"
+import Link from "next/link"
 
 export default function HeroBanner() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -39,9 +40,9 @@ export default function HeroBanner() {
           Perfect for agencies, designers, and creative professionals.
         </p>
         <div className="mt-5">
-          <a href="/products" className="inline-block rounded-full bg-[#00EB02] px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00EB02] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          <Link href="/products" className="inline-block rounded-full bg-[#00EB02] px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00EB02] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             Browse Collection
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -41,14 +41,14 @@ const NavbarActions = () => {
       />
       
       <div className="ml-auto flex items-center gap-2">
-        {/* Studio Button - Desktop (opens modal) */}
+        {/* Studio Button - Mobile & Desktop (opens modal) */}
         <button
           onClick={() => setShowStudioModal(true)}
-          className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 transition-all cursor-pointer group relative overflow-hidden animate-[pulse-glow_3s_ease-in-out_infinite]"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 transition-all cursor-pointer group relative overflow-hidden animate-[pulse-glow_3s_ease-in-out_infinite]"
           aria-label="Open Brandex Studio"
         >
           {/* Shimmer effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" />
+          <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" />
           
           {/* NEW badge */}
           <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[8px] font-bold bg-red-500 text-white rounded-full uppercase animate-pulse shadow-sm z-20">

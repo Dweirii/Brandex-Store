@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     const categoryId = searchParams.get("categoryId");
     const page = searchParams.get("page");
     const limit = searchParams.get("limit");
+    const priceFilter = searchParams.get("priceFilter");
 
     if (!query || !storeId) {
       return NextResponse.json(
@@ -36,6 +37,7 @@ export async function GET(req: NextRequest) {
     if (categoryId) adminUrl.searchParams.set("categoryId", categoryId);
     if (page) adminUrl.searchParams.set("page", page);
     if (limit) adminUrl.searchParams.set("limit", limit);
+    if (priceFilter && priceFilter !== "all") adminUrl.searchParams.set("priceFilter", priceFilter);
 
     // Forward request to admin API (which uses Typesense)
     const controller = new AbortController();
@@ -71,9 +73,9 @@ export async function GET(req: NextRequest) {
           "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
         },
       });
-    } catch (fetchError: any) {
+    } catch (fetchError: unknown) {
       clearTimeout(timeoutId);
-      if (fetchError.name === 'AbortError') {
+      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
         console.error("Typesense search timeout:", fetchError);
         return NextResponse.json(
           { error: "Search timeout - please try again" },

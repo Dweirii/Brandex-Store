@@ -7,7 +7,14 @@ import { Button } from "@/components/ui/Button"
 
 const studioUrl = process.env.NEXT_PUBLIC_STUDIO_URL || "http://localhost:3002"
 
-const navigationItems = [
+interface NavigationItem {
+  label: string
+  href: string
+  external?: boolean
+  badge?: string
+}
+
+const navigationItems: NavigationItem[] = [
   { label: "Explore", href: "/products" },
   { label: "Image", href: "/category/images" },
   { label: "Video", href: "/category/videos" },

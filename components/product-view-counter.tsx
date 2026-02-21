@@ -1,50 +1,54 @@
 "use client"
 
 import { Eye } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 interface ProductViewCounterProps {
   productId: string
 }
 
+const hashId = (id: string) =>
+  id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+
 const ProductViewCounter = ({ productId }: ProductViewCounterProps) => {
-  const [viewCount, setViewCount] = useState<number>(0)
-  const [activeViewers, setActiveViewers] = useState<number>(0)
+  // Lazy initialisers run exactly once — no state resets on re-renders or
+  // effect re-runs, which was causing the visible "jump" back to the
+  // hash-based value while the animation had already moved elsewhere.
+  const [viewCount] = useState(() => {
+    const hash = hashId(productId)
+    return 500 + (hash % 9500)
+  })
+
+  const [activeViewers, setActiveViewers] = useState(() => {
+    const hash = hashId(productId)
+    return 2 + (hash % 7) // 2–8
+  })
+
+  // Keep a stable ref to the latest timeoutId so cleanup is always accurate
+  // even when the callback fires and schedules the next tick.
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    // Generate a consistent view count based on product ID hash (500-10,000 range)
-    // Multiplied by 10 from original 50-500 range
-    const hash = productId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    const baseCount = 500 + (hash % 9500) // 500-10,000 range
-    setViewCount(baseCount)
-
-    // Generate consistent starting viewers based on product ID (2-8 range)
-    const initialViewers = 2 + (hash % 7) // 2-8 starting range
-    setActiveViewers(initialViewers)
-
-    // Smoothly step active viewers by ±1 at a time so every number between 2-8 is hit
-    const scheduleNextUpdate = () => {
-      // Random interval between 1.5-3.5 seconds per step
-      const interval = Math.random() * 2000 + 1500
-      return setTimeout(() => {
+    const schedule = () => {
+      // Random interval 1.5–3.5 s per step for natural feel
+      const delay = Math.random() * 2000 + 1500
+      timerRef.current = setTimeout(() => {
         setActiveViewers(prev => {
-          // 35% chance to stay the same (adds natural pauses)
+          // 35 % chance to stay put — adds realistic pauses
           if (Math.random() < 0.35) return prev
-
-          // Move by exactly 1 in a random direction
-          const direction = Math.random() > 0.5 ? 1 : -1
-          const newValue = prev + direction
-          // Clamp between 2-8
-          return Math.max(2, Math.min(8, newValue))
+          const dir = Math.random() > 0.5 ? 1 : -1
+          return Math.max(2, Math.min(8, prev + dir))
         })
-        timeoutId = scheduleNextUpdate()
-      }, interval)
+        schedule()
+      }, delay)
     }
 
-    let timeoutId = scheduleNextUpdate()
+    schedule()
 
-    return () => clearTimeout(timeoutId)
-  }, [productId])
+    return () => {
+      if (timerRef.current !== null) clearTimeout(timerRef.current)
+    }
+  }, []) // intentionally empty — initial value is fixed via lazy useState
 
   return (
     <div className="flex items-center gap-4 text-sm text-muted-foreground py-3 border-y border-border my-4">

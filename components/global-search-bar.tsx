@@ -73,8 +73,8 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
             setSuggestions(data.suggestions || [])
             setShowSuggestions(true)
           }
-        } catch (error: any) {
-          if (error.name === "AbortError") return
+        } catch (error: unknown) {
+          if (error instanceof Error && error.name === "AbortError") return
           console.error("Autocomplete failed:", error)
           setSuggestions([])
         } finally {
@@ -116,6 +116,12 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
         const currentCategoryId = searchParams.get("categoryId")
         if (currentCategoryId && currentCategoryId !== DEFAULT_CATEGORY_ID) {
           params.set("categoryId", currentCategoryId)
+        }
+
+        // Preserve priceFilter from URL if present
+        const currentPriceFilter = searchParams.get("priceFilter")
+        if (currentPriceFilter && currentPriceFilter !== "all") {
+          params.set("priceFilter", currentPriceFilter)
         }
 
         // Reset to page 1 when query changes
@@ -164,6 +170,12 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
       params.set("categoryId", currentCategoryId)
     }
 
+    // Preserve priceFilter from URL
+    const currentPriceFilter = searchParams.get("priceFilter")
+    if (currentPriceFilter && currentPriceFilter !== "all") {
+      params.set("priceFilter", currentPriceFilter)
+    }
+
     params.set("page", "1")
     router.push(`/products/search?${params.toString()}`)
   }, [router, searchParams])
@@ -192,6 +204,12 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
           const currentCategoryId = searchParams.get("categoryId")
           if (currentCategoryId && currentCategoryId !== DEFAULT_CATEGORY_ID) {
             params.set("categoryId", currentCategoryId)
+          }
+
+          // Preserve priceFilter from URL
+          const currentPriceFilter = searchParams.get("priceFilter")
+          if (currentPriceFilter && currentPriceFilter !== "all") {
+            params.set("priceFilter", currentPriceFilter)
           }
 
           params.set("page", "1")

@@ -28,17 +28,17 @@ export function StudioAnnouncementBanner() {
           {/* Promotional text */}
           <p className="hidden truncate text-sm text-white md:block">
             <span className="font-semibold text-white">
-              AI-Powered Image Editing
+              Brandex Studio
             </span>
-            {" "}is now available for everyone.{" "}
+            {" "}AI-Powered Image Editing is now available for everyone.{" "}
             <span className="font-bold text-white underline decoration-white/40 underline-offset-4 decoration-2">Free access.</span>
           </p>
 
           {/* Mobile short text */}
           <p className="truncate text-sm text-white md:hidden">
-            <span className="font-semibold text-white">AI Editing</span>
+            <span className="font-semibold text-white">Brandex Studio</span>
             {" "}&mdash;{" "}
-            <span className="font-bold text-white">Free access</span>
+            <span className="font-bold text-white">Free AI Editing</span>
           </p>
 
           {/* CTA link */}

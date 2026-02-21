@@ -14,6 +14,7 @@ import Pagination from "@/components/paginatioon"
 import Container from "@/components/ui/container"
 import { getStoredImageData } from "@/components/image-search-button"
 import { SearchLoadingState } from "@/components/search-loading-state"
+import PriceFilter from "@/components/price-filter"
 
 interface SearchResponse {
   results: Product[]
@@ -43,6 +44,7 @@ export default function ProductSearchPage() {
   const queryParam = searchParams.get("query") || ""
   const categoryIdParam = searchParams.get("categoryId") || DEFAULT_CATEGORY_ID
   const pageParam = parseInt(searchParams.get("page") || "1", 10)
+  const priceFilterParam = (searchParams.get("priceFilter") || "all") as "all" | "free" | "paid"
 
   const [products, setProducts] = useState<Product[]>([])
   const [total, setTotal] = useState(0)
@@ -91,7 +93,7 @@ export default function ProductSearchPage() {
   }, [categoryIdParam, categories])
 
   const performImageSearch = useCallback(
-    async (base64Image: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID) => {
+    async (base64Image: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID, priceFilter: string = "all") => {
       // Cancel any in-flight request
       abortControllerRef.current?.abort()
       const controller = new AbortController()
@@ -116,6 +118,9 @@ export default function ProductSearchPage() {
         }
         formData.append('page', page.toString())
         formData.append('limit', RESULTS_PER_PAGE.toString())
+        if (priceFilter && priceFilter !== "all") {
+          formData.append('priceFilter', priceFilter)
+        }
         
         const params = new URLSearchParams({ storeId: storeId || "" })
         const res = await fetch(
@@ -145,8 +150,8 @@ export default function ProductSearchPage() {
         if (data.info && uniqueResults.length === 0) {
           toast.info(data.info, { duration: 8000 })
         }
-      } catch (error: any) {
-        if (error.name === "AbortError") return // Silently ignore cancelled requests
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === "AbortError") return // Silently ignore cancelled requests
         console.error("Image search failed:", error)
         toast.error("Image search failed. Please try uploading the image again.")
         setProducts([])
@@ -163,7 +168,7 @@ export default function ProductSearchPage() {
   )
 
   const performSearch = useCallback(
-    async (searchQuery: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID) => {
+    async (searchQuery: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID, priceFilter: string = "all") => {
       // Allow searching even if query is short if a specific category is selected
       // But for global search, we still want a minimum query length
       if (!searchQuery.trim() && categoryId === DEFAULT_CATEGORY_ID) {
@@ -198,6 +203,10 @@ export default function ProductSearchPage() {
           params.set("categoryId", categoryId)
         }
 
+        if (priceFilter && priceFilter !== "all") {
+          params.set("priceFilter", priceFilter)
+        }
+
         const res = await fetch(`${apiUrl}/products/search?${params}`, {
           signal: controller.signal,
         })
@@ -215,8 +224,8 @@ export default function ProductSearchPage() {
         setTotal(data.total || 0)
         setCurrentPage(data.page || 1)
         setPageCount(data.pageCount || 1)
-      } catch (error: any) {
-        if (error.name === "AbortError") return // Silently ignore cancelled requests
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === "AbortError") return // Silently ignore cancelled requests
         console.error("Search failed:", error)
         setProducts([])
         setTotal(0)
@@ -235,6 +244,7 @@ export default function ProductSearchPage() {
     const currentQuery = searchParams.get("query") || ""
     const currentPage = parseInt(searchParams.get("page") || "1", 10)
     const currentCategoryId = searchParams.get("categoryId") || DEFAULT_CATEGORY_ID
+    const currentPriceFilter = searchParams.get("priceFilter") || "all"
     const imageSearchParam = searchParams.get("imageSearch")
     const imageId = searchParams.get("imageId")
 
@@ -247,7 +257,7 @@ export default function ProductSearchPage() {
       const base64Image = getStoredImageData(imageId)
       
       if (base64Image) {
-        performImageSearch(base64Image, currentPage, currentCategoryId)
+        performImageSearch(base64Image, currentPage, currentCategoryId, currentPriceFilter)
       } else {
         // Image data not found in sessionStorage
         console.warn("Image data not found. Please upload the image again.")
@@ -263,7 +273,7 @@ export default function ProductSearchPage() {
 
     if (currentQuery.trim().length >= 2) {
       // No debounce here - the search bar already debounces before updating the URL
-      performSearch(currentQuery, currentPage, currentCategoryId)
+      performSearch(currentQuery, currentPage, currentCategoryId, currentPriceFilter)
     } else if (currentQuery.trim().length === 0 && currentCategoryId === DEFAULT_CATEGORY_ID) {
       setProducts([])
       setHasSearched(false)
@@ -290,7 +300,7 @@ export default function ProductSearchPage() {
         {/* Results Header */}
         <div className="px-4 sm:px-6 lg:px-8 mb-8">
           {(queryParam || isImageSearch) && (
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
                   Search Results
@@ -309,11 +319,14 @@ export default function ProductSearchPage() {
                   )}
                 </p>
               </div>
-              {!loading && hasSearched && (
-                <span className="text-sm text-muted-foreground">
-                  {total} {total === 1 ? "result" : "results"}
-                </span>
-              )}
+              <div className="flex items-center gap-3 shrink-0">
+                <PriceFilter />
+                {!loading && hasSearched && (
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">
+                    {total} {total === 1 ? "result" : "results"}
+                  </span>
+                )}
+              </div>
             </div>
           )}
 

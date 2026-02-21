@@ -39,7 +39,7 @@ function CreditsPageContent() {
     if (!isLoaded) return;
     
     if (!isSignedIn) {
-      router.push("/sign-in?redirect=/credits");
+      router.push("/sign-in?redirect_url=/credits");
       return;
     }
 

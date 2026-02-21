@@ -154,7 +154,7 @@ export const DownloadButton = ({
         variant: "destructive",
       })
       try {
-        openSignIn?.()
+        openSignIn?.({ forceRedirectUrl: window.location.href })
       } catch { }
       return
     }

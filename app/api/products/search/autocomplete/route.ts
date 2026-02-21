@@ -63,9 +63,9 @@ export async function GET(req: NextRequest) {
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
         },
       });
-    } catch (fetchError: any) {
+    } catch (fetchError: unknown) {
       clearTimeout(timeoutId);
-      if (fetchError.name === 'AbortError') {
+      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
         console.error("Autocomplete timeout - returning empty suggestions");
       }
       return NextResponse.json({ suggestions: [] });
