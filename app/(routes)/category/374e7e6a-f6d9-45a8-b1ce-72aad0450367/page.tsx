@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { Suspense } from "react"
 import Link from "next/link"
 import getCategories from "@/actions/get-categories"
 import Container from "@/components/ui/container"
@@ -616,7 +617,9 @@ export default async function SignatureServicesPage() {
         </div>
       </div>
 
-      <ScrollToTop />
+      <Suspense fallback={null}>
+        <ScrollToTop />
+      </Suspense>
     </Container>
   )
 }

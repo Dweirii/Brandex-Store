@@ -44,7 +44,7 @@ export default function ProductSearchPage() {
   const queryParam = searchParams.get("query") || ""
   const categoryIdParam = searchParams.get("categoryId") || DEFAULT_CATEGORY_ID
   const pageParam = parseInt(searchParams.get("page") || "1", 10)
-  const priceFilterParam = (searchParams.get("priceFilter") || "all") as "all" | "free" | "paid"
+
 
   const [products, setProducts] = useState<Product[]>([])
   const [total, setTotal] = useState(0)
