@@ -237,11 +237,11 @@ export default function TermsOfService() {
                 <div className="bg-muted p-4 rounded-lg my-4">
                   <p>
                     <strong>Email:</strong>{" "}
-                    <a href="mailto:support@Brandexme.com" className="text-primary hover:underline">
-                      support@Brandexme.com
+                    <a href="mailto:team@brandexme.com" className="text-primary hover:underline">
+                      team@brandexme.com
                     </a>
                     <br />
-                    <strong>Phone:</strong> +962-79-297-7707
+                    <strong>Phone:</strong> +1-855-404-2726
                     <br />
                     <strong>Business Name:</strong> Brandex
                     <br />

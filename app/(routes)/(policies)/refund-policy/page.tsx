@@ -69,7 +69,7 @@ export default function RefundPolicy() {
                 <li>Clear explanation of the refund reason</li>
               </ul>
               <p className="mt-2">
-                Email: <a href="mailto:support@Brandexme.com" className="text-primary hover:underline">support@Brandexme.com</a>
+                Email: <a href="mailto:team@brandexme.com" className="text-primary hover:underline">team@brandexme.com</a>
               </p>
             </div>
 
@@ -77,8 +77,8 @@ export default function RefundPolicy() {
             <p>For any refund-related questions or issues, contact us via:</p>
             <div className="bg-muted p-4 rounded-lg my-4">
               <p>
-                <strong>Email:</strong> <a href="mailto:support@Brandexme.com" className="text-primary hover:underline">support@Brandexme.com</a><br />
-                <strong>Phone:</strong> +962-79-297-7707<br />
+                <strong>Email:</strong> <a href="mailto:team@brandexme.com" className="text-primary hover:underline">team@brandexme.com</a><br />
+                <strong>Phone:</strong> +1-855-404-2726<br />
                 <strong>Business Name:</strong> Brandex<br />
                 <strong>Headquarters:</strong> Amman, Jordan
               </p>

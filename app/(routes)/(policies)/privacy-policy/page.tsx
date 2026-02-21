@@ -199,8 +199,8 @@ export default function PrivacyPolicy() {
                 </ul>
                 <p>
                   To exercise these rights, contact us at:{" "}
-                  <a href="mailto:support@Brandex.com" className="text-primary hover:underline">
-                    support@Brandex.com
+                  <a href="mailto:team@brandexme.com" className="text-primary hover:underline">
+                    team@brandexme.com
                   </a>
                 </p>
 
@@ -227,11 +227,11 @@ export default function PrivacyPolicy() {
                 <div className="bg-muted p-4 rounded-lg my-4">
                   <p>
                     <strong>Email:</strong>{" "}
-                    <a href="mailto:support@Brandex.com" className="text-primary hover:underline">
-                      support@Brandex.com
+                    <a href="mailto:team@brandexme.com" className="text-primary hover:underline">
+                      team@brandexme.com
                     </a>
                     <br />
-                    <strong>Phone:</strong> +962-79-297-7707
+                    <strong>Phone:</strong> +1-855-404-2726
                     <br />
                     <strong>Business Name:</strong> Brandex
                     <br />
