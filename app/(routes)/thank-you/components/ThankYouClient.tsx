@@ -261,7 +261,7 @@ export default function ThankYouPage() {
                 ? "bg-red-500"
                 : urgencyLevel === "warning"
                   ? "bg-yellow-500"
-                  : "bg-green-500"
+                  : "bg-primary"
                 }`}
               initial={{ width: "100%" }}
               animate={{ width: `${(timeLeft / (30 * 60)) * 100}%` }}

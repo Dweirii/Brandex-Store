@@ -22,7 +22,7 @@ const features = [
     title: "Ready Packaging Art Work",
     description:
       "Essential design elements and identity assets to maintain brand consistency across channels",
-    gradient: "from-green-500 via-emerald-500 to-teal-500",
+    gradient: "from-primary via-emerald-500 to-teal-500",
     bgPattern:
       "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20",
     count: "150+",
@@ -99,7 +99,7 @@ export function WhatYouGetSection() {
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-to-r from-blue-400/10 to-cyan-400/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-green-400/5 to-emerald-400/5 rounded-full blur-3xl animate-pulse delay-500" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary/5 to-emerald-400/5 rounded-full blur-3xl animate-pulse delay-500" />
       </div>
 
       {/* Floating Decorative Elements */}

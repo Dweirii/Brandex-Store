@@ -41,13 +41,12 @@ const Logo = () => {
     <Link href="/" className="flex items-center gap-x-2 relative pointer-events-auto group">
       <Image
         src={logoSrc}
-        width={50}
-        height={20}
+        width={200}
+        height={40}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-200 group-hover:opacity-80 h-5 w-auto md:h-6"
-        style={{ width: "auto", height: "auto" }}
-        sizes="(max-width: 640px) 80px, (max-width: 768px) 150px, 200px"
+        className="transition-all duration-200 group-hover:opacity-80 h-6 w-auto md:h-8"
+        sizes="(max-width: 640px) 100px, 200px"
         placeholder="blur"
         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
       />

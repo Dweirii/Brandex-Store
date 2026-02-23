@@ -76,9 +76,9 @@
 
   --chart-1: #00da20;
   --chart-2: #94A394;
-  --chart-3: #00b81a;
-  --chart-4: #007f00;
-  --chart-5: #c8facc;
+  --chart-3: #00da20;
+  --chart-4: #00da20;
+  --chart-5: #00da20;
 
   --radius: 10px;
 
@@ -132,9 +132,9 @@
   /* Chart colors - enhanced green palette */
   --chart-1: #00da20;
   --chart-2: #b8b8b8;
-  --chart-3: #00b81a;
-  --chart-4: #00a300;
-  --chart-5: #66ff66;
+  --chart-3: #00da20;
+  --chart-4: #00da20;
+  --chart-5: #00da20;
 
   /* Sidebar - main dark color */
   --sidebar: #0F1113;

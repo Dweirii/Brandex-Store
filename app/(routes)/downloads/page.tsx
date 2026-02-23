@@ -237,7 +237,7 @@ function DownloadsPageContent() {
               <p className="text-sm text-muted-foreground">Total Downloads</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 text-center">
-              <Package className="h-8 w-8 text-green-500 mx-auto mb-2" />
+              <Package className="h-8 w-8 text-primary mx-auto mb-2" />
               <p className="text-2xl font-bold text-foreground">{getFreeDownloads()}</p>
               <p className="text-sm text-muted-foreground">Free Downloads</p>
             </div>

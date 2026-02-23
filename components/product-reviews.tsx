@@ -321,7 +321,7 @@ const ProductReviews = ({ productId }: ProductReviewsProps) => {
                       <div className="flex items-center gap-2">
                         <h4 className="font-semibold text-foreground">{review.userName}</h4>
                         {review.isVerifiedPurchase && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-green-50 text-primary border border-green-200 dark:bg-green-900/20 dark:text-primary dark:border-primary">
                             <CheckCircle className="h-3 w-3" />
                             Verified Purchase
                           </span>

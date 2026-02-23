@@ -270,7 +270,7 @@ export function SearchLoadingState({ isImageSearch = false, className, variant =
                   className={cn(
                     "flex items-center justify-center w-8 h-8 rounded-full transition-colors",
                     isActive && "bg-primary text-primary-foreground",
-                    isCompleted && "bg-green-500 text-white",
+                    isCompleted && "bg-primary text-white",
                     !isActive && !isCompleted && "bg-muted text-muted-foreground"
                   )}
                 >

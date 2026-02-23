@@ -245,7 +245,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
         {/* Free Badge */}
         {isFree && (
-          <div className="absolute top-2 left-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-md z-10">
+          <div className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-1 rounded-md z-10">
             Free
           </div>
         )}

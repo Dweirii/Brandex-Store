@@ -37,7 +37,7 @@ export function PremiumModal() {
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-center gap-3 text-center">
-            <Crown className="h-8 w-8 text-green-500" />
+            <Crown className="h-8 w-8 text-primary" />
             <span className="text-3xl font-bold">Brandex Credits</span>
           </DialogTitle>
         </DialogHeader>

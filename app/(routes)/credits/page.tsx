@@ -284,7 +284,7 @@ function CreditsPageContent() {
                       <p className="font-semibold">${purchase.price}</p>
                       <div className={cn(
                         "text-xs flex items-center gap-1",
-                        purchase.status === "COMPLETED" ? "text-green-600" : "text-muted-foreground"
+                        purchase.status === "COMPLETED" ? "text-primary" : "text-muted-foreground"
                       )}>
                         {purchase.status === "COMPLETED" && <Check className="h-3 w-3" />}
                         {purchase.status}
@@ -352,7 +352,7 @@ function CreditsPageContent() {
                     <div className="text-right">
                       <p className={cn(
                         "text-sm font-semibold",
-                        download.isFree ? "text-green-600" : "text-primary"
+                        download.isFree ? "text-primary" : "text-primary"
                       )}>
                         {download.isFree ? "Free" : `${download.creditsUsed} credits`}
                       </p>

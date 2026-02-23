@@ -65,7 +65,7 @@ const Footer = () => {
             </p>
             <ul className="text-sm space-y-2">
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-primary" /> {/* Changed text-green-400 to text-primary */}
+                <Mail className="h-4 w-4 text-primary" /> {/* Changed text-primary to text-primary */}
                 <a href="mailto:team@brandexme.com" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}
@@ -73,7 +73,7 @@ const Footer = () => {
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-primary" /> {/* Changed text-green-400 to text-primary */}
+                <Phone className="h-4 w-4 text-primary" /> {/* Changed text-primary to text-primary */}
                 <a href="tel:+18554042726" className="text-muted-foreground hover:underline">
                   {" "}
                   {/* Added text-muted-foreground */}

@@ -135,7 +135,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             {/* Badge Layer */}
             <div className="absolute top-3 left-3 z-20 flex gap-2">
                 {isFree ? (
-                    <div className="px-3 py-1 bg-green-500/90 dark:bg-green-600/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
+                    <div className="px-3 py-1 bg-primary/90 dark:bg-primary/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
                         Free
                     </div>
                 ) : (

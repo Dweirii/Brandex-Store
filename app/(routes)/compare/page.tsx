@@ -122,7 +122,7 @@ const ComparePage = () => {
                 {items.map((product) => (
                   <td key={product.id} className="p-4 border-b border-l border-border">
                     {Number(product.price) === 0 ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-semibold bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-sm font-semibold bg-primary/10 text-primary dark:text-primary border border-primary/20">
                         Free
                       </span>
                     ) : (
@@ -252,7 +252,7 @@ const ComparePage = () => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Type:</span> 
                   {Number(product.price) === 0 ? (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-green-500/10 text-green-700 dark:text-green-400 border border-green-500/20">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-primary/10 text-primary dark:text-primary border border-primary/20">
                       Free
                     </span>
                   ) : (
