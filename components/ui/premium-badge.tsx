@@ -68,12 +68,12 @@ export function PremiumBadgeSimple({
     <div
       className={cn(
         "inline-flex items-center justify-center rounded-md font-bold w-fit whitespace-nowrap shrink-0",
-        "bg-gradient-to-r from-green-600 to-[#00FF00]",
-        "text-black shadow-md shadow-green-500/20",
-        "border border-green-400/30",
+        "text-black shadow-md",
+        "border",
         sizeClasses[size],
         className
       )}
+      style={{ background: 'linear-gradient(to right, #009916, #00da20)', boxShadow: '0 4px 6px -1px rgba(0, 218, 32, 0.2)', borderColor: 'rgba(0, 218, 32, 0.3)' }}
       {...props}
     >
       {label}
