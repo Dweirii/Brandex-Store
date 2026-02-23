@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     const page = searchParams.get("page");
     const limit = searchParams.get("limit");
     const priceFilter = searchParams.get("priceFilter");
+    const subcategories = searchParams.get("subcategories");
 
     if (!query || !storeId) {
       return NextResponse.json(
@@ -38,6 +39,7 @@ export async function GET(req: NextRequest) {
     if (page) adminUrl.searchParams.set("page", page);
     if (limit) adminUrl.searchParams.set("limit", limit);
     if (priceFilter && priceFilter !== "all") adminUrl.searchParams.set("priceFilter", priceFilter);
+    if (subcategories) adminUrl.searchParams.set("subcategories", subcategories);
 
     // Forward request to admin API (which uses Typesense)
     const controller = new AbortController();

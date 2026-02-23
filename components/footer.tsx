@@ -43,13 +43,19 @@ const Footer = () => {
                       href={href}
                       className="text-muted-foreground hover:text-primary transition-colors duration-200"
                     >
-                      {" "}
-                      {/* Changed hover:text-green-400 to hover:text-primary, added text-muted-foreground */}
                       {label}
                     </Link>
                   </li>
                 )
               })}
+              <li>
+                <Link
+                  href="/privacy-request"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                >
+                  Do Not Sell My Personal Information
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

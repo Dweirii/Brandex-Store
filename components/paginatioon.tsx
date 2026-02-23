@@ -17,7 +17,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages }) => {
   const onPageChange = (page: number) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set("page", page.toString())
-    router.push(`${pathname}?${params.toString()}`)
+    router.push(`${pathname}?${params.toString()}`, { scroll: false })
   }
 
   // Generate page numbers to display

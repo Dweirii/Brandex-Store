@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { Search, ChevronRight, Loader2 } from "lucide-react"
+import { Search, ChevronRight, Loader2, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { ImageSearchButton } from "./image-search-button"
@@ -35,8 +35,25 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
   const autocompleteControllerRef = useRef<AbortController | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Update query when URL changes (e.g., back/forward navigation)
+  // Tracks the last query we pushed to the URL so the URL→state sync
+  // knows to skip its own updates and not overwrite what the user is typing.
+  const lastPushedQueryRef = useRef<string>("")
+
+  // Extract stable scalar values from searchParams for effect dependencies.
+  // Prevents effects from re-firing when unrelated params (e.g. page) change.
+  const storeIdParam = searchParams.get("storeId") || ""
+  const categoryIdParam = searchParams.get("categoryId") || ""
+  const priceFilterParam = searchParams.get("priceFilter") || ""
+  const imageSearchParam = searchParams.get("imageSearch") || ""
+
+  // Sync URL → state only for external navigation (back/forward button).
+  // When our own router.push updates the URL, lastPushedQueryRef matches
+  // the incoming queryParam so we skip the sync and preserve user input.
   useEffect(() => {
+    if (queryParam === lastPushedQueryRef.current) {
+      lastPushedQueryRef.current = ""
+      return
+    }
     setQuery(queryParam)
   }, [queryParam])
 
@@ -47,21 +64,19 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
     }
 
     if (query.trim().length >= 1) {
-      setIsSearching(true)
       suggestionsTimerRef.current = setTimeout(async () => {
-        // Cancel previous autocomplete request
+        setIsSearching(true)
         autocompleteControllerRef.current?.abort()
         const controller = new AbortController()
         autocompleteControllerRef.current = controller
 
         try {
-          const storeId = searchParams.get("storeId")
           const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
           const params = new URLSearchParams({
             query: query.trim(),
             limit: "6",
           })
-          if (storeId) params.set("storeId", storeId)
+          if (storeIdParam) params.set("storeId", storeIdParam)
 
           const res = await fetch(`${apiUrl}/products/search/autocomplete?${params}`, {
             signal: controller.signal,
@@ -82,7 +97,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
             setIsSearching(false)
           }
         }
-      }, 150) // 150ms debounce for suggestions (fast feedback)
+      }, 150)
     } else {
       setSuggestions([])
       setShowSuggestions(false)
@@ -95,130 +110,120 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
       }
       autocompleteControllerRef.current?.abort()
     }
-  }, [query, searchParams])
+  }, [query, storeIdParam])
 
   // Debounced URL update as user types - triggers the search page
   useEffect(() => {
-    // Clear existing timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current)
     }
 
-    // Only search if query has at least 2 characters
     if (query.trim().length >= 2) {
       debounceTimerRef.current = setTimeout(() => {
         const params = new URLSearchParams()
-        const storeId = searchParams.get("storeId")
         params.set("query", query.trim())
-        if (storeId) params.set("storeId", storeId)
+        if (storeIdParam) params.set("storeId", storeIdParam)
 
-        // Preserve categoryId from URL if present
-        const currentCategoryId = searchParams.get("categoryId")
-        if (currentCategoryId && currentCategoryId !== DEFAULT_CATEGORY_ID) {
-          params.set("categoryId", currentCategoryId)
+        if (categoryIdParam && categoryIdParam !== DEFAULT_CATEGORY_ID) {
+          params.set("categoryId", categoryIdParam)
         }
 
-        // Preserve priceFilter from URL if present
-        const currentPriceFilter = searchParams.get("priceFilter")
-        if (currentPriceFilter && currentPriceFilter !== "all") {
-          params.set("priceFilter", currentPriceFilter)
+        if (priceFilterParam && priceFilterParam !== "all") {
+          params.set("priceFilter", priceFilterParam)
         }
 
-        // Reset to page 1 when query changes
         params.set("page", "1")
 
-        // Navigate to search page if not already there
+        lastPushedQueryRef.current = query.trim()
         if (pathname !== "/products/search") {
           router.push(`/products/search?${params.toString()}`)
         } else {
-          // Update URL without navigation if already on search page
           router.push(`/products/search?${params.toString()}`, { scroll: false })
         }
         setShowSuggestions(false)
-      }, 300) // 300ms debounce (search page fires immediately on URL change)
+      }, 300)
     } else if (query.trim().length === 0) {
-      // If query is empty, navigate back to home page
-      // BUT don't redirect if it's an image search!
-      const isImageSearch = searchParams.get("imageSearch") === "true"
+      const isImageSearch = imageSearchParam === "true"
       if (pathname === "/products/search" && !isImageSearch) {
         debounceTimerRef.current = setTimeout(() => {
+          lastPushedQueryRef.current = ""
           router.push("/")
         }, 300)
       }
       setShowSuggestions(false)
     }
 
-    // Cleanup
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current)
       }
     }
-  }, [query, router, searchParams, pathname])
+  }, [query, router, pathname, storeIdParam, categoryIdParam, priceFilterParam, imageSearchParam])
 
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setQuery(suggestion)
     setShowSuggestions(false)
-    const storeId = searchParams.get("storeId")
     const params = new URLSearchParams()
     params.set("query", suggestion)
-    if (storeId) params.set("storeId", storeId)
+    if (storeIdParam) params.set("storeId", storeIdParam)
 
-    // Preserve category from URL
-    const currentCategoryId = searchParams.get("categoryId")
-    if (currentCategoryId && currentCategoryId !== DEFAULT_CATEGORY_ID) {
-      params.set("categoryId", currentCategoryId)
+    if (categoryIdParam && categoryIdParam !== DEFAULT_CATEGORY_ID) {
+      params.set("categoryId", categoryIdParam)
     }
 
-    // Preserve priceFilter from URL
-    const currentPriceFilter = searchParams.get("priceFilter")
-    if (currentPriceFilter && currentPriceFilter !== "all") {
-      params.set("priceFilter", currentPriceFilter)
+    if (priceFilterParam && priceFilterParam !== "all") {
+      params.set("priceFilter", priceFilterParam)
     }
 
     params.set("page", "1")
+    lastPushedQueryRef.current = suggestion
     router.push(`/products/search?${params.toString()}`)
-  }, [router, searchParams])
+  }, [router, storeIdParam, categoryIdParam, priceFilterParam])
 
-  // Image search is now handled directly in ImageSearchButton component
+  const handleClear = useCallback(() => {
+    setQuery("")
+    setSuggestions([])
+    setShowSuggestions(false)
+    setSelectedIndex(-1)
+    autocompleteControllerRef.current?.abort()
+    const isImageSearch = imageSearchParam === "true"
+    if (!isImageSearch) {
+      lastPushedQueryRef.current = ""
+      router.push("/")
+    }
+  }, [router, imageSearchParam])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
         e.preventDefault()
-        // Clear debounce and search immediately
         if (debounceTimerRef.current) {
           clearTimeout(debounceTimerRef.current)
         }
 
         if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-          // Use selected suggestion
           handleSuggestionClick(suggestions[selectedIndex])
         } else if (query.trim().length >= 2) {
-          // Search with current query
-          const storeId = searchParams.get("storeId")
           const params = new URLSearchParams()
           params.set("query", query.trim())
-          if (storeId) params.set("storeId", storeId)
+          if (storeIdParam) params.set("storeId", storeIdParam)
 
-          const currentCategoryId = searchParams.get("categoryId")
-          if (currentCategoryId && currentCategoryId !== DEFAULT_CATEGORY_ID) {
-            params.set("categoryId", currentCategoryId)
+          if (categoryIdParam && categoryIdParam !== DEFAULT_CATEGORY_ID) {
+            params.set("categoryId", categoryIdParam)
           }
 
-          // Preserve priceFilter from URL
-          const currentPriceFilter = searchParams.get("priceFilter")
-          if (currentPriceFilter && currentPriceFilter !== "all") {
-            params.set("priceFilter", currentPriceFilter)
+          if (priceFilterParam && priceFilterParam !== "all") {
+            params.set("priceFilter", priceFilterParam)
           }
 
           params.set("page", "1")
+          lastPushedQueryRef.current = query.trim()
           router.push(`/products/search?${params.toString()}`)
           setShowSuggestions(false)
         } else if (query.trim().length === 0) {
-          // If empty, go to home page (but not during image search)
-          const isImageSearch = searchParams.get("imageSearch") === "true"
+          const isImageSearch = imageSearchParam === "true"
           if (!isImageSearch) {
+            lastPushedQueryRef.current = ""
             router.push("/")
           }
           setShowSuggestions(false)
@@ -234,15 +239,14 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
       } else if (e.key === "Escape") {
         setShowSuggestions(false)
         setSelectedIndex(-1)
-        // If on search page and query is empty, go to home
-        // BUT don't redirect if it's an image search!
-        const isImageSearch = searchParams.get("imageSearch") === "true"
+        const isImageSearch = imageSearchParam === "true"
         if (pathname === "/products/search" && query.trim().length === 0 && !isImageSearch) {
+          lastPushedQueryRef.current = ""
           router.push("/")
         }
       }
     },
-    [query, router, searchParams, pathname, suggestions, selectedIndex, handleSuggestionClick]
+    [query, router, pathname, suggestions, selectedIndex, handleSuggestionClick, storeIdParam, categoryIdParam, priceFilterParam, imageSearchParam]
   )
 
   // Close suggestions when clicking outside
@@ -261,9 +265,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
   return (
     <div ref={containerRef} className={cn("relative w-full", className)}>
       <form onSubmit={(e) => e.preventDefault()} className="relative w-full">
-        {/* Category Selector and Search Input - Side by side, visually connected */}
         <div className="flex items-center gap-2">
-          {/* Search Input - Standalone */}
           <div className="relative flex-1">
             {isSearching ? (
               <Loader2
@@ -278,7 +280,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
               />
             )}
             <Input
-              type="search"
+              type="text"
               placeholder="Search products..."
               value={query}
               onChange={(e) => {
@@ -293,7 +295,6 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
               }}
               onBlur={() => {
                 setIsFocused(false)
-                // Delay hiding suggestions to allow click
                 setTimeout(() => setShowSuggestions(false), 200)
               }}
               onKeyDown={handleKeyDown}
@@ -310,7 +311,17 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
             />
           </div>
           
-          {/* Image Search Button - Only show if enabled */}
+          {query.trim().length > 0 && (
+            <button
+              type="button"
+              onClick={handleClear}
+              aria-label="Clear search"
+              className="shrink-0 flex items-center justify-center h-8 w-8 rounded-full text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-all duration-150"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+
           {process.env.NEXT_PUBLIC_ENABLE_IMAGE_SEARCH === 'true' && (
             <ImageSearchButton 
               className="shrink-0"
@@ -319,7 +330,6 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
         </div>
       </form>
 
-      {/* Autocomplete Suggestions Dropdown - Enhanced */}
       {showSuggestions && suggestions.length > 0 && query.trim().length >= 1 && (
         <div className="absolute top-full left-0 right-0 mt-3 bg-background/95 backdrop-blur-md border border-border/80 rounded-xl shadow-xl z-50 max-h-80 overflow-y-auto overflow-x-hidden">
           <div className="py-2">

@@ -14,6 +14,7 @@ const isPublicRoute = createRouteMatcher([
   '/orders(.*)',
   '/terms-of-service',
   '/privacy-policy',
+  '/refund-policy',
 ]);
 
 const ALLOWED_DOMAINS = [

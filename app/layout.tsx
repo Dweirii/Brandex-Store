@@ -19,6 +19,7 @@ import { HelpWidget } from "@/components/help-widget";
 import { BackToTop } from "@/components/back-to-top";
 import { CompareButton } from "@/components/compare-button";
 import { StudioAnnouncementBanner } from "@/components/studio-announcement-banner";
+import { CookieConsent } from "@/components/cookie-consent";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -89,6 +90,25 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="h-full" suppressHydrationWarning>
         <head>
+          {/*
+           * Consent Mode v2 — MUST run before gtag.js loads so GA4 and Google
+           * Ads respect the default-deny state on every page load. The
+           * CookieConsent component calls gtag('consent','update',{...}) after
+           * the visitor makes a choice, which unlocks the blocked signals.
+           */}
+          <Script id="consent-mode-init" strategy="beforeInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('consent', 'default', {
+                analytics_storage:    'denied',
+                ad_storage:           'denied',
+                ad_user_data:         'denied',
+                ad_personalization:   'denied',
+                wait_for_update:       500
+              });
+            `}
+          </Script>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
             strategy="afterInteractive"
@@ -125,6 +145,7 @@ export default function RootLayout({
               <HelpWidget />
               <BackToTop />
               <CompareButton />
+              <CookieConsent />
             </Providers>
           </ThemeProvider>
           <Analytics />
