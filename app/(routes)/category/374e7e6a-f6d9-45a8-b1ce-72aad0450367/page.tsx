@@ -23,14 +23,14 @@ export const metadata: Metadata = {
       "Custom packaging design, logos, mockups, and print-ready files. Design + Pre-Print, Done Right.",
     url: `https://brandexme.com${CATEGORY_URL}`,
     siteName: "Brandex",
-    images: [{ url: "https://brandexme.com/Logo.png", width: 1200, height: 630, alt: "Brandex Signature Services" }],
+    images: [{ url: "https://brandexme.com/Logo.svg", width: 1200, height: 630, alt: "Brandex Signature Services" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Signature Services | Brandex",
     description: "Custom packaging design, logos, mockups, and print-ready files.",
-    images: ["https://brandexme.com/Logo.png"],
+    images: ["https://brandexme.com/Logo.svg"],
   },
   alternates: {
     canonical: `https://brandexme.com${CATEGORY_URL}`,

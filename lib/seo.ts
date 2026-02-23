@@ -4,11 +4,11 @@ export function getSiteUrl(): string {
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
-  
+
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL;
   }
-  
+
   return process.env.NODE_ENV === "production"
     ? "https://brandexme.com"
     : "http://localhost:3000";
@@ -40,7 +40,7 @@ function generateProductDescription(
   const categoryText = product.category ? ` ${product.category.name}` : "";
   const priceText = product.price ? ` Starting at $${product.price}` : "";
   const keywords = product.keywords?.slice(0, 2).join(", ") || "premium design";
-  
+
   const parts = [
     `${product.name}${categoryText ? ` - Premium ${categoryText.toLowerCase()}` : ""} mockup`,
     keywords,
@@ -50,11 +50,11 @@ function generateProductDescription(
   ].filter(Boolean);
 
   let description = parts.join(". ");
-  
+
   if (description.length < 150) {
     description = `${description} Instant download at Brandex - professional design resources for designers and marketers.`;
   }
-  
+
   if (description.length > 160) {
     description = description.slice(0, 157) + "...";
   }
@@ -75,7 +75,7 @@ export function generateProductMetadata(
 ): Metadata {
   const siteUrl = getSiteUrl();
   const productUrl = `${siteUrl}/products/${productId}`;
-  const productImage = product.images?.[0]?.url || `${siteUrl}/Logo.png`;
+  const productImage = product.images?.[0]?.url || `${siteUrl}/Logo.svg`;
   const description = generateProductDescription(product);
 
   return {
@@ -115,7 +115,7 @@ function generateCategoryDescription(categoryName: string): string {
     `Discover high-quality ${categoryName.toLowerCase()} mockups & design templates. Ready-made PSD files, packaging designs & brand assets. Download instantly!`,
     `Premium ${categoryName.toLowerCase()} design resources: mockups, PSD files & packaging templates. Professional quality for designers. Browse & download now!`,
   ];
-  
+
   let description = descriptions[0];
   for (const desc of descriptions) {
     if (desc.length >= 150 && desc.length <= 160) {
@@ -123,14 +123,14 @@ function generateCategoryDescription(categoryName: string): string {
       break;
     }
   }
-  
+
   if (description.length < 150) {
     description = `${description} Instant access to premium design assets.`;
   }
   if (description.length > 160) {
     description = description.slice(0, 157) + "...";
   }
-  
+
   return description;
 }
 
@@ -143,7 +143,7 @@ export function generateCategoryMetadata(
 ): Metadata {
   const siteUrl = getSiteUrl();
   const categoryUrl = `${siteUrl}/category/${categoryId}`;
-  const categoryImage = category.billboard?.imageUrl || `${siteUrl}/Logo.png`;
+  const categoryImage = category.billboard?.imageUrl || `${siteUrl}/Logo.svg`;
   const description = generateCategoryDescription(category.name);
 
   return {
@@ -179,7 +179,7 @@ export function generateCategoryMetadata(
 
 export function generateHomeMetadata(): Metadata {
   const siteUrl = getSiteUrl();
-  const defaultImage = `${siteUrl}/Logo.png`;
+  const defaultImage = `${siteUrl}/Logo.svg`;
   const description = "Premium mockups, packaging designs & layered PSD files for designers & marketers. Professional quality, instant download. Shop now at Brandex!";
 
   return {
@@ -227,7 +227,7 @@ export function generateProductStructuredData(
 ) {
   const siteUrl = getSiteUrl();
   const productUrl = `${siteUrl}/products/${productId}`;
-  const imageUrl = product.images?.[0]?.url || `${siteUrl}/Logo.png`;
+  const imageUrl = product.images?.[0]?.url || `${siteUrl}/Logo.svg`;
   const price = product.price ? parseFloat(product.price) : undefined;
   const currency = "USD";
 
@@ -244,16 +244,16 @@ export function generateProductStructuredData(
     category: product.category?.name,
     offers: price
       ? {
-          "@type": "Offer",
-          url: productUrl,
-          priceCurrency: currency,
-          price: price.toFixed(2),
-          availability: "https://schema.org/InStock",
-          seller: {
-            "@type": "Organization",
-            name: "Brandex",
-          },
-        }
+        "@type": "Offer",
+        url: productUrl,
+        priceCurrency: currency,
+        price: price.toFixed(2),
+        availability: "https://schema.org/InStock",
+        seller: {
+          "@type": "Organization",
+          name: "Brandex",
+        },
+      }
       : undefined,
     url: productUrl,
   };
@@ -267,7 +267,7 @@ export function generateOrganizationStructuredData() {
     "@type": "Organization",
     name: "Brandex",
     url: siteUrl,
-    logo: `${siteUrl}/Logo.png`,
+    logo: `${siteUrl}/Logo.svg`,
     description:
       "Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands.",
     sameAs: [
