@@ -55,7 +55,7 @@
   --popover: #ffffff;
   --popover-foreground: #020817;
 
-  --primary: #00da20;
+  --primary: #00c853;
   --primary-foreground: #ffffff;
 
   --secondary: #94A394;
@@ -64,7 +64,7 @@
   --muted: #e9ecef;
   --muted-foreground: #94A394;
 
-  --accent: #00da20;
+  --accent: #00c853;
   --accent-foreground: #ffffff;
 
   --destructive: #dc3545;
@@ -72,24 +72,24 @@
 
   --border: #dee2e6;
   --input: #ced4da;
-  --ring: #00da20;
+  --ring: #00c853;
 
-  --chart-1: #00da20;
+  --chart-1: #00c853;
   --chart-2: #94A394;
-  --chart-3: #00da20;
-  --chart-4: #00da20;
-  --chart-5: #00da20;
+  --chart-3: #00c853;
+  --chart-4: #00c853;
+  --chart-5: #00c853;
 
   --radius: 10px;
 
   --sidebar: #ffffff;
   --sidebar-foreground: #020817;
-  --sidebar-primary: #00da20;
+  --sidebar-primary: #00c853;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f8f9fa;
   --sidebar-accent-foreground: #020817;
   --sidebar-border: #dee2e6;
-  --sidebar-ring: #00da20;
+  --sidebar-ring: #00c853;
 }
 
 
@@ -105,7 +105,7 @@
   --popover-foreground: #f0f0f0;
 
   /* Brand green */
-  --primary: #00da20;
+  --primary: #00c853;
   --primary-foreground: #0F1113;
 
   /* Improved secondary: warm gray-taupe for better contrast */
@@ -117,7 +117,7 @@
   --muted-foreground: #a0a0a0;
 
   /* Keep accent as your green */
-  --accent: #00da20;
+  --accent: #00c853;
   --accent-foreground: #0F1113;
 
   /* Better destructive red for dark mode */
@@ -127,24 +127,24 @@
   /* Improved borders for better hierarchy */
   --border: #2d2d2d;
   --input: #252525;
-  --ring: #00da20;
+  --ring: #00c853;
 
   /* Chart colors - enhanced green palette */
-  --chart-1: #00da20;
+  --chart-1: #00c853;
   --chart-2: #b8b8b8;
-  --chart-3: #00da20;
-  --chart-4: #00da20;
-  --chart-5: #00da20;
+  --chart-3: #00c853;
+  --chart-4: #00c853;
+  --chart-5: #00c853;
 
   /* Sidebar - main dark color */
   --sidebar: #0F1113;
   --sidebar-foreground: #f0f0f0;
-  --sidebar-primary: #00da20;
+  --sidebar-primary: #00c853;
   --sidebar-primary-foreground: #0F1113;
   --sidebar-accent: #0F1113;
   --sidebar-accent-foreground: #e8e8e8;
   --sidebar-border: #2d2d2d;
-  --sidebar-ring: #00da20;
+  --sidebar-ring: #00c853;
 }
 
 
@@ -451,11 +451,11 @@
 
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 218, 32, 0.4);
+    box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.4);
   }
 
   50% {
-    box-shadow: 0 0 20px 8px rgba(0, 218, 32, 0.2);
+    box-shadow: 0 0 20px 8px rgba(0, 200, 83, 0.2);
   }
 }
 
