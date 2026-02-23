@@ -53,6 +53,20 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Logo green color
+        logogreen: {
+          50: "#e6ffe6",
+          100: "#ccffcc",
+          200: "#99ff99",
+          300: "#66ff66",
+          400: "#33ff33",
+          500: "#00ff00",
+          600: "#00da20", // Logo color
+          700: "#00b300",
+          800: "#008000",
+          900: "#006600",
+          950: "#004d00",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

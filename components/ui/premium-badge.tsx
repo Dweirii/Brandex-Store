@@ -73,7 +73,7 @@ export function PremiumBadgeSimple({
         sizeClasses[size],
         className
       )}
-      style={{ background: 'linear-gradient(to right, #009916, #00c853)', boxShadow: '0 4px 6px -1px rgba(0, 200, 83, 0.2)', borderColor: 'rgba(0, 200, 83, 0.3)' }}
+      style={{ background: 'linear-gradient(to right, #009916, #00da20)', boxShadow: '0 4px 6px -1px rgba(0, 218, 32, 0.2)', borderColor: 'rgba(0, 218, 32, 0.3)' }}
       {...props}
     >
       {label}
