@@ -1,25 +1,18 @@
 import type React from "react"
-import { Inter } from "next/font/google"
+import type { Metadata } from "next"
 
-const inter = Inter({ subsets: ["latin"] })
-
-export const metadata = {
-  title: "Privacy Policy | Albahaa Store",
-  description: "Privacy Policy for Albahaa Store",
+export const metadata: Metadata = {
+  title: {
+    default: "Legal | brandexme.com",
+    template: "%s | brandexme.com",
+  },
+  description: "Legal policies for brandexme.com — Privacy Policy, Refund Policy, and Terms of Service.",
 }
 
-export default function Layout({
+export default function PoliciesLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen w-full bg-white`}>
-        <main className="min-h-screen w-full flex flex-col">
-          {children}
-        </main>
-      </body>
-    </html>
-  )
+}) {
+  return <>{children}</>
 }

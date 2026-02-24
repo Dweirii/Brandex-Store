@@ -117,7 +117,7 @@ export default function PrivacyPolicy() {
             <Card className="p-6 md:p-8">
               <div className="prose prose-gray max-w-none dark:prose-invert">
                 <p className="text-lg">
-                  This Privacy Policy describes how Brandex LLC (&quot;Brandex LLC,&quot; &quot;BrandexMe,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) collects, uses, discloses, and protects personal information when you visit brandexme.com or use our services, including purchasing and accessing digital downloads (collectively, the &quot;Services&quot;).
+                  This Privacy Policy describes how Brandex LLC (&quot;Brandex LLC,&quot; &quot;brandexme.com,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) collects, uses, discloses, and protects personal information when you visit brandexme.com or use our services, including purchasing and accessing digital downloads (collectively, the &quot;Services&quot;).
                 </p>
                 <p>By using the Services, you agree to this Privacy Policy. If you do not agree, do not use the Services.</p>
 
@@ -127,7 +127,7 @@ export default function PrivacyPolicy() {
                 </h2>
                 <ul className="list-none pl-0 space-y-1 my-4">
                   <li><strong>Legal Entity:</strong> Brandex LLC</li>
-                  <li><strong>Brand/Service Name:</strong> BrandexMe</li>
+                  <li><strong>Website:</strong> brandexme.com</li>
                   <li><strong>Location:</strong> Granger, Indiana, United States</li>
                   <li><strong>Email:</strong> <a href="mailto:team@brandexme.com" className="text-primary hover:underline">team@brandexme.com</a></li>
                 </ul>
@@ -314,7 +314,7 @@ export default function PrivacyPolicy() {
                 <h2 id="digital-products" className="text-2xl font-semibold mt-10 mb-4 scroll-mt-24">
                   8) Digital Products Only
                 </h2>
-                <p>BrandexMe provides digital products and digital downloads only. We do not ship physical goods. Delivery may occur through download access within your account or another digital method described at checkout.</p>
+                <p>brandexme.com provides digital products and digital downloads only. We do not ship physical goods. Delivery may occur through download access within your account or another digital method described at checkout.</p>
 
                 {/* Section 9 */}
                 <h2 id="data-retention" className="text-2xl font-semibold mt-10 mb-4 scroll-mt-24">

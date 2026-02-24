@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import { Mail, Phone, Instagram } from "lucide-react"
+import { SignedIn } from "@clerk/nextjs"
+import Container from "@/components/ui/container"
 
 const XIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -18,22 +20,18 @@ const BehanceIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const Footer = () => {
   return (
     <footer className="bg-card text-foreground border-t border-border py-10 md:py-14">
-      {" "}
-      <div className="container mx-auto px-10 max-w-7xl">
+      <Container className="px-4 sm:px-6 lg:px-8">
         {/* Grid Layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">About Brandex</h3>{" "}
-            {/* Ensured text-foreground */}
-            <p className="text-sm text-muted-foreground">
-              {" "}
-              {/* Changed text-gray-400 to text-muted-foreground */}
+            <h3 className="text-lg font-semibold mb-4 text-foreground">About Brandex</h3>
+            <p className="text-sm text-muted-foreground max-w-[640px]">
               Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and
               brands who demand quality and speed.
             </p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Quick Links</h3> {/* Ensured text-foreground */}
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               {["Privacy Policy", "Refund Policy", "Terms of Service"].map((label) => {
                 const href = `/${label.toLowerCase().replace(/ /g, "-")}`
@@ -59,35 +57,30 @@ const Footer = () => {
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Contact</h3> {/* Ensured text-foreground */}
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Contact</h3>
             <p className="text-sm text-muted-foreground mb-3">
               Need help? Email us and we&apos;ll get back to you soon.
             </p>
             <ul className="text-sm space-y-2">
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-primary" /> {/* Changed text-primary to text-primary */}
+                <Mail className="h-4 w-4 text-primary" />
                 <a href="mailto:team@brandexme.com" className="text-muted-foreground hover:underline">
-                  {" "}
-                  {/* Added text-muted-foreground */}
                   team@brandexme.com
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-primary" /> {/* Changed text-primary to text-primary */}
-                <a href="tel:+18554042726" className="text-muted-foreground hover:underline">
-                  {" "}
-                  {/* Added text-muted-foreground */}
-                  +1-855-404-2726
-                </a>
-              </li>
+              <SignedIn>
+                <li className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 text-primary" />
+                  <a href="tel:+18554042726" className="text-muted-foreground hover:underline">
+                    +1-855-404-2726
+                  </a>
+                </li>
+              </SignedIn>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Stay Connected</h3>{" "}
-            {/* Ensured text-foreground */}
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Stay Connected</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              {" "}
-              {/* Changed text-gray-400 to text-muted-foreground */}
               Follow us on our social platforms for updates and more.
             </p>
             <div className="flex gap-4">
@@ -123,9 +116,9 @@ const Footer = () => {
         </div>
         {/* Footer Bottom */}
         <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} <span className="font-semibold text-foreground">Brandex</span> — All Rights Reserved
+          © 2024–2026 Brandex LLC. All Rights Reserved.
         </div>
-      </div>
+      </Container>
     </footer>
   )
 }

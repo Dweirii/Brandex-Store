@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProducts from "@/actions/get-products";
-import { getRelatedProductsWithAI } from "@/lib/ai-recommender";
+import { getRelatedProductsWithAI, getRelatedProductsFallback } from "@/lib/ai-recommender";
 import type { Product } from "@/types";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
@@ -66,46 +66,30 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
   const categoryId = currentProduct.category?.id;
   if (!categoryId) return null;
 
-  // 1. Fetch more products from the same category to find better matches
+  // Hard constraint: only products from the same category.
+  // Within that pool, rank by keywords → name → description.
   const { products: allInCategory } = await getProducts({
     categoryId,
-    limit: 50, // Get a larger pool for better matching
+    limit: 80,
   });
 
-  // Filter out current product
   const candidates = allInCategory.filter((item) => item.id !== currentProduct.id);
 
-  // 2. Try AI Recommender first
+  // 2. Try AI Recommender first (requires GOOGLE_GENERATIVE_AI_API_KEY or AI_GATEWAY_API_KEY)
   let relatedItems: Product[] = [];
+  const aiRecommendedIds = await getRelatedProductsWithAI(currentProduct, candidates);
 
-  // Only attempt AI if key is present
-  if (process.env.AI_GATEWAY_API_KEY) {
-    const aiRecommendedIds = await getRelatedProductsWithAI(currentProduct, candidates);
-
-    if (aiRecommendedIds.length > 0) {
-      // Map IDs back to product objects and maintain AI's order
-      relatedItems = aiRecommendedIds
-        .map(id => candidates.find(c => c.id === id))
-        .filter((p): p is Product => !!p)
-        .slice(0, 8);
-    }
+  if (aiRecommendedIds.length > 0) {
+    // Map IDs back to product objects, preserving AI's relevance order
+    relatedItems = aiRecommendedIds
+      .map((id) => candidates.find((c) => c.id === id))
+      .filter((p): p is Product => !!p)
+      .slice(0, 8);
   }
 
-  // 3. Fallback to keyword matching if AI fails or keys are missing
+  // 3. Smart multi-signal fallback when AI is unavailable or returns nothing
   if (relatedItems.length === 0) {
-    const currentKeywords = currentProduct.keywords || [];
-
-    relatedItems = candidates
-      .map((item) => {
-        const itemKeywords = item.keywords || [];
-        const intersection = itemKeywords.filter((k) => currentKeywords.includes(k));
-        return {
-          ...item,
-          score: intersection.length,
-        };
-      })
-      .sort((a, b) => b.score - a.score) // Sort by highest keyword match
-      .slice(0, 8);
+    relatedItems = getRelatedProductsFallback(currentProduct, candidates);
   }
 
   if (relatedItems.length === 0) {

@@ -139,7 +139,7 @@ export default function TermsOfService() {
             <Card className="p-6 md:p-8">
               <div className="prose prose-gray max-w-none dark:prose-invert">
                 <p className="text-lg">
-                  These Terms of Service (&quot;Terms&quot;) govern your access to and use of brandexme.com and any related applications, products, and services operated by Brandex LLC (&quot;Brandex LLC,&quot; &quot;BrandexMe,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) (collectively, the &quot;Services&quot;).
+                  These Terms of Service (&quot;Terms&quot;) govern your access to and use of brandexme.com and any related applications, products, and services operated by Brandex LLC (&quot;Brandex LLC,&quot; &quot;brandexme.com,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) (collectively, the &quot;Services&quot;).
                 </p>
                 <p>By accessing or using the Services, you agree to these Terms. If you do not agree, do not use the Services.</p>
 
@@ -175,7 +175,7 @@ export default function TermsOfService() {
                   4) Digital Products and Delivery
                 </h2>
                 <ul className="list-disc pl-6 space-y-1 my-4">
-                  <li>BrandexMe provides digital products and digital downloads only. We do not ship physical goods.</li>
+                  <li>brandexme.com provides digital products and digital downloads only. We do not ship physical goods.</li>
                   <li>Delivery and access may be provided through your account download area or another digital method described at checkout.</li>
                   <li>You are responsible for ensuring you have compatible devices/software and internet access to download and use digital products.</li>
                 </ul>
@@ -214,7 +214,7 @@ export default function TermsOfService() {
                 <h2 id="license" className="text-2xl font-semibold mt-10 mb-4 scroll-mt-24">
                   8) License to Digital Products
                 </h2>
-                <p>Unless a product listing states otherwise, when you purchase a digital product from BrandexMe, you receive a limited, non-exclusive, non-transferable, revocable license to download and use that product for your personal or internal business use.</p>
+                <p>Unless a product listing states otherwise, when you purchase a digital product from brandexme.com, you receive a limited, non-exclusive, non-transferable, revocable license to download and use that product for your personal or internal business use.</p>
                 <p>You may not:</p>
                 <ul className="list-disc pl-6 space-y-1 my-4">
                   <li>resell, sublicense, distribute, share, or publicly post the product files (or any portion of them) unless the product license explicitly permits it,</li>
@@ -268,7 +268,7 @@ export default function TermsOfService() {
                 <h2 id="intellectual-property" className="text-2xl font-semibold mt-10 mb-4 scroll-mt-24">
                   12) Intellectual Property
                 </h2>
-                <p>The Services, including the website, software, design, text, logos, and all BrandexMe content (excluding User Content), are owned by Brandex LLC or its licensors and are protected by intellectual property laws.</p>
+                <p>The Services, including the website, software, design, text, logos, and all brandexme.com content (excluding User Content), are owned by Brandex LLC or its licensors and are protected by intellectual property laws.</p>
 
                 {/* Section 13 */}
                 <h2 id="dmca" className="text-2xl font-semibold mt-10 mb-4 scroll-mt-24">

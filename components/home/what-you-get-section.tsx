@@ -24,7 +24,7 @@ const features = [
       "Essential design elements and identity assets to maintain brand consistency across channels",
     gradient: "from-primary via-emerald-500 to-teal-500",
     bgPattern:
-      "bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20",
+      "bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10",
     count: "150+",
     category: "Assets",
     features: ["Logo kits", "Typography sets", "Color palettes", "Brand guidelines"],
@@ -166,7 +166,7 @@ export function WhatYouGetSection() {
 
         {/* Creative Grid Layout */}
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1320px] mx-auto"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"

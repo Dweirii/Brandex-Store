@@ -155,7 +155,7 @@ export default function ThankYouPage() {
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
         >
-          <div className="h-24 w-24 rounded-full flex items-center justify-center shadow-2xl" style={{ backgroundColor: '#00da20' }}>
+          <div className="h-24 w-24 rounded-full flex items-center justify-center shadow-2xl" style={{ backgroundColor: '#00B81A' }}>
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -166,7 +166,7 @@ export default function ThankYouPage() {
           </div>
 
           <motion.div
-            className="absolute inset-0 rounded-full border-4" style={{ borderColor: '#00da20' }}
+            className="absolute inset-0 rounded-full border-4" style={{ borderColor: '#00B81A' }}
             initial={{ scale: 1, opacity: 0.8 }}
             animate={{ scale: 1.5, opacity: 0 }}
             transition={{
@@ -206,14 +206,14 @@ export default function ThankYouPage() {
             ? "bg-red-50 border-red-500 dark:bg-red-950/20 dark:border-red-500"
             : urgencyLevel === "warning"
               ? "bg-yellow-50 border-yellow-500 dark:bg-yellow-950/20 dark:border-yellow-500"
-              : "dark:bg-green-950/20"
+              : "dark:bg-primary/20"
             } border-2 mb-8 ${urgencyLevel === "critical"
               ? "bg-red-50 border-red-500 dark:bg-red-950/20 dark:border-red-500"
               : urgencyLevel === "warning"
                 ? "bg-yellow-50 border-yellow-500 dark:bg-yellow-950/20 dark:border-yellow-500"
                 : ""
             }`}
-          style={urgencyLevel === "normal" ? { backgroundColor: 'rgba(0,218,32,0.06)', borderColor: '#00da20' } : {}}
+          style={urgencyLevel === "normal" ? { backgroundColor: 'rgba(0,184,26,0.06)', borderColor: '#00B81A' } : {}}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.4 }}
@@ -222,7 +222,7 @@ export default function ThankYouPage() {
             {urgencyLevel === "critical" ? (
               <AlertTriangle className="h-6 w-6 text-red-500" />
             ) : (
-              <Clock className="h-6 w-6" style={{ color: '#00da20' }} />
+              <Clock className="h-6 w-6" style={{ color: '#00B81A' }} />
             )}
             <h2 className="text-lg font-bold text-foreground">
               {urgencyLevel === "critical" ? "URGENT: Download Now!" : "Download Time Remaining"}
@@ -236,7 +236,7 @@ export default function ThankYouPage() {
                 ? "text-yellow-600 dark:text-yellow-400"
                 : ""
               }`}
-            style={urgencyLevel === "normal" ? { color: '#00da20' } : {}}
+            style={urgencyLevel === "normal" ? { color: '#00B81A' } : {}}
             animate={urgencyLevel === "critical" ? { scale: [1, 1.05, 1] } : {}}
             transition={urgencyLevel === "critical" ? { duration: 1, repeat: Number.POSITIVE_INFINITY } : {}}
           >
@@ -250,7 +250,7 @@ export default function ThankYouPage() {
                 ? "text-yellow-700 dark:text-yellow-300"
                 : ""
               }`}
-            style={urgencyLevel === "normal" ? { color: '#00da20' } : {}}
+            style={urgencyLevel === "normal" ? { color: '#00B81A' } : {}}
           >
             {timeLeft === 0 ? "Download time has expired" : "You have 30 minutes to download your files"}
           </p>
@@ -291,7 +291,7 @@ export default function ThankYouPage() {
             >
               <div className="text-left flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <Download className="h-5 w-5" style={{ color: '#00da20' }} />
+                  <Download className="h-5 w-5" style={{ color: '#00B81A' }} />
                   <p className="font-semibold text-lg text-foreground">{item.productName}</p>
                 </div>
                 <p className="text-gray-600 dark:text-gray-400">

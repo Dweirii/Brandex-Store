@@ -59,11 +59,11 @@ const ProductViewCounter = ({ productId }: ProductViewCounterProps) => {
       <div className="flex items-center gap-2">
         <div className="relative">
           <span className="flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#00da20' }}></span>
-            <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#00da20' }}></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#00B81A' }}></span>
+            <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: '#00B81A' }}></span>
           </span>
         </div>
-        <span className="font-medium" style={{ color: '#00da20' }}>
+        <span className="font-medium" style={{ color: '#00B81A' }}>
           {activeViewers} {activeViewers === 1 ? "person" : "people"} viewing now
         </span>
       </div>

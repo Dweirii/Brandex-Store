@@ -27,10 +27,9 @@ const MemoizedProductCard = memo(ProductCard)
 
 const breakpointColumnsObj = {
   default: 4,
-  1536: 4,
-  1024: 3,
-  640: 2,
-  500: 1
+  1280: 3,
+  768: 2,
+  480: 1,
 }
 
 const ProductList: React.FC<ProductListProps> = ({
@@ -147,11 +146,11 @@ const ProductList: React.FC<ProductListProps> = ({
 
       <Masonry
         breakpointCols={breakpointColumnsObj}
-        className="flex w-auto -ml-4 sm:-ml-6"
-        columnClassName="pl-4 sm:pl-6 bg-clip-padding"
+        className="flex w-auto -ml-6 sm:-ml-8"
+        columnClassName="pl-6 sm:pl-8 bg-clip-padding"
       >
         {visibleItems.map((item) => (
-          <div key={item.id} className="mb-4 sm:mb-6">
+          <div key={item.id} className="mb-6 sm:mb-8">
             {variant === 'related' ? (
               <RelatedProductCard data={item} />
             ) : (
@@ -162,7 +161,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
         {/* Loading Skeletons */}
         {loading && Array.from({ length: 4 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="mb-4 sm:mb-6">
+          <div key={`skeleton-${i}`} className="mb-6 sm:mb-8">
             <Skeleton className="aspect-[3/4] w-full rounded-xl" />
           </div>
         ))}

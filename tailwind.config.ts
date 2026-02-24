@@ -13,9 +13,13 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.5rem",
+        lg: "2rem",
+      },
       screens: {
-        "2xl": "1400px",
+        "2xl": "1320px",
       },
     },
     extend: {
@@ -53,19 +57,19 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Logo green color
+        // Brand green - primary and only green (#00B81A)
         logogreen: {
-          50: "#e6ffe6",
-          100: "#ccffcc",
-          200: "#99ff99",
-          300: "#66ff66",
-          400: "#33ff33",
-          500: "#00ff00",
-          600: "#00da20", // Logo color
-          700: "#00b300",
-          800: "#008000",
-          900: "#006600",
-          950: "#004d00",
+          50: "#e6f9e8",
+          100: "#b8f0be",
+          200: "#8ae694",
+          300: "#5cdc6a",
+          400: "#2ed240",
+          500: "#00B81A",
+          600: "#009316",
+          700: "#006e11",
+          800: "#00490b",
+          900: "#002506",
+          950: "#001203",
         },
       },
       borderRadius: {

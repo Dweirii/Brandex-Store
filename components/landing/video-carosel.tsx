@@ -335,7 +335,7 @@ export default function VideoCarousel() {
 
   return (
     <section className="w-full py-8">
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             Featured Products
