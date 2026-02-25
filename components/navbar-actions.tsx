@@ -1,6 +1,6 @@
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import useRecentlyViewed from "@/hooks/use-recently-viewed"
-import { Coins, Heart, Clock, Palette, Sparkles } from "lucide-react"
+import { Coins, Heart, Clock, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
