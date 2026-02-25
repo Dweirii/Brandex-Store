@@ -90,13 +90,15 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
       />
       <div className="min-h-screen py-6 sm:py-8">
         <div className="px-4 sm:px-6 lg:px-8 mb-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 py-4 sm:py-5">
-            <div className="flex-1 min-w-0 overflow-hidden">
+          <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
+            <div className="flex-1 min-w-0 overflow-hidden hidden md:flex">
               <CategoryNav categories={categories} />
             </div>
-            <div className="flex flex-row items-center gap-3 flex-shrink-0">
-              <PriceFilter className="flex-shrink-0" />
-              <SortFilter className="flex-shrink-0" />
+            <div className="flex flex-row items-center gap-2 w-full md:w-auto md:shrink-0">
+              <div className="flex-1 md:flex-none">
+                <PriceFilter />
+              </div>
+              <SortFilter />
             </div>
           </div>
         </div>

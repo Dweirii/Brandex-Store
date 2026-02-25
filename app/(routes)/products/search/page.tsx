@@ -369,6 +369,7 @@ export default function ProductSearchPage() {
           {!loading && products.length > 0 && (
             <div className="space-y-6">
               {/* Products Grid with Masonry */}
+              <div className="overflow-x-hidden">
               <Masonry
                 breakpointCols={breakpointColumnsObj}
                 className="flex w-auto -ml-4 sm:-ml-6"
@@ -380,6 +381,7 @@ export default function ProductSearchPage() {
                   </div>
                 ))}
               </Masonry>
+              </div>
 
               {/* Pagination */}
               {pageCount > 1 && (

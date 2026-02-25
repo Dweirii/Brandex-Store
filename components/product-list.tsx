@@ -144,6 +144,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
       {visibleItems.length === 0 && !loading && <NoResults />}
 
+      <div className="overflow-x-hidden">
       <Masonry
         breakpointCols={breakpointColumnsObj}
         className="flex w-auto -ml-6 sm:-ml-8"
@@ -166,6 +167,7 @@ const ProductList: React.FC<ProductListProps> = ({
           </div>
         ))}
       </Masonry>
+      </div>
 
       {/* Infinite Scroll Trigger */}
       {hasMore && (

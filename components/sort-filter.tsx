@@ -22,8 +22,6 @@ type SortOption = {
 
 const sortOptions: SortOption[] = [
   { value: "mostPopular", label: "Most Popular" },
-  { value: "priceLow", label: "Price: Low to High" },
-  { value: "priceHigh", label: "Price: High to Low" },
   { value: "newest", label: "Newest" },
   { value: "oldest", label: "Oldest" },
   { value: "nameAsc", label: "Name: A-Z" },
@@ -69,31 +67,33 @@ export default function SortFilter({ className }: SortFilterProps) {
         <button
           disabled={isPending}
           className={cn(
-            "px-4 py-1.5 text-sm font-medium rounded-lg border border-border/60 bg-background hover:bg-muted/50 transition-all duration-200 flex items-center gap-2 justify-between min-w-[180px]",
+            "px-3 py-1.5 sm:px-4 text-sm font-medium rounded-lg border border-border/60 bg-background hover:bg-muted/50 transition-all duration-200 flex items-center gap-1.5 sm:gap-2 sm:min-w-[160px]",
             isPending && "opacity-50 cursor-not-allowed",
             className
           )}
         >
-          <span className="flex items-center gap-2">
-            <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-            <span className="hidden sm:inline text-muted-foreground">Sort:</span>
-            <span className="text-foreground">{currentSortLabel}</span>
-          </span>
+          <ArrowUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
+          <span className="hidden sm:inline text-muted-foreground">Sort:</span>
+          <span className="text-foreground hidden sm:inline">{currentSortLabel}</span>
+          <span className="text-foreground sm:hidden text-xs">Sort</span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[200px] bg-background border-border/60 rounded-lg shadow-sm">
+      <DropdownMenuContent align="end" className="w-[190px] bg-background border-border/60 rounded-xl shadow-md p-1">
         {sortOptions.map((option) => (
           <DropdownMenuItem
             key={option.value}
             onClick={() => handleSortChange(option.value)}
             className={cn(
-              "cursor-pointer flex items-center justify-between text-sm",
-              currentSort === option.value && "bg-muted/50"
+              "cursor-pointer flex items-center justify-between text-sm rounded-lg px-3 py-2",
+              "focus:bg-muted/50 focus:text-foreground",
+              currentSort === option.value
+                ? "text-primary font-semibold bg-primary/8 focus:bg-primary/10 focus:text-primary"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <span className={currentSort === option.value ? "text-foreground font-medium" : "text-muted-foreground"}>{option.label}</span>
+            <span>{option.label}</span>
             {currentSort === option.value && (
-              <Check className="h-4 w-4 text-foreground" />
+              <Check className="h-3.5 w-3.5 text-primary shrink-0" />
             )}
           </DropdownMenuItem>
         ))}

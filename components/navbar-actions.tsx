@@ -1,6 +1,6 @@
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import useRecentlyViewed from "@/hooks/use-recently-viewed"
-import { Coins, Heart, Clock, Palette } from "lucide-react"
+import { Coins, Heart, Clock, Palette, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -42,22 +42,22 @@ const NavbarActions = () => {
       
       <div className="ml-auto flex items-center gap-2">
         {/* Studio Button - Mobile & Desktop (opens modal) */}
-        <button
-          onClick={() => setShowStudioModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 transition-all cursor-pointer group relative overflow-hidden animate-[pulse-glow_3s_ease-in-out_infinite]"
-          aria-label="Open Brandex Studio"
-        >
-          {/* Shimmer effect */}
-          <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" />
-          
-          {/* NEW badge */}
-          <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[8px] font-bold bg-red-500 text-white rounded-full uppercase animate-pulse shadow-sm z-20">
-            New
+        <div className="relative">
+          <button
+            onClick={() => setShowStudioModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 transition-all cursor-pointer group relative overflow-hidden animate-[pulse-glow_3s_ease-in-out_infinite]"
+            aria-label="Open Brandex Studio"
+          >
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/30 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" />
+            <Sparkles className="h-3.5 w-3.5 text-white group-hover:rotate-12 transition-transform relative z-10" />
+            <span className="text-xs font-semibold text-white relative z-10">Studio</span>
+          </button>
+          {/* NEW badge — outside overflow-hidden so it's fully visible */}
+          <span className="absolute -top-2.5 -right-2.5 px-1.5 py-[3px] text-[10px] font-bold bg-red-500 text-white rounded-full uppercase animate-pulse shadow-md z-20 leading-none pointer-events-none">
+            NEW
           </span>
-          
-          <Palette className="h-3.5 w-3.5 text-white group-hover:rotate-12 transition-transform relative z-10" />
-          <span className="text-xs font-semibold text-white relative z-10">Studio</span>
-        </button>
+        </div>
 
 
       {isSignedIn && (

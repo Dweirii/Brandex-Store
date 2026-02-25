@@ -46,7 +46,7 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         disabled={isPending}
         aria-pressed={currentFilter === 'all'}
         className={cn(
-          "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
           currentFilter === 'all' 
             ? "bg-background text-foreground shadow-sm" 
             : "text-muted-foreground hover:text-foreground hover:bg-background/50",
@@ -61,7 +61,7 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         disabled={isPending}
         aria-pressed={currentFilter === 'paid'}
         className={cn(
-          "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
           currentFilter === 'paid' 
             ? "bg-background text-foreground shadow-sm" 
             : "text-muted-foreground hover:text-foreground hover:bg-background/50",
@@ -76,7 +76,7 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         disabled={isPending}
         aria-pressed={currentFilter === 'free'}
         className={cn(
-          "px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
           currentFilter === 'free' 
             ? "bg-background text-foreground shadow-sm" 
             : "text-muted-foreground hover:text-foreground hover:bg-background/50",
