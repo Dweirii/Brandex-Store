@@ -143,7 +143,7 @@ export default function RootLayout({
         </head>
 
         <body
-          className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-card/70 text-foreground transition-colors`}
+          className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-card/70 text-foreground transition-colors overflow-x-hidden`}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Providers>

@@ -232,12 +232,12 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
         {!isFree && (
           <div
-            className="absolute inset-[-50%] z-30 pointer-events-none opacity-[0.06] select-none"
+            className="absolute inset-0 z-30 pointer-events-none opacity-[0.06] select-none overflow-hidden"
             style={{
               backgroundImage: `url('/water-mark.png')`,
               backgroundRepeat: 'repeat',
               backgroundSize: '40px',
-              transform: 'rotate(30deg)',
+              transform: 'rotate(30deg) scale(1.5)',
               filter: 'brightness(0) invert(1)',
             }}
           />
