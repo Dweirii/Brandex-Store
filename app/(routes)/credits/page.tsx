@@ -39,7 +39,7 @@ function CreditsPageContent() {
     if (!isLoaded) return;
     
     if (!isSignedIn) {
-      router.push("/sign-in?redirect_url=/credits");
+      router.push("/sign-in?redirect_url=/credits&message=Sign+in+to+buy+credits.");
       return;
     }
 

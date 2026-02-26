@@ -116,7 +116,7 @@ const Footer = () => {
         </div>
         {/* Footer Bottom */}
         <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
-          © 2024–2026 Brandex LLC. All Rights Reserved.
+          © 2026 Brandex LLC. All Rights Reserved.
         </div>
       </Container>
     </footer>

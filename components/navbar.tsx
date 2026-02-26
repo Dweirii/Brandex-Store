@@ -6,12 +6,12 @@ import { MobileNavbarSection } from "./mobile-navbar-section"
 import { DesktopNavbarSection } from "./desktop-navbar-section"
 import type { Category } from "@/types"
 
+const HIDDEN_CATEGORIES = ["Customer Service"]
 
 const Navbar = () => {
   const [categories, setCategories] = useState<Category[]>([])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loading, setLoading] = useState(true)
-  const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -28,8 +28,8 @@ const Navbar = () => {
           throw new Error(`Failed to fetch categories: ${res.status}`)
         }
 
-        const data = await res.json()
-        setCategories(data)
+        const data: Category[] = await res.json()
+        setCategories(data.filter((c) => !HIDDEN_CATEGORIES.includes(c.name)))
         setLoading(false)
       } catch (error) {
         console.error("Failed to load categories:", error)
@@ -41,28 +41,9 @@ const Navbar = () => {
     fetchCategories()
   }, [])
 
-  // Scroll detection
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-
-    // Check initial scroll position
-    handleScroll()
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
   return (
     <>
-      <div 
-        className={`overflow-visible pt-1.5 pb-3 transition-all duration-300 ${
-          isScrolled 
-            ? "bg-background/95 backdrop-blur-lg shadow-sm" 
-            : "bg-transparent"
-        }`}
-      >
+      <div className="overflow-visible pt-1.5 pb-3 bg-background/95 backdrop-blur-lg shadow-sm">
         <Container>
           <Suspense fallback={<div className="md:hidden h-16" />}>
             <MobileNavbarSection categories={categories} />
