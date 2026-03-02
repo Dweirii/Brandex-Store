@@ -104,7 +104,7 @@ const ComparePage = () => {
                             <Expand className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                           </div>
                         </div>
-                        <Link href={`/products/${product.id}`} className="block mt-2">
+                        <Link href={`/products/${product.slug ?? product.id}`} className="block mt-2">
                           <h3 className="font-semibold text-foreground hover:text-primary transition-colors line-clamp-2">
                             {product.name}
                           </h3>
@@ -242,7 +242,7 @@ const ComparePage = () => {
                   <Expand className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                 </div>
               </div>
-              <Link href={`/products/${product.id}`}>
+              <Link href={`/products/${product.slug ?? product.id}`}>
                 <h3 className="font-bold text-lg text-foreground mb-2 hover:text-primary transition-colors">
                   {product.name}
                 </h3>

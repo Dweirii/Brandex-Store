@@ -42,7 +42,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         <h1 className="text-3xl font-bold text-foreground flex-1">
           {data.name}
         </h1>
-        <ProductShare productId={data.id} productName={data.name} />
+        <ProductShare productId={data.slug ?? data.id} productName={data.name} />
       </div>
 
       {/* Description */}
@@ -90,6 +90,9 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           iconOnly={false}
           customText={isFreeProduct ? "Free Download" : "Download (5 Credits)"}
         />
+        <p className="text-xs text-center text-muted-foreground">
+          Includes front + back label, layered PSD, smart objects. Re-downloads are free.
+        </p>
       </div>
 
       {/* Full Artwork — Packaging category only */}

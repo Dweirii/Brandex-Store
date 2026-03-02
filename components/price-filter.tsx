@@ -40,46 +40,46 @@ export default function PriceFilter({ className }: PriceFilterProps) {
   }
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-1 bg-muted/30 p-1 rounded-lg", className)} role="group" aria-label="Price filter">
+    <div className={cn("flex flex-wrap items-center gap-1 bg-white border border-[#E5E7EB] p-1 rounded-lg", className)} role="group" aria-label="Price filter">
       <button
         onClick={() => handleFilterChange('all')}
         disabled={isPending}
         aria-pressed={currentFilter === 'all'}
         className={cn(
-          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
-          currentFilter === 'all' 
-            ? "bg-background text-foreground shadow-sm" 
-            : "text-muted-foreground hover:text-foreground hover:bg-background/50",
+          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md border transition-all duration-200",
+          currentFilter === 'all'
+            ? "bg-[#00B81A] text-white border-[#00B81A] shadow-sm"
+            : "text-[#374151] bg-white border-[#E5E7EB] hover:text-[#111827] hover:bg-[#F9FAFB] hover:border-[#D1D5DB]",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         All
       </button>
-      
+
       <button
         onClick={() => handleFilterChange('paid')}
         disabled={isPending}
         aria-pressed={currentFilter === 'paid'}
         className={cn(
-          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
-          currentFilter === 'paid' 
-            ? "bg-background text-foreground shadow-sm" 
-            : "text-muted-foreground hover:text-foreground hover:bg-background/50",
+          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md border transition-all duration-200",
+          currentFilter === 'paid'
+            ? "bg-[#00B81A] text-white border-[#00B81A] shadow-sm"
+            : "text-[#374151] bg-white border-[#E5E7EB] hover:text-[#111827] hover:bg-[#F9FAFB] hover:border-[#D1D5DB]",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         Paid
       </button>
-      
+
       <button
         onClick={() => handleFilterChange('free')}
         disabled={isPending}
         aria-pressed={currentFilter === 'free'}
         className={cn(
-          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
-          currentFilter === 'free' 
-            ? "bg-background text-foreground shadow-sm" 
-            : "text-muted-foreground hover:text-foreground hover:bg-background/50",
+          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md border transition-all duration-200",
+          currentFilter === 'free'
+            ? "bg-[#00B81A] text-white border-[#00B81A] shadow-sm"
+            : "text-[#374151] bg-white border-[#E5E7EB] hover:text-[#111827] hover:bg-[#F9FAFB] hover:border-[#D1D5DB]",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >

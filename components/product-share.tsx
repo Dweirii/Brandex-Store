@@ -12,6 +12,7 @@ import {
 import toast from "react-hot-toast"
 
 interface ProductShareProps {
+  /** Accepts a slug (preferred) or UUID for backwards compatibility */
   productId: string
   productName: string
 }

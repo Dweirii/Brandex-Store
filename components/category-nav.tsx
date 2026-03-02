@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import type { Category } from "@/types"
+import { ClipboardList, Search } from "lucide-react"
 
 interface CategoryNavProps {
   categories: Category[]
@@ -42,31 +43,63 @@ export default function CategoryNav({ categories }: CategoryNavProps) {
 
   const sorted = sortCategories(categories)
 
+  const isIntakeActive = pathname === "/intake" || pathname.startsWith("/intake/")
+
   return (
-    <div className="hidden md:block overflow-x-auto scrollbar-hide relative z-10 pointer-events-auto">
-      <nav className="flex items-center gap-1 min-w-max h-full py-1 pr-2">
-        {sorted.map((category) => {
-          // Active if on category page OR if on homepage and this is the mockups category
-          const isActive = 
-            pathname === `/category/${category.id}` || 
-            (pathname === "/" && category.id === MOCKUPS_CATEGORY_ID)
-          
-          return (
-            <Link
-              key={category.id}
-              href={`/category/${category.id}`}
-              className={cn(
-                "px-4 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-all duration-200 relative z-10 shrink-0",
-                isActive
-                  ? "text-foreground bg-muted/50"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-              )}
-            >
-              {category.name}
-            </Link>
-          )
-        })}
-      </nav>
+    <div className="hidden md:flex items-center gap-2 relative z-10 pointer-events-auto w-full min-w-0">
+      {/* Scrollable category list */}
+      <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
+        <nav className="flex items-center gap-1 min-w-max h-full py-1">
+          {sorted.map((category) => {
+            const isActive =
+              pathname === `/category/${category.id}` ||
+              (pathname === "/" && category.id === MOCKUPS_CATEGORY_ID)
+
+            return (
+              <Link
+                key={category.id}
+                href={`/category/${category.id}`}
+                className={cn(
+                  "px-4 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-all duration-200 relative z-10 shrink-0",
+                  isActive
+                    ? "text-foreground bg-muted/50"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                )}
+              >
+                {category.name}
+              </Link>
+            )
+          })}
+        </nav>
+      </div>
+
+      {/* Intake actions — pinned to the right, never scrolls */}
+      <div className="shrink-0 pl-2 border-l border-border flex items-center gap-1">
+        <Link
+          href="/intake"
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-md whitespace-nowrap transition-all duration-200",
+            isIntakeActive && !pathname.startsWith("/intake/track")
+              ? "text-primary bg-primary/10"
+              : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+          )}
+        >
+          <ClipboardList className="w-3.5 h-3.5" />
+          Start a Project
+        </Link>
+        <Link
+          href="/intake/track"
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-all duration-200",
+            pathname.startsWith("/intake/track")
+              ? "text-primary bg-primary/10"
+              : "text-muted-foreground hover:text-primary hover:bg-primary/10"
+          )}
+        >
+          <Search className="w-3.5 h-3.5" />
+          Track Request
+        </Link>
+      </div>
     </div>
   )
 }

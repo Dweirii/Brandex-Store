@@ -10,6 +10,8 @@ import PriceFilter from "@/components/price-filter"
 import SortFilter from "@/components/sort-filter"
 import CategoryNav from "@/components/category-nav"
 import { RecentlyViewed } from "@/components/recently-viewed"
+import { HeroSection } from "@/components/category-hero"
+import { heroConfigs } from "@/lib/heroConfig"
 import { shuffle } from "@/lib/utils"
 import {
   generateHomeMetadata,
@@ -69,25 +71,43 @@ async function MockupProducts({
 
 const HomePage = async ({ searchParams }: HomePageProps) => {
   const { priceFilter, sortBy } = await searchParams
-  const categories = await getCategories()
+
+  // Fetch nav categories and a small product sample for the hero collage in parallel
+  const [categories, heroProductData] = await Promise.all([
+    getCategories(),
+    getProduct({ categoryId: MOCKUPS_CATEGORY_ID, page: 1, limit: 8 }),
+  ])
+
+  const heroImages = shuffle(
+    heroProductData.products
+      .map((p) => p.images?.[0]?.url)
+      .filter((url): url is string => Boolean(url))
+  ).slice(0, 4)
+
+  const homeHeroConfig = {
+    ...heroConfigs.home,
+    images: heroImages.length > 0 ? heroImages : heroConfigs.home.images,
+  }
 
   const websiteStructuredData = generateWebsiteStructuredData()
   const organizationStructuredData = generateOrganizationStructuredData()
 
   return (
-    <Container>
+    <>
+      {/* Structured data */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(websiteStructuredData),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteStructuredData) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationStructuredData),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationStructuredData) }}
       />
+
+      {/* Home hero — no category badge, images from real Mockup Studio products */}
+      <HeroSection config={homeHeroConfig} />
+
+      <Container>
       <div className="min-h-screen py-6 sm:py-8">
         <div className="px-4 sm:px-6 lg:px-8 mb-8">
           <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
@@ -103,7 +123,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
           </div>
         </div>
 
-        <div className="px-4 sm:px-6 lg:px-8">
+        <div id="product-grid" className="px-4 sm:px-6 lg:px-8">
           <Suspense
             key={`${priceFilter || 'all'}-${sortBy || 'newest'}`}
             fallback={<ProductListSkeleton title="" />}
@@ -117,7 +137,8 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
       </div>
       <RecentlyViewed />
       <ScrollToTop />
-    </Container>
+      </Container>
+    </>
   )
 }
 

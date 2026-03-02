@@ -45,7 +45,7 @@ const NavbarActions = () => {
         <div className="relative">
           <button
             onClick={() => setShowStudioModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 transition-all cursor-pointer group relative overflow-hidden animate-[pulse-glow_3s_ease-in-out_infinite]"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary hover:bg-primary/90 transition-all cursor-pointer group relative overflow-hidden animate-[pulse-glow_3s_ease-in-out_infinite]"
             aria-label="Open Brandex Studio"
           >
             {/* Shimmer effect */}

@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
+import getProductBySlug from "@/actions/get-product-by-slug";
 import getProducts from "@/actions/get-products";
 import { getRelatedProductsWithAI, getRelatedProductsFallback } from "@/lib/ai-recommender";
 import type { Product } from "@/types";
@@ -21,6 +23,7 @@ import {
   generateBreadcrumbStructuredData,
   getSiteUrl,
 } from "@/lib/seo";
+import { ProductBreadcrumb } from "@/components/product-breadcrumb";
 
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
@@ -33,26 +36,39 @@ const Gallery = dynamic(() => import("@/components/gallery"), {
   ssr: true,
 });
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Resolve a route param that may be a UUID (old links) or a slug (new links). */
+async function resolveProduct(param: string): Promise<{ product: Product; canonical: string } | null> {
+  if (UUID_RE.test(param)) {
+    // Old UUID-based URL — fetch by ID and redirect to the slug URL
+    const product = await getProduct(param);
+    if (!product) return null;
+    const canonical = product.slug ?? param;
+    return { product, canonical };
+  }
+  // New slug-based URL
+  const product = await getProductBySlug(param);
+  if (!product) return null;
+  return { product, canonical: param };
+}
+
 interface ProductPageProps {
-  params: Promise<{ productId: string }>;
+  params: Promise<{ slug: string }>;
   searchParams?: Promise<{ page?: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   try {
-    const { productId } = await params;
-    const product = await getProduct(productId);
-
-    if (!product) {
+    const { slug } = await params;
+    const resolved = await resolveProduct(slug);
+    if (!resolved) {
       return {
         title: "Product Not Found | Brandex",
         description: "The requested product could not be found.",
       };
     }
-
-    return generateProductMetadata(product, productId);
+    return generateProductMetadata(resolved.product, resolved.canonical);
   } catch (error) {
     console.error("Error generating product metadata:", error);
     return {
@@ -66,28 +82,19 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
   const categoryId = currentProduct.category?.id;
   if (!categoryId) return null;
 
-  // Hard constraint: only products from the same category.
-  // Within that pool, rank by keywords → name → description.
-  const { products: allInCategory } = await getProducts({
-    categoryId,
-    limit: 80,
-  });
-
+  const { products: allInCategory } = await getProducts({ categoryId, limit: 80 });
   const candidates = allInCategory.filter((item) => item.id !== currentProduct.id);
 
-  // 2. Try AI Recommender first (requires GOOGLE_GENERATIVE_AI_API_KEY or AI_GATEWAY_API_KEY)
   let relatedItems: Product[] = [];
   const aiRecommendedIds = await getRelatedProductsWithAI(currentProduct, candidates);
 
   if (aiRecommendedIds.length > 0) {
-    // Map IDs back to product objects, preserving AI's relevance order
     relatedItems = aiRecommendedIds
       .map((id) => candidates.find((c) => c.id === id))
       .filter((p): p is Product => !!p)
       .slice(0, 8);
   }
 
-  // 3. Smart multi-signal fallback when AI is unavailable or returns nothing
   if (relatedItems.length === 0) {
     relatedItems = getRelatedProductsFallback(currentProduct, candidates);
   }
@@ -114,42 +121,56 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
 
 export default async function ProductPage({ params }: ProductPageProps) {
   try {
-    const { productId } = await params;
+    const { slug } = await params;
+    const resolved = await resolveProduct(slug);
 
-    const product = await getProduct(productId);
-    if (!product) throw new Error("Product not found");
+    if (!resolved) throw new Error("Product not found");
+
+    const { product, canonical } = resolved;
+
+    // Redirect old UUID-based URLs to their slug URL
+    if (UUID_RE.test(slug) && canonical !== slug) {
+      redirect(`/products/${canonical}`);
+    }
 
     const siteUrl = getSiteUrl();
-    const productStructuredData = generateProductStructuredData(product, productId);
+    const productUrl = `${siteUrl}/products/${canonical}`;
+    const productStructuredData = generateProductStructuredData(product, canonical);
     const breadcrumbStructuredData = generateBreadcrumbStructuredData([
       { name: "Home", url: siteUrl },
-      { name: product.category?.name || "Products", url: product.category?.id ? `${siteUrl}/category/${product.category.id}` : `${siteUrl}/home` },
-      { name: product.name, url: `${siteUrl}/products/${productId}` },
+      {
+        name: product.category?.name || "Products",
+        url: product.category?.id
+          ? `${siteUrl}/category/${product.category.id}`
+          : `${siteUrl}/home`,
+      },
+      { name: product.name, url: productUrl },
     ]);
 
     return (
       <div className="bg-background">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(productStructuredData),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(breadcrumbStructuredData),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
         />
 
         <Container>
           <ProductViewTracker product={product} />
           <div className="px-4 py-10 sm:px-6 lg:px-8">
             <ProductBackButton />
+            <ProductBreadcrumb
+              category={product.category}
+              subcategory={product.subcategory}
+              productName={product.name}
+            />
             <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
               {/* Gallery */}
               <div className="w-full">
-                {(product.videoUrl || product.images?.length > 0) ? (
+                {product.videoUrl || product.images?.length > 0 ? (
                   <Suspense
                     fallback={
                       <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
@@ -171,18 +192,18 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {/* Product Info */}
               <div className="mt-10 lg:mt-0">
                 <Info data={product} />
-                <ProductViewCounter productId={productId} />
+                <ProductViewCounter productId={product.id} />
               </div>
             </div>
           </div>
         </Container>
 
-        {/* Reviews Section - hidden for now */}
+        {/* Reviews Section — hidden for now */}
         {false && (
           <div className="mt-8 border-t">
             <Container>
               <div className="px-4 py-12 sm:px-6 lg:px-8">
-                <ProductReviews productId={productId} />
+                <ProductReviews productId={product.id} />
               </div>
             </Container>
           </div>

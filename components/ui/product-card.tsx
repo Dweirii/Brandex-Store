@@ -106,8 +106,8 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
   // Prefetch product page on hover
   const handleMouseEnterCard = useCallback(() => {
-    router.prefetch(`/products/${data.id}`)
-  }, [router, data.id])
+    router.prefetch(`/products/${data.slug ?? data.id}`)
+  }, [router, data.slug, data.id])
 
   const handleCompare = useCallback(
     (e: React.MouseEvent) => {
@@ -148,15 +148,15 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
   return (
     <motion.div
-      whileHover={isMounted && !isMobile ? { scale: 1.02 } : {}}
+      whileHover={isMounted && !isMobile ? { scale: 1.02, y: -2 } : {}}
       transition={{ duration: 0.2, ease: "easeOut" as const }}
       onMouseEnter={() => {
         handleMouseEnter()
         handleMouseEnterCard()
       }}
       onMouseLeave={handleMouseLeave}
-      onClick={() => router.push(`/products/${data.id}`)}
-      className="relative bg-card rounded-lg overflow-hidden shadow-md hover:shadow-lg cursor-pointer group will-change-transform"
+      onClick={() => router.push(`/products/${data.slug ?? data.id}`)}
+      className="relative bg-white border border-[#E5E7EB] rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_25px_rgba(17,24,39,0.12)] hover:border-[rgba(0,184,26,0.35)] cursor-pointer group will-change-transform transition-[box-shadow,border-color] duration-200"
     >
       {/* Image/Video Container */}
       <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4] md:aspect-auto">

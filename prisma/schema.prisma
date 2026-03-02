@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model IntakeSubmission {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  fullName       String
+  email          String
+  company        String?
+  needs          Json
+  otherDesc      String?
+  goal           String
+  vibe           String?
+  notes          String?
+  packDimensions String?
+  packSkus       Int?
+  packHasDieline String?
+  deadline       DateTime
+  budget         String?
+  status         String   @default("new")
+  uploadToken    String?  @unique
+  uploadEnabled  Boolean  @default(false)
+  uploadedFiles  Json?
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+}

@@ -26,9 +26,11 @@ const getProduct = async (id: string): Promise<Product> => {
             throw new Error("Invalid product data");
         }
 
+        const subcategoryEntry = data.ProductSubcategories?.[0];
         return {
             ...data,
             category: data.Category || data.category,
+            subcategory: subcategoryEntry?.Subcategory ?? undefined,
             images: data.Image?.map((img: any) => ({ url: img.url })) || [],
         };
     } catch (error) {

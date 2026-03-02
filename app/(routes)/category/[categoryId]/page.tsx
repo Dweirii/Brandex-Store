@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import type { Product } from "@/types"
 import { Suspense } from "react"
 import getCategory from "@/actions/get-category"
 import getCategories from "@/actions/get-categories"
@@ -10,6 +11,9 @@ import { ScrollToTop } from "@/components/scroll-to-top"
 import PriceFilter from "@/components/price-filter"
 import SortFilter from "@/components/sort-filter"
 import CategoryNav from "@/components/category-nav"
+import { HeroSection } from "@/components/category-hero"
+import { getHeroConfigById } from "@/lib/heroConfig"
+import { shuffle } from "@/lib/utils"
 import {
   generateCategoryMetadata,
   generateBreadcrumbStructuredData,
@@ -99,11 +103,24 @@ export default async function CategoryPage({
   const priceFilter = searchParamsData?.priceFilter
   const sortBy = searchParamsData?.sortBy
 
-  // Fetch category and categories for navigation
-  const [category, categories] = await Promise.all([
+  const heroConfigBase = getHeroConfigById(categoryId)
+
+  // Fetch category, nav categories, and (if this page has a hero) a small
+  // product sample to populate the collage with real images.
+  const [category, categories, heroProductData] = await Promise.all([
     getCategory(categoryId),
     getCategories(),
+    heroConfigBase
+      ? getProducts({ categoryId, page: 1, limit: 8 })
+      : Promise.resolve({ products: [] as Product[] }),
   ])
+
+  // Pick one image per product, shuffle, take 4 for the collage
+  const heroImages = shuffle(
+    heroProductData.products
+      .map((p) => p.images?.[0]?.url)
+      .filter((url): url is string => Boolean(url))
+  ).slice(0, 4)
 
   // Generate breadcrumb structured data
   const siteUrl = getSiteUrl()
@@ -114,9 +131,14 @@ export default async function CategoryPage({
     ])
     : null
 
+  // Merge real images into the config (fall back to placeholder URLs if none fetched)
+  const heroConfig = heroConfigBase
+    ? { ...heroConfigBase, images: heroImages.length > 0 ? heroImages : heroConfigBase.images }
+    : null
+
   return (
-    <Container>
-      {/* Structured Data */}
+    <>
+      {/* Structured Data — invisible */}
       {breadcrumbStructuredData && (
         <script
           type="application/ld+json"
@@ -125,40 +147,48 @@ export default async function CategoryPage({
           }}
         />
       )}
-      <div className="min-h-screen py-6 sm:py-8">
-        {/* Header with Categories and Filters */}
-        <div className="px-4 sm:px-6 lg:px-8 mb-8">
-          <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
-            {/* Categories Bar — desktop only */}
-            <div className="flex-1 min-w-0 overflow-hidden hidden md:flex">
-              <CategoryNav categories={categories} />
-            </div>
-            {/* Filters — full-width on mobile, auto on desktop */}
-            <div className="flex flex-row items-center gap-2 w-full md:w-auto md:shrink-0">
-              <div className="flex-1 md:flex-none">
-                <PriceFilter />
+
+      {/* Full-width hero — only rendered for configured categories */}
+      {heroConfig && (
+        <HeroSection config={heroConfig} categoryLabel={category?.name} />
+      )}
+
+      <Container>
+        <div className="min-h-screen py-6 sm:py-8">
+          {/* Header with Categories and Filters */}
+          <div className="px-4 sm:px-6 lg:px-8 mb-8">
+            <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
+              {/* Categories Bar — desktop only */}
+              <div className="flex-1 min-w-0 overflow-hidden hidden md:flex">
+                <CategoryNav categories={categories} />
               </div>
-              <SortFilter />
+              {/* Filters — full-width on mobile, auto on desktop */}
+              <div className="flex flex-row items-center gap-2 w-full md:w-auto md:shrink-0">
+                <div className="flex-1 md:flex-none">
+                  <PriceFilter />
+                </div>
+                <SortFilter />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Products Grid */}
-        <div className="px-4 sm:px-6 lg:px-8">
-          <Suspense
-            key={`${categoryId}-${priceFilter || 'all'}-${sortBy || 'newest'}`}
-            fallback={<ProductListSkeleton title="" />}
-          >
-            <CategoryProducts
-              categoryId={categoryId}
-              priceFilter={priceFilter}
-              sortBy={sortBy || 'newest'}
-            />
-          </Suspense>
+          {/* Products Grid */}
+          <div id="product-grid" className="px-4 sm:px-6 lg:px-8">
+            <Suspense
+              key={`${categoryId}-${priceFilter || 'all'}-${sortBy || 'newest'}`}
+              fallback={<ProductListSkeleton title="" />}
+            >
+              <CategoryProducts
+                categoryId={categoryId}
+                priceFilter={priceFilter}
+                sortBy={sortBy || 'newest'}
+              />
+            </Suspense>
+          </div>
         </div>
-      </div>
-      <ScrollToTop />
-    </Container>
+        <ScrollToTop />
+      </Container>
+    </>
   )
 }
 

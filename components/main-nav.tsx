@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import type { Category } from "@/types"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, ChevronRight } from "lucide-react"
+import { Menu, X, ChevronRight, ClipboardList, Search } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/Button"
@@ -42,6 +42,9 @@ const MainNav = ({ data }: MainNavProps) => {
       )}
     >
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Spacer to keep categories centered */}
+        <div className="hidden md:block w-36" />
+
         <nav className="hidden md:flex flex-1 justify-center items-center space-x-1 lg:space-x-4">
           {routes.map((route, index) => (
             <div
@@ -58,8 +61,10 @@ const MainNav = ({ data }: MainNavProps) => {
                 <Link
                   href={route.href}
                   className={cn(
-                    "relative block px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-full group", // Added group
-                    route.active ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary",
+                    "relative block px-4 py-2 text-sm transition-colors duration-200 rounded-full group no-underline",
+                    route.active
+                      ? "text-[#00B81A] font-semibold"
+                      : "text-[#111827] font-medium hover:text-[#00B81A]",
                   )}
                   aria-current={route.active ? "page" : undefined}
                 >
@@ -68,10 +73,7 @@ const MainNav = ({ data }: MainNavProps) => {
                   <AnimatePresence>
                     {(route.active || hoveredIndex === index) && (
                       <motion.span
-                        className={cn(
-                          "absolute inset-0 rounded-full -z-0",
-                          route.active ? "bg-primary/10" : "bg-muted/50",
-                        )}
+                        className="absolute inset-0 rounded-full -z-0 bg-[#E9FBEF]"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
@@ -85,10 +87,10 @@ const MainNav = ({ data }: MainNavProps) => {
                     {(route.active || hoveredIndex === index) && (
                       <motion.span
                         className={cn(
-                          "absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-3/4 rounded-full",
-                          route.active ? "bg-primary" : "bg-border",
+                          "absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full bg-[#00B81A]",
+                          route.active ? "h-[3px] w-3/4" : "h-[2px] w-3/4",
                         )}
-                        initial={{ scaleX: 0, originX: 0.5 }} 
+                        initial={{ scaleX: 0, originX: 0.5 }}
                         animate={{ scaleX: 1 }}
                         exit={{ scaleX: 0, originX: 0.5 }}
                         transition={{ duration: 0.2 }}
@@ -100,6 +102,22 @@ const MainNav = ({ data }: MainNavProps) => {
             </div>
           ))}
         </nav>
+
+        {/* Start a Project — desktop */}
+        <div className="hidden md:flex w-36 justify-end">
+          <Link
+            href="/intake"
+            className={cn(
+              "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200",
+              pathname === "/intake" || pathname.startsWith("/intake/")
+                ? "border-primary bg-[#E9FBEF] text-primary"
+                : "border-border text-foreground hover:border-primary hover:text-primary hover:bg-[#E9FBEF]"
+            )}
+          >
+            <ClipboardList className="w-3.5 h-3.5" />
+            Start a Project
+          </Link>
+        </div>
 
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -150,8 +168,8 @@ const MainNav = ({ data }: MainNavProps) => {
                       className={cn(
                         "group flex items-center justify-between px-6 py-4 text-base font-medium transition-all",
                         route.active
-                          ? "bg-primary/10 text-primary border-l-4 border-primary" 
-                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                          ? "bg-[#E9FBEF] text-[#00B81A] font-semibold border-l-[3px] border-[#00B81A]"
+                          : "text-[#111827] hover:bg-[#E9FBEF] hover:text-[#00B81A]",
                       )}
                       aria-current={route.active ? "page" : undefined}
                     >
@@ -167,6 +185,26 @@ const MainNav = ({ data }: MainNavProps) => {
                     </Link>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* Start a Project + Track — mobile */}
+              <div className="p-4 border-t border-border space-y-2">
+                <Link
+                  href="/intake"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm transition-opacity hover:opacity-90"
+                >
+                  <ClipboardList className="w-4 h-4" />
+                  Start a Project
+                </Link>
+                <Link
+                  href="/intake/track"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-border text-muted-foreground font-medium text-sm transition-colors hover:text-foreground hover:bg-muted/50"
+                >
+                  <Search className="w-4 h-4" />
+                  Track Your Request
+                </Link>
               </div>
             </SheetContent>
           </Sheet>
