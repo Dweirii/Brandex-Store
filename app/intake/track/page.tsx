@@ -92,7 +92,7 @@ export default async function TrackPage({ searchParams }: PageProps) {
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Track Your Request</h1>
           <p className="text-muted-foreground text-sm">
-            Enter the email you used when submitting and we&apos;ll send you a link to view your request status.
+            Enter the email you used when submitting to view your request status.
           </p>
         </div>
         <TrackLookup />

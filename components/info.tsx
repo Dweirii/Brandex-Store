@@ -8,6 +8,7 @@ import { DownloadButton } from "@/components/ui/download-button"
 import { ProductShare } from "@/components/product-share"
 import { useTheme } from "next-themes"
 import Image from "next/image"
+import Link from "next/link"
 
 interface InfoProps {
   data: Product
@@ -50,6 +51,21 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         <p className="text-base text-muted-foreground leading-relaxed">
           {data.description}
         </p>
+      )}
+
+      {/* Keyword Tags */}
+      {data.keywords && data.keywords.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {data.keywords.map((keyword: string) => (
+            <Link
+              key={keyword}
+              href={`/products/search?query=${encodeURIComponent(keyword)}`}
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              {keyword}
+            </Link>
+          ))}
+        </div>
       )}
 
       {/* Product Type Badge */}

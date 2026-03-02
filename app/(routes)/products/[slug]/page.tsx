@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProductBySlug from "@/actions/get-product-by-slug";
 import getProducts from "@/actions/get-products";
-import { getRelatedProductsWithAI, getRelatedProductsFallback } from "@/lib/ai-recommender";
+import { getRelatedProductsWithAI, getRelatedProductsFallback, scoreCandidate } from "@/lib/ai-recommender";
 import type { Product } from "@/types";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
@@ -80,42 +80,70 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 async function RelatedProducts({ currentProduct }: { currentProduct: Product }) {
   const categoryId = currentProduct.category?.id;
-  if (!categoryId) return null;
 
-  const { products: allInCategory } = await getProducts({ categoryId, limit: 80 });
-  const candidates = allInCategory.filter((item) => item.id !== currentProduct.id);
+  // Build a rich candidate pool: same-category neighbors + store-wide keyword matches
+  const [{ products: categoryProducts }, { products: storeProducts }] = await Promise.all([
+    categoryId ? getProducts({ categoryId, limit: 60 }) : Promise.resolve({ products: [] }),
+    getProducts({ limit: 120 }),
+  ]);
+
+  // Merge and deduplicate — category products first (stronger contextual signal)
+  const seen = new Set<string>([currentProduct.id]);
+  const candidates: Product[] = [];
+  for (const p of [...categoryProducts, ...storeProducts]) {
+    if (!seen.has(p.id)) {
+      seen.add(p.id);
+      candidates.push(p);
+    }
+  }
+
+  if (candidates.length === 0) return null;
+
+  // Pre-score every candidate using multi-signal scoring
+  const scoreMap = new Map<string, number>(
+    candidates.map((c) => [c.id, scoreCandidate(currentProduct, c)])
+  );
+
+  // Sort by score descending — top 30 go to AI for semantic re-ranking
+  const sortedCandidates = [...candidates].sort(
+    (a, b) => (scoreMap.get(b.id) ?? 0) - (scoreMap.get(a.id) ?? 0)
+  );
+  const aiPool = sortedCandidates.slice(0, 30);
 
   let relatedItems: Product[] = [];
-  const aiRecommendedIds = await getRelatedProductsWithAI(currentProduct, candidates);
+
+  // Try AI semantic re-ranking
+  const aiRecommendedIds = await getRelatedProductsWithAI(currentProduct, aiPool, scoreMap);
 
   if (aiRecommendedIds.length > 0) {
     relatedItems = aiRecommendedIds
       .map((id) => candidates.find((c) => c.id === id))
       .filter((p): p is Product => !!p)
-      .slice(0, 8);
+      .slice(0, 4);
   }
 
+  // Fallback: pure scoring
   if (relatedItems.length === 0) {
-    relatedItems = getRelatedProductsFallback(currentProduct, candidates);
+    relatedItems = getRelatedProductsFallback(currentProduct, sortedCandidates);
   }
 
-  if (relatedItems.length === 0) {
-    return (
-      <p className="text-center py-10 text-muted-foreground">
-        No related products found
-      </p>
-    );
-  }
+  if (relatedItems.length === 0) return null;
 
   return (
-    <ProductList
-      title="Related Items"
-      items={relatedItems}
-      total={relatedItems.length}
-      page={1}
-      pageCount={1}
-      variant="related"
-    />
+    <div className="border-t">
+      <Container>
+        <div className="px-4 py-12 sm:px-6 lg:px-8">
+          <ProductList
+            title="You May Also Like"
+            items={relatedItems}
+            total={relatedItems.length}
+            page={1}
+            pageCount={1}
+            variant="related"
+          />
+        </div>
+      </Container>
+    </div>
   );
 }
 
@@ -209,24 +237,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
         )}
 
-        {/* Related Products */}
-        <div className="border-t">
-          <Container>
-            <div className="px-4 py-12 sm:px-6 lg:px-8">
-              <Suspense
-                fallback={
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {Array.from({ length: 6 }).map((_, i) => (
+        {/* Related Products — wrapper lives inside RelatedProducts so nothing renders when empty */}
+        <Suspense
+          fallback={
+            <div className="border-t">
+              <Container>
+                <div className="px-4 py-12 sm:px-6 lg:px-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
                       <Skeleton key={i} className="h-96 rounded-lg" />
                     ))}
                   </div>
-                }
-              >
-                <RelatedProducts currentProduct={product} />
-              </Suspense>
+                </div>
+              </Container>
             </div>
-          </Container>
-        </div>
+          }
+        >
+          <RelatedProducts currentProduct={product} />
+        </Suspense>
       </div>
     );
   } catch (error) {

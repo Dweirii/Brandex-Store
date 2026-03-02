@@ -1,21 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, CheckCircle2, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
 
 export function TrackLookup() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<"idle" | "sent" | "not_found" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
 
     setLoading(true);
-    setStatus("idle");
+    setError(null);
 
     const res = await fetch("/api/intake/lookup", {
       method: "POST",
@@ -23,32 +25,18 @@ export function TrackLookup() {
       body: JSON.stringify({ email: email.trim() }),
     });
 
-    setLoading(false);
+    const data = await res.json();
 
-    if (res.ok) {
-      setStatus("sent");
+    if (res.ok && data.token) {
+      router.push(`/intake/track?token=${data.token}`);
     } else if (res.status === 404) {
-      setStatus("not_found");
+      setLoading(false);
+      setError("No submissions found for this email. Make sure it's the same email you used when submitting.");
     } else {
-      setStatus("error");
+      setLoading(false);
+      setError(data.error ?? "Something went wrong. Please try again.");
     }
   };
-
-  if (status === "sent") {
-    return (
-      <div className="bg-card border border-border rounded-2xl p-6 text-center space-y-3">
-        <div className="flex justify-center">
-          <div className="w-12 h-12 rounded-full bg-green-500/10 border-2 border-green-500/30 flex items-center justify-center">
-            <CheckCircle2 className="w-5 h-5 text-green-600" />
-          </div>
-        </div>
-        <p className="text-sm font-semibold text-foreground">Check your inbox!</p>
-        <p className="text-sm text-muted-foreground">
-          We sent a tracking link to <strong className="text-foreground">{email}</strong>.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={submit} className="bg-card border border-border rounded-2xl p-6 space-y-4">
@@ -58,20 +46,15 @@ export function TrackLookup() {
           type="email"
           placeholder="Your email address"
           value={email}
-          onChange={(e) => { setEmail(e.target.value); setStatus("idle"); }}
+          onChange={(e) => { setEmail(e.target.value); setError(null); }}
           className="pl-10"
           required
         />
       </div>
 
-      {status === "not_found" && (
+      {error && (
         <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
-          No submissions found for this email. Make sure it&apos;s the same email you used when submitting.
-        </p>
-      )}
-      {status === "error" && (
-        <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
-          Something went wrong. Please try again.
+          {error}
         </p>
       )}
 
@@ -79,13 +62,9 @@ export function TrackLookup() {
         {loading ? (
           <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Looking up…</>
         ) : (
-          "Send Tracking Link"
+          "View My Submission"
         )}
       </Button>
-
-      <p className="text-xs text-muted-foreground text-center">
-        We&apos;ll email you a link to view your submission status.
-      </p>
     </form>
   );
 }

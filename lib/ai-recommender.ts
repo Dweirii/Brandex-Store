@@ -4,11 +4,12 @@ import { z } from "zod"
 import type { Product } from "@/types"
 
 // ---------------------------------------------------------------------------
-// Tokeniser shared by name + description scoring
+// Tokeniser
 // ---------------------------------------------------------------------------
 
 const STOP_WORDS = new Set([
   "brandex", "mockup", "mockups", "design", "designs", "psd", "file", "files",
+  "template", "templates", "premium", "free", "editable", "layered", "ready",
   "a", "an", "the", "and", "of", "with", "for", "to", "in", "on", "at",
   "is", "it", "its", "by", "from", "or", "as", "be", "are", "was",
 ])
@@ -22,33 +23,42 @@ function tokenise(text: string): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// Scorer
+// Scorer — multi-signal relevance scoring
 //
-// Category is enforced as a HARD FILTER upstream (only same-category products
-// are passed in as candidates). Within that pool, rank by:
-//   1. Keywords    — each shared keyword          →  5 pts each
-//   2. Name        — each shared meaningful word  →  3 pts each
-//   3. Description — each shared meaningful word  →  1 pt  each
+// Signals (highest to lowest weight):
+//   1. Keyword exact match      — full phrase match          → 10 pts each
+//   2. Keyword token overlap    — shared word inside a tag   →  3 pts each
+//   3. Name token overlap       — shared meaningful word     →  4 pts each
+//   4. Description token overlap                             →  1 pt  each
 // ---------------------------------------------------------------------------
 
-function scoreCandidate(current: Product, candidate: Product): number {
+export function scoreCandidate(current: Product, candidate: Product): number {
   let score = 0
 
-  // --- 1. Keywords ---
-  const currentKw = new Set(
-    (current.keywords ?? []).map((k) => k.toLowerCase().trim()).filter(Boolean)
-  )
-  for (const kw of (candidate.keywords ?? []).map((k) => k.toLowerCase().trim())) {
-    if (kw && currentKw.has(kw)) score += 5
+  const currentKwNorm = (current.keywords ?? []).map((k) => k.toLowerCase().trim()).filter(Boolean)
+  const candidateKwNorm = (candidate.keywords ?? []).map((k) => k.toLowerCase().trim()).filter(Boolean)
+
+  // --- 1. Keyword exact phrase match ---
+  const currentKwSet = new Set(currentKwNorm)
+  for (const kw of candidateKwNorm) {
+    if (currentKwSet.has(kw)) score += 10
   }
 
-  // --- 2. Name ---
+  // --- 2. Keyword token overlap (word within a keyword phrase) ---
+  const currentKwTokens = new Set(currentKwNorm.flatMap((kw) => tokenise(kw)))
+  for (const kw of candidateKwNorm) {
+    for (const token of tokenise(kw)) {
+      if (currentKwTokens.has(token)) score += 3
+    }
+  }
+
+  // --- 3. Name token overlap ---
   const currentNameTokens = new Set(tokenise(current.name))
   for (const word of tokenise(candidate.name)) {
-    if (currentNameTokens.has(word)) score += 3
+    if (currentNameTokens.has(word)) score += 4
   }
 
-  // --- 3. Description ---
+  // --- 4. Description token overlap ---
   if (current.description && candidate.description) {
     const currentDescTokens = new Set(tokenise(current.description))
     for (const word of tokenise(candidate.description)) {
@@ -60,18 +70,21 @@ function scoreCandidate(current: Product, candidate: Product): number {
 }
 
 /**
- * Ranks same-category candidates by keywords → name → description.
- * Returns the top 8.
+ * Pure scoring fallback — ranks candidates by multi-signal relevance, returns top 4.
+ * Includes zero-score candidates (same-category neighbors) when no signal matches exist.
  */
 export function getRelatedProductsFallback(
   currentProduct: Product,
   candidates: Product[]
 ): Product[] {
-  return candidates
+  const scored = candidates
     .map((c) => ({ product: c, score: scoreCandidate(currentProduct, c) }))
     .sort((a, b) => b.score - a.score)
-    .slice(0, 8)
-    .map((x) => x.product)
+
+  // Prefer scored matches, but include unscored same-category items to fill up to 4
+  const withScore = scored.filter((x) => x.score > 0)
+  const withoutScore = scored.filter((x) => x.score === 0)
+  return [...withScore, ...withoutScore].slice(0, 4).map((x) => x.product)
 }
 
 // ---------------------------------------------------------------------------
@@ -92,13 +105,15 @@ function buildGoogleClient() {
 }
 
 /**
- * Uses Gemini 2.0 Flash Lite to rank related products.
- * All candidates are already from the same category — rank within that by:
- * keywords → name → description.
+ * Uses Gemini 2.0 Flash to semantically rank pre-scored candidates.
+ * Receives a pool already sorted by relevance score — AI re-ranks using
+ * use-case understanding and semantic similarity, not just keyword overlap.
+ * Returns up to 4 best-match product IDs.
  */
 export async function getRelatedProductsWithAI(
   currentProduct: Product,
-  candidates: Product[]
+  candidates: Product[],
+  scores: Map<string, number>
 ): Promise<string[]> {
   const googleClient = buildGoogleClient()
 
@@ -108,43 +123,50 @@ export async function getRelatedProductsWithAI(
   }
 
   try {
-    const pool = candidates.slice(0, 40)
+    // Take the top 30 pre-scored candidates so AI works with quality signals, not noise
+    const pool = candidates
+      .slice(0, 30)
+
+    if (pool.length === 0) return []
 
     const { object } = await generateObject({
-      model: googleClient("gemini-2.0-flash-lite"),
+      model: googleClient("gemini-2.0-flash"),
       schema: z.object({
         recommendedIds: z
           .array(z.string())
-          .max(8)
-          .describe("Up to 8 product IDs from the candidate list, best match first"),
+          .max(4)
+          .describe("Up to 4 product IDs, best match first"),
       }),
       prompt: `
-You are a product discovery expert for "Brandex" — a design asset marketplace (mockups, PSD files, packaging designs).
+You are a smart recommendation engine for Brandex — a design asset marketplace selling mockup templates, PSD label designs, packaging artwork, and brand asset files for designers and businesses.
 
-CURRENT PRODUCT:
+A customer is currently viewing this product:
 - Name: "${currentProduct.name}"
 - Category: "${currentProduct.category?.name ?? "N/A"}"
-- Keywords: ${(currentProduct.keywords ?? []).join(", ") || "none"}
-- Description: ${currentProduct.description ?? "N/A"}
+- Tags: ${(currentProduct.keywords ?? []).slice(0, 10).join(", ") || "none"}
+- Description: "${(currentProduct.description ?? "N/A").slice(0, 250)}"
 
-CANDIDATE PRODUCTS — all are from the same category as the current product. Pick the best 8:
+Your job: choose the 4 products below that this customer would MOST WANT to download next.
+
+Think like a designer browsing for assets:
+- What is the PRIMARY USE CASE of the current product? (label design, product mockup, social post, etc.)
+- What INDUSTRY or THEME does it serve? (food, tech, beauty, fashion, etc.)
+- What FORMAT or PRODUCT TYPE is it? (bottle, box, pouch, smartwatch, phone, etc.)
+- A good recommendation serves the SAME USE CASE or SAME THEME — ideally both.
+
+Avoid recommending:
+- Products that are near-identical to the current one (same item, slightly different name)
+- Products with no thematic or use-case connection
+
+CANDIDATES (sorted by keyword/name relevance score — higher score = stronger signal):
 ${pool
   .map(
     (p) =>
-      `[${p.id}] ${p.name} | KW: ${(p.keywords ?? []).join(", ") || "none"} | Desc: ${(p.description ?? "").slice(0, 120)}`
+      `[${p.id}] score:${scores.get(p.id) ?? 0} | "${p.name}" | ${p.category?.name ?? "?"} | Tags: ${(p.keywords ?? []).slice(0, 6).join(", ") || "none"} | "${(p.description ?? "").slice(0, 100)}"`
   )
   .join("\n")}
 
-RANKING PRIORITY (within the same category):
-1. KEYWORDS — products sharing more keywords with the current product rank higher.
-2. NAME — products whose name contains similar subject or product type rank higher.
-3. DESCRIPTION — products whose description overlaps in theme or use case get a small boost.
-
-STRICT RULES:
-- Return ONLY IDs from the list above — never invent IDs.
-- Return exactly 8 IDs (fewer only if pool has fewer than 8), best match first.
-- Prefer variety — do not return 8 near-identical items.
-- Ignore generic keywords: new, trending, hot, premium, exclusive.
+Return exactly 4 IDs from the list above (fewer only if the pool has fewer than 4 truly relevant items). Best match first.
       `.trim(),
     })
 
