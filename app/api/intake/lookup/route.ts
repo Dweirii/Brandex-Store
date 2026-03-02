@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     const firstName = submissions[0].fullName.split(" ")[0];
 
     const links = submissions
-      .filter((s) => s.uploadToken)
+      .filter((s): s is { uploadToken: string; fullName: string } => !!s.uploadToken)
       .map((s) => `${SITE_URL}/intake/track?token=${s.uploadToken}`);
 
     const linkListHtml = links
