@@ -107,28 +107,28 @@ async function sendTeamNotification(params: {
   </div>
   <div style="background:#fff;padding:28px 32px 32px;border-radius:0 0 12px 12px;box-shadow:0 4px 24px rgba(0,0,0,.06);">
     ${section("Contact", [
-      row("Name", params.fullName),
-      row("Email", `<a href="mailto:${params.email}" style="color:#00B81A;">${params.email}</a>`),
-      row("Company", params.company),
-    ].join(""))}
+    row("Name", params.fullName),
+    row("Email", `<a href="mailto:${params.email}" style="color:#00B81A;">${params.email}</a>`),
+    row("Company", params.company),
+  ].join(""))}
     ${section("Services", [
-      row("Needs", needsLabel),
-      row("Other Details", params.otherDesc),
-    ].join(""))}
+    row("Needs", needsLabel),
+    row("Other Details", params.otherDesc),
+  ].join(""))}
     ${section("Project Details", [
-      row("Goal", params.goal),
-      row("Vibe / Style", params.vibe),
-      ...(packagingSelected ? [
-        row("Pack Dimensions", params.packDimensions),
-        row("Number of SKUs", params.packSkus),
-        row("Has Dieline", params.packHasDieline),
-      ] : []),
-    ].join(""))}
+    row("Goal", params.goal),
+    row("Vibe / Style", params.vibe),
+    ...(packagingSelected ? [
+      row("Pack Dimensions", params.packDimensions),
+      row("Number of SKUs", params.packSkus),
+      row("Has Dieline", params.packHasDieline),
+    ] : []),
+  ].join(""))}
     ${section("Timeline & Budget", [
-      row("Deadline", deadline),
-      row("Budget", params.budget),
-      row("Notes", params.notes),
-    ].join(""))}
+    row("Deadline", deadline),
+    row("Budget", params.budget),
+    row("Notes", params.notes),
+  ].join(""))}
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px 20px;margin:0 0 24px;">
       <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#15803d;">Client Tracking Link</p>
       <a href="${trackLink}" style="color:#00B81A;font-size:14px;word-break:break-all;">${trackLink}</a>
@@ -242,6 +242,11 @@ export async function POST(req: Request) {
     const deadline = new Date(data.deadline);
     if (isNaN(deadline.getTime())) {
       return NextResponse.json({ error: "Invalid deadline date" }, { status: 422 });
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (deadline < today) {
+      return NextResponse.json({ error: "Deadline must be today or a future date" }, { status: 422 });
     }
 
     const uploadToken = crypto.randomUUID();

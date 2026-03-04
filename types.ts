@@ -4,9 +4,10 @@ export interface Billboard {
     imageUrl: string;
 };
 
-export interface Category{
+export interface Category {
     id: string;
     name: string;
+    slug?: string;
     billboard: Billboard;
 }
 
@@ -17,21 +18,21 @@ export interface Subcategory {
 }
 
 export interface Product {
-  [x: string]: any;
-  storeId: string;
-  id: string;
-  slug?: string;
-  category: Category;
-  subcategory?: Subcategory;
-  name: string;
-  price: string;
-  isFeatured: boolean;
-  images: Image[];
+    [x: string]: any;
+    storeId: string;
+    id: string;
+    slug?: string;
+    category: Category;
+    subcategory?: Subcategory;
+    name: string;
+    price: string;
+    isFeatured: boolean;
+    images: Image[];
 
 
-  description?: string;
-  keywords: string[];
-  originalPrice?: string; 
+    description?: string;
+    keywords: string[];
+    originalPrice?: string;
 }
 
 

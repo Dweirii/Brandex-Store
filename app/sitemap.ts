@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
 import getProducts from "@/actions/get-products";
-import getCategories from "@/actions/get-categories";
 import { getSiteUrl } from "@/lib/seo";
 
 /**
@@ -18,12 +17,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
-    },
-    {
-      url: `${siteUrl}/home`,
-      lastModified: currentDate,
-      changeFrequency: "daily",
-      priority: 0.9,
     },
     {
       url: `${siteUrl}/privacy-policy`,
@@ -45,19 +38,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Fetch all categories
-  let categoryPages: MetadataRoute.Sitemap = [];
-  try {
-    const categories = await getCategories();
-    categoryPages = categories.map((category) => ({
-      url: `${siteUrl}/category/${category.id}`,
-      lastModified: currentDate,
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    }));
-  } catch (error) {
-    console.error("Error fetching categories for sitemap:", error);
-  }
+  // Define the ordered top-level navigation items
+  const topLevelSlugs = [
+    "packaging",
+    "mockups",
+    "graphics",
+    "motion-library"
+  ];
+
+  const categoryPages: MetadataRoute.Sitemap = topLevelSlugs.map((slug) => ({
+    url: `${siteUrl}/category/${slug}`,
+    lastModified: currentDate,
+    changeFrequency: "daily" as const,
+    priority: 0.8,
+  }));
 
   // Fetch products with limits to prevent build timeouts
   // Only include most recent products in sitemap for SEO
@@ -66,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const MAX_PAGES = 10; // Limit to 10 pages max (1000 products with limit 100)
     const MAX_PRODUCTS = 1000; // Hard limit on total products to prevent timeout
     const limit = 100; // Fetch in batches of 100
-    
+
     let page = 1;
     let hasMorePages = true;
 

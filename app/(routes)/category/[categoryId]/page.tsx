@@ -1,8 +1,9 @@
 import { Metadata } from "next"
 import type { Product } from "@/types"
 import { Suspense } from "react"
+import { redirect } from "next/navigation"
 import getCategory from "@/actions/get-category"
-import getCategories from "@/actions/get-categories"
+
 import getProducts from "@/actions/get-products"
 import Container from "@/components/ui/container"
 import ProductList from "@/components/product-list"
@@ -19,16 +20,39 @@ import {
   generateBreadcrumbStructuredData,
   getSiteUrl,
 } from "@/lib/seo"
+import {
+  isUUID,
+  categoryParamToSlug,
+  categoryParamToId,
+  CATEGORY_GROUPS,
+  SLUG_TO_GROUP_MAP,
+  CATEGORY_SLUG_MAP,
+} from "@/lib/category-slugs"
+import { CategorySubNav } from "@/components/category-sub-nav"
 
-// Generate dynamic metadata for category pages
+// ─── Metadata ────────────────────────────────────────────────────────────────
+
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ categoryId: string }>
+  searchParams?: Promise<{ type?: string }>
 }): Promise<Metadata> {
   try {
-    const { categoryId } = await params
-    const category = await getCategory(categoryId)
+    const { categoryId: param } = await params
+    const { type } = (await searchParams) || {}
+
+    const slug = categoryParamToSlug(param)
+
+    // Resolve ID: If it's a group, check for 'type', otherwise use default group ID or param ID
+    let uuid = categoryParamToId(param)
+    if (CATEGORY_GROUPS[slug] && type) {
+      const subtab = CATEGORY_GROUPS[slug].subtabs.find(s => s.slug === type)
+      if (subtab) uuid = subtab.id
+    }
+
+    const category = await getCategory(uuid)
 
     if (!category) {
       return {
@@ -37,7 +61,8 @@ export async function generateMetadata({
       }
     }
 
-    return generateCategoryMetadata(category, categoryId)
+    // Always generate canonical with the slug
+    return generateCategoryMetadata(category, slug)
   } catch (error) {
     console.error("Error generating category metadata:", error)
     return {
@@ -47,9 +72,11 @@ export async function generateMetadata({
   }
 }
 
+// ─── Category Products sub-component ─────────────────────────────────────────
+
 interface CategoryProductsProps {
   categoryId: string
-  priceFilter?: 'paid' | 'free' | 'all'
+  priceFilter?: "paid" | "free" | "all"
   sortBy?: string
 }
 
@@ -58,16 +85,17 @@ async function CategoryProducts({
   priceFilter,
   sortBy,
 }: CategoryProductsProps) {
-  const [category, { products, total, page: current, pageCount }] = await Promise.all([
-    getCategory(categoryId),
-    getProducts({
-      categoryId,
-      page: 1,
-      limit: 48,
-      priceFilter: priceFilter,
-      sortBy: sortBy,
-    }),
-  ])
+  const [category, { products, total, page: current, pageCount }] =
+    await Promise.all([
+      getCategory(categoryId),
+      getProducts({
+        categoryId,
+        page: 1,
+        limit: 48,
+        priceFilter,
+        sortBy,
+      }),
+    ])
 
   if (!category) {
     return (
@@ -91,47 +119,83 @@ async function CategoryProducts({
   )
 }
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default async function CategoryPage({
   params,
   searchParams,
 }: {
   params: Promise<{ categoryId: string }>
-  searchParams?: Promise<{ priceFilter?: 'paid' | 'free' | 'all'; sortBy?: string }>
+  searchParams?: Promise<{ priceFilter?: "paid" | "free" | "all"; sortBy?: string; type?: string }>
 }) {
-  const { categoryId } = await params
+  const { categoryId: param } = await params
   const searchParamsData = await searchParams
   const priceFilter = searchParamsData?.priceFilter
   const sortBy = searchParamsData?.sortBy
+  const type = searchParamsData?.type
 
-  const heroConfigBase = getHeroConfigById(categoryId)
+  // 1. 301-redirect old member slugs to group slugs (e.g., /category/images -> /category/graphics?type=images)
+  const groupSlugFromOldMember = SLUG_TO_GROUP_MAP[param]
+  if (groupSlugFromOldMember) {
+    const qs = new URLSearchParams()
+    qs.set("type", param)
+    if (priceFilter) qs.set("priceFilter", priceFilter)
+    if (sortBy) qs.set("sortBy", sortBy)
+    redirect(`/category/${groupSlugFromOldMember}?${qs.toString()}`)
+  }
 
-  // Fetch category, nav categories, and (if this page has a hero) a small
-  // product sample to populate the collage with real images.
-  const [category, categories, heroProductData] = await Promise.all([
-    getCategory(categoryId),
-    getCategories(),
+  // 2. 301-redirect UUID-based URLs to their slug equivalent
+  if (isUUID(param)) {
+    const slug = categoryParamToSlug(param)
+    // Only redirect if we have a known slug mapping
+    if (slug !== param) {
+      const qs = new URLSearchParams()
+      // If the old UUID belonged to a member of a group, set the type
+      const oldSlug = CATEGORY_SLUG_MAP[param]
+      if (oldSlug && SLUG_TO_GROUP_MAP[oldSlug]) {
+        qs.set("type", oldSlug)
+      }
+      if (priceFilter) qs.set("priceFilter", priceFilter)
+      if (sortBy) qs.set("sortBy", sortBy)
+      const suffix = qs.toString() ? `?${qs.toString()}` : ""
+      redirect(`/category/${slug}${suffix}`)
+    }
+  }
+
+  // Resolve the real UUID for API calls
+  const slug = categoryParamToSlug(param)
+  let uuid = categoryParamToId(param)
+
+  // Resolve specific sub-category ID if in a group and 'type' is provided
+  if (CATEGORY_GROUPS[slug] && type) {
+    const subtab = CATEGORY_GROUPS[slug].subtabs.find(s => s.slug === type)
+    if (subtab) uuid = subtab.id
+  }
+
+  const heroConfigBase = getHeroConfigById(uuid)
+
+  const [category, heroProductData] = await Promise.all([
+    getCategory(uuid),
     heroConfigBase
-      ? getProducts({ categoryId, page: 1, limit: 8 })
+      ? getProducts({ categoryId: uuid, page: 1, limit: 8 })
       : Promise.resolve({ products: [] as Product[] }),
   ])
 
-  // Pick one image per product, shuffle, take 4 for the collage
   const heroImages = shuffle(
     heroProductData.products
       .map((p) => p.images?.[0]?.url)
       .filter((url): url is string => Boolean(url))
   ).slice(0, 4)
 
-  // Generate breadcrumb structured data
+  // Canonical URL always uses the slug
   const siteUrl = getSiteUrl()
   const breadcrumbStructuredData = category
     ? generateBreadcrumbStructuredData([
       { name: "Home", url: siteUrl },
-      { name: category.name, url: `${siteUrl}/category/${categoryId}` },
+      { name: category.name, url: `${siteUrl}/category/${slug}` },
     ])
     : null
 
-  // Merge real images into the config (fall back to placeholder URLs if none fetched)
   const heroConfig = heroConfigBase
     ? { ...heroConfigBase, images: heroImages.length > 0 ? heroImages : heroConfigBase.images }
     : null
@@ -157,10 +221,10 @@ export default async function CategoryPage({
         <div className="min-h-screen py-6 sm:py-8">
           {/* Header with Categories and Filters */}
           <div className="px-4 sm:px-6 lg:px-8 mb-8">
-            <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
+            <div className="flex items-center gap-3 py-4 sm:py-5">
               {/* Categories Bar — desktop only */}
               <div className="flex-1 min-w-0 overflow-hidden hidden md:flex">
-                <CategoryNav categories={categories} />
+                <CategoryNav />
               </div>
               {/* Filters — full-width on mobile, auto on desktop */}
               <div className="flex flex-row items-center gap-2 w-full md:w-auto md:shrink-0">
@@ -170,18 +234,21 @@ export default async function CategoryPage({
                 <SortFilter />
               </div>
             </div>
+
+            {/* Sub-navigation for groups (Mockups, Graphics) */}
+            <CategorySubNav groupSlug={slug} currentType={type} />
           </div>
 
           {/* Products Grid */}
           <div id="product-grid" className="px-4 sm:px-6 lg:px-8">
             <Suspense
-              key={`${categoryId}-${priceFilter || 'all'}-${sortBy || 'newest'}`}
+              key={`${uuid}-${priceFilter || "all"}-${sortBy || "newest"}`}
               fallback={<ProductListSkeleton title="" />}
             >
               <CategoryProducts
-                categoryId={categoryId}
+                categoryId={uuid}
                 priceFilter={priceFilter}
-                sortBy={sortBy || 'newest'}
+                sortBy={sortBy || "newest"}
               />
             </Suspense>
           </div>
@@ -191,4 +258,3 @@ export default async function CategoryPage({
     </>
   )
 }
-

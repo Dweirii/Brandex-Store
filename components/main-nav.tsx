@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import type { Category } from "@/types"
+
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X, ChevronRight, ClipboardList, Search } from "lucide-react"
@@ -10,11 +10,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/Button"
 
-interface MainNavProps {
-  data: Category[]
-}
-
-const MainNav = ({ data }: MainNavProps) => {
+const MainNav = () => {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -28,10 +24,17 @@ const MainNav = ({ data }: MainNavProps) => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const routes = data.map((route) => ({
-    href: `/category/${route.id}`,
-    label: route.name,
-    active: pathname === `/category/${route.id}`,
+  const routes = [
+    { label: "Packaging", href: "/category/packaging", id: "fd995552-baa8-4b86-bf7e-0acbefd43fd6" },
+    { label: "Mockups", href: "/category/mockups", id: "mockups", isGroup: true },
+    { label: "Graphics", href: "/category/graphics", id: "graphics", isGroup: true },
+    { label: "Motion Library", href: "/category/motion-library", id: "c302954a-6cd2-43a7-9916-16d9252f754c" },
+  ].map((route) => ({
+    ...route,
+    active:
+      pathname === route.href ||
+      (route.isGroup && pathname.startsWith(route.href)) ||
+      (route.id === "graphics" && (pathname.includes("/images") || pathname.includes("/vectors") || pathname.includes("/psd-lab")))
   }))
 
   return (
@@ -123,8 +126,8 @@ const MainNav = ({ data }: MainNavProps) => {
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button
-                variant="ghost" 
-                size="icon" 
+                variant="ghost"
+                size="icon"
                 className="h-9 w-9 rounded-full text-foreground"
                 aria-label="Open menu"
               >
@@ -153,6 +156,7 @@ const MainNav = ({ data }: MainNavProps) => {
                   Categories
                 </motion.h2>
               </div>
+
 
               <div className="flex-1 overflow-auto py-2">
                 {routes.map((route, index) => (

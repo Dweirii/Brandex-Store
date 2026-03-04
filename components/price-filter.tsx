@@ -13,25 +13,25 @@ export default function PriceFilter({ className }: PriceFilterProps) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
-  
+
   const currentFilter = searchParams.get('priceFilter') || 'all'
-  
+
   const handleFilterChange = (filter: 'paid' | 'free' | 'all') => {
     startTransition(() => {
       try {
         const params = new URLSearchParams(searchParams.toString())
-        
+
         if (filter === 'all') {
           params.delete('priceFilter')
         } else {
           params.set('priceFilter', filter)
         }
-        
+
         params.delete('page')
-        
+
         const queryString = params.toString()
         const newUrl = queryString ? `${pathname}?${queryString}` : pathname
-        
+
         router.push(newUrl)
       } catch (error) {
         console.error('Error applying price filter:', error)
@@ -40,46 +40,44 @@ export default function PriceFilter({ className }: PriceFilterProps) {
   }
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-1 bg-white border border-[#E5E7EB] p-1 rounded-lg", className)} role="group" aria-label="Price filter">
+    <div className={cn("flex items-center gap-1 bg-muted/30 border border-border/60 p-1 rounded-xl h-[42px]", className)} role="group" aria-label="Price filter">
       <button
         onClick={() => handleFilterChange('all')}
         disabled={isPending}
         aria-pressed={currentFilter === 'all'}
         className={cn(
-          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md border transition-all duration-200",
+          "h-full px-4 text-[13px] font-bold rounded-lg transition-all duration-300",
           currentFilter === 'all'
-            ? "bg-[#00B81A] text-white border-[#00B81A] shadow-sm"
-            : "text-[#374151] bg-white border-[#E5E7EB] hover:text-[#111827] hover:bg-[#F9FAFB] hover:border-[#D1D5DB]",
+            ? "bg-primary text-white shadow-sm"
+            : "text-muted-foreground hover:text-foreground hover:bg-background/40",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         All
       </button>
-
       <button
         onClick={() => handleFilterChange('paid')}
         disabled={isPending}
         aria-pressed={currentFilter === 'paid'}
         className={cn(
-          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md border transition-all duration-200",
+          "h-full px-4 text-[13px] font-bold rounded-lg transition-all duration-300",
           currentFilter === 'paid'
-            ? "bg-[#00B81A] text-white border-[#00B81A] shadow-sm"
-            : "text-[#374151] bg-white border-[#E5E7EB] hover:text-[#111827] hover:bg-[#F9FAFB] hover:border-[#D1D5DB]",
+            ? "bg-primary text-white shadow-sm"
+            : "text-muted-foreground hover:text-foreground hover:bg-background/40",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >
         Paid
       </button>
-
       <button
         onClick={() => handleFilterChange('free')}
         disabled={isPending}
         aria-pressed={currentFilter === 'free'}
         className={cn(
-          "flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-sm font-medium rounded-md border transition-all duration-200",
+          "h-full px-4 text-[13px] font-bold rounded-lg transition-all duration-300",
           currentFilter === 'free'
-            ? "bg-[#00B81A] text-white border-[#00B81A] shadow-sm"
-            : "text-[#374151] bg-white border-[#E5E7EB] hover:text-[#111827] hover:bg-[#F9FAFB] hover:border-[#D1D5DB]",
+            ? "bg-primary text-white shadow-sm"
+            : "text-muted-foreground hover:text-foreground hover:bg-background/40",
           isPending && "opacity-50 cursor-not-allowed"
         )}
       >

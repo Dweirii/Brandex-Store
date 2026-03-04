@@ -1,15 +1,14 @@
 import { Metadata } from "next"
 import { Suspense } from "react"
 import Link from "next/link"
-import getCategories from "@/actions/get-categories"
+
 import Container from "@/components/ui/container"
 import CategoryNav from "@/components/category-nav"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import { generateBreadcrumbStructuredData, getSiteUrl } from "@/lib/seo"
 
-const CATEGORY_ID = "374e7e6a-f6d9-45a8-b1ce-72aad0450367"
 const CATEGORY_NAME = "Signature Services"
-const CATEGORY_URL = `/category/${CATEGORY_ID}`
+const CATEGORY_URL = `/category/signature-services`
 
 export const metadata: Metadata = {
   title: "Signature Services | Brandex",
@@ -38,7 +37,7 @@ export const metadata: Metadata = {
 }
 
 export default async function SignatureServicesPage() {
-  const [categories] = await Promise.all([getCategories()])
+
 
   const siteUrl = getSiteUrl()
   const breadcrumbStructuredData = generateBreadcrumbStructuredData([
@@ -56,7 +55,7 @@ export default async function SignatureServicesPage() {
       <div className="min-h-screen py-6 sm:py-8">
         {/* Category Nav */}
         <div className="px-4 sm:px-6 lg:px-8 mb-8">
-          <CategoryNav categories={categories} />
+          <CategoryNav />
         </div>
 
         {/* Page Content */}

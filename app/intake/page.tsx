@@ -28,7 +28,14 @@ const schema = z
     packDimensions: z.string().optional(),
     packSkus: z.coerce.number().int().positive().optional().or(z.literal("")),
     packHasDieline: z.string().optional(),
-    deadline: z.string().min(1, "Please pick a deadline"),
+    deadline: z
+      .string()
+      .min(1, "Please pick a deadline")
+      .refine((val) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return new Date(val) >= today;
+      }, "Deadline must be today or a future date"),
     budget: z.string().optional(),
     notes: z.string().optional(),
   })

@@ -33,27 +33,27 @@ export default function SortFilter({ className }: SortFilterProps) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const [isPending, startTransition] = useTransition()
-  
+
   const currentSort = searchParams.get('sortBy') || 'newest'
   const currentSortLabel = sortOptions.find(opt => opt.value === currentSort)?.label || "Newest"
-  
+
   const handleSortChange = (sortValue: string) => {
     startTransition(() => {
       try {
         const params = new URLSearchParams(searchParams.toString())
-        
+
         if (sortValue === 'newest') {
           params.delete('sortBy')
         } else {
           params.set('sortBy', sortValue)
         }
-        
+
         // Reset to first page when sort changes
         params.delete('page')
-        
+
         const queryString = params.toString()
         const newUrl = queryString ? `${pathname}?${queryString}` : pathname
-        
+
         router.push(newUrl)
       } catch (error) {
         console.error('Error applying sort filter:', error)
@@ -67,7 +67,7 @@ export default function SortFilter({ className }: SortFilterProps) {
         <button
           disabled={isPending}
           className={cn(
-            "px-3 py-1.5 sm:px-4 text-sm font-medium rounded-lg border border-border/60 bg-background hover:bg-muted/50 transition-all duration-200 flex items-center gap-1.5 sm:gap-2 sm:min-w-[160px]",
+            "h-[42px] px-3 sm:px-4 text-[13px] font-bold rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 sm:min-w-[160px]",
             isPending && "opacity-50 cursor-not-allowed",
             className
           )}

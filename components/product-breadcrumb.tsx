@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { Category, Subcategory } from "@/types"
+import { categoryHref } from "@/lib/category-slugs"
 
 interface ProductBreadcrumbProps {
   category: Category
@@ -14,7 +15,7 @@ export function ProductBreadcrumb({
 }: ProductBreadcrumbProps) {
   const items = [
     { label: "Mockups", href: "/" },
-    { label: category.name, href: `/category/${category.id}` },
+    { label: category.name, href: categoryHref(category) },
     ...(subcategory ? [{ label: subcategory.name, href: null }] : []),
     { label: productName, href: null },
   ]

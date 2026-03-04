@@ -9,6 +9,8 @@ import { ProductShare } from "@/components/product-share"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import Link from "next/link"
+import { useAuth } from "@clerk/nextjs"
+import { useCredits } from "@/hooks/use-credits"
 
 interface InfoProps {
   data: Product
@@ -18,6 +20,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const isFreeProduct = Number(data.price) === 0
   const isPremiumProduct = !isFreeProduct
   const { theme, systemTheme } = useTheme()
+  const { isSignedIn } = useAuth()
+  const { balance } = useCredits(data.storeId)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
@@ -80,12 +84,12 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               <Coins className="h-4 w-4" />
               5 Credits
             </span>
-                  {/* Helper text */}
+            {/* Helper text */}
             {isPremiumProduct && (
-                <p className="text-xs text-left text-muted-foreground">
-                  Premium download costs 5 credits. Re-downloads are free.
-                </p>
-              )}
+              <p className="text-xs text-left text-muted-foreground">
+                Premium download costs 5 credits. Re-downloads are free.
+              </p>
+            )}
           </>
         ) : (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20 dark:text-primary">
@@ -106,6 +110,11 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           iconOnly={false}
           customText={isFreeProduct ? "Free Download" : "Download (5 Credits)"}
         />
+        {mounted && isSignedIn && (
+          <p className="text-xs text-center text-muted-foreground">
+            Your balance: <span className="font-semibold text-primary">{balance} credits</span>
+          </p>
+        )}
         <p className="text-xs text-center text-muted-foreground">
           Includes front + back label, layered PSD, smart objects. Re-downloads are free.
         </p>

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import type { Category } from "@/types"
 import { cn } from "@/lib/utils"
+import { categoryHref } from "@/lib/category-slugs"
 
 interface CategoriesDropdownProps {
   categories: Category[]
@@ -24,8 +25,8 @@ export default function CategoriesDropdown({ categories }: CategoriesDropdownPro
 
   const isCategoryPage = pathname?.startsWith("/category/")
 
-  const handleCategoryClick = (categoryId: string) => {
-    router.push(`/category/${categoryId}`)
+  const handleCategoryClick = (category: Category) => {
+    router.push(categoryHref(category))
     setOpen(false)
   }
 
@@ -48,11 +49,12 @@ export default function CategoriesDropdown({ categories }: CategoriesDropdownPro
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-48 max-h-[350px] overflow-y-auto bg-card border-border">
         {categories.map((category) => {
-          const isActive = pathname === `/category/${category.id}`
+          const href = categoryHref(category)
+          const isActive = pathname === href || pathname === `/category/${category.id}`
           return (
             <DropdownMenuItem
               key={category.id}
-              onClick={() => handleCategoryClick(category.id)}
+              onClick={() => handleCategoryClick(category)}
               className={cn(
                 "cursor-pointer text-sm py-2",
                 isActive && "bg-primary/10 text-primary font-medium"

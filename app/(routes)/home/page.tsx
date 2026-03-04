@@ -1,3 +1,12 @@
+import { redirect } from "next/navigation";
+
+// /home is temporarily hidden — redirects to the homepage.
+// To restore, uncomment the original page below and remove the redirect.
+export default function HomePage() {
+  redirect("/");
+}
+
+/*
 "use client"
 
 import VideoCarousel from "@/components/landing/video-carosel"
@@ -18,3 +27,5 @@ export default function HomePage() {
     </Container>
   )
 }
+*/
+

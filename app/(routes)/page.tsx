@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { Suspense } from "react"
 import getProduct from "@/actions/get-products"
-import getCategories from "@/actions/get-categories"
+
 import ProductList from "@/components/product-list"
 import Container from "@/components/ui/container"
 import { ProductListSkeleton } from "@/components/product-list-skeleton"
@@ -73,8 +73,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
   const { priceFilter, sortBy } = await searchParams
 
   // Fetch nav categories and a small product sample for the hero collage in parallel
-  const [categories, heroProductData] = await Promise.all([
-    getCategories(),
+  const [heroProductData] = await Promise.all([
     getProduct({ categoryId: MOCKUPS_CATEGORY_ID, page: 1, limit: 8 }),
   ])
 
@@ -108,35 +107,35 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
       <HeroSection config={homeHeroConfig} />
 
       <Container>
-      <div className="min-h-screen py-6 sm:py-8">
-        <div className="px-4 sm:px-6 lg:px-8 mb-8">
-          <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
-            <div className="flex-1 min-w-0 overflow-hidden hidden md:flex">
-              <CategoryNav categories={categories} />
-            </div>
-            <div className="flex flex-row items-center gap-2 w-full md:w-auto md:shrink-0">
-              <div className="flex-1 md:flex-none">
-                <PriceFilter />
+        <div className="min-h-screen py-6 sm:py-8">
+          <div className="px-4 sm:px-6 lg:px-8 mb-8">
+            <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
+              <div className="flex-1 min-w-0 overflow-hidden hidden md:flex">
+                <CategoryNav />
               </div>
-              <SortFilter />
+              <div className="flex flex-row items-center gap-2 w-full md:w-auto md:shrink-0">
+                <div className="flex-1 md:flex-none">
+                  <PriceFilter />
+                </div>
+                <SortFilter />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div id="product-grid" className="px-4 sm:px-6 lg:px-8">
-          <Suspense
-            key={`${priceFilter || 'all'}-${sortBy || 'newest'}`}
-            fallback={<ProductListSkeleton title="" />}
-          >
-            <MockupProducts
-              priceFilter={priceFilter}
-              sortBy={sortBy || 'newest'}
-            />
-          </Suspense>
+          <div id="product-grid" className="px-4 sm:px-6 lg:px-8">
+            <Suspense
+              key={`${priceFilter || 'all'}-${sortBy || 'newest'}`}
+              fallback={<ProductListSkeleton title="" />}
+            >
+              <MockupProducts
+                priceFilter={priceFilter}
+                sortBy={sortBy || 'newest'}
+              />
+            </Suspense>
+          </div>
         </div>
-      </div>
-      <RecentlyViewed />
-      <ScrollToTop />
+        <RecentlyViewed />
+        <ScrollToTop />
       </Container>
     </>
   )

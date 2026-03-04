@@ -24,6 +24,7 @@ import {
   getSiteUrl,
 } from "@/lib/seo";
 import { ProductBreadcrumb } from "@/components/product-breadcrumb";
+import { CATEGORY_SLUG_MAP } from "@/lib/category-slugs";
 
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
@@ -169,8 +170,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {
         name: product.category?.name || "Products",
         url: product.category?.id
-          ? `${siteUrl}/category/${product.category.id}`
-          : `${siteUrl}/home`,
+          ? `${siteUrl}/category/${CATEGORY_SLUG_MAP[product.category.id] ?? product.category.id}`
+          : `${siteUrl}/`,
       },
       { name: product.name, url: productUrl },
     ]);
