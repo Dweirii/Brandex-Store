@@ -25,6 +25,65 @@ import {
 import { ProductBreadcrumb } from "@/components/product-breadcrumb";
 import { CATEGORY_SLUG_MAP } from "@/lib/category-slugs";
 
+/** Category IDs for What's Included and other category-specific content */
+const CATEGORY_IDS = {
+  images: "6214c586-a7c7-4f71-98ab-e1bc147a07f4",
+  motion: "c302954a-6cd2-43a7-9916-16d9252f754c",
+  packaging: "fd995552-baa8-4b86-bf7e-0acbefd43fd6",
+  psd: "1364f5f9-6f45-48fd-8cd1-09815e1606c0",
+  vectors: "b0469986-6cb9-4a35-8cd6-6cc9ec51a561",
+  mockups: "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a",
+} as const;
+
+/** What's Included copy per category */
+const WHATS_INCLUDED_BY_CATEGORY: Record<string, string[]> = {
+  [CATEGORY_IDS.images]: [
+    "High-resolution image files",
+    "Multiple formats and sizes",
+    "Ready for web and print",
+    "Usage guide included",
+  ],
+  [CATEGORY_IDS.motion]: [
+    "Video file(s) in common formats",
+    "Multiple resolutions when applicable",
+    "Ready to use in your edits",
+    "Usage guide included",
+  ],
+  [CATEGORY_IDS.packaging]: [
+    "High-resolution PSD mockup",
+    "Smart Object layers for easy editing",
+    "Organized Photoshop layers",
+    "Front + back label layouts",
+    "Help guide included",
+    "Editable text layers (vector-based fonts — change text without losing quality)",
+  ],
+  [CATEGORY_IDS.psd]: [
+    "High-resolution PSD file",
+    "Smart Object layers for easy editing",
+    "Organized Photoshop layers",
+    "Help guide included",
+  ],
+  [CATEGORY_IDS.vectors]: [
+    "Scalable vector files (AI, EPS, or SVG)",
+    "Editable shapes and paths",
+    "Crisp at any size — no pixelation",
+    "Usage guide included",
+  ],
+  [CATEGORY_IDS.mockups]: [
+    "High-resolution PSD mockup",
+    "Smart Object layers for easy editing",
+    "Organized Photoshop layers",
+    "Help guide included",
+  ],
+};
+
+const DEFAULT_WHATS_INCLUDED = [
+  "High-resolution PSD mockup",
+  "Smart Object layers for easy editing",
+  "Organized Photoshop layers",
+  "Help guide included",
+];
+
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
     <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
@@ -78,14 +137,10 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-function ProductDetails() {
-  const whatsIncluded = [
-    "1 High-resolution PSD mockup",
-    "Smart Object layers for easy editing",
-    "Organized Photoshop layers",
-    "Front + back label layouts",
-    "Help guide included",
-  ];
+function ProductDetails({ product }: { product: Product }) {
+  const categoryId = product.category?.id;
+  const whatsIncluded =
+    (categoryId && WHATS_INCLUDED_BY_CATEGORY[categoryId]) || DEFAULT_WHATS_INCLUDED;
 
   const specifications = [
     { label: "Application", value: "Adobe Photoshop" },
@@ -301,7 +356,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </div>
                 )}
                 {/* What's Included / Specifications / How It Works */}
-                <ProductDetails />
+                <ProductDetails product={product} />
               </div>
 
               {/* Right column: Product Info */}

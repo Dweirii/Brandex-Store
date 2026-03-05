@@ -211,7 +211,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           <div className="w-full min-w-0 flex items-center justify-between gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1 shrink-0">
               <Download className="h-3 w-3" />
-              {Math.max(data.downloadCount ?? 0, 125).toLocaleString()} downloads
+              {Math.max(Number(data.downloadCount) || 0, 125).toLocaleString()} downloads
             </span>
             <span className="flex items-center gap-1 shrink-0">
               <Shield className="h-3 w-3" />
