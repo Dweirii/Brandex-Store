@@ -84,6 +84,110 @@ const DEFAULT_WHATS_INCLUDED = [
   "Help guide included",
 ];
 
+type SpecEntry = { label: string; value: string };
+
+/** Specifications per category */
+const SPECIFICATIONS_BY_CATEGORY: Record<string, SpecEntry[]> = {
+  [CATEGORY_IDS.images]: [
+    { label: "File Type", value: "PNG, JPG" },
+    { label: "Resolution", value: "High-resolution" },
+    { label: "Usage", value: "Web & print ready" },
+    { label: "Color Space", value: "RGB" },
+  ],
+  [CATEGORY_IDS.motion]: [
+    { label: "Format", value: "MP4, MOV" },
+    { label: "Resolution", value: "1080p / 4K" },
+    { label: "Frame Rate", value: "24–30 fps" },
+    { label: "Usage", value: "Ready for editing" },
+  ],
+  [CATEGORY_IDS.packaging]: [
+    { label: "Application", value: "Adobe Photoshop" },
+    { label: "File Type", value: "PSD" },
+    { label: "Resolution", value: "4500 × 3000 px" },
+    { label: "DPI", value: "300" },
+    { label: "Color Space", value: "RGB" },
+    { label: "Layered", value: "Yes" },
+  ],
+  [CATEGORY_IDS.psd]: [
+    { label: "Application", value: "Adobe Photoshop" },
+    { label: "File Type", value: "PSD" },
+    { label: "Resolution", value: "4500 × 3000 px" },
+    { label: "DPI", value: "300" },
+    { label: "Color Space", value: "RGB" },
+    { label: "Layered", value: "Yes" },
+  ],
+  [CATEGORY_IDS.vectors]: [
+    { label: "Application", value: "Adobe Illustrator / vector editor" },
+    { label: "File Type", value: "AI, EPS, SVG" },
+    { label: "Scalable", value: "Yes — no quality loss" },
+    { label: "Editable", value: "Shapes, paths, text" },
+  ],
+  [CATEGORY_IDS.mockups]: [
+    { label: "Application", value: "Adobe Photoshop" },
+    { label: "File Type", value: "PSD" },
+    { label: "Resolution", value: "4500 × 3000 px" },
+    { label: "DPI", value: "300" },
+    { label: "Color Space", value: "RGB" },
+    { label: "Layered", value: "Yes" },
+  ],
+};
+
+const DEFAULT_SPECIFICATIONS: SpecEntry[] = [
+  { label: "Application", value: "Adobe Photoshop" },
+  { label: "File Type", value: "PSD" },
+  { label: "Resolution", value: "4500 × 3000 px" },
+  { label: "DPI", value: "300" },
+  { label: "Color Space", value: "RGB" },
+  { label: "Layered", value: "Yes" },
+];
+
+/** How It Works steps per category */
+const HOW_IT_WORKS_BY_CATEGORY: Record<string, string[]> = {
+  [CATEGORY_IDS.images]: [
+    "Download the image files",
+    "Open or import into your project",
+    "Use for web, print, or social",
+    "Export at the size you need",
+  ],
+  [CATEGORY_IDS.motion]: [
+    "Download the video file(s)",
+    "Import into your video editor",
+    "Place in your timeline or composition",
+    "Export your final video",
+  ],
+  [CATEGORY_IDS.packaging]: [
+    "Open the PSD in Photoshop",
+    "Double-click the Smart Object layer",
+    "Paste your design",
+    "Save and export your mockup",
+  ],
+  [CATEGORY_IDS.psd]: [
+    "Open the PSD in Photoshop",
+    "Double-click the Smart Object layer",
+    "Paste your design",
+    "Save and export your mockup",
+  ],
+  [CATEGORY_IDS.vectors]: [
+    "Open the file in Illustrator or your vector editor",
+    "Edit shapes, paths, and text as needed",
+    "Export to AI, EPS, SVG, or PDF",
+    "Use at any size without quality loss",
+  ],
+  [CATEGORY_IDS.mockups]: [
+    "Open the PSD in Photoshop",
+    "Double-click the Smart Object layer",
+    "Paste your design",
+    "Save and export your mockup",
+  ],
+};
+
+const DEFAULT_HOW_IT_WORKS = [
+  "Open the PSD in Photoshop",
+  "Double-click the Smart Object layer",
+  "Paste your design",
+  "Save and export your mockup",
+];
+
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
     <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
@@ -141,22 +245,10 @@ function ProductDetails({ product }: { product: Product }) {
   const categoryId = product.category?.id;
   const whatsIncluded =
     (categoryId && WHATS_INCLUDED_BY_CATEGORY[categoryId]) || DEFAULT_WHATS_INCLUDED;
-
-  const specifications = [
-    { label: "Application", value: "Adobe Photoshop" },
-    { label: "File Type", value: "PSD" },
-    { label: "Resolution", value: "4500 × 3000 px" },
-    { label: "DPI", value: "300" },
-    { label: "Color Space", value: "RGB" },
-    { label: "Layered", value: "Yes" },
-  ];
-
-  const howItWorks = [
-    "Open the PSD in Photoshop",
-    "Double-click the Smart Object layer",
-    "Paste your design",
-    "Save and export your mockup",
-  ];
+  const specifications =
+    (categoryId && SPECIFICATIONS_BY_CATEGORY[categoryId]) || DEFAULT_SPECIFICATIONS;
+  const howItWorks =
+    (categoryId && HOW_IT_WORKS_BY_CATEGORY[categoryId]) || DEFAULT_HOW_IT_WORKS;
 
   return (
     <div className="mt-5 border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
