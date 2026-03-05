@@ -91,7 +91,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com data:",
-      "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.google.com https://www.google-analytics.com https://www.merchant-center-analytics.goog https://googleads.g.doubleclick.net https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+      `connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.google.com https://www.google-analytics.com https://www.merchant-center-analytics.goog https://googleads.g.doubleclick.net https://vitals.vercel-insights.com https://va.vercel-scripts.com${process.env.NODE_ENV === 'development' ? ' http://localhost:3001' : ''}`,
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
