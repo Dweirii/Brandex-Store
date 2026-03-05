@@ -76,12 +76,29 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
-  // Video optimization headers
+  // Security and performance headers (CSP addresses PCI-DSS/OWASP/ISO 27001)
   async headers() {
+    const csp = [
+      "default-src 'self'",
+      "frame-ancestors 'none'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "img-src 'self' data: blob: https:",
+      "font-src 'self' https://fonts.gstatic.com data:",
+      "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://www.google-analytics.com https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join('; ');
+
     return [
       {
         source: '/(.*)',
         headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: csp,
+          },
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
