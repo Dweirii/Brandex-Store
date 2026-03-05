@@ -137,26 +137,22 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         )}
       </div>
 
-      {/* Download Card */}
+      {/* Download Card — no text-center so feature list & trust row alignment are not affected */}
       <div className="border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
-        <div className="p-5 space-y-4 text-center">
+        <div className="p-5 space-y-4">
 
-          {/* Download count — floor at 125 as starting cap */}
-          <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
-            <Download className="h-3.5 w-3.5" />
-            <span>{Math.max(data.downloadCount ?? 0, 125).toLocaleString()} downloads</span>
-          </p>
-
-          {/* Top Download Button */}
-          <DownloadButton
-            storeId={data.storeId}
-            productId={data.id}
-            size="lg"
-            variant="premium"
-            className="w-full h-12 text-base font-semibold"
-            iconOnly={false}
-            customText={isFreeProduct ? "Free Download" : `Download (${productPrice} Credits)`}
-          />
+          {/* Top Download Button — wrapper ensures full width so sections below match */}
+          <div className="w-full min-w-0">
+            <DownloadButton
+              storeId={data.storeId}
+              productId={data.id}
+              size="lg"
+              variant="premium"
+              className="w-full h-12 text-base font-semibold"
+              iconOnly={false}
+              customText={isFreeProduct ? "Free Download" : `Download (${productPrice} Credits)`}
+            />
+          </div>
 
           {/* Credit balance — signed-in + premium only */}
           {mounted && isSignedIn && isPremiumProduct && (
@@ -188,27 +184,40 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           {/* Divider */}
           <div className="border-t border-[#E5E7EB] dark:border-border" />
 
-          {/* Feature checklist — 2×2 grid, full width, green checkmarks */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-left">
-            {FEATURES.map((feature) => (
-              <div key={feature} className="flex items-start gap-2 text-sm text-foreground">
-                <Check className="h-4 w-4 mt-0.5 shrink-0" style={{ color: "#00B81A" }} />
-                <span>{feature}</span>
-              </div>
-            ))}
+          {/* Feature checklist — full width, aligned with button; left column text-left, right column text-right */}
+          <div className="w-full min-w-0 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-foreground">
+            <div className="flex items-center gap-2 text-left">
+              <Check className="h-4 w-4 shrink-0" style={{ color: "#00B81A" }} />
+              <span>{FEATURES[0]}</span>
+            </div>
+            <div className="flex items-center justify-end gap-2 text-right">
+              <Check className="h-4 w-4 shrink-0 order-2" style={{ color: "#00B81A" }} />
+              <span className="order-1">{FEATURES[2]}</span>
+            </div>
+            <div className="flex items-center gap-2 text-left">
+              <Check className="h-4 w-4 shrink-0" style={{ color: "#00B81A" }} />
+              <span>{FEATURES[1]}</span>
+            </div>
+            <div className="flex items-center justify-end gap-2 text-right">
+              <Check className="h-4 w-4 shrink-0 order-2" style={{ color: "#00B81A" }} />
+              <span className="order-1">{FEATURES[3]}</span>
+            </div>
           </div>
 
           {/* Divider */}
           <div className="border-t border-[#E5E7EB] dark:border-border" />
 
-          {/* Trust row */}
-          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
+          {/* Trust row — full width, same as button; three segments spread edge-to-edge */}
+          <div className="w-full min-w-0 flex items-center justify-between gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1 shrink-0">
+              <Download className="h-3 w-3" />
+              {Math.max(data.downloadCount ?? 0, 125).toLocaleString()} downloads
+            </span>
+            <span className="flex items-center gap-1 shrink-0">
               <Shield className="h-3 w-3" />
               Secure checkout powered by Stripe
             </span>
-            <span className="opacity-40">•</span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 shrink-0">
               <Lock className="h-3 w-3" />
               Login secured by Clerk
             </span>
