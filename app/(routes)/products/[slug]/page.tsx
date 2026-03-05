@@ -149,10 +149,9 @@ function ProductDetails() {
               How It Works
             </h3>
           </div>
-          <ol className="space-y-1.5">
-            {howItWorks.map((step, i) => (
-              <li key={step} className="text-xs text-muted-foreground leading-snug flex gap-1.5">
-                <span className="font-semibold text-foreground/50 shrink-0">{i + 1}.</span>
+          <ol className="space-y-1.5 list-decimal list-inside">
+            {howItWorks.map((step) => (
+              <li key={step} className="text-xs text-muted-foreground leading-snug">
                 {step}
               </li>
             ))}
