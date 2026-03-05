@@ -29,7 +29,7 @@ const FEATURES = [
 const Info: React.FC<InfoProps> = ({ data }) => {
   const isFreeProduct = Number(data.price) === 0
   const isPremiumProduct = !isFreeProduct
-  const productPrice = Number(data.price)
+  const productPrice = 5
   const { theme, systemTheme } = useTheme()
   const { isSignedIn } = useAuth()
   const { balance } = useCredits(data.storeId)
