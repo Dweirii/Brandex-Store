@@ -141,6 +141,12 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       <div className="border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
         <div className="p-5 space-y-4 text-center">
 
+          {/* Download count — floor at 125 as starting cap */}
+          <p className="text-sm text-muted-foreground flex items-center justify-center gap-1.5">
+            <Download className="h-3.5 w-3.5" />
+            <span>{Math.max(data.downloadCount ?? 0, 125).toLocaleString()} downloads</span>
+          </p>
+
           {/* Top Download Button */}
           <DownloadButton
             storeId={data.storeId}

@@ -33,6 +33,8 @@ export interface Product {
     description?: string;
     keywords: string[];
     originalPrice?: string;
+    /** Number of downloads; when 0 or missing, UI shows 125 as starting cap */
+    downloadCount?: number;
 }
 
 
