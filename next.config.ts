@@ -28,6 +28,11 @@ const nextConfig = {
         destination: "/new-path",
         permanent: true,
       },
+      {
+        source: "/manifest.webmanifest",
+        destination: "/manifest",
+        permanent: false,
+      },
     ];
   },
 
@@ -82,11 +87,11 @@ const nextConfig = {
       "default-src 'self'",
       "frame-ancestors 'none'",
       "frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com data:",
-      "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.google.com https://www.google-analytics.com https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+      "connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.google.com https://www.google-analytics.com https://www.merchant-center-analytics.goog https://googleads.g.doubleclick.net https://vitals.vercel-insights.com https://va.vercel-scripts.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
