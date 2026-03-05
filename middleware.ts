@@ -25,16 +25,6 @@ const ALLOWED_DOMAINS = [
   '127.0.0.1',
 ];
 
-// Security headers required by PCI-DSS/OWASP/ISO 27001 — applied on every response from middleware
-const CSP =
-  "default-src 'self'; frame-ancestors 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://www.google-analytics.com https://vitals.vercel-insights.com https://va.vercel-scripts.com; object-src 'none'; base-uri 'self'; form-action 'self'";
-
-function setSecurityHeaders(response: NextResponse): void {
-  response.headers.set('Content-Security-Policy', CSP);
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
-}
-
 export default clerkMiddleware(async (auth, req) => {
   const origin = req.headers.get('origin') || '';
   const host = req.headers.get('host') || '';
@@ -50,7 +40,6 @@ export default clerkMiddleware(async (auth, req) => {
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     response.headers.set('Access-Control-Allow-Credentials', 'true');
-    setSecurityHeaders(response);
     return response;
   }
 
@@ -69,14 +58,8 @@ export default clerkMiddleware(async (auth, req) => {
       maxAge: 60 * 60 * 24 * 7, // 1 week
       sameSite: 'lax'
     });
-    setSecurityHeaders(response);
     return response;
   }
-
-  // Ensure security headers on all other responses (e.g. GET /)
-  const response = NextResponse.next();
-  setSecurityHeaders(response);
-  return response;
 });
 
 export const config = {
