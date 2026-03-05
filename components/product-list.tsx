@@ -32,6 +32,13 @@ const breakpointColumnsObj = {
   480: 1,
 }
 
+const relatedBreakpointColumnsObj = {
+  default: 4,
+  1280: 3,
+  768: 2,
+  480: 1,
+}
+
 const ProductList: React.FC<ProductListProps> = ({
   title,
   items,
@@ -146,7 +153,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
       <div className="overflow-x-hidden">
       <Masonry
-        breakpointCols={breakpointColumnsObj}
+        breakpointCols={variant === 'related' ? relatedBreakpointColumnsObj : breakpointColumnsObj}
         className="flex w-auto -ml-6 sm:-ml-8"
         columnClassName="pl-6 sm:pl-8 bg-clip-padding"
       >

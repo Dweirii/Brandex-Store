@@ -135,11 +135,11 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             {/* Badge Layer */}
             <div className="absolute top-3 left-3 z-20 flex gap-2">
                 {isFree ? (
-                    <div className="px-3 py-1 bg-primary/90 dark:bg-primary/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
+                    <div className="px-3 py-1 bg-primary/90 dark:bg-primary/90 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
                         Free
                     </div>
                 ) : (
-                    <div className="px-3 py-1 bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
+                    <div className="px-3 py-1 bg-amber-500/90 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
                         Premium
                     </div>
                 )}
@@ -148,14 +148,14 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             {/* Content Layer (Hidden and revealed on hover) */}
             <div className="absolute inset-0 z-20 flex flex-col justify-end p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                 <div className="flex items-center justify-between gap-2">
-                    <h4 className="text-white font-semibold text-sm line-clamp-1 drop-shadow-md">
+                    <h4 className="text-white font-semibold text-base line-clamp-1 drop-shadow-md">
                         {data.name}
                     </h4>
                     <button
                         onClick={handleViewClick}
                         className="p-2 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full text-white transition-colors"
                     >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-5 h-5" />
                     </button>
                 </div>
             </div>

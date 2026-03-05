@@ -14,7 +14,6 @@ import { AlertCircle, Gift, ClipboardList, Lightbulb } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Container from "@/components/ui/container";
 import { ProductBackButton } from "@/components/product-back-button";
-import { ProductViewCounter } from "@/components/product-view-counter";
 import { ProductViewTracker } from "@/components/product-view-tracker";
 import { ProductReviews } from "@/components/product-reviews";
 import {
@@ -216,9 +215,9 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
   if (relatedItems.length === 0) return null;
 
   return (
-    <div className="border-t border-[#E5E7EB] dark:border-border">
+    <div>
       <Container>
-        <div className="px-4 py-12 sm:px-6 lg:px-8">
+        <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E7EB] dark:border-border">
           <h2 className="text-xl font-bold text-foreground mb-6">Related Mockups</h2>
           <ProductList
             title=""
@@ -289,7 +288,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <Suspense
                     fallback={
                       <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
-                        <div className="relative aspect-4/5 w-full">
+                        <div className="relative aspect-4/3 w-full">
                           <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
                         </div>
                       </div>
@@ -309,7 +308,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
               {/* Right column: Product Info */}
               <div className="mt-10 lg:mt-0">
                 <Info data={product} />
-                <ProductViewCounter productId={product.id} />
               </div>
             </div>
           </div>
@@ -329,10 +327,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Related Products — wrapper lives inside RelatedProducts so nothing renders when empty */}
         <Suspense
           fallback={
-            <div className="border-t">
+            <div>
               <Container>
-                <div className="px-4 py-12 sm:px-6 lg:px-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E7EB] dark:border-border">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {Array.from({ length: 4 }).map((_, i) => (
                       <Skeleton key={i} className="h-96 rounded-lg" />
                     ))}

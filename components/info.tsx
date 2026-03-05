@@ -16,15 +16,21 @@ interface InfoProps {
   data: Product
 }
 
-const hashId = (id: string) =>
-  id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
-
 const FEATURES = [
   "Instant download",
   "Commercial license included",
   "Free re-downloads",
   "Layered PSD with smart objects",
 ]
+
+const MAX_TAGS_VISIBLE = 4
+const MAX_MULTI_WORD_TAGS = 4
+
+function buildCleanTags(keywords: string[]): string[] {
+  const oneWord = keywords.filter((k) => k.trim().split(/\s+/).length === 1)
+  const multiWord = keywords.filter((k) => k.trim().split(/\s+/).length > 1)
+  return [...oneWord, ...multiWord.slice(0, MAX_MULTI_WORD_TAGS)]
+}
 
 const Info: React.FC<InfoProps> = ({ data }) => {
   const isFreeProduct = Number(data.price) === 0
@@ -34,12 +40,17 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const { isSignedIn } = useAuth()
   const { balance } = useCredits(data.storeId)
   const [mounted, setMounted] = useState(false)
+  const [tagsExpanded, setTagsExpanded] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
+  const cleanTags = data.keywords?.length ? buildCleanTags(data.keywords) : []
+  const visibleTags = tagsExpanded ? cleanTags : cleanTags.slice(0, MAX_TAGS_VISIBLE)
+  const hasHiddenTags = cleanTags.length > MAX_TAGS_VISIBLE
+  const hiddenCount = cleanTags.length - MAX_TAGS_VISIBLE
+
   const currentBalance = mounted && isSignedIn ? (balance ?? 0) : 0
   const creditsNeeded = Math.max(0, productPrice - currentBalance)
-  const downloadCount = 50 + (hashId(data.id) % 470)
 
   const getIconSrc = () => {
     if (!mounted) {
@@ -72,10 +83,10 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         </p>
       )}
 
-      {/* Keyword Tags */}
-      {data.keywords && data.keywords.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {data.keywords.map((keyword: string) => (
+      {/* Keyword Tags — max 4 visible; rest behind "Show more" */}
+      {cleanTags.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          {visibleTags.map((keyword: string) => (
             <Link
               key={keyword}
               href={`/products/search?query=${encodeURIComponent(keyword)}`}
@@ -84,6 +95,24 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               {keyword}
             </Link>
           ))}
+          {hasHiddenTags && !tagsExpanded && (
+            <button
+              type="button"
+              onClick={() => setTagsExpanded(true)}
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-muted-foreground border border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              Show more ({hiddenCount})
+            </button>
+          )}
+          {hasHiddenTags && tagsExpanded && (
+            <button
+              type="button"
+              onClick={() => setTagsExpanded(false)}
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-muted-foreground border border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              Show less
+            </button>
+          )}
         </div>
       )}
 
@@ -110,7 +139,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
 
       {/* Download Card */}
       <div className="border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
-        <div className="p-5 space-y-4">
+        <div className="p-5 space-y-4 text-center">
 
           {/* Top Download Button */}
           <DownloadButton
@@ -153,10 +182,10 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           {/* Divider */}
           <div className="border-t border-[#E5E7EB] dark:border-border" />
 
-          {/* Feature checklist */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+          {/* Feature checklist — 2×2 grid, full width, green checkmarks */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-left">
             {FEATURES.map((feature) => (
-              <div key={feature} className="flex items-start gap-2 text-sm text-muted-foreground">
+              <div key={feature} className="flex items-start gap-2 text-sm text-foreground">
                 <Check className="h-4 w-4 mt-0.5 shrink-0" style={{ color: "#00B81A" }} />
                 <span>{feature}</span>
               </div>
@@ -177,8 +206,6 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               <Lock className="h-3 w-3" />
               Login secured by Clerk
             </span>
-            <span className="opacity-40">•</span>
-            <span>Downloaded {downloadCount} times</span>
           </div>
 
         </div>
