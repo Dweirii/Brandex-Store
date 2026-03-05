@@ -81,20 +81,23 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
-  // Security and performance headers (CSP addresses PCI-DSS/OWASP/ISO 27001)
   async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
     const csp = [
       "default-src 'self'",
       "frame-ancestors 'none'",
       "frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://va.vercel-scripts.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://va.vercel-scripts.com",
+      "worker-src 'self' blob:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com data:",
-      `connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.com https://*.clerk.dev https://clerk.brandexme.com https://www.google.com https://www.google-analytics.com https://www.merchant-center-analytics.goog https://googleads.g.doubleclick.net https://vitals.vercel-insights.com https://va.vercel-scripts.com${process.env.NODE_ENV === 'development' ? ' http://localhost:3001' : ''}`,
+      isDev
+        ? "connect-src 'self' https: ws: http://localhost:3001 http://localhost:3002 http://localhost:3003"
+        : "connect-src 'self' https: wss:",
       "object-src 'none'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' https:",
     ].join('; ');
 
     return [
