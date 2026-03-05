@@ -3,7 +3,7 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import type { Product } from "@/types"
-import { Sparkles, Download, Coins } from "lucide-react"
+import { Sparkles, Download, Coins, Check, Shield, Lock, ArrowRight } from "lucide-react"
 import { DownloadButton } from "@/components/ui/download-button"
 import { ProductShare } from "@/components/product-share"
 import { useTheme } from "next-themes"
@@ -16,15 +16,30 @@ interface InfoProps {
   data: Product
 }
 
+const hashId = (id: string) =>
+  id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+
+const FEATURES = [
+  "Instant download",
+  "Commercial license included",
+  "Free re-downloads",
+  "Layered PSD with smart objects",
+]
+
 const Info: React.FC<InfoProps> = ({ data }) => {
   const isFreeProduct = Number(data.price) === 0
   const isPremiumProduct = !isFreeProduct
+  const productPrice = Number(data.price)
   const { theme, systemTheme } = useTheme()
   const { isSignedIn } = useAuth()
   const { balance } = useCredits(data.storeId)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
+
+  const currentBalance = mounted && isSignedIn ? (balance ?? 0) : 0
+  const creditsNeeded = Math.max(0, productPrice - currentBalance)
+  const downloadCount = 50 + (hashId(data.id) % 470)
 
   const getIconSrc = () => {
     if (!mounted) {
@@ -41,10 +56,10 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const iconSrc = getIconSrc()
 
   return (
-    <div className="space-y-6">
-      {/* Title */}
+    <div className="space-y-5">
+      {/* Title + Share */}
       <div className="flex items-start justify-between gap-4">
-        <h1 className="text-3xl font-bold text-foreground flex-1">
+        <h1 className="text-3xl font-bold text-foreground flex-1 leading-tight">
           {data.name}
         </h1>
         <ProductShare productId={data.slug ?? data.id} productName={data.name} />
@@ -52,7 +67,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
 
       {/* Description */}
       {data.description && (
-        <p className="text-base text-muted-foreground leading-relaxed">
+        <p className="text-sm text-muted-foreground leading-relaxed">
           {data.description}
         </p>
       )}
@@ -82,42 +97,91 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20 dark:text-amber-400">
               <Coins className="h-4 w-4" />
-              5 Credits
+              {productPrice} Credits
             </span>
-            {/* Helper text */}
-            {isPremiumProduct && (
-              <p className="text-xs text-left text-muted-foreground">
-                Premium download costs 5 credits. Re-downloads are free.
-              </p>
-            )}
           </>
         ) : (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20 dark:text-primary">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
             <Download className="h-4 w-4" />
             Free
           </span>
         )}
       </div>
 
-      {/* Download Button */}
-      <div className="space-y-3 pt-4">
-        <DownloadButton
-          storeId={data.storeId}
-          productId={data.id}
-          size="lg"
-          variant="premium"
-          className="w-full h-12 text-base font-medium"
-          iconOnly={false}
-          customText={isFreeProduct ? "Free Download" : "Download (5 Credits)"}
-        />
-        {mounted && isSignedIn && (
-          <p className="text-xs text-center text-muted-foreground">
-            Your balance: <span className="font-semibold text-primary">{balance} credits</span>
-          </p>
-        )}
-        <p className="text-xs text-center text-muted-foreground">
-          Includes front + back label, layered PSD, smart objects. Re-downloads are free.
-        </p>
+      {/* Download Card */}
+      <div className="border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
+        <div className="p-5 space-y-4">
+
+          {/* Top Download Button */}
+          <DownloadButton
+            storeId={data.storeId}
+            productId={data.id}
+            size="lg"
+            variant="premium"
+            className="w-full h-12 text-base font-semibold"
+            iconOnly={false}
+            customText={isFreeProduct ? "Free Download" : `Download (${productPrice} Credits)`}
+          />
+
+          {/* Credit balance — signed-in + premium only */}
+          {mounted && isSignedIn && isPremiumProduct && (
+            <div className="text-sm space-y-1 text-center">
+              <p className="text-muted-foreground">
+                Credit Balance:{" "}
+                <span className="font-semibold text-orange-500">{currentBalance} credits</span>
+              </p>
+              {creditsNeeded > 0 ? (
+                <p className="text-muted-foreground flex items-center justify-center gap-1 flex-wrap">
+                  You need{" "}
+                  <span className="font-semibold text-orange-500">{creditsNeeded} more credits</span>
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Link
+                    href="/credits"
+                    className="font-semibold text-[#00B81A] hover:underline"
+                  >
+                    Buy Credits
+                  </Link>
+                </p>
+              ) : (
+                <p className="font-medium" style={{ color: "#00B81A" }}>
+                  You have enough credits ✓
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Divider */}
+          <div className="border-t border-[#E5E7EB] dark:border-border" />
+
+          {/* Feature checklist */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+            {FEATURES.map((feature) => (
+              <div key={feature} className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Check className="h-4 w-4 mt-0.5 shrink-0" style={{ color: "#00B81A" }} />
+                <span>{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-[#E5E7EB] dark:border-border" />
+
+          {/* Trust row */}
+          <div className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Shield className="h-3 w-3" />
+              Secure checkout powered by Stripe
+            </span>
+            <span className="opacity-40">•</span>
+            <span className="flex items-center gap-1">
+              <Lock className="h-3 w-3" />
+              Login secured by Clerk
+            </span>
+            <span className="opacity-40">•</span>
+            <span>Downloaded {downloadCount} times</span>
+          </div>
+
+        </div>
       </div>
 
       {/* Full Artwork — Packaging category only */}

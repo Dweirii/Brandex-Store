@@ -10,7 +10,7 @@ import type { Product } from "@/types";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Gift, ClipboardList, Lightbulb } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Container from "@/components/ui/container";
 import { ProductBackButton } from "@/components/product-back-button";
@@ -29,7 +29,7 @@ import { CATEGORY_SLUG_MAP } from "@/lib/category-slugs";
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
     <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
-      <div className="relative aspect-[4/3] w-full">
+      <div className="relative aspect-4/3 w-full">
         <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
       </div>
     </div>
@@ -77,6 +77,91 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description: "Explore details about this product.",
     };
   }
+}
+
+function ProductDetails() {
+  const whatsIncluded = [
+    "1 High-resolution PSD mockup",
+    "Smart Object layers for easy editing",
+    "Organized Photoshop layers",
+    "Front + back label layouts",
+    "Help guide included",
+  ];
+
+  const specifications = [
+    { label: "Application", value: "Adobe Photoshop" },
+    { label: "File Type", value: "PSD" },
+    { label: "Resolution", value: "4500 × 3000 px" },
+    { label: "DPI", value: "300" },
+    { label: "Color Space", value: "RGB" },
+    { label: "Layered", value: "Yes" },
+  ];
+
+  const howItWorks = [
+    "Open the PSD in Photoshop",
+    "Double-click the Smart Object layer",
+    "Paste your design",
+    "Save and export your mockup",
+  ];
+
+  return (
+    <div className="mt-5 border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
+      <div className="grid grid-cols-3 divide-x divide-[#E5E7EB] dark:divide-border">
+        {/* What's Included */}
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Gift className="h-4 w-4 text-muted-foreground shrink-0" />
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">
+              What&apos;s Included
+            </h3>
+          </div>
+          <ul className="space-y-1.5">
+            {whatsIncluded.map((item) => (
+              <li key={item} className="text-xs text-muted-foreground leading-snug">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Specifications */}
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <ClipboardList className="h-4 w-4 text-muted-foreground shrink-0" />
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">
+              Specifications
+            </h3>
+          </div>
+          <ul className="space-y-1.5">
+            {specifications.map(({ label, value }) => (
+              <li key={label} className="text-xs text-muted-foreground leading-snug">
+                <span className="font-medium text-foreground/70">{label}:</span>{" "}
+                {value}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* How It Works */}
+        <div className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Lightbulb className="h-4 w-4 text-muted-foreground shrink-0" />
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">
+              How It Works
+            </h3>
+          </div>
+          <ol className="space-y-1.5">
+            {howItWorks.map((step, i) => (
+              <li key={step} className="text-xs text-muted-foreground leading-snug flex gap-1.5">
+                <span className="font-semibold text-foreground/50 shrink-0">{i + 1}.</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 async function RelatedProducts({ currentProduct }: { currentProduct: Product }) {
@@ -131,11 +216,12 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
   if (relatedItems.length === 0) return null;
 
   return (
-    <div className="border-t">
+    <div className="border-t border-[#E5E7EB] dark:border-border">
       <Container>
         <div className="px-4 py-12 sm:px-6 lg:px-8">
+          <h2 className="text-xl font-bold text-foreground mb-6">Related Mockups</h2>
           <ProductList
-            title="You May Also Like"
+            title=""
             items={relatedItems}
             total={relatedItems.length}
             page={1}
@@ -197,13 +283,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               productName={product.name}
             />
             <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
-              {/* Gallery */}
+              {/* Left column: Gallery + details sections */}
               <div className="w-full">
                 {product.videoUrl || product.images?.length > 0 ? (
                   <Suspense
                     fallback={
                       <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
-                        <div className="relative aspect-[4/3] w-full">
+                        <div className="relative aspect-4/5 w-full">
                           <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
                         </div>
                       </div>
@@ -216,9 +302,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     <p className="text-muted-foreground">No media available</p>
                   </div>
                 )}
+                {/* What's Included / Specifications / How It Works */}
+                <ProductDetails />
               </div>
 
-              {/* Product Info */}
+              {/* Right column: Product Info */}
               <div className="mt-10 lg:mt-0">
                 <Info data={product} />
                 <ProductViewCounter productId={product.id} />

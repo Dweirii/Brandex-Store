@@ -28,7 +28,7 @@ const Gallery: React.FC<GalleryProps> = ({ data }) => {
 
   return (
     <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
-      <div className="relative aspect-[4/3] w-full">
+      <div className="relative aspect-4/5 w-full">
         {data.videoUrl ? (
           <>
             <video
