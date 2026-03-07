@@ -16,12 +16,79 @@ interface InfoProps {
   data: Product
 }
 
-const FEATURES = [
+// First 3 items are constant across all product types.
+// The 4th item is type-specific and shown in the bottom-right cell of the checklist.
+const FEATURES_BY_CATEGORY: Record<string, [string, string, string, string]> = {
+  // Mockups
+  "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a": [
+    "Instant download",
+    "Free re-downloads",
+    "Commercial license included",
+    "Layered PSD with smart objects",
+  ],
+  // Images
+  "6214c586-a7c7-4f71-98ab-e1bc147a07f4": [
+    "Instant download",
+    "Free re-downloads",
+    "Commercial license included",
+    "High-resolution image files",
+  ],
+  // Vectors
+  "b0469986-6cb9-4a35-8cd6-6cc9ec51a561": [
+    "Instant download",
+    "Free re-downloads",
+    "Commercial license included",
+    "Scalable vector files (SVG/AI/EPS)",
+  ],
+  // Packaging
+  "fd995552-baa8-4b86-bf7e-0acbefd43fd6": [
+    "Instant download",
+    "Free re-downloads",
+    "Commercial license included",
+    "Print-ready packaging template files",
+  ],
+  // PSD Lab
+  "1364f5f9-6f45-48fd-8cd1-09815e1606c0": [
+    "Instant download",
+    "Free re-downloads",
+    "Commercial license included",
+    "Layered PSD with smart objects",
+  ],
+  // Motion Library
+  "c302954a-6cd2-43a7-9916-16d9252f754c": [
+    "Instant download",
+    "Free re-downloads",
+    "Commercial license included",
+    "High-quality motion file(s) (MP4/MOV)",
+  ],
+}
+
+const DEFAULT_FEATURES: [string, string, string, string] = [
   "Instant download",
-  "Commercial license included",
   "Free re-downloads",
+  "Commercial license included",
   "Layered PSD with smart objects",
 ]
+
+/**
+ * Returns a display-safe download count string.
+ * - Real count ≥ 126 → show real count
+ * - Real count < 126  → show a seeded-random number in 10–125
+ *   (seeded on productId so the same product always shows the same number)
+ */
+function getDisplayDownloadCount(productId: string, rawCount: number | undefined): string {
+  const real = Number(rawCount) || 0
+  if (real >= 126) return real.toLocaleString()
+
+  // Deterministic hash of productId → stable per product across renders
+  let hash = 0
+  for (let i = 0; i < productId.length; i++) {
+    hash = Math.imul(31, hash) + productId.charCodeAt(i)
+    hash |= 0
+  }
+  const mocked = (Math.abs(hash) % 116) + 10 // range 10–125
+  return mocked.toLocaleString()
+}
 
 const MAX_TAGS_VISIBLE = 4
 const MAX_MULTI_WORD_TAGS = 4
@@ -35,6 +102,7 @@ function buildCleanTags(keywords: string[]): string[] {
 const Info: React.FC<InfoProps> = ({ data }) => {
   const isFreeProduct = Number(data.price) === 0
   const isPremiumProduct = !isFreeProduct
+  const FEATURES = (data.category?.id && FEATURES_BY_CATEGORY[data.category.id]) || DEFAULT_FEATURES
   const productPrice = 5
   const { theme, systemTheme } = useTheme()
   const { isSignedIn } = useAuth()
@@ -150,7 +218,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               variant="premium"
               className="w-full h-12 text-base font-semibold"
               iconOnly={false}
-              customText={isFreeProduct ? "Free Download" : `Download (${productPrice} Credits)`}
+              customText={isFreeProduct ? "Free Download" : `Download for ${productPrice} Credits`}
             />
           </div>
 
@@ -211,7 +279,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           <div className="w-full min-w-0 flex items-center justify-between gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1 shrink-0">
               <Download className="h-3 w-3" />
-              {Math.max(Number(data.downloadCount) || 0, 125).toLocaleString()} downloads
+              {getDisplayDownloadCount(data.id, data.downloadCount)} downloads
             </span>
             <span className="flex items-center gap-1 shrink-0">
               <Shield className="h-3 w-3" />

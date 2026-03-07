@@ -19,6 +19,12 @@ export interface HeroConfig {
   images: string[]
   /** Optional icon + label pairs shown below the CTAs (e.g. HOME page) */
   iconRow?: HeroIconItem[]
+  /**
+   * Controls how thumbnails are rendered in hero tiles.
+   * "cover"   – object-cover, fills the frame (default; best for photos/mockups)
+   * "contain" – object-contain with padding + border + shadow (best for vector/line art on transparent backgrounds)
+   */
+  tileStyle?: "cover" | "contain"
 }
 
 export type HeroPageKey =
@@ -62,6 +68,11 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/packaging-3.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/packaging-4.jpg",
     ],
+    iconRow: [
+      { icon: "package", label: "Print-ready templates" },
+      { icon: "check", label: "Production-ready" },
+      { icon: "sparkles", label: "Commercial license" },
+    ],
   },
 
   "mockup-studio": {
@@ -76,8 +87,15 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/mockup-3.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/mockup-4.jpg",
     ],
+    iconRow: [
+      { icon: "layers", label: "Layered PSD" },
+      { icon: "zap", label: "Smart objects" },
+      { icon: "sparkles", label: "Client-ready" },
+    ],
   },
 
+  // "images" is also the default landing for /category/graphics (no type selected),
+  // so the iconRow reflects the full Graphics group offering.
   images: {
     headline: "Premium images for brand-first campaigns.",
     subhead:
@@ -89,6 +107,11 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/images-2.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/images-3.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/images-4.jpg",
+    ],
+    iconRow: [
+      { icon: "download", label: "High-resolution files" },
+      { icon: "zap", label: "Instant download" },
+      { icon: "sparkles", label: "Commercial license" },
     ],
   },
 
@@ -104,6 +127,12 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/vectors-3.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/vectors-4.jpg",
     ],
+    tileStyle: "contain",
+    iconRow: [
+      { icon: "layers", label: "Scalable vectors" },
+      { icon: "zap", label: "Editable colors" },
+      { icon: "sparkles", label: "Commercial license" },
+    ],
   },
 
   "psd-lab": {
@@ -118,6 +147,11 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/psd-lab-3.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/psd-lab-4.jpg",
     ],
+    iconRow: [
+      { icon: "layers", label: "Layered PSD" },
+      { icon: "zap", label: "Smart objects" },
+      { icon: "sparkles", label: "Client-ready" },
+    ],
   },
 
   "motion-library": {
@@ -131,6 +165,11 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/motion-2.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/motion-3.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/motion-4.jpg",
+    ],
+    iconRow: [
+      { icon: "download", label: "Motion assets" },
+      { icon: "zap", label: "Instant download" },
+      { icon: "sparkles", label: "Commercial license" },
     ],
   },
 }

@@ -42,7 +42,7 @@ export default function CategoryNav() {
                 "h-[42px] flex items-center px-4 text-[13px] font-bold rounded-xl transition-all duration-300 relative z-10 shrink-0",
                 isActive
                   ? "text-white bg-primary shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  : "text-muted-foreground hover:text-primary hover:bg-primary/10"
               )}
             >
               {item.label}

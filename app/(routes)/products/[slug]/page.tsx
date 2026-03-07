@@ -35,6 +35,15 @@ const CATEGORY_IDS = {
   mockups: "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a",
 } as const;
 
+const RELATED_HEADING: Record<string, string> = {
+  [CATEGORY_IDS.mockups]:   "Related Mockups",
+  [CATEGORY_IDS.images]:    "Related Images",
+  [CATEGORY_IDS.vectors]:   "Related Vectors",
+  [CATEGORY_IDS.packaging]: "Related Packaging",
+  [CATEGORY_IDS.psd]:       "Related PSDs",
+  [CATEGORY_IDS.motion]:    "Related Motion",
+};
+
 /** What's Included copy per category */
 const WHATS_INCLUDED_BY_CATEGORY: Record<string, string[]> = {
   [CATEGORY_IDS.images]: [
@@ -243,12 +252,45 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 function ProductDetails({ product }: { product: Product }) {
   const categoryId = product.category?.id;
-  const whatsIncluded =
-    (categoryId && WHATS_INCLUDED_BY_CATEGORY[categoryId]) || DEFAULT_WHATS_INCLUDED;
-  const specifications =
-    (categoryId && SPECIFICATIONS_BY_CATEGORY[categoryId]) || DEFAULT_SPECIFICATIONS;
-  const howItWorks =
-    (categoryId && HOW_IT_WORKS_BY_CATEGORY[categoryId]) || DEFAULT_HOW_IT_WORKS;
+  const isImages = categoryId === CATEGORY_IDS.images;
+
+  // PNG detection: check keywords and gallery image URLs
+  const hasPng =
+    isImages &&
+    (product.keywords?.some((k: string) => k.toLowerCase().includes("png")) ||
+      product.images?.some((img: { url: string }) =>
+        img.url.toLowerCase().includes(".png")
+      ));
+
+  const fileCount = product.images?.length ?? 1;
+
+  const whatsIncluded: string[] = isImages
+    ? [
+        "High-resolution image file(s) (JPG/JPEG)",
+        ...(hasPng ? ["PNG version included"] : []),
+        "Commercial license included",
+      ]
+    : (categoryId && WHATS_INCLUDED_BY_CATEGORY[categoryId]) || DEFAULT_WHATS_INCLUDED;
+
+  const specifications: SpecEntry[] = isImages
+    ? [
+        { label: "File Type", value: hasPng ? "JPG/JPEG + PNG" : "JPG/JPEG" },
+        { label: "Quantity", value: fileCount === 1 ? "1 file" : `${fileCount} files` },
+        { label: "Resolution", value: "High-resolution" },
+        { label: "Color Mode", value: "RGB" },
+        { label: "Software Needed", value: "None" },
+        { label: "Delivery", value: "Instant download" },
+      ]
+    : (categoryId && SPECIFICATIONS_BY_CATEGORY[categoryId]) || DEFAULT_SPECIFICATIONS;
+
+  const howItWorks: string[] = isImages
+    ? [
+        "Click Download to save the file(s) to your device.",
+        "Open in any app (Photos, Preview, Canva, Photoshop, etc.).",
+        "Use for web, social, presentations, or print.",
+        "Re-download anytime from My Downloads.",
+      ]
+    : (categoryId && HOW_IT_WORKS_BY_CATEGORY[categoryId]) || DEFAULT_HOW_IT_WORKS;
 
   return (
     <div className="mt-5 border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
@@ -303,6 +345,11 @@ function ProductDetails({ product }: { product: Product }) {
               </li>
             ))}
           </ol>
+          {isImages && (
+            <p className="mt-3 text-[11px] text-muted-foreground/70 italic leading-snug">
+              This is a ready-to-use image file (not a PSD template).
+            </p>
+          )}
         </div>
       </div>
     </div>
@@ -364,7 +411,9 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
     <div>
       <Container>
         <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E7EB] dark:border-border">
-          <h2 className="text-xl font-bold text-foreground mb-6">Related Mockups</h2>
+          <h2 className="text-xl font-bold text-foreground mb-6">
+            {(categoryId && RELATED_HEADING[categoryId]) ?? "Related Products"}
+          </h2>
           <ProductList
             title=""
             items={relatedItems}

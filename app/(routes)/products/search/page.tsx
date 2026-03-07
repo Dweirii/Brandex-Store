@@ -2,14 +2,13 @@
 
 import { useEffect, useState, useCallback, useRef } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { PackageSearch, ImageIcon } from "lucide-react"
+import { PackageSearch, ImageIcon, SearchX, X } from "lucide-react"
 import Masonry from "react-masonry-css"
 import { toast } from "sonner"
 
 import type { Product, Category } from "@/types"
 import RelatedProductCard from "@/components/ui/related-product-card"
 import SearchCategoryNav from "@/components/search-category-nav"
-import NoResults from "@/components/ui/no-results"
 import Pagination from "@/components/paginatioon"
 import Container from "@/components/ui/container"
 import { getStoredImageData } from "@/components/image-search-button"
@@ -294,51 +293,68 @@ export default function ProductSearchPage() {
     router.push(`/products/search?${params.toString()}`)
   }, [router, searchParams])
 
+  const currentPriceFilter = searchParams.get("priceFilter") || "all"
+  const hasActiveFilters =
+    categoryIdParam !== DEFAULT_CATEGORY_ID || currentPriceFilter !== "all"
+
+  const clearAllFilters = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("categoryId")
+    params.delete("priceFilter")
+    params.set("page", "1")
+    router.push(`/products/search?${params.toString()}`)
+  }, [router, searchParams])
+
+  const clearCategoryFilter = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("categoryId")
+    params.set("page", "1")
+    router.push(`/products/search?${params.toString()}`)
+  }, [router, searchParams])
+
   return (
     <Container>
       <div className="min-h-screen py-6 sm:py-8">
         {/* Results Header */}
-        <div className="px-4 sm:px-6 lg:px-8 mb-8">
+        <div className="px-4 sm:px-6 lg:px-8 mb-6">
           {(queryParam || isImageSearch) && (
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-2">
-                  Search Results
-                </h1>
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  {isImageSearch ? (
-                    <>
-                      <ImageIcon className="h-4 w-4" />
-                      <span>Image search results</span>
-                    </>
-                  ) : (
-                    <>Results for &quot;{queryParam}&quot;</>
-                  )}
-                  {categoryIdParam !== DEFAULT_CATEGORY_ID && selectedCategoryName && selectedCategoryName !== "All Categories" && (
-                    <span className="ml-2">in {selectedCategoryName}</span>
-                  )}
-                </p>
-              </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <PriceFilter />
-                {!loading && hasSearched && (
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">
-                    {total} {total === 1 ? "result" : "results"}
-                  </span>
+            <div className="mb-4">
+              <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mb-1">
+                Search Results
+              </h1>
+              <p className="text-sm text-muted-foreground flex items-center gap-2">
+                {isImageSearch ? (
+                  <>
+                    <ImageIcon className="h-4 w-4" />
+                    <span>Image search results</span>
+                  </>
+                ) : (
+                  <>Results for &quot;{queryParam}&quot;</>
                 )}
-              </div>
+                {categoryIdParam !== DEFAULT_CATEGORY_ID && selectedCategoryName && selectedCategoryName !== "All Categories" && (
+                  <span>in {selectedCategoryName}</span>
+                )}
+              </p>
             </div>
           )}
 
-          {/* Search Category Navigation Filter */}
-          <SearchCategoryNav
-            categories={categories}
-            selectedCategoryId={categoryIdParam}
-            onCategoryChange={handleCategoryNavChange}
-          />
+          {/* Filter bar — category dropdown + All/Paid/Free toggle + result count */}
+          <div className="flex items-center gap-3 flex-wrap py-3">
+            <SearchCategoryNav
+              categories={categories}
+              selectedCategoryId={categoryIdParam}
+              onCategoryChange={handleCategoryNavChange}
+            />
+            <PriceFilter />
+            {!loading && hasSearched && (
+              <span className="text-sm text-muted-foreground whitespace-nowrap ml-auto">
+                {total} {total === 1 ? "result" : "results"}
+              </span>
+            )}
+          </div>
 
           {!queryParam && !hasSearched && !isImageSearch && (
-            <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl bg-muted/5">
+            <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl bg-muted/5 mt-4">
               <PackageSearch className="mx-auto h-12 w-12 mb-4 opacity-20" />
               <p className="text-lg">Select a category, search by text, or upload an image to find products.</p>
             </div>
@@ -354,13 +370,38 @@ export default function ProductSearchPage() {
           )}
 
           {!loading && products.length === 0 && hasSearched && (
-            <div className="space-y-4">
-              <NoResults />
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="relative rounded-full bg-muted p-4 mb-4">
+                <SearchX className="h-10 w-10 text-muted-foreground/50" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No results found</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mb-6">
+                {queryParam
+                  ? `No products match "${queryParam}"${categoryIdParam !== DEFAULT_CATEGORY_ID ? ` in ${selectedCategoryName}` : ""}.`
+                  : "No products match your current filters."}
+              </p>
+              <div className="flex items-center gap-3 flex-wrap justify-center">
+                {categoryIdParam !== DEFAULT_CATEGORY_ID && (
+                  <button
+                    onClick={clearCategoryFilter}
+                    className="flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-xl border border-border hover:border-foreground/40 hover:bg-muted/50 transition-all duration-200"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    Search all categories
+                  </button>
+                )}
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="flex items-center gap-1.5 h-9 px-4 text-sm font-semibold rounded-xl bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 transition-all duration-200"
+                  >
+                    Clear filters
+                  </button>
+                )}
+              </div>
               {searchInfo && (
-                <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                    ℹ️ {searchInfo}
-                  </p>
+                <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg max-w-md">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200">ℹ️ {searchInfo}</p>
                 </div>
               )}
             </div>

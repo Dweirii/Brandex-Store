@@ -14,11 +14,11 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
-  const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow } = config
+  const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow, tileStyle } = config
 
   return (
     <section className="w-full bg-background">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-10 sm:pt-12">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
 
           {/* Left: Text — justify-center keeps content vertically centred against collage */}
@@ -69,17 +69,16 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
               </Button>
             </div>
 
-            {/* Icon row — trust signals */}
+            {/* Micro-line — dot-separated trust signals beneath the CTA buttons */}
             {iconRow && iconRow.length > 0 && (
-              <div className="flex flex-row flex-wrap items-center gap-4 mt-0.5">
-                {iconRow.map((item, i) => {
-                  return (
-                    <div key={i} className="flex items-center gap-1.5">
-                      <span className="text-xs text-muted-foreground">{item.label}</span>
-                    </div>
-                  )
-                })}
-              </div>
+              <p className="flex items-center flex-wrap gap-x-1.5 gap-y-0.5 text-[11.5px] text-muted-foreground mt-0.5 leading-snug">
+                {iconRow.map((item, i) => (
+                  <span key={i} className="flex items-center gap-x-1.5">
+                    {i > 0 && <span className="opacity-30 select-none">·</span>}
+                    {item.label}
+                  </span>
+                ))}
+              </p>
             )}
           </motion.div>
 
@@ -89,14 +88,14 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
           >
-            <ImageCollage images={images} />
+            <ImageCollage images={images} tileStyle={tileStyle} />
           </motion.div>
 
         </div>
-      </div>
 
-      {/* Divider */}
-      <div className="border-b border-border" />
+        {/* Divider — constrained to container width, matching hero + grid alignment */}
+        <div className="border-b border-border mt-10 sm:mt-12" />
+      </div>
     </section>
   )
 }
@@ -109,22 +108,27 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
 // never overflow or shrink unpredictably.
 // ---------------------------------------------------------------------------
 
-function ImageCollage({ images }: { images: string[] }) {
+interface ImageCollageProps {
+  images: string[]
+  tileStyle?: "cover" | "contain"
+}
+
+function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
   const tiles = images.slice(0, 4)
 
   if (tiles.length === 0) return null
 
   if (tiles.length === 1) {
     return (
-      <Tile src={tiles[0]} className="aspect-[4/3] w-full" priority sizes="(max-width: 1024px) 100vw, 50vw" />
+      <Tile src={tiles[0]} className="aspect-[4/3] w-full" priority sizes="(max-width: 1024px) 100vw, 50vw" tileStyle={tileStyle} />
     )
   }
 
   if (tiles.length === 2) {
     return (
       <div className="grid grid-cols-2 gap-2 h-[220px] sm:h-[260px] lg:h-[280px]">
-        <Tile src={tiles[0]} className="h-full" priority sizes="(max-width: 1024px) 50vw, 25vw" />
-        <Tile src={tiles[1]} className="h-full" sizes="(max-width: 1024px) 50vw, 25vw" />
+        <Tile src={tiles[0]} className="h-full" priority sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
+        <Tile src={tiles[1]} className="h-full" sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
       </div>
     )
   }
@@ -138,22 +142,26 @@ function ImageCollage({ images }: { images: string[] }) {
         className="row-span-2"
         priority
         sizes="(max-width: 1024px) 33vw, 17vw"
+        tileStyle={tileStyle}
       />
       {/* Col 2 — full height */}
       <Tile
         src={tiles[1]}
         className="row-span-2"
         sizes="(max-width: 1024px) 33vw, 17vw"
+        tileStyle={tileStyle}
       />
       {/* Col 3 top */}
       <Tile
         src={tiles[2] ?? ""}
         sizes="(max-width: 1024px) 33vw, 17vw"
+        tileStyle={tileStyle}
       />
       {/* Col 3 bottom */}
       <Tile
         src={tiles[3] ?? ""}
         sizes="(max-width: 1024px) 33vw, 17vw"
+        tileStyle={tileStyle}
       />
     </div>
   )
@@ -164,22 +172,44 @@ interface TileProps {
   className?: string
   priority?: boolean
   sizes?: string
+  tileStyle?: "cover" | "contain"
 }
 
-function Tile({ src, className = "", priority, sizes }: TileProps) {
+function Tile({ src, className = "", priority, sizes, tileStyle = "cover" }: TileProps) {
   const hasImage = Boolean(src?.trim())
+  const isContain = tileStyle === "contain"
+
+  // Contain mode: clean white frame + subtle border + gentle shadow
+  // so transparent vector art has clear visual separation from the page.
+  const frameClasses = isContain
+    ? `relative rounded-xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
+    : `relative rounded-xl overflow-hidden bg-muted ${className}`
 
   return (
-    <div className={`relative rounded-xl overflow-hidden bg-muted ${className}`}>
+    <div className={frameClasses}>
       {hasImage && (
-        <Image
-          src={src}
-          alt=""
-          fill
-          className="object-cover"
-          sizes={sizes}
-          priority={priority}
-        />
+        isContain ? (
+          // Inner wrapper creates uniform padding so art never touches the frame edge
+          <div className="absolute inset-[10%]">
+            <Image
+              src={src}
+              alt=""
+              fill
+              className="object-contain"
+              sizes={sizes}
+              priority={priority}
+            />
+          </div>
+        ) : (
+          <Image
+            src={src}
+            alt=""
+            fill
+            className="object-cover"
+            sizes={sizes}
+            priority={priority}
+          />
+        )
       )}
     </div>
   )
