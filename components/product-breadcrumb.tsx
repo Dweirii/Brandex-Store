@@ -32,15 +32,13 @@ export function ProductBreadcrumb({
             {item.href && !isLast ? (
               <Link
                 href={item.href}
-                className="hover:underline transition-colors"
-                className="text-muted-foreground"
+                className="text-muted-foreground hover:underline transition-colors"
               >
                 {item.label}
               </Link>
             ) : (
               <span
-                className="font-medium truncate max-w-[180px] sm:max-w-xs"
-                className={isLast ? "text-foreground" : "text-muted-foreground"}
+                className={`font-medium truncate max-w-[180px] sm:max-w-xs ${isLast ? "text-foreground" : "text-muted-foreground"}`}
                 title={item.label}
               >
                 {item.label}

@@ -225,13 +225,7 @@ export default function ThankYouPage() {
           </div>
 
           <motion.div
-            className={`text-4xl font-mono font-bold mb-3 ${urgencyLevel === "critical"
-              ? "text-red-600 dark:text-red-400"
-              : urgencyLevel === "warning"
-                ? "text-yellow-600 dark:text-yellow-400"
-                : ""
-              }`}
-            className={urgencyLevel === "normal" ? "text-primary" : ""}
+            className={`text-4xl font-mono font-bold mb-3 ${urgencyLevel === "critical" ? "text-red-600 dark:text-red-400" : urgencyLevel === "warning" ? "text-yellow-600 dark:text-yellow-400" : "text-primary"}`}
             animate={urgencyLevel === "critical" ? { scale: [1, 1.05, 1] } : {}}
             transition={urgencyLevel === "critical" ? { duration: 1, repeat: Number.POSITIVE_INFINITY } : {}}
           >
