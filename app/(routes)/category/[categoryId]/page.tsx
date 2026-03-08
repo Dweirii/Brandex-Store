@@ -214,7 +214,17 @@ export default async function CategoryPage({
 
       {/* Full-width hero — only rendered for configured categories */}
       {heroConfig && (
-        <HeroSection config={heroConfig} categoryLabel={category?.name} />
+        <HeroSection
+          config={heroConfig}
+          categoryLabel={
+            // When landing on a group slug with no sub-type selected (e.g. /category/graphics),
+            // use the group's display name ("Graphics") rather than the underlying
+            // sub-category name ("Images") that the UUID resolves to.
+            CATEGORY_GROUPS[slug] && !type
+              ? CATEGORY_GROUPS[slug].name
+              : category?.name
+          }
+        />
       )}
 
       <Container>

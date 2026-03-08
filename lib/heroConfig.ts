@@ -38,11 +38,11 @@ export type HeroPageKey =
 
 export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
   home: {
-    headline: "Premium mockups that present like a pro.",
+    headline: "Premium creative assets. Built to impress.",
     subhead:
-      "Realistic scenes with smart-object workflows—drop in artwork, fine-tune lighting, and export client-ready visuals in minutes.",
-    primaryCTA: { label: "Open Mockup Studio", href: "/category/mockups" },
-    secondaryCTA: { label: "View Newest", href: "/category/mockups?sortBy=newest" },
+      "Mockups, vectors, photos, packaging, and motion—ready for real projects and real deadlines.",
+    primaryCTA: { label: "Browse Assets", href: "/" },
+    secondaryCTA: { label: "View Pricing", href: "/credits" },
     images: [
       "https://Brandex-cdn.b-cdn.net/hero/home-1.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/home-2.jpg",
@@ -50,9 +50,9 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/home-4.jpg",
     ],
     iconRow: [
-      { icon: "download", label: "Instant Download" },
+      { icon: "download", label: "Instant download" },
       { icon: "layers", label: "Layered PSD" },
-      { icon: "sparkles", label: "Commercial-ready" },
+      { icon: "sparkles", label: "Commercial license" },
     ],
   },
 
@@ -79,7 +79,7 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
     headline: "Premium mockups that present like a pro.",
     subhead:
       "Realistic scenes with smart-object workflows—drop in artwork, fine-tune lighting, and export client-ready visuals in minutes.",
-    primaryCTA: { label: "Open Mockup Studio", href: "/category/mockups" },
+    primaryCTA: { label: "Browse Mockups", href: "/category/mockups" },
     secondaryCTA: { label: "View Newest", href: "/category/mockups?sortBy=newest" },
     images: [
       "https://Brandex-cdn.b-cdn.net/hero/mockup-1.jpg",
@@ -95,13 +95,13 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
   },
 
   // "images" is also the default landing for /category/graphics (no type selected),
-  // so the iconRow reflects the full Graphics group offering.
+  // so the headline and iconRow reflect the full Graphics group offering.
   images: {
-    headline: "Premium images for brand-first campaigns.",
+    headline: "Premium graphics for brand-first campaigns.",
     subhead:
-      "Curated visuals built for landing pages, ads, and product storytelling—clean, modern, and ready to use.",
-    primaryCTA: { label: "Browse Images", href: "/category/images" },
-    secondaryCTA: { label: "View Newest", href: "/category/images?sortBy=newest" },
+      "Curated images, vectors, and PSDs built for landing pages, ads, and product storytelling—clean, modern, and ready to use.",
+    primaryCTA: { label: "Browse Graphics", href: "/category/graphics" },
+    secondaryCTA: { label: "View Newest", href: "/category/graphics?sortBy=newest" },
     images: [
       "https://Brandex-cdn.b-cdn.net/hero/images-1.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/images-2.jpg",
@@ -109,8 +109,8 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "https://Brandex-cdn.b-cdn.net/hero/images-4.jpg",
     ],
     iconRow: [
-      { icon: "download", label: "High-resolution files" },
-      { icon: "zap", label: "Instant download" },
+      { icon: "layers", label: "Images + vectors + PSD" },
+      { icon: "download", label: "Instant download" },
       { icon: "sparkles", label: "Commercial license" },
     ],
   },

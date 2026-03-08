@@ -155,7 +155,7 @@ export default function ThankYouPage() {
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
         >
-          <div className="h-24 w-24 rounded-full flex items-center justify-center shadow-2xl" style={{ backgroundColor: '#00B81A' }}>
+          <div className="h-24 w-24 rounded-full flex items-center justify-center shadow-2xl bg-primary">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -166,7 +166,7 @@ export default function ThankYouPage() {
           </div>
 
           <motion.div
-            className="absolute inset-0 rounded-full border-4" style={{ borderColor: '#00B81A' }}
+            className="absolute inset-0 rounded-full border-4 border-primary"
             initial={{ scale: 1, opacity: 0.8 }}
             animate={{ scale: 1.5, opacity: 0 }}
             transition={{
@@ -202,18 +202,13 @@ export default function ThankYouPage() {
         </motion.div>
 
         <motion.div
-          className={`w-full max-w-md p-6 rounded-2xl border-2 mb-8 ${urgencyLevel === "critical"
-            ? "bg-red-50 border-red-500 dark:bg-red-950/20 dark:border-red-500"
-            : urgencyLevel === "warning"
-              ? "bg-yellow-50 border-yellow-500 dark:bg-yellow-950/20 dark:border-yellow-500"
-              : "dark:bg-primary/20"
-            } border-2 mb-8 ${urgencyLevel === "critical"
+          className={`w-full max-w-md p-6 rounded-2xl border-2 mb-8 ${
+            urgencyLevel === "critical"
               ? "bg-red-50 border-red-500 dark:bg-red-950/20 dark:border-red-500"
               : urgencyLevel === "warning"
                 ? "bg-yellow-50 border-yellow-500 dark:bg-yellow-950/20 dark:border-yellow-500"
-                : ""
-            }`}
-          style={urgencyLevel === "normal" ? { backgroundColor: 'rgba(0,184,26,0.06)', borderColor: '#00B81A' } : {}}
+                : "bg-primary/5 border-primary dark:bg-primary/20"
+          }`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1.4 }}
@@ -222,7 +217,7 @@ export default function ThankYouPage() {
             {urgencyLevel === "critical" ? (
               <AlertTriangle className="h-6 w-6 text-red-500" />
             ) : (
-              <Clock className="h-6 w-6" style={{ color: '#00B81A' }} />
+              <Clock className="h-6 w-6 text-primary" />
             )}
             <h2 className="text-lg font-bold text-foreground">
               {urgencyLevel === "critical" ? "URGENT: Download Now!" : "Download Time Remaining"}
@@ -236,7 +231,7 @@ export default function ThankYouPage() {
                 ? "text-yellow-600 dark:text-yellow-400"
                 : ""
               }`}
-            style={urgencyLevel === "normal" ? { color: '#00B81A' } : {}}
+            className={urgencyLevel === "normal" ? "text-primary" : ""}
             animate={urgencyLevel === "critical" ? { scale: [1, 1.05, 1] } : {}}
             transition={urgencyLevel === "critical" ? { duration: 1, repeat: Number.POSITIVE_INFINITY } : {}}
           >
@@ -244,13 +239,7 @@ export default function ThankYouPage() {
           </motion.div>
 
           <p
-            className={`text-sm font-medium ${urgencyLevel === "critical"
-              ? "text-red-700 dark:text-red-300"
-              : urgencyLevel === "warning"
-                ? "text-yellow-700 dark:text-yellow-300"
-                : ""
-              }`}
-            style={urgencyLevel === "normal" ? { color: '#00B81A' } : {}}
+            className={`text-sm font-medium ${urgencyLevel === "critical" ? "text-red-700 dark:text-red-300" : urgencyLevel === "warning" ? "text-yellow-700 dark:text-yellow-300" : "text-primary"}`}
           >
             {timeLeft === 0 ? "Download time has expired" : "You have 30 minutes to download your files"}
           </p>
@@ -291,7 +280,7 @@ export default function ThankYouPage() {
             >
               <div className="text-left flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <Download className="h-5 w-5" style={{ color: '#00B81A' }} />
+                  <Download className="h-5 w-5 text-primary" />
                   <p className="font-semibold text-lg text-foreground">{item.productName}</p>
                 </div>
                 <p className="text-gray-600 dark:text-gray-400">

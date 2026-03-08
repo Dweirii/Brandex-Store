@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import type { HeroConfig } from "@/lib/heroConfig"
 
@@ -14,6 +15,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
+  const router = useRouter()
   const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow, tileStyle } = config
 
   return (
@@ -30,7 +32,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
           >
             {/* Category badge — category pages only */}
             {categoryLabel && (
-              <div className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-[#00B81A]/10 border border-[#00B81A]/20 text-[#00B81A] text-[0.7rem] font-semibold uppercase tracking-wide">
+              <div className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[0.7rem] font-semibold uppercase tracking-wide">
                 <Sparkles className="w-2.5 h-2.5" />
                 {categoryLabel}
               </div>
@@ -50,7 +52,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
             <div className="flex flex-row flex-wrap gap-2.5 mt-1">
               <Button
                 size="sm"
-                className="group bg-[#00B81A] hover:bg-[#009316] text-white font-semibold px-5 h-9 text-sm rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
+                className="group bg-primary hover:bg-logogreen-600 text-white font-semibold px-5 h-9 text-sm rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
                 onClick={() => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })}
               >
                 <span className="flex items-center gap-1.5">
@@ -63,7 +65,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
                 variant="outline"
                 size="sm"
                 className="font-semibold px-5 h-9 text-sm rounded-lg border border-border hover:border-foreground/40 transition-all duration-300"
-                onClick={() => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() => router.push(secondaryCTA.href)}
               >
                 {secondaryCTA.label}
               </Button>
@@ -183,7 +185,7 @@ function Tile({ src, className = "", priority, sizes, tileStyle = "cover" }: Til
   // so transparent vector art has clear visual separation from the page.
   const frameClasses = isContain
     ? `relative rounded-xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
-    : `relative rounded-xl overflow-hidden bg-muted ${className}`
+    : `relative rounded-xl overflow-hidden bg-muted border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
 
   return (
     <div className={frameClasses}>

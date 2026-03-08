@@ -33,14 +33,14 @@ export function ProductBreadcrumb({
               <Link
                 href={item.href}
                 className="hover:underline transition-colors"
-                style={{ color: "#6B7280" }}
+                className="text-muted-foreground"
               >
                 {item.label}
               </Link>
             ) : (
               <span
                 className="font-medium truncate max-w-[180px] sm:max-w-xs"
-                style={{ color: isLast ? "#111827" : "#6B7280" }}
+                className={isLast ? "text-foreground" : "text-muted-foreground"}
                 title={item.label}
               >
                 {item.label}

@@ -281,6 +281,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                   <DownloadButton
                     storeId={data.storeId}
                     productId={data.id}
+                    productSlug={data.slug ?? data.id}
                     size="sm"
                     variant="default"
                     iconOnly
@@ -327,6 +328,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                       <DownloadButton
                         storeId={data.storeId}
                         productId={data.id}
+                        productSlug={data.slug ?? data.id}
                         size="sm"
                         variant="default"
                         iconOnly
@@ -421,6 +423,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                   <DownloadButton
                     storeId={data.storeId}
                     productId={data.id}
+                    productSlug={data.slug ?? data.id}
                     size="sm"
                     variant="default"
                     className="flex-1 bg-white/90 hover:bg-white text-foreground border-0"
@@ -440,6 +443,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
                   <DownloadButton
                     storeId={data.storeId}
                     productId={data.id}
+                    productSlug={data.slug ?? data.id}
                     size="sm"
                     variant="default"
                     className="flex-1 bg-white/90 hover:bg-white text-foreground border-0"

@@ -103,7 +103,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider signInFallbackRedirectUrl="/downloads">
       <html lang="en" className="h-full" suppressHydrationWarning>
         <head>
           {/*

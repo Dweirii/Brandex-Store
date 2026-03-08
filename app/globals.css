@@ -7,6 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-hover-bg: var(--hover-bg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -47,13 +48,13 @@
 
 :root {
   --background: #FCFCFD;
-  --foreground: #111827;
+  --foreground: #333333;
 
   --card: #ffffff;
-  --card-foreground: #111827;
+  --card-foreground: #333333;
 
   --popover: #ffffff;
-  --popover-foreground: #111827;
+  --popover-foreground: #333333;
 
   --primary: #00B81A;
   --primary-foreground: #ffffff;
@@ -75,6 +76,8 @@
   --ring: rgba(0, 184, 26, 0.30);
 
   --hover-bg: #E9FBEF;
+  --primary-hover: #009316;
+  --primary-dark: #008c16;
 
   --chart-1: #00B81A;
   --chart-2: #6B7280;
@@ -85,11 +88,11 @@
   --radius: 10px;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #111827;
+  --sidebar-foreground: #333333;
   --sidebar-primary: #00B81A;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #F9FAFB;
-  --sidebar-accent-foreground: #111827;
+  --sidebar-accent-foreground: #333333;
   --sidebar-border: #E5E7EB;
   --sidebar-ring: rgba(0, 184, 26, 0.30);
 }
@@ -147,6 +150,9 @@
   --sidebar-accent-foreground: #e8e8e8;
   --sidebar-border: #2d2d2d;
   --sidebar-ring: #00B81A;
+  --hover-bg: rgba(0, 184, 26, 0.08);
+  --primary-hover: #009316;
+  --primary-dark: #008c16;
 }
 
 

@@ -214,6 +214,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             <DownloadButton
               storeId={data.storeId}
               productId={data.id}
+              productSlug={data.slug ?? data.id}
               size="lg"
               variant="premium"
               className="w-full h-12 text-base font-semibold"
@@ -236,13 +237,13 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                   <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
                   <Link
                     href="/credits"
-                    className="font-semibold text-[#00B81A] hover:underline"
+                    className="font-semibold text-primary hover:underline"
                   >
                     Buy Credits
                   </Link>
                 </p>
               ) : (
-                <p className="font-medium" style={{ color: "#00B81A" }}>
+                <p className="font-medium text-primary">
                   You have enough credits ✓
                 </p>
               )}
@@ -250,30 +251,30 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           )}
 
           {/* Divider */}
-          <div className="border-t border-[#E5E7EB] dark:border-border" />
+          <div className="border-t border-border" />
 
           {/* Feature checklist — full width, aligned with button; left column text-left, right column text-right */}
           <div className="w-full min-w-0 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-foreground">
             <div className="flex items-center gap-2 text-left">
-              <Check className="h-4 w-4 shrink-0" style={{ color: "#00B81A" }} />
+              <Check className="h-4 w-4 shrink-0 text-primary" />
               <span>{FEATURES[0]}</span>
             </div>
             <div className="flex items-center justify-end gap-2 text-right">
-              <Check className="h-4 w-4 shrink-0 order-2" style={{ color: "#00B81A" }} />
+              <Check className="h-4 w-4 shrink-0 order-2 text-primary" />
               <span className="order-1">{FEATURES[2]}</span>
             </div>
             <div className="flex items-center gap-2 text-left">
-              <Check className="h-4 w-4 shrink-0" style={{ color: "#00B81A" }} />
+              <Check className="h-4 w-4 shrink-0 text-primary" />
               <span>{FEATURES[1]}</span>
             </div>
             <div className="flex items-center justify-end gap-2 text-right">
-              <Check className="h-4 w-4 shrink-0 order-2" style={{ color: "#00B81A" }} />
+              <Check className="h-4 w-4 shrink-0 order-2 text-primary" />
               <span className="order-1">{FEATURES[3]}</span>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="border-t border-[#E5E7EB] dark:border-border" />
+          <div className="border-t border-border" />
 
           {/* Trust row — full width, same as button; three segments spread edge-to-edge */}
           <div className="w-full min-w-0 flex items-center justify-between gap-4 text-xs text-muted-foreground">
@@ -297,7 +298,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       {/* Full Artwork — Packaging category only */}
       {data.category?.id === "fd995552-baa8-4b86-bf7e-0acbefd43fd6" && (
         <div className="pt-2 flex flex-col items-center justify-center">
-          <p className="text-xl md:text-black font-bold tracking-wide uppercase text-muted-foreground mb-3">
+          <p className="text-xl md:text-foreground font-bold tracking-wide uppercase text-muted-foreground mb-3">
             Full Artwork
           </p>
           <Image

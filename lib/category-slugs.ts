@@ -23,7 +23,7 @@ export const CATEGORY_GROUPS: Record<string, { name: string; ids: string[]; subt
         name: "Mockups",
         ids: ["960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"],
         subtabs: [
-            { label: "Studio", id: "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a", slug: "mockup-studio" }
+            { label: "Mockups", id: "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a", slug: "mockup-studio" }
         ]
     },
     "graphics": {

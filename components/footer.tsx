@@ -26,34 +26,28 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-foreground">About Brandex</h3>
             <p className="text-sm text-muted-foreground max-w-[640px]">
-              Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and
-              brands who demand quality and speed.
+              brandexme.com offers premium creative assets including mockups, graphics (images, vectors, PSD), packaging, and motion. Instant downloads, commercial-ready, and built for real-world projects.
             </p>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4 text-foreground">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              {["Privacy Policy", "Refund Policy", "Terms of Service"].map((label) => {
-                const href = `/${label.toLowerCase().replace(/ /g, "-")}`
-                return (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                )
-              })}
-              <li>
-                <Link
-                  href="/privacy-request"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                >
-                  Do Not Sell My Personal Information
-                </Link>
-              </li>
+              {[
+                { label: "About", href: "/about" },
+                { label: "Licensing", href: "/licensing" },
+                { label: "Refund Policy", href: "/refund-policy" },
+                { label: "Privacy Policy", href: "/privacy-policy" },
+                { label: "Terms of Service", href: "/terms-of-service" },
+              ].map(({ label, href }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>

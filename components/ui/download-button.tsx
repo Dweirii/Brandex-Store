@@ -3,12 +3,12 @@
 import { useState, useRef, useEffect } from "react"
 import { createPortal } from "react-dom"
 import { useAuth, useClerk } from "@clerk/nextjs"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Download, Loader2, Lock, CheckCircle, Sparkles } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { track as vercelTrack } from "@vercel/analytics"
-// ⬇️ shadcn/ui toast hook (adjust the path if your project differs)
 import { useToast } from "@/components/ui/use-toast"
 import { DownloadProgress } from "@/components/ui/download-progress"
 
@@ -18,6 +18,8 @@ type ButtonVariant = "default" | "outline" | "ghost" | "premium"
 interface DownloadButtonProps {
   storeId: string
   productId: string
+  /** Slug (or ID as fallback) used to redirect to the product page when access is denied after auto-login */
+  productSlug?: string
   disabled?: boolean
   size?: ButtonSize
   variant?: ButtonVariant
@@ -28,8 +30,8 @@ interface DownloadButtonProps {
   gaEventName?: string
   iconOnly?: boolean
   className?: string
-  customText?: string // Custom button text to display
-  customIcon?: React.ComponentType<{ className?: string }> // Custom icon to display
+  customText?: string
+  customIcon?: React.ComponentType<{ className?: string }>
 }
 
 // Get the base admin URL without any API path
@@ -46,6 +48,7 @@ const GA_EVENT_DEFAULT = "download_complete"
 export const DownloadButton = ({
   storeId,
   productId,
+  productSlug,
   disabled = false,
   size = "sm",
   variant = "default",
@@ -64,6 +67,7 @@ export const DownloadButton = ({
   const [isClicked, setIsClicked] = useState(false)
   const { getToken, isSignedIn } = useAuth()
   const { openSignIn } = useClerk()
+  const router = useRouter()
   const { toast } = useToast()
   const objectUrlRef = useRef<string | null>(null)
 
@@ -73,6 +77,9 @@ export const DownloadButton = ({
   const [currentFileName, setCurrentFileName] = useState("")
   const [isComplete, setIsComplete] = useState(false)
   const [mounted, setMounted] = useState(false)
+
+  // Tracks whether this render is an auto-triggered post-login download
+  const autoDownloadCheckedRef = useRef(false)
 
   useEffect(() => {
     setMounted(true)
@@ -140,21 +147,45 @@ export const DownloadButton = ({
     }
   }
 
+  // ── Auto-resume download after sign-in ───────────────────────────────────
+  // When a logged-out user clicks Download we embed ?pendingDownload=<id> in
+  // the forceRedirectUrl so Clerk returns the user here after login. On mount
+  // we detect that param, clean the URL, then wait for isSignedIn to become
+  // true before triggering the download automatically.
+  useEffect(() => {
+    if (!isSignedIn || autoDownloadCheckedRef.current) return
+    autoDownloadCheckedRef.current = true
+
+    if (typeof window === "undefined") return
+    const url = new URL(window.location.href)
+    const pendingId = url.searchParams.get("pendingDownload")
+
+    if (pendingId === productId) {
+      url.searchParams.delete("pendingDownload")
+      window.history.replaceState({}, "", url.toString())
+      // Slight delay so Clerk's session token is fully ready
+      setTimeout(() => handleDownload(undefined, { isAutoTriggered: true }), 300)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignedIn])
+
   // ── main handler ──────────────────────────────────────────────────────────
-  const handleDownload = async (e?: React.MouseEvent) => {
+  const handleDownload = async (
+    e?: React.MouseEvent,
+    opts?: { isAutoTriggered?: boolean },
+  ) => {
     e?.preventDefault()
     e?.stopPropagation()
 
     if (disabled || loading) return
 
     if (!isSignedIn) {
-      toast({
-        title: "Sign in required",
-        description: "You need to sign in to download your purchase.",
-        variant: "destructive",
-      })
+      // No red toast — just open the Clerk modal with a pending-download marker
+      // embedded in the return URL so we can auto-resume after sign-in.
       try {
-        openSignIn?.({ forceRedirectUrl: window.location.href })
+        const returnUrl = new URL(window.location.href)
+        returnUrl.searchParams.set("pendingDownload", productId)
+        openSignIn?.({ forceRedirectUrl: returnUrl.toString() })
       } catch { }
       return
     }
@@ -332,7 +363,25 @@ export const DownloadButton = ({
 
       console.error("[Download Error]", e)
 
-      // Handle insufficient credits errors
+      // Handle insufficient credits / no-access errors ─────────────────────
+      // When the download was auto-triggered after sign-in and the user doesn't
+      // have access, send them to the product page (purchase flow) instead of
+      // showing a toast. They can decide to buy there; if they don't, they stay
+      // in context on that product page.
+      const isAccessDenied =
+        msg.includes("UPGRADE_REQUIRED") ||
+        msg.includes("Insufficient credits") ||
+        msg.includes("credits") ||
+        msg.includes("don't have access") ||
+        msg.includes("do not have access")
+
+      if (isAccessDenied && opts?.isAutoTriggered) {
+        ga("download_error_access_denied_auto", { product_id: productId, store_id: storeId, message: msg })
+        vTrack("download_error_access_denied_auto", { productId, storeId, message: msg })
+        router.push(`/products/${productSlug ?? productId}`)
+        return
+      }
+
       if (msg.includes("Insufficient credits") || msg.includes("credits")) {
         ga("download_error_insufficient_credits", { product_id: productId, store_id: storeId, message: msg })
         vTrack("download_error_insufficient_credits", { productId, storeId, message: msg })

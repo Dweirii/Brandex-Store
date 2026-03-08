@@ -18,9 +18,9 @@ import {
   Settings,
   Sun,
   Moon,
-  Laptop,
   Coins,
   Download,
+  HelpCircle,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
@@ -127,6 +127,14 @@ export function UserDropdown() {
             <span className="text-sm font-medium group-hover:text-foreground transition-colors">Settings</span>
           </DropdownMenuItem>
 
+          {/* Help */}
+          <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
+            <Link href="/help" className="flex items-center gap-3 px-3 py-2.5 group">
+              <HelpCircle className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <span className="text-sm font-medium group-hover:text-foreground transition-colors">Help &amp; FAQ</span>
+            </Link>
+          </DropdownMenuItem>
+
           <DropdownMenuSeparator className="bg-border/50 my-1.5" />
 
           {/* Theme Section */}
@@ -142,11 +150,6 @@ export function UserDropdown() {
           <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("dark"), 10)} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-muted/50">
             <Moon className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mr-3" />
             <span className="text-sm font-medium group-hover:text-foreground transition-colors">Dark</span>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem onSelect={() => setTimeout(() => setTheme("system"), 10)} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-muted/50">
-            <Laptop className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mr-3" />
-            <span className="text-sm font-medium group-hover:text-foreground transition-colors">System</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator className="bg-border/50 my-1.5" />

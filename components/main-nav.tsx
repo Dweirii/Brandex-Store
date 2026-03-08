@@ -66,8 +66,8 @@ const MainNav = () => {
                   className={cn(
                     "relative block px-4 py-2 text-sm transition-colors duration-200 rounded-full group no-underline",
                     route.active
-                      ? "text-[#00B81A] font-semibold"
-                      : "text-[#111827] font-medium hover:text-[#00B81A]",
+                      ? "text-primary font-semibold"
+                      : "text-foreground font-medium hover:text-primary",
                   )}
                   aria-current={route.active ? "page" : undefined}
                 >
@@ -76,7 +76,7 @@ const MainNav = () => {
                   <AnimatePresence>
                     {(route.active || hoveredIndex === index) && (
                       <motion.span
-                        className="absolute inset-0 rounded-full -z-0 bg-[#E9FBEF]"
+                        className="absolute inset-0 rounded-full -z-0 bg-hover-bg"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
@@ -90,7 +90,7 @@ const MainNav = () => {
                     {(route.active || hoveredIndex === index) && (
                       <motion.span
                         className={cn(
-                          "absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full bg-[#00B81A]",
+                          "absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full bg-primary",
                           route.active ? "h-[3px] w-3/4" : "h-[2px] w-3/4",
                         )}
                         initial={{ scaleX: 0, originX: 0.5 }}
@@ -113,8 +113,8 @@ const MainNav = () => {
             className={cn(
               "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200",
               pathname === "/intake" || pathname.startsWith("/intake/")
-                ? "border-primary bg-[#E9FBEF] text-primary"
-                : "border-border text-foreground hover:border-primary hover:text-primary hover:bg-[#E9FBEF]"
+                ? "border-primary bg-hover-bg text-primary"
+                : "border-border text-foreground hover:border-primary hover:text-primary hover:bg-hover-bg"
             )}
           >
             <ClipboardList className="w-3.5 h-3.5" />
@@ -172,8 +172,8 @@ const MainNav = () => {
                       className={cn(
                         "group flex items-center justify-between px-6 py-4 text-base font-medium transition-all",
                         route.active
-                          ? "bg-[#E9FBEF] text-[#00B81A] font-semibold border-l-[3px] border-[#00B81A]"
-                          : "text-[#111827] hover:bg-[#E9FBEF] hover:text-[#00B81A]",
+                          ? "bg-hover-bg text-primary font-semibold border-l-[3px] border-primary"
+                          : "text-foreground hover:bg-hover-bg hover:text-primary",
                       )}
                       aria-current={route.active ? "page" : undefined}
                     >

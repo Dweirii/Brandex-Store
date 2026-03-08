@@ -17,8 +17,8 @@ export function DesktopNavbarSection() {
       </div>
 
       <div className="flex items-center gap-3 shrink-0 relative">
-        <UserDropdown />
         <NavbarActions />
+        <UserDropdown />
       </div>
     </div>
   )
