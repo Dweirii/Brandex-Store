@@ -36,19 +36,14 @@ const NavbarActions = () => {
       <div className="ml-auto flex items-center gap-2">
 
         {/* Studio — secondary, outline style */}
-        <div className="relative">
-          <button
-            onClick={() => setShowStudioModal(true)}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border hover:border-foreground/30 hover:bg-muted/50 transition-all duration-200 cursor-pointer group"
-            aria-label="Open Brandex Studio"
-          >
-            <Sparkles className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors whitespace-nowrap">Studio</span>
-          </button>
-          <span className="absolute -top-2.5 -right-2.5 px-1.5 py-[3px] text-[10px] font-bold bg-red-500 text-white rounded-full uppercase animate-pulse shadow-md z-20 leading-none pointer-events-none">
-            NEW
-          </span>
-        </div>
+        <button
+          onClick={() => setShowStudioModal(true)}
+          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border hover:border-foreground/30 hover:bg-muted/50 transition-all duration-200 cursor-pointer group"
+          aria-label="Open Brandex Studio"
+        >
+          <Sparkles className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
+          <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors whitespace-nowrap">Studio</span>
+        </button>
 
         {/* Custom Work — primary */}
         <Link
