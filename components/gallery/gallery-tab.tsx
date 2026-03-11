@@ -11,7 +11,7 @@ interface GalleryTabProps {
 }
 
 const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
-  const isVideo = image.url.endsWith(".mp4") || image.url.endsWith(".mov")
+  const isVideo = /\.(mp4|mov)(\?|#|$)/i.test(image.url)
 
   return (
     <Tab className="relative flex aspect-square cursor-pointer items-center justify-center

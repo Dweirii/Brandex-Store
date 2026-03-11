@@ -128,7 +128,7 @@ export default function PrivacyPolicy() {
                 <ul className="list-none pl-0 space-y-1 my-4">
                   <li><strong>Legal Entity:</strong> Brandex LLC</li>
                   <li><strong>Website:</strong> brandexme.com</li>
-                  <li><strong>Location:</strong> Granger, Indiana, United States</li>
+                  <li>Granger, Indiana, United States</li>
                   <li><strong>Email:</strong> <a href="mailto:team@brandexme.com" className="text-primary hover:underline">team@brandexme.com</a></li>
                 </ul>
 
@@ -405,7 +405,7 @@ export default function PrivacyPolicy() {
                   <p>
                     <strong>Brandex LLC</strong>
                     <br />
-                    <strong>Location:</strong> Granger, Indiana, United States
+                    Granger, Indiana, United States
                     <br />
                     <strong>Email:</strong>{" "}
                     <a href="mailto:team@brandexme.com" className="text-primary hover:underline">

@@ -94,8 +94,9 @@ const MAX_TAGS_VISIBLE = 4
 const MAX_MULTI_WORD_TAGS = 4
 
 function buildCleanTags(keywords: string[]): string[] {
-  const oneWord = keywords.filter((k) => k.trim().split(/\s+/).length === 1)
-  const multiWord = keywords.filter((k) => k.trim().split(/\s+/).length > 1)
+  const split = keywords.flatMap((k) => k.split(",").map((s) => s.trim()).filter(Boolean))
+  const oneWord = split.filter((k) => k.split(/\s+/).length === 1)
+  const multiWord = split.filter((k) => k.split(/\s+/).length > 1)
   return [...oneWord, ...multiWord.slice(0, MAX_MULTI_WORD_TAGS)]
 }
 
@@ -263,13 +264,15 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               <Check className="h-4 w-4 shrink-0 order-2 text-primary" />
               <span className="order-1">{FEATURES[2]}</span>
             </div>
-            <div className="flex items-center gap-2 text-left">
-              <Check className="h-4 w-4 shrink-0 text-primary" />
-              <span>{FEATURES[1]}</span>
-            </div>
-            <div className="flex items-center justify-end gap-2 text-right">
-              <Check className="h-4 w-4 shrink-0 order-2 text-primary" />
-              <span className="order-1">{FEATURES[3]}</span>
+            {!isFreeProduct && (
+              <div className="flex items-center gap-2 text-left">
+                <Check className="h-4 w-4 shrink-0 text-primary" />
+                <span>{FEATURES[1]}</span>
+              </div>
+            )}
+            <div className={isFreeProduct ? "col-span-2 flex items-center gap-2 text-left" : "flex items-center justify-end gap-2 text-right"}>
+              <Check className={isFreeProduct ? "h-4 w-4 shrink-0 text-primary" : "h-4 w-4 shrink-0 order-2 text-primary"} />
+              <span className={isFreeProduct ? "" : "order-1"}>{FEATURES[3]}</span>
             </div>
           </div>
 
