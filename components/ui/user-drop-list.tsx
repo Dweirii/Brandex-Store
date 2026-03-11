@@ -18,8 +18,6 @@ import {
   Settings,
   Sun,
   Moon,
-  Coins,
-  Download,
   HelpCircle,
 } from "lucide-react"
 import { useTheme } from "next-themes"
@@ -105,19 +103,11 @@ export function UserDropdown() {
 
           <DropdownMenuSeparator className="bg-border/50" />
 
-          {/* Credits */}
+          {/* Dashboard */}
           <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
-            <Link href="/credits" className="flex items-center gap-3 px-3 py-2.5 group">
-              <Coins className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <span className="flex-1 text-sm font-medium group-hover:text-foreground transition-colors">Credits</span>
-            </Link>
-          </DropdownMenuItem>
-
-          {/* Downloads */}
-          <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
-            <Link href="/downloads" className="flex items-center gap-3 px-3 py-2.5 group">
-              <Download className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-              <span className="text-sm font-medium group-hover:text-foreground transition-colors">Downloads</span>
+            <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2.5 group">
+              <User className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <span className="flex-1 text-sm font-medium group-hover:text-foreground transition-colors">Dashboard</span>
             </Link>
           </DropdownMenuItem>
 
