@@ -17,8 +17,10 @@ export interface HeroConfig {
   secondaryCTA: { label: string; href: string }
   /** Pass 2–4 image URLs; the collage auto-adapts to the count */
   images: string[]
-  /** Optional icon + label pairs shown below the CTAs (e.g. HOME page) */
+  /** Optional icon + label pairs shown below the CTAs */
   iconRow?: HeroIconItem[]
+  /** Optional dot-separated trust line shown below the icon row */
+  trustLine?: string
   /**
    * Controls how thumbnails are rendered in hero tiles.
    * "cover"   – object-cover, fills the frame (default; best for photos/mockups)
@@ -38,11 +40,11 @@ export type HeroPageKey =
 
 export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
   home: {
-    headline: "Premium creative assets. Built to impress.",
+    headline: "Real assets. Real deadlines. Real results.",
     subhead:
-      "Mockups, vectors, photos, packaging, and motion—ready for real projects and real deadlines.",
-    primaryCTA: { label: "Browse Assets", href: "/" },
-    secondaryCTA: { label: "View Pricing", href: "/credits" },
+      "Mockups, packaging, vectors, photos and motion — professionally crafted and ready to use today. Stop searching. Start creating.",
+    primaryCTA: { label: "Explore Assets", href: "/products" },
+    secondaryCTA: { label: "See Pricing", href: "/credits" },
     images: [
       "https://Brandex-cdn.b-cdn.net/hero/home-1.jpg",
       "https://Brandex-cdn.b-cdn.net/hero/home-2.jpg",
@@ -54,6 +56,7 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       { icon: "layers", label: "Layered PSD" },
       { icon: "sparkles", label: "Commercial license" },
     ],
+    trustLine: "Ready to use • Easy to customize • Commercial-ready",
   },
 
   packaging: {

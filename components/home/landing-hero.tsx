@@ -2,8 +2,14 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import { Zap, LayoutGrid, ShieldCheck } from "lucide-react"
 import Container from "@/components/ui/container"
+
+const trustBadges = [
+    { icon: Zap,         label: "Instant download" },
+    { icon: LayoutGrid,  label: "Layered PSD" },
+    { icon: ShieldCheck, label: "Commercial license" },
+]
 
 export function LandingHero() {
     return (
@@ -14,14 +20,15 @@ export function LandingHero() {
                     {/* Left: Typography */}
                     <div className="flex flex-col space-y-8">
                         <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter leading-[0.95]">
-                            Premium
+                            Real assets.
                             <br />
-                            Mockups.
+                            Real deadlines.
+                            <br />
+                            Real results.
                         </h1>
 
                         <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-                            High-resolution assets designed for professionals.
-                            Smart objects, instant downloads, commercial license included.
+                            Mockups, packaging, vectors, photos and motion — professionally crafted and ready to use today. Stop searching. Start creating.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4">
@@ -29,15 +36,33 @@ export function LandingHero() {
                                 href="/products"
                                 className="inline-flex items-center justify-center h-14 px-8 bg-primary text-primary-foreground font-semibold rounded-full hover:opacity-90 transition-opacity"
                             >
-                                Browse Collection
+                                Explore Assets
                             </Link>
                             <Link
-                                href="/category/free"
+                                href="/credits"
                                 className="inline-flex items-center justify-center h-14 px-8 border-2 border-border font-semibold rounded-full hover:bg-muted transition-colors"
                             >
-                                Free Assets <ArrowRight className="ml-2 w-4 h-4" />
+                                See Pricing
                             </Link>
                         </div>
+
+                        {/* Trust badges */}
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 pt-2">
+                            {trustBadges.map(({ icon: Icon, label }, i) => (
+                                <div key={label} className="flex items-center gap-2">
+                                    {i > 0 && (
+                                        <span className="w-px h-5 bg-border shrink-0" />
+                                    )}
+                                    <Icon className="h-5 w-5 text-primary shrink-0" strokeWidth={2} />
+                                    <span className="text-sm font-medium text-foreground">{label}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Trust line */}
+                        <p className="text-sm text-muted-foreground">
+                            Ready to use&nbsp;&bull;&nbsp;Easy to customize&nbsp;&bull;&nbsp;Commercial-ready
+                        </p>
                     </div>
 
                     {/* Right: Image */}

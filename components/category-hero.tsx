@@ -1,11 +1,33 @@
 "use client"
 
 import Image from "next/image"
-import { ArrowRight, Sparkles } from "lucide-react"
+import {
+  ArrowRight,
+  Sparkles,
+  Download,
+  Zap,
+  Shield,
+  Star,
+  Package,
+  Layers,
+  Check,
+  type LucideIcon,
+} from "lucide-react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
-import type { HeroConfig } from "@/lib/heroConfig"
+import type { HeroConfig, HeroIconKey } from "@/lib/heroConfig"
+
+const ICON_MAP: Record<HeroIconKey, LucideIcon> = {
+  download: Download,
+  zap:      Zap,
+  shield:   Shield,
+  star:     Star,
+  package:  Package,
+  layers:   Layers,
+  check:    Check,
+  sparkles: Sparkles,
+}
 
 
 interface HeroSectionProps {
@@ -16,7 +38,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
   const router = useRouter()
-  const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow, tileStyle } = config
+  const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow, trustLine, tileStyle } = config
 
   return (
     <section className="w-full bg-background">
@@ -71,16 +93,25 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
               </Button>
             </div>
 
-            {/* Micro-line — dot-separated trust signals beneath the CTA buttons */}
+            {/* Icon row — trust signals beneath the CTA buttons */}
             {iconRow && iconRow.length > 0 && (
-              <p className="flex items-center flex-wrap gap-x-1.5 gap-y-0.5 text-[11.5px] text-muted-foreground mt-0.5 leading-snug">
-                {iconRow.map((item, i) => (
-                  <span key={i} className="flex items-center gap-x-1.5">
-                    {i > 0 && <span className="opacity-30 select-none">·</span>}
-                    {item.label}
-                  </span>
-                ))}
-              </p>
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-1">
+                {iconRow.map((item, i) => {
+                  const Icon = ICON_MAP[item.icon]
+                  return (
+                    <div key={i} className="flex items-center gap-2">
+                      {i > 0 && <span className="w-px h-5 bg-border shrink-0" />}
+                      <Icon className="h-5 w-5 text-primary shrink-0" strokeWidth={2} />
+                      <span className="text-sm font-medium text-foreground">{item.label}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Trust line */}
+            {trustLine && (
+              <p className="text-sm text-muted-foreground">{trustLine}</p>
             )}
           </motion.div>
 

@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", type: "image/x-icon" },
       { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
       { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
     ],
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
       { url: "/icons/icon-192.png", sizes: "192x192" },
       { url: "/icons/icon-512.png", sizes: "512x512" },
     ],
-    shortcut: "/icons/icon-192.png",
+    shortcut: "/favicon.ico",
   },
   robots: {
     index: true,

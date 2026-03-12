@@ -3,7 +3,6 @@
 import type React from "react"
 import { memo, useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { Eye } from "lucide-react"
 import type { Product } from "@/types"
