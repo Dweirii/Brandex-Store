@@ -172,6 +172,88 @@ function DashboardContent() {
         </div>
       </div>
 
+      {/* My Files */}
+      <div className="bg-card border border-border rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+          <div className="flex items-center gap-2">
+            <Package className="h-4 w-4 text-muted-foreground" />
+            <h2 className="font-semibold text-sm">My Files</h2>
+          </div>
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={cn(
+                  "px-3 py-1 rounded-md text-xs font-medium transition-colors",
+                  activeTab === tab
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {dlLoading ? (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : filteredFiles.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-12">
+            No files found
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredFiles.map((d) => (
+              <div key={d.id} className="group">
+                <div className="aspect-[4/3] rounded-xl overflow-hidden bg-muted mb-2">
+                  {d.imageUrl ? (
+                    <Image
+                      src={d.imageUrl}
+                      alt={d.productName}
+                      width={300}
+                      height={225}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Package className="h-8 w-8 text-muted-foreground/40" />
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs font-semibold text-foreground truncate">
+                  {d.productName}
+                </p>
+                <p className="text-[10px] text-muted-foreground mb-2">
+                  {formatDate(d.createdAt)} at{" "}
+                  {new Date(d.createdAt).toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "text-[10px] py-0 h-4 shrink-0",
+                      d.isFree
+                        ? "text-primary border-primary/30 bg-primary/5"
+                        : "text-purple-500 border-purple-500/30 bg-purple-500/5"
+                    )}
+                  >
+                    {d.isFree ? "Free" : "Premium"}
+                  </Badge>
+                  <DownloadButtonWrapper storeId={d.storeId} productId={d.productId} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Recent Purchases + Recent Downloads */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Recent Purchases */}
@@ -290,88 +372,6 @@ function DashboardContent() {
             )}
           </div>
         </div>
-      </div>
-
-      {/* My Files */}
-      <div className="bg-card border border-border rounded-2xl p-6">
-        <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-          <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-muted-foreground" />
-            <h2 className="font-semibold text-sm">My Files</h2>
-          </div>
-          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-            {TABS.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={cn(
-                  "px-3 py-1 rounded-md text-xs font-medium transition-colors",
-                  activeTab === tab
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {dlLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
-        ) : filteredFiles.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-12">
-            No files found
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredFiles.map((d) => (
-              <div key={d.id} className="group">
-                <div className="aspect-[4/3] rounded-xl overflow-hidden bg-muted mb-2">
-                  {d.imageUrl ? (
-                    <Image
-                      src={d.imageUrl}
-                      alt={d.productName}
-                      width={300}
-                      height={225}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package className="h-8 w-8 text-muted-foreground/40" />
-                    </div>
-                  )}
-                </div>
-                <p className="text-xs font-semibold text-foreground truncate">
-                  {d.productName}
-                </p>
-                <p className="text-[10px] text-muted-foreground mb-2">
-                  {formatDate(d.createdAt)} at{" "}
-                  {new Date(d.createdAt).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
-                <div className="flex items-center justify-between gap-2">
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "text-[10px] py-0 h-4 shrink-0",
-                      d.isFree
-                        ? "text-primary border-primary/30 bg-primary/5"
-                        : "text-purple-500 border-purple-500/30 bg-purple-500/5"
-                    )}
-                  >
-                    {d.isFree ? "Free" : "Premium"}
-                  </Badge>
-                  <DownloadButtonWrapper storeId={d.storeId} productId={d.productId} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   )

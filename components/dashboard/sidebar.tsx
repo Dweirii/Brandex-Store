@@ -97,14 +97,13 @@ export function DashboardSidebar() {
         </div>
 
         {/* Credits CTA card */}
-        <div className="mt-auto mx-1 rounded-xl bg-foreground text-background p-4">
+        <div className="mx-1 rounded-xl bg-foreground text-background p-4">
           <p className="text-xs font-semibold mb-0.5">Need more credits?</p>
           <p className="text-[11px] opacity-60 mb-3">
             Each premium download costs 5 credits
           </p>
           <div className="flex items-center justify-between text-[10px] opacity-60 mb-1.5">
             <span>{balance ?? 0} credits remaining</span>
-            <span>50 max</span>
           </div>
           <div className="w-full bg-white/20 rounded-full h-1 mb-3">
             <div

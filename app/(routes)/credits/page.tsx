@@ -129,20 +129,20 @@ function CreditsPageContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-8 shadow-2xl text-primary-foreground relative overflow-hidden"
+          className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-5 shadow-2xl text-primary-foreground relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
           
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-3 rounded-xl">
-                  <Coins className="h-6 w-6" />
+                <div className="bg-white/20 p-2 rounded-xl">
+                  <Coins className="h-5 w-5" />
                 </div>
                 <div>
                   <p className="text-sm opacity-90">Available Balance</p>
-                  <p className="text-4xl font-bold">
+                  <p className="text-3xl font-bold">
                     {isLoading ? (
                       <Loader2 className="h-8 w-8 animate-spin inline" />
                     ) : (
@@ -154,7 +154,7 @@ function CreditsPageContent() {
               <Button
                 onClick={() => setShowPurchaseModal(true)}
                 variant="outline"
-                size="lg"
+                size="sm"
                 className="bg-white text-primary hover:bg-white/90 border-0 shadow-lg"
               >
                 <Plus className="h-4 w-4" />
@@ -183,37 +183,39 @@ function CreditsPageContent() {
               className="bg-background rounded-2xl p-6 max-w-2xl w-full shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-2xl font-bold mb-6">Buy Credits</h2>
-              
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
+              <h2 className="text-xl font-bold mb-4">Buy Credits</h2>
+
+              <div className="grid md:grid-cols-2 gap-3 mb-4">
                 {/* Pack 50 */}
-                <div className="border-2 border-border rounded-xl p-6 hover:border-primary transition-colors">
-                  <h3 className="text-xl font-semibold mb-2">50 Credits</h3>
-                  <p className="text-3xl font-bold text-primary mb-4">$6.99</p>
-                  <p className="text-sm text-muted-foreground mb-4">
+                <div className="border-2 border-border rounded-xl p-4 hover:border-primary transition-colors">
+                  <h3 className="text-base font-semibold mb-1">50 Credits</h3>
+                  <p className="text-2xl font-bold text-primary mb-1">$6.99</p>
+                  <p className="text-xs text-muted-foreground mb-3">
                     $0.14 per credit
                   </p>
                   <Button
                     onClick={() => handleBuyCredits("PACK_50")}
                     className="w-full"
+                    size="sm"
                   >
                     Purchase
                   </Button>
                 </div>
 
                 {/* Pack 100 */}
-                <div className="border-2 border-primary rounded-xl p-6 relative bg-primary/5">
+                <div className="border-2 border-primary rounded-xl p-4 relative bg-primary/5">
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
                     Best Value
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">100 Credits</h3>
-                  <p className="text-3xl font-bold text-primary mb-4">$11.99</p>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <h3 className="text-base font-semibold mb-1">100 Credits</h3>
+                  <p className="text-2xl font-bold text-primary mb-1">$11.99</p>
+                  <p className="text-xs text-muted-foreground mb-3">
                     $0.12 per credit
                   </p>
                   <Button
                     onClick={() => handleBuyCredits("PACK_100")}
                     className="w-full"
+                    size="sm"
                   >
                     Purchase
                   </Button>

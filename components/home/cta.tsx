@@ -17,7 +17,7 @@ export function CallToActionSection() {
           transition={{ duration: 0.8 }}
         >
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00EB02]/20 border border-[#00EB02]/30 badge-text text-[#00EB02] mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00B81A]/20 border border-[#00B81A]/30 badge-text text-[#00B81A] mb-6"
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -38,7 +38,7 @@ export function CallToActionSection() {
             <span className="relative">
               your brand?
               <motion.div
-                className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#00EB02] to-[#00C402] rounded-full"
+                className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-[#00B81A] to-[#00B81A] rounded-full"
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}

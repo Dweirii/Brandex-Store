@@ -64,7 +64,7 @@ export default async function SignatureServicesPage() {
 
             {/* ── HERO HEADER ────────────────────────────────────── */}
             <header className="text-center py-10 pb-5">
-              <span className="inline-block px-3 py-1.5 rounded-full bg-[#00C853] text-[#0b1a10] font-black text-[13px] tracking-[0.35px] uppercase">
+              <span className="inline-block px-3 py-1.5 rounded-full bg-[#00B81A] text-[#0b1a10] font-black text-[13px] tracking-[0.35px] uppercase">
                 Signature Services
               </span>
 
@@ -80,7 +80,7 @@ export default async function SignatureServicesPage() {
               <div className="flex flex-wrap justify-center gap-3 mt-6">
                 <Link
                   href="/contact"
-                  className="px-6 py-3.5 rounded-xl bg-[#00C853] text-[#0b1a10] font-black text-sm no-underline transition-opacity hover:opacity-90"
+                  className="px-6 py-3.5 rounded-xl bg-[#00B81A] text-[#0b1a10] font-black text-sm no-underline transition-opacity hover:opacity-90"
                 >
                   Start a Signature Project
                 </Link>
@@ -97,12 +97,12 @@ export default async function SignatureServicesPage() {
               </p>
             </header>
 
-            <hr className="border-t border-[#e6e6e6] my-5" />
+            <hr className="border-t border-[#E5E5E5] my-5" />
 
             {/* ── WHAT WE BUILD ───────────────────────────────────── */}
             <section className="mt-5">
               <h2 className="text-2xl font-black mb-3 flex items-center gap-2.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                 What We Build
               </h2>
 
@@ -133,7 +133,7 @@ export default async function SignatureServicesPage() {
                 ].map(({ title, desc }) => (
                   <div
                     key={title}
-                    className="border border-[#e6e6e6] rounded-2xl p-4 bg-white"
+                    className="border border-[#E5E5E5] rounded-2xl p-4 bg-white"
                   >
                     <h3 className="text-[18px] font-black mb-1.5">{title}</h3>
                     <p className="text-[#333] m-0">{desc}</p>
@@ -145,7 +145,7 @@ export default async function SignatureServicesPage() {
             {/* ── WHAT'S INCLUDED ─────────────────────────────────── */}
             <section className="mt-6">
               <h2 className="text-2xl font-black mb-3 flex items-center gap-2.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                 What&apos;s Included
               </h2>
 
@@ -174,7 +174,7 @@ export default async function SignatureServicesPage() {
             {/* ── HOW IT WORKS ────────────────────────────────────── */}
             <section className="mt-6">
               <h2 className="text-2xl font-black mb-3 flex items-center gap-2.5">
-                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                 How It Works
               </h2>
 
@@ -196,7 +196,7 @@ export default async function SignatureServicesPage() {
             </section>
 
             {/* ── CTA BANNER ──────────────────────────────────────── */}
-            <section className="mt-8 p-5 border border-[#e6e6e6] rounded-2xl bg-linear-to-b from-[rgba(0,200,83,0.12)] to-[rgba(0,200,83,0)]">
+            <section className="mt-8 p-5 border border-[#E5E5E5] rounded-2xl bg-linear-to-b from-[rgba(0,200,83,0.12)] to-[rgba(0,200,83,0)]">
               <h2 className="text-[22px] font-black mb-2">Ready to Build Something Clean?</h2>
               <p className="text-[#333] mb-4">
                 Tell us what you need: packaging type, dimensions, and the vibe you&apos;re going for. We&apos;ll take
@@ -206,7 +206,7 @@ export default async function SignatureServicesPage() {
               <div className="flex flex-wrap justify-center gap-3">
                 <Link
                   href="/contact"
-                  className="px-6 py-3.5 rounded-xl bg-[#00C853] text-[#0b1a10] font-black text-sm no-underline transition-opacity hover:opacity-90"
+                  className="px-6 py-3.5 rounded-xl bg-[#00B81A] text-[#0b1a10] font-black text-sm no-underline transition-opacity hover:opacity-90"
                 >
                   Get Started
                 </Link>
@@ -226,7 +226,7 @@ export default async function SignatureServicesPage() {
             {/* ── INTAKE FORM ─────────────────────────────────────── */}
             <section className="mt-10">
               <header className="text-center pb-5">
-                <span className="inline-block px-3 py-1.5 rounded-full bg-[#00C853] text-[#0b1a10] font-black text-[13px] tracking-[0.35px] uppercase">
+                <span className="inline-block px-3 py-1.5 rounded-full bg-[#00B81A] text-[#0b1a10] font-black text-[13px] tracking-[0.35px] uppercase">
                   Signature Project Intake
                 </span>
                 <h2 className="mt-4 mb-2 text-3xl sm:text-4xl font-black tracking-tight">
@@ -238,14 +238,14 @@ export default async function SignatureServicesPage() {
                 </p>
               </header>
 
-              <hr className="border-t border-[#e6e6e6] my-5" />
+              <hr className="border-t border-[#E5E5E5] my-5" />
 
               <form className="space-y-6">
 
                 {/* CONTACT */}
                 <fieldset className="space-y-3">
                   <legend className="text-[22px] font-black flex items-center gap-2.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                     Contact
                   </legend>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -255,7 +255,7 @@ export default async function SignatureServicesPage() {
                       { id: "phone", label: "Phone (optional)", type: "tel" },
                       { id: "company", label: "Company / Brand", type: "text" },
                     ].map(({ id, label, type }) => (
-                      <div key={id} className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                      <div key={id} className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                         <label htmlFor={id} className="block font-black mb-2 text-sm">
                           {label}
                         </label>
@@ -263,7 +263,7 @@ export default async function SignatureServicesPage() {
                           id={id}
                           name={id}
                           type={type}
-                          className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors"
+                          className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors"
                         />
                       </div>
                     ))}
@@ -273,10 +273,10 @@ export default async function SignatureServicesPage() {
                 {/* WHAT DO YOU NEED */}
                 <fieldset className="space-y-3">
                   <legend className="text-[22px] font-black flex items-center gap-2.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                     What do you need?
                   </legend>
-                  <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white space-y-4">
+                  <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white space-y-4">
                     <p className="text-[#333] text-sm">Select all that apply:</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {[
@@ -304,9 +304,9 @@ export default async function SignatureServicesPage() {
                         <label
                           key={id}
                           htmlFor={id}
-                          className="flex items-start gap-3 border border-[#e6e6e6] rounded-2xl p-4 bg-white cursor-pointer hover:border-[#00C853] transition-colors"
+                          className="flex items-start gap-3 border border-[#E5E5E5] rounded-2xl p-4 bg-white cursor-pointer hover:border-[#00B81A] transition-colors"
                         >
-                          <input id={id} name={id} type="checkbox" className="mt-1 accent-[#00C853]" />
+                          <input id={id} name={id} type="checkbox" className="mt-1 accent-[#00B81A]" />
                           <div>
                             <div className="font-black text-sm">{label}</div>
                             <div className="text-[#666] text-xs mt-0.5">{sub}</div>
@@ -322,7 +322,7 @@ export default async function SignatureServicesPage() {
                         id="primary_goal"
                         name="primary_goal"
                         type="text"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors"
                       />
                     </div>
                   </div>
@@ -331,7 +331,7 @@ export default async function SignatureServicesPage() {
                 {/* PROJECT DETAILS */}
                 <fieldset className="space-y-3">
                   <legend className="text-[22px] font-black flex items-center gap-2.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                     Project Details
                   </legend>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -341,7 +341,7 @@ export default async function SignatureServicesPage() {
                       { id: "quantity_skus", label: "How many SKUs/versions?", placeholder: "e.g. 3 flavors" },
                       { id: "vibe", label: "Style / vibe", placeholder: "e.g. minimal, bold, earthy" },
                     ].map(({ id, label, placeholder }) => (
-                      <div key={id} className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                      <div key={id} className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                         <label htmlFor={id} className="block font-black mb-2 text-sm">
                           {label}
                         </label>
@@ -350,12 +350,12 @@ export default async function SignatureServicesPage() {
                           name={id}
                           type="text"
                           placeholder={placeholder}
-                          className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                          className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                         />
                       </div>
                     ))}
                   </div>
-                  <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                  <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                     <label htmlFor="notes" className="block font-black mb-2 text-sm">
                       Anything we should know?
                     </label>
@@ -363,7 +363,7 @@ export default async function SignatureServicesPage() {
                       id="notes"
                       name="notes"
                       rows={5}
-                      className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors resize-none"
+                      className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors resize-none"
                     />
                   </div>
                 </fieldset>
@@ -371,11 +371,11 @@ export default async function SignatureServicesPage() {
                 {/* PRINT + SIZE SPECS */}
                 <fieldset className="space-y-3">
                   <legend className="text-[22px] font-black flex items-center gap-2.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                     Print + Size Specs
                   </legend>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                    <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                       <label htmlFor="dimensions" className="block font-black mb-2 text-sm">
                         Dimensions
                       </label>
@@ -384,13 +384,13 @@ export default async function SignatureServicesPage() {
                         name="dimensions"
                         type="text"
                         placeholder="e.g. 4×6 in, 100×150 mm"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                       />
                       <p className="mt-2 text-[#666] text-xs">
                         If you don&apos;t know, tell us the container/product and we&apos;ll guide it.
                       </p>
                     </div>
-                    <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                    <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                       <label htmlFor="printer" className="block font-black mb-2 text-sm">
                         Printer / vendor (if known)
                       </label>
@@ -399,10 +399,10 @@ export default async function SignatureServicesPage() {
                         name="printer"
                         type="text"
                         placeholder="e.g. Printingforless, local shop"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                       />
                     </div>
-                    <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                    <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                       <label htmlFor="finishes" className="block font-black mb-2 text-sm">
                         Finishes (optional)
                       </label>
@@ -411,10 +411,10 @@ export default async function SignatureServicesPage() {
                         name="finishes"
                         type="text"
                         placeholder="e.g. matte laminate, UV spot, foil"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                       />
                     </div>
-                    <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                    <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                       <label htmlFor="dieline" className="block font-black mb-2 text-sm">
                         Dieline / template (if you have it)
                       </label>
@@ -423,7 +423,7 @@ export default async function SignatureServicesPage() {
                         name="dieline"
                         type="url"
                         placeholder="Link to file (Dropbox, Drive, etc.)"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                       />
                       <p className="mt-2 text-[#666] text-xs">Upload PDF/AI files if available.</p>
                     </div>
@@ -433,10 +433,10 @@ export default async function SignatureServicesPage() {
                 {/* BRAND ASSETS */}
                 <fieldset className="space-y-3">
                   <legend className="text-[22px] font-black flex items-center gap-2.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                     Brand Assets
                   </legend>
-                  <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white space-y-4">
+                  <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white space-y-4">
                     <p className="text-[#333] text-sm">Upload anything you have (logos, fonts, references, copy, images):</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
@@ -447,8 +447,8 @@ export default async function SignatureServicesPage() {
                           id="brand_colors"
                           name="brand_colors"
                           type="text"
-                          placeholder="e.g. #00C853, navy, gold"
-                          className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                          placeholder="e.g. #00B81A, navy, gold"
+                          className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                         />
                       </div>
                       <div>
@@ -460,7 +460,7 @@ export default async function SignatureServicesPage() {
                           name="fonts"
                           type="text"
                           placeholder="e.g. Montserrat, Helvetica"
-                          className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                          className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                         />
                       </div>
                     </div>
@@ -473,7 +473,7 @@ export default async function SignatureServicesPage() {
                         name="references"
                         rows={3}
                         placeholder="Links to inspiration, competitors, or existing brand assets"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors resize-none placeholder:text-[#aaa]"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors resize-none placeholder:text-[#aaa]"
                       />
                     </div>
                   </div>
@@ -482,11 +482,11 @@ export default async function SignatureServicesPage() {
                 {/* TIMELINE + BUDGET */}
                 <fieldset className="space-y-3">
                   <legend className="text-[22px] font-black flex items-center gap-2.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                     Timeline + Budget
                   </legend>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                    <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                       <label htmlFor="deadline" className="block font-black mb-2 text-sm">
                         Target deadline
                       </label>
@@ -494,18 +494,18 @@ export default async function SignatureServicesPage() {
                         id="deadline"
                         name="deadline"
                         type="date"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors"
                       />
                       <p className="mt-2 text-[#666] text-xs">If you have a hard date, add it here.</p>
                     </div>
-                    <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                    <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                       <label htmlFor="budget" className="block font-black mb-2 text-sm">
                         Budget range
                       </label>
                       <select
                         id="budget"
                         name="budget"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors bg-white"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors bg-white"
                       >
                         <option value="">Select one</option>
                         <option>Under $500</option>
@@ -515,14 +515,14 @@ export default async function SignatureServicesPage() {
                         <option>$5,000+</option>
                       </select>
                     </div>
-                    <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white">
+                    <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white">
                       <label htmlFor="rush" className="block font-black mb-2 text-sm">
                         Rush needed?
                       </label>
                       <select
                         id="rush"
                         name="rush"
-                        className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors bg-white"
+                        className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors bg-white"
                       >
                         <option value="">Select one</option>
                         <option>No</option>
@@ -537,10 +537,10 @@ export default async function SignatureServicesPage() {
                 {/* FINAL FILES + APPROVALS */}
                 <fieldset className="space-y-3">
                   <legend className="text-[22px] font-black flex items-center gap-2.5">
-                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853] shrink-0" />
+                    <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A] shrink-0" />
                     Final Files + Approvals
                   </legend>
-                  <div className="border border-[#e6e6e6] rounded-2xl p-4 bg-white space-y-4">
+                  <div className="border border-[#E5E5E5] rounded-2xl p-4 bg-white space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label htmlFor="file_formats" className="block font-black mb-2 text-sm">
@@ -551,7 +551,7 @@ export default async function SignatureServicesPage() {
                           name="file_formats"
                           type="text"
                           placeholder="e.g. PDF, AI, PNG, PSD"
-                          className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                          className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                         />
                       </div>
                       <div>
@@ -563,12 +563,12 @@ export default async function SignatureServicesPage() {
                           name="approver"
                           type="text"
                           placeholder="Name or role"
-                          className="w-full px-3 py-2.5 border border-[#ddd] rounded-xl text-sm outline-none focus:border-[#00C853] transition-colors placeholder:text-[#aaa]"
+                          className="w-full px-3 py-2.5 border border-[#E5E5E5] rounded-xl text-sm outline-none focus:border-[#00B81A] transition-colors placeholder:text-[#aaa]"
                         />
                       </div>
                     </div>
                     <label className="flex items-start gap-3 cursor-pointer">
-                      <input type="checkbox" name="confirm" className="mt-1 accent-[#00C853]" required />
+                      <input type="checkbox" name="confirm" className="mt-1 accent-[#00B81A]" required />
                       <span className="text-sm text-[#333]">
                         <strong>I confirm:</strong> I&apos;ve provided the best available copy/claims and I&apos;m
                         responsible for final content approval.
@@ -578,7 +578,7 @@ export default async function SignatureServicesPage() {
                 </fieldset>
 
                 {/* SUBMIT */}
-                <div className="p-5 border border-[#e6e6e6] rounded-2xl bg-linear-to-b from-[rgba(0,200,83,0.12)] to-[rgba(0,200,83,0)]">
+                <div className="p-5 border border-[#E5E5E5] rounded-2xl bg-linear-to-b from-[rgba(0,200,83,0.12)] to-[rgba(0,200,83,0)]">
                   <h3 className="text-[22px] font-black mb-2">Submit Intake</h3>
                   <p className="text-[#333] text-sm mb-4">
                     Once submitted, we&apos;ll review and reply with next steps.
@@ -586,7 +586,7 @@ export default async function SignatureServicesPage() {
                   <div className="flex flex-wrap justify-center gap-3">
                     <button
                       type="submit"
-                      className="px-6 py-3.5 rounded-xl bg-[#00C853] text-[#0b1a10] font-black text-sm border-none cursor-pointer transition-opacity hover:opacity-90"
+                      className="px-6 py-3.5 rounded-xl bg-[#00B81A] text-[#0b1a10] font-black text-sm border-none cursor-pointer transition-opacity hover:opacity-90"
                     >
                       Send Intake Form
                     </button>
@@ -607,7 +607,7 @@ export default async function SignatureServicesPage() {
             {/* ── FOOTER ──────────────────────────────────────────── */}
             <footer className="text-center mt-8 pb-4 text-[#666] text-sm">
               <p className="flex items-center justify-center gap-2">
-                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00C853]" />
+                <span className="inline-block w-2.5 h-2.5 rounded-[3px] bg-[#00B81A]" />
                 brandexme.COM — Signature Services
               </p>
             </footer>

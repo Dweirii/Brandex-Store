@@ -41,8 +41,8 @@ function formatNeeds(needs: string[]): string {
 function row(label: string, value: string | number | null | undefined) {
   if (value === null || value === undefined || value === "") return "";
   return `<tr>
-    <td style="padding:8px 16px;font-weight:600;color:#6b7280;width:160px;vertical-align:top;font-size:13px;">${label}</td>
-    <td style="padding:8px 16px;color:#111827;font-size:14px;">${value}</td>
+    <td style="padding:8px 16px;font-weight:600;color:#6F6F6F;width:160px;vertical-align:top;font-size:13px;">${label}</td>
+    <td style="padding:8px 16px;color:#1F1F1F;font-size:14px;">${value}</td>
   </tr>`;
 }
 
@@ -50,7 +50,7 @@ function section(title: string, rows: string) {
   if (!rows.trim()) return "";
   return `<div style="margin:0 0 20px;">
     <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#00B81A;">${title}</p>
-    <table style="width:100%;border-collapse:collapse;background:#f9fafb;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;">${rows}</table>
+    <table style="width:100%;border-collapse:collapse;background:#F8F8F8;border-radius:8px;overflow:hidden;border:1px solid #E5E5E5;">${rows}</table>
   </div>`;
 }
 
@@ -94,14 +94,14 @@ async function sendTeamNotification(params: {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
-<body style="margin:0;padding:0;background:#f3f4f6;font-family:'Segoe UI',Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#F8F8F8;font-family:'Segoe UI',Arial,sans-serif;">
 <div style="max-width:640px;margin:32px auto;">
   <div style="background:#fff;border-radius:12px 12px 0 0;padding:28px 32px 20px;border-bottom:3px solid #00B81A;">
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="width:36px;height:36px;background:#00B81A;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;line-height:1;">B</div>
       <div>
-        <div style="font-size:18px;font-weight:700;color:#111827;">New Project Inquiry</div>
-        <div style="font-size:12px;color:#6b7280;">Brandex Intake · ${params.createdAt.toLocaleString()}</div>
+        <div style="font-size:18px;font-weight:700;color:#1F1F1F;">New Project Inquiry</div>
+        <div style="font-size:12px;color:#6F6F6F;">Brandex Intake · ${params.createdAt.toLocaleString()}</div>
       </div>
     </div>
   </div>
@@ -130,10 +130,10 @@ async function sendTeamNotification(params: {
     row("Notes", params.notes),
   ].join(""))}
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px 20px;margin:0 0 24px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#15803d;">Client Tracking Link</p>
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#00B81A;">Client Tracking Link</p>
       <a href="${trackLink}" style="color:#00B81A;font-size:14px;word-break:break-all;">${trackLink}</a>
     </div>
-    <p style="margin:0;font-size:11px;color:#9ca3af;text-align:center;">Submission ID: ${params.submissionId}</p>
+    <p style="margin:0;font-size:11px;color:#6F6F6F;text-align:center;">Submission ID: ${params.submissionId}</p>
   </div>
 </div>
 </body></html>`;
@@ -171,36 +171,36 @@ async function sendClientConfirmation(params: {
   const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" /></head>
-<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:0;padding:0;background:#f9fafb;">
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;margin:0;padding:0;background:#F8F8F8;">
   <div style="max-width:560px;margin:0 auto;padding:40px 20px;">
-    <div style="background:#fff;border-radius:16px;padding:40px;border:1px solid #e5e7eb;">
+    <div style="background:#fff;border-radius:16px;padding:40px;border:1px solid #E5E5E5;">
       <div style="width:48px;height:48px;background:#00B81A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;line-height:1;margin-bottom:24px;">B</div>
 
-      <h2 style="margin:0 0 8px 0;font-size:22px;color:#111827;">Thanks, ${firstName}!</h2>
-      <p style="margin:0 0 24px 0;font-size:15px;color:#6b7280;line-height:1.6;">
-        We've received your project inquiry for <strong style="color:#111827;">${needsLabel}</strong>.
-        Our team will review it and get back to you within <strong style="color:#111827;">24 hours</strong>.
+      <h2 style="margin:0 0 8px 0;font-size:22px;color:#1F1F1F;">Thanks, ${firstName}!</h2>
+      <p style="margin:0 0 24px 0;font-size:15px;color:#6F6F6F;line-height:1.6;">
+        We've received your project inquiry for <strong style="color:#1F1F1F;">${needsLabel}</strong>.
+        Our team will review it and get back to you within <strong style="color:#1F1F1F;">24 hours</strong>.
       </p>
 
-      <div style="background:#f3f4f6;border-radius:12px;padding:20px;margin-bottom:28px;">
-        <p style="margin:0 0 4px 0;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#9ca3af;">What's next?</p>
-        <ul style="margin:8px 0 0;padding:0 0 0 18px;font-size:14px;color:#374151;line-height:2;">
+      <div style="background:#F8F8F8;border-radius:12px;padding:20px;margin-bottom:28px;">
+        <p style="margin:0 0 4px 0;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#6F6F6F;">What's next?</p>
+        <ul style="margin:8px 0 0;padding:0 0 0 18px;font-size:14px;color:#6F6F6F;line-height:2;">
           <li>We review your details</li>
           <li>You'll receive a status update email</li>
           <li>Upload reference files anytime via the link below</li>
         </ul>
       </div>
 
-      <a href="${trackLink}" style="display:block;background:#111827;color:#fff;text-decoration:none;padding:14px 24px;border-radius:10px;font-weight:600;font-size:14px;text-align:center;margin-bottom:24px;">
+      <a href="${trackLink}" style="display:block;background:#1F1F1F;color:#fff;text-decoration:none;padding:14px 24px;border-radius:10px;font-weight:600;font-size:14px;text-align:center;margin-bottom:24px;">
         Track Your Request & Upload Files
       </a>
 
-      <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.6;">
+      <p style="margin:0;font-size:13px;color:#6F6F6F;line-height:1.6;">
         Save this email — you can use the link above anytime to check your request status or upload files.
       </p>
     </div>
-    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:20px;">
-      Brandex · <a href="${SITE_URL}" style="color:#9ca3af;">${SITE_URL.replace("https://", "")}</a>
+    <p style="text-align:center;font-size:12px;color:#6F6F6F;margin-top:20px;">
+      Brandex · <a href="${SITE_URL}" style="color:#6F6F6F;">${SITE_URL.replace("https://", "")}</a>
     </p>
   </div>
 </body>

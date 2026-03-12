@@ -104,7 +104,7 @@ export function WhatYouGetSection() {
 
       {/* Floating Decorative Elements */}
       <motion.div
-        className="absolute top-32 right-20 w-4 h-4 bg-[#00EB02] rounded-full opacity-60"
+        className="absolute top-32 right-20 w-4 h-4 bg-[#00B81A] rounded-full opacity-60"
         variants={floatingVariants}
         animate="animate"
       />
@@ -132,7 +132,7 @@ export function WhatYouGetSection() {
         >
           <Link href="/premium">
             <motion.div
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#00EB02]/10 to-purple-500/10 border border-[#00EB02]/20 text-sm font-medium text-[#00EB02] mb-8 cursor-pointer hover:bg-[#00EB02]/20 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#00B81A]/10 to-purple-500/10 border border-[#00B81A]/20 text-sm font-medium text-[#00B81A] mb-8 cursor-pointer hover:bg-[#00B81A]/20 transition-colors"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -153,7 +153,7 @@ export function WhatYouGetSection() {
               <span className="relative">
                 thrive
                 <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#00EB02] to-purple-500 rounded-full"
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#00B81A] to-purple-500 rounded-full"
                   initial={{ scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}
                   viewport={{ once: true }}
@@ -183,7 +183,7 @@ export function WhatYouGetSection() {
                   } ${index === 1 ? "lg:min-h-[600px]" : ""} 
                 rounded-3xl ${feature.bgPattern} border border-gray-100 dark:border-gray-800 
                 overflow-hidden transition-all duration-700 hover:scale-[1.02] hover:shadow-2xl 
-                hover:shadow-purple-500/10 dark:hover:shadow-[#00EB02]/10`}
+                hover:shadow-purple-500/10 dark:hover:shadow-[#00B81A]/10`}
               >
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-30">
@@ -261,9 +261,9 @@ export function WhatYouGetSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
-          <div className="inline-flex items-center gap-8 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#00EB02]/10 to-purple-500/10 border border-[#00EB02]/20">
+          <div className="inline-flex items-center gap-8 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#00B81A]/10 to-purple-500/10 border border-[#00B81A]/20">
             <div className="text-center">
-              <div className="text-3xl font-bold text-[#00EB02]">30K+</div>
+              <div className="text-3xl font-bold text-[#00B81A]">30K+</div>
               <div className="text-sm text-muted-foreground">Total Assets</div>
             </div>
             <div className="w-px h-12 bg-gradient-to-b from-transparent via-gray-300 dark:via-gray-600 to-transparent" />

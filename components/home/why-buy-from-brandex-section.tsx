@@ -38,8 +38,8 @@ const benefits = [
       "Regular content updates",
       "Professional design standards",
     ],
-    color: "text-[#00EB02]",
-    bgColor: "bg-[#00EB02]/10",
+    color: "text-[#00B81A]",
+    bgColor: "bg-[#00B81A]/10",
   },
 ]
 
@@ -70,8 +70,8 @@ export function WhyBuyFromBrandexSection() {
   return (
     <section className="py-32 bg-white dark:bg-card relative overflow-hidden">
       {/* Subtle background decoration */}
-      <div className="absolute top-20 right-20 w-64 h-64 bg-[#00EB02]/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#00EB02]/3 rounded-full blur-3xl" />
+      <div className="absolute top-20 right-20 w-64 h-64 bg-[#00B81A]/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 left-20 w-80 h-80 bg-[#00B81A]/3 rounded-full blur-3xl" />
 
       <div className="container relative">
         <motion.div

@@ -26,15 +26,15 @@ function formatNeeds(needs: unknown): string {
 function row(label: string, value: string | number | null | undefined) {
   if (value === null || value === undefined || value === "") return "";
   return `<tr>
-    <td style="padding:8px 16px;font-weight:600;color:#6b7280;width:180px;vertical-align:top;font-size:13px;">${label}</td>
-    <td style="padding:8px 16px;color:#111827;font-size:14px;">${value}</td>
+    <td style="padding:8px 16px;font-weight:600;color:#6F6F6F;width:180px;vertical-align:top;font-size:13px;">${label}</td>
+    <td style="padding:8px 16px;color:#1F1F1F;font-size:14px;">${value}</td>
   </tr>`;
 }
 
 function section(title: string, rows: string) {
   return `<div style="margin:0 0 24px;">
     <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#00B81A;">${title}</p>
-    <table style="width:100%;border-collapse:collapse;background:#f9fafb;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;">
+    <table style="width:100%;border-collapse:collapse;background:#F8F8F8;border-radius:8px;overflow:hidden;border:1px solid #E5E5E5;">
       ${rows}
     </table>
   </div>`;
@@ -71,7 +71,7 @@ export const sendIntakeEmail = inngest.createFunction(
       const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
-<body style="margin:0;padding:0;background:#f3f4f6;font-family:'Segoe UI',Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#F8F8F8;font-family:'Segoe UI',Arial,sans-serif;">
 <div style="max-width:640px;margin:32px auto;">
 
   <!-- Header -->
@@ -79,8 +79,8 @@ export const sendIntakeEmail = inngest.createFunction(
     <div style="display:flex;align-items:center;gap:10px;">
       <div style="width:36px;height:36px;background:#00B81A;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;line-height:1;">B</div>
       <div>
-        <div style="font-size:18px;font-weight:700;color:#111827;">New Project Inquiry</div>
-        <div style="font-size:12px;color:#6b7280;">Brandex Intake · ${new Date(submission.createdAt).toLocaleString()}</div>
+        <div style="font-size:18px;font-weight:700;color:#1F1F1F;">New Project Inquiry</div>
+        <div style="font-size:12px;color:#6F6F6F;">Brandex Intake · ${new Date(submission.createdAt).toLocaleString()}</div>
       </div>
     </div>
   </div>
@@ -117,9 +117,9 @@ export const sendIntakeEmail = inngest.createFunction(
 
     ${uploadLink ? `
     <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px 20px;margin:0 0 24px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#15803d;">Client Upload Link</p>
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#00B81A;">Client Upload Link</p>
       <a href="${uploadLink}" style="color:#00B81A;font-size:14px;word-break:break-all;">${uploadLink}</a>
-      <p style="margin:8px 0 0;font-size:12px;color:#6b7280;">Share this link with the client so they can upload reference files.</p>
+      <p style="margin:8px 0 0;font-size:12px;color:#6F6F6F;">Share this link with the client so they can upload reference files.</p>
     </div>` : ""}
 
     <div style="text-align:center;">
@@ -127,7 +127,7 @@ export const sendIntakeEmail = inngest.createFunction(
         Open Brandex
       </a>
     </div>
-    <p style="margin:20px 0 0;font-size:11px;color:#9ca3af;text-align:center;">Submission ID: ${submission.id}</p>
+    <p style="margin:20px 0 0;font-size:11px;color:#6F6F6F;text-align:center;">Submission ID: ${submission.id}</p>
   </div>
 </div>
 </body>

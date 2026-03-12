@@ -33,14 +33,14 @@ export default function HeroBanner() {
       <div className="relative z-10 flex h-full flex-col justify-center px-8 py-8 sm:px-12 md:px-16 max-w-xl">
         <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl md:text-4xl text-balance">
           Premium mockups and designs starting at{" "}
-          <span className="text-[#00EB02]">$9.99</span>
+          <span className="text-[#00B81A]">$9.99</span>
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-white/60 sm:text-base max-w-md">
           Access thousands of professional-grade mockups, packaging designs, and branding assets. 
           Perfect for agencies, designers, and creative professionals.
         </p>
         <div className="mt-5">
-          <Link href="/products" className="inline-block rounded-full bg-[#00EB02] px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00EB02] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          <Link href="/products" className="inline-block rounded-full bg-[#00B81A] px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00B81A] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             Browse Collection
           </Link>
         </div>

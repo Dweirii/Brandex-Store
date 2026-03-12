@@ -156,10 +156,10 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
       }}
       onMouseLeave={handleMouseLeave}
       onClick={() => router.push(`/products/${data.slug ?? data.id}`)}
-      className="relative bg-white border border-[#E5E7EB] rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_25px_rgba(17,24,39,0.12)] hover:border-[rgba(0,184,26,0.35)] cursor-pointer group will-change-transform transition-[box-shadow,border-color] duration-200"
+      className="relative bg-white border border-[#E5E5E5] rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_25px_rgba(17,24,39,0.12)] hover:border-[rgba(0,184,26,0.35)] cursor-pointer group will-change-transform transition-[box-shadow,border-color] duration-200"
     >
       {/* Image/Video Container */}
-      <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4] md:aspect-auto">
+      <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4]">
         {/* Frosty Reveal Overlay */}
         {!isMobile && (
           <div className="frost-overlay">
@@ -174,7 +174,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             width={800}
             height={1000}
             className={cn(
-              "w-full h-full md:h-auto object-cover md:object-contain transition-all duration-200 group-hover:scale-105 select-none pointer-events-none",
+              "w-full h-full object-cover transition-all duration-200 group-hover:scale-105 select-none pointer-events-none",
               hasVideo ? "group-hover:brightness-105" : "group-hover:brightness-110 group-hover:saturate-105"
             )}
             onContextMenu={(e) => e.preventDefault()}
@@ -204,7 +204,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             preload={hasImage ? "none" : "metadata"}
             className={cn(
               "transition-all duration-200 group-hover:scale-105 group-hover:brightness-105",
-              hasImage ? "absolute inset-0 w-full h-full object-cover md:object-contain z-10" : "w-full h-full md:h-auto object-cover md:object-contain",
+              hasImage ? "absolute inset-0 w-full h-full object-cover z-10" : "w-full h-full object-cover",
               (hasImage && !isHovered && !isMobile) ? "opacity-0" : "opacity-100"
             )}
             onLoadedData={() => setMediaLoaded(true)}

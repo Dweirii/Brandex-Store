@@ -207,7 +207,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       </div>
 
       {/* Download Card — no text-center so feature list & trust row alignment are not affected */}
-      <div className="border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
+      <div className="border border-[#E5E5E5] dark:border-border rounded-xl overflow-hidden bg-card">
         <div className="p-5 space-y-4">
 
           {/* Top Download Button — wrapper ensures full width so sections below match */}

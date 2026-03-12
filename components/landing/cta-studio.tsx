@@ -60,7 +60,7 @@ export default function HeroBanner() {
       <div className="relative z-10 flex h-full flex-col justify-center px-8 py-8 sm:px-12 md:px-16 max-w-xl">
         <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl md:text-4xl text-balance">
           Create stunning designs with{" "}
-          <span className="text-[#00EB02]">Brandex Studio</span>
+          <span className="text-[#00B81A]">Brandex Studio</span>
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-white/60 sm:text-base max-w-md">
           AI-powered design tools, customizable templates, and professional assets. 
@@ -72,7 +72,7 @@ export default function HeroBanner() {
             target="_blank" 
             rel="noopener noreferrer"
             onClick={handleClick}
-            className="inline-block rounded-md bg-[#00EB02] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#00EB02]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00EB02] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer"
+            className="inline-block rounded-md bg-[#00B81A] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#00B81A]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00B81A] focus-visible:ring-offset-2 focus-visible:ring-offset-black cursor-pointer"
           >
             Try Studio
           </a>

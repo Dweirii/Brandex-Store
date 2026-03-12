@@ -16,7 +16,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, ease: "easeOut" as const }}
         >
           <motion.div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00EB02]/10 border border-[#00EB02]/20 badge-text text-[#00EB02] mb-4 sm:mb-6"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00B81A]/10 border border-[#00B81A]/20 badge-text text-[#00B81A] mb-4 sm:mb-6"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -35,7 +35,7 @@ export function HeroSection() {
             <span className="relative inline-block">
               Digital Products
               <motion.div
-                className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-[#00EB02] to-[#00C402] rounded-full"
+                className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-[#00B81A] to-[#00B81A] rounded-full"
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 1, duration: 0.8 }}

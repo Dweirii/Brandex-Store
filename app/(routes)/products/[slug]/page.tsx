@@ -293,8 +293,8 @@ function ProductDetails({ product }: { product: Product }) {
     : (categoryId && HOW_IT_WORKS_BY_CATEGORY[categoryId]) || DEFAULT_HOW_IT_WORKS;
 
   return (
-    <div className="mt-5 border border-[#E5E7EB] dark:border-border rounded-xl overflow-hidden bg-card">
-      <div className="grid grid-cols-3 divide-x divide-[#E5E7EB] dark:divide-border">
+    <div className="mt-5 border border-[#E5E5E5] dark:border-border rounded-xl overflow-hidden bg-card">
+      <div className="grid grid-cols-3 divide-x divide-[#E5E5E5] dark:divide-border">
         {/* What's Included */}
         <div className="p-4">
           <div className="flex items-center gap-2 mb-3">
@@ -410,7 +410,7 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
   return (
     <div>
       <Container>
-        <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E7EB] dark:border-border">
+        <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E5E5] dark:border-border">
           <h2 className="text-xl font-bold text-foreground mb-6">
             {(categoryId && RELATED_HEADING[categoryId]) ?? "Related Products"}
           </h2>
@@ -524,7 +524,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           fallback={
             <div>
               <Container>
-                <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E7EB] dark:border-border">
+                <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E5E5] dark:border-border">
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {Array.from({ length: 4 }).map((_, i) => (
                       <Skeleton key={i} className="h-96 rounded-lg" />

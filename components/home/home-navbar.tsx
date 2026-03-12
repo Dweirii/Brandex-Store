@@ -56,7 +56,7 @@ export function HomeNavbar() {
                 >
                   {item.label}
                   {item.badge && (
-                    <span className="ml-1.5 inline-flex items-center rounded-md bg-[#00EB02] px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    <span className="ml-1.5 inline-flex items-center rounded-md bg-[#00B81A] px-1.5 py-0.5 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -69,7 +69,7 @@ export function HomeNavbar() {
                 >
                   {item.label}
                   {item.badge && (
-                    <span className="ml-1.5 inline-flex items-center rounded-md bg-[#00EB02] px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    <span className="ml-1.5 inline-flex items-center rounded-md bg-[#00B81A] px-1.5 py-0.5 text-[10px] font-bold text-white">
                       {item.badge}
                     </span>
                   )}
@@ -83,7 +83,7 @@ export function HomeNavbar() {
             {/* Asset Library Button */}
             <Button
               asChild
-              className="hidden md:inline-flex bg-[#00EB02] text-white hover:opacity-90 h-9 rounded-full px-4 transition-opacity"
+              className="hidden md:inline-flex bg-[#00B81A] text-white hover:opacity-90 h-9 rounded-full px-4 transition-opacity"
             >
               <Link href="/downloads">
                 <span className="mr-1.5">📦</span>
@@ -98,7 +98,7 @@ export function HomeNavbar() {
             </button>
 
             {/* User Avatar */}
-            <Link href="/profile" className="w-9 h-9 rounded-full bg-[#00EB02] flex items-center justify-center shrink-0 hover:opacity-90 transition-opacity">
+            <Link href="/profile" className="w-9 h-9 rounded-full bg-[#00B81A] flex items-center justify-center shrink-0 hover:opacity-90 transition-opacity">
               <span className="text-white font-semibold text-sm">U</span>
             </Link>
 
@@ -129,7 +129,7 @@ export function HomeNavbar() {
                   >
                     <span>{item.label}</span>
                     {item.badge && (
-                      <span className="inline-flex items-center rounded-md bg-[#00EB02] px-2 py-1 text-xs font-bold text-white">
+                      <span className="inline-flex items-center rounded-md bg-[#00B81A] px-2 py-1 text-xs font-bold text-white">
                         {item.badge}
                       </span>
                     )}
@@ -143,7 +143,7 @@ export function HomeNavbar() {
                   >
                     <span>{item.label}</span>
                     {item.badge && (
-                      <span className="inline-flex items-center rounded-md bg-[#00EB02] px-2 py-1 text-xs font-bold text-white">
+                      <span className="inline-flex items-center rounded-md bg-[#00B81A] px-2 py-1 text-xs font-bold text-white">
                         {item.badge}
                       </span>
                     )}

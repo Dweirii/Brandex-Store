@@ -129,7 +129,7 @@ function GalleryCell({ item }: { item: GalleryVideo }) {
       {item.username && (
         <div className="absolute top-3 left-3 flex items-center gap-2">
           <div className="flex items-center gap-2 rounded-full bg-black/60 py-1.5 px-3 backdrop-blur-sm">
-            <div className="h-2.5 w-2.5 rounded-full bg-[#00EB02]" />
+            <div className="h-2.5 w-2.5 rounded-full bg-[#00B81A]" />
             <span className="text-xs font-medium text-foreground">
               {item.username}
             </span>
@@ -148,7 +148,7 @@ function GalleryCell({ item }: { item: GalleryVideo }) {
         <div className="absolute inset-0 flex items-end justify-end p-4">
           <Link
             href="/products"
-            className="flex items-center gap-2 rounded-full bg-[#00EB02]/20 px-4 py-2 backdrop-blur-sm border border-[#00EB02]/30 text-[#00EB02] text-sm font-medium hover:bg-[#00EB02]/30 transition-colors"
+            className="flex items-center gap-2 rounded-full bg-[#00B81A]/20 px-4 py-2 backdrop-blur-sm border border-[#00B81A]/30 text-[#00B81A] text-sm font-medium hover:bg-[#00B81A]/30 transition-colors"
           >
             {"View All Products"}
             <ArrowUpRight className="h-4 w-4" />
@@ -176,20 +176,20 @@ export default function ExclusiveGallery() {
             >
               <path
                 d="M2 10C2 5.58 5.58 2 10 2s8 3.58 8 8-3.58 8-8 8"
-                stroke="#00EB02"
+                stroke="#00B81A"
                 strokeWidth="2.5"
                 strokeLinecap="round"
               />
               <path
                 d="M14 10c0-4.42 3.58-8 8-8s8 3.58 8 8-3.58 8-8 8"
-                stroke="#00EB02"
+                stroke="#00B81A"
                 strokeWidth="2.5"
                 strokeLinecap="round"
               />
             </svg>
           </div>
 
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#00EB02]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#00B81A]">
             Premium Quality
           </p>
 
@@ -206,7 +206,7 @@ export default function ExclusiveGallery() {
           </p>
 
           <div className="flex flex-col gap-3 mt-2">
-            <Link href="/products" className="w-full text-center rounded-full bg-[#00EB02] px-6 py-3.5 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+            <Link href="/products" className="w-full text-center rounded-full bg-[#00B81A] px-6 py-3.5 text-sm font-bold text-white hover:opacity-90 transition-opacity">
               Browse Products
             </Link>
             <Link href="/category/free" className="w-full text-center rounded-full bg-transparent px-6 py-3.5 text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border">
