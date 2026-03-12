@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import useMobile from "@/hooks/use-mobile"
 import usePreviewModal from "@/hooks/use-preview-modal"
 import { getDisplayImageUrl } from "@/lib/image-utils"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 
 interface RelatedProductCardProps {
     data: Product
@@ -96,9 +97,10 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             {/* Media Layer */}
             <div className="absolute inset-0 z-0">
                 {rawFirstImageUrl && (
-                    <Image
+                    <ImageWithFallback
                         src={firstImageUrl!}
                         alt={data.name}
+                        fallbackSeed={data.name}
                         fill
                         className={cn(
                             "object-cover transition-transform duration-500 group-hover:scale-110",

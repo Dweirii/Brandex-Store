@@ -5,7 +5,7 @@ import { useUser, useAuth } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import axios from "axios"
-import Image from "next/image"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import Link from "next/link"
 import {
   Coins,
@@ -211,9 +211,10 @@ function DashboardContent() {
               <div key={d.id} className="group">
                 <div className="aspect-[4/3] rounded-xl overflow-hidden bg-muted mb-2">
                   {d.imageUrl ? (
-                    <Image
+                    <ImageWithFallback
                       src={d.imageUrl}
                       alt={d.productName}
+                      fallbackSeed={d.productName}
                       width={300}
                       height={225}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
@@ -345,9 +346,10 @@ function DashboardContent() {
               recentDownloads.map((d) => (
                 <div key={d.id} className="flex items-center gap-3">
                   {d.imageUrl ? (
-                    <Image
+                    <ImageWithFallback
                       src={d.imageUrl}
                       alt={d.productName}
+                      fallbackSeed={d.productName}
                       width={36}
                       height={36}
                       className="w-9 h-9 rounded-lg object-cover shrink-0"

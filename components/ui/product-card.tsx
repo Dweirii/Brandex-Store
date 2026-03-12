@@ -18,6 +18,7 @@ import usePreviewModal from "@/hooks/use-preview-modal"
 import useCompare from "@/hooks/use-compare"
 
 import { getDisplayImageUrl } from "@/lib/image-utils"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 
 interface ProductCardProps {
   data: Product
@@ -168,9 +169,10 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
         )}
         {/* Always render Image if available */}
         {hasImage && (
-          <Image
+          <ImageWithFallback
             src={firstImageUrl!}
             alt={data.name}
+            fallbackSeed={data.name}
             width={800}
             height={1000}
             className={cn(

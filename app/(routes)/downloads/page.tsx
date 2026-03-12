@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import Image from "next/image"
+import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import {
   Select,
   SelectContent,
@@ -370,17 +370,16 @@ function DownloadsPageContent() {
                       transition={{ duration: 0.3, delay: index * 0.05 }}
                     >
                       {/* Product Image */}
-                      {download.imageUrl && (
-                        <div className="relative w-full h-48 bg-muted">
-                          <Image
-                            src={download.imageUrl}
-                            alt={download.productName}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          />
-                        </div>
-                      )}
+                      <div className="relative w-full h-48 bg-muted">
+                        <ImageWithFallback
+                          src={download.imageUrl ?? ""}
+                          alt={download.productName}
+                          fallbackSeed={download.productName}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      </div>
 
                       <div className="p-6">
                         <div className="flex justify-between items-start mb-4">
