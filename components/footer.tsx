@@ -19,18 +19,18 @@ const BehanceIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 const Footer = () => {
   return (
-    <footer className="bg-card text-foreground border-t border-border py-10 md:py-14">
+    <footer className="bg-card text-foreground border-t border-border py-10 md:py-14 mt-0">
       <Container className="px-4 sm:px-6 lg:px-8">
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">About Brandex</h3>
-            <p className="text-sm text-muted-foreground max-w-[640px]">
+            <h3 className="text-base font-bold mb-3 text-foreground">About Brandex</h3>
+            <p className="text-sm text-[#6B6B6B] leading-relaxed max-w-[640px]">
               brandexme.com offers premium creative assets including mockups, graphics (images, vectors, PSD), packaging, and motion. Instant downloads, commercial-ready, and built for real-world projects.
             </p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Quick Links</h3>
+            <h3 className="text-base font-bold mb-3 text-foreground">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               {[
                 { label: "About", href: "/about" },
@@ -42,7 +42,7 @@ const Footer = () => {
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200"
+                    className="text-[#6B6B6B] hover:text-primary transition-colors duration-200"
                   >
                     {label}
                   </Link>
@@ -51,21 +51,21 @@ const Footer = () => {
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Contact</h3>
-            <p className="text-sm text-muted-foreground mb-3">
+            <h3 className="text-base font-bold mb-3 text-foreground">Contact</h3>
+            <p className="text-sm text-[#6B6B6B] mb-3">
               Need help? Email us and we&apos;ll get back to you soon.
             </p>
             <ul className="text-sm space-y-2">
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <a href="mailto:team@brandexme.com" className="text-muted-foreground hover:underline">
+                <a href="mailto:team@brandexme.com" className="text-[#6B6B6B] hover:text-foreground transition-colors">
                   team@brandexme.com
                 </a>
               </li>
               <SignedIn>
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-primary" />
-                  <a href="tel:+18554042726" className="text-muted-foreground hover:underline">
+                  <a href="tel:+18554042726" className="text-[#6B6B6B] hover:text-foreground transition-colors">
                     +1-855-404-2726
                   </a>
                 </li>
@@ -73,43 +73,43 @@ const Footer = () => {
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Stay Connected</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <h3 className="text-base font-bold mb-3 text-foreground">Stay Connected</h3>
+            <p className="text-sm text-[#6B6B6B] mb-4">
               Follow us on our social platforms for updates and more.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <a
                 href="https://x.com/brandexme?s=21&t=ZY2A-PurYFzWTpcYQkcePw"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition"
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-[#F3F4F6] text-[#6B6B6B] hover:bg-primary hover:text-white transition-all duration-200"
                 aria-label="Brandex on X"
               >
-                <XIcon className="h-5 w-5" />
+                <XIcon className="h-4 w-4" />
               </a>
               <a
                 href="https://www.instagram.com/brandex_llc/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition"
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-[#F3F4F6] text-[#6B6B6B] hover:bg-primary hover:text-white transition-all duration-200"
                 aria-label="Brandex on Instagram"
               >
-                <Instagram className="h-5 w-5" />
+                <Instagram className="h-4 w-4" />
               </a>
               <a
                 href="https://www.behance.net/brandex-design"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition"
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-[#F3F4F6] text-[#6B6B6B] hover:bg-primary hover:text-white transition-all duration-200"
                 aria-label="Brandex on Behance"
               >
-                <BehanceIcon className="h-5 w-5" />
+                <BehanceIcon className="h-4 w-4" />
               </a>
             </div>
           </div>
         </div>
         {/* Footer Bottom */}
-        <div className="mt-10 border-t border-border pt-6 text-center text-xs text-muted-foreground">
+        <div className="mt-8 border-t border-border pt-5 text-center text-xs text-muted-foreground">
           © 2026 Brandex LLC. All Rights Reserved.
         </div>
       </Container>

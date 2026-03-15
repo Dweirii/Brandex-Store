@@ -18,7 +18,7 @@ const RecentlyViewed = () => {
   if (items.length === 0) return null
 
   return (
-    <div className="bg-background py-12 border-t" data-recently-viewed id="recently-viewed">
+    <div className="bg-background py-8 border-t" data-recently-viewed id="recently-viewed">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Start a Project — Brandex",
+  title: "Submit a Request — Brandex",
   description: "Tell us about your project and we'll get back to you within 24 hours.",
   robots: { index: false, follow: false },
 };

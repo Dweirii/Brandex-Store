@@ -184,7 +184,7 @@ export default function IntakePage() {
   return (
     <div className="w-full max-w-xl">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1.5">Start a Project</h1>
+        <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1.5">Submit a Request</h1>
         <p className="text-muted-foreground">Fill out the form below and we&apos;ll be in touch within 24 hours.</p>
       </div>
 

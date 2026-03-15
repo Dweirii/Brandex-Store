@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { ClipboardList, Search } from "lucide-react"
+import { Search } from "lucide-react"
 
 
 
@@ -20,8 +20,6 @@ export default function CategoryNav() {
     { id: "graphics", label: "Graphics", href: "/category/graphics", isGroup: true },
     { id: "c302954a-6cd2-43a7-9916-16d9252f754c", label: "Motion Library", href: "/category/motion-library" },
   ]
-
-  const isIntakeActive = pathname === "/intake" || pathname.startsWith("/intake/")
 
   return (
     <div className="hidden md:flex items-center gap-6 relative z-10 pointer-events-auto">
@@ -53,18 +51,6 @@ export default function CategoryNav() {
 
       {/* Intake actions — pinned to the right */}
       <div className="shrink-0 pl-6 border-l border-border/50 flex items-center gap-2">
-        <Link
-          href="/intake"
-          className={cn(
-            "h-[42px] flex items-center gap-2 px-4 text-[13px] font-bold rounded-xl whitespace-nowrap transition-all duration-300",
-            isIntakeActive && !pathname.startsWith("/intake/track")
-              ? "text-primary bg-primary/10 ring-1 ring-primary/20"
-              : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-          )}
-        >
-          <ClipboardList className="w-4 h-4" />
-          Start a Project
-        </Link>
         <Link
           href="/intake/track"
           className={cn(

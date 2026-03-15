@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, ChevronRight, ClipboardList, Search } from "lucide-react"
+import { Menu, X, ChevronRight, Search } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/Button"
@@ -106,21 +106,7 @@ const MainNav = () => {
           ))}
         </nav>
 
-        {/* Start a Project — desktop */}
-        <div className="hidden md:flex w-36 justify-end">
-          <Link
-            href="/intake"
-            className={cn(
-              "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200",
-              pathname === "/intake" || pathname.startsWith("/intake/")
-                ? "border-primary bg-hover-bg text-primary"
-                : "border-border text-foreground hover:border-primary hover:text-primary hover:bg-hover-bg"
-            )}
-          >
-            <ClipboardList className="w-3.5 h-3.5" />
-            Start a Project
-          </Link>
-        </div>
+        <div className="hidden md:flex w-36 justify-end" />
 
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -191,16 +177,8 @@ const MainNav = () => {
                 ))}
               </div>
 
-              {/* Start a Project + Track — mobile */}
+              {/* Track — mobile */}
               <div className="p-4 border-t border-border space-y-2">
-                <Link
-                  href="/intake"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm transition-opacity hover:opacity-90"
-                >
-                  <ClipboardList className="w-4 h-4" />
-                  Start a Project
-                </Link>
                 <Link
                   href="/intake/track"
                   onClick={() => setIsOpen(false)}

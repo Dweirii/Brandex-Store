@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", type: "image/x-icon" },
+      { url: "/icon.svg", type: "image/x-icon" },
       { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
       { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
     ],
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
       { url: "/icons/icon-192.png", sizes: "192x192" },
       { url: "/icons/icon-512.png", sizes: "512x512" },
     ],
-    shortcut: "/favicon.ico",
+    shortcut: "/icon.svg",
   },
   robots: {
     index: true,
@@ -142,7 +142,7 @@ export default function RootLayout({
         </head>
 
         <body
-          className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-card/70 text-foreground transition-colors overflow-x-hidden`}
+          className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-background text-foreground transition-colors overflow-x-hidden`}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Providers>
@@ -154,7 +154,7 @@ export default function RootLayout({
                   <Navbar />
                 </header>
               </Suspense>
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 pb-0">{children}</main>
               <AppToaster />
               <Footer />
               <HelpWidget />

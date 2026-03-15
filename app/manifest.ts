@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
       "Premium mockups, ready-made packaging designs, and layered PSD files crafted for designers, marketers, and brands who demand quality and speed.",
     start_url: "/",
     display: "standalone",
-    background_color: "#F8F8F8",
+    background_color: "#FFFFFF",
     theme_color: "#00B81A",
     orientation: "portrait-primary",
     icons: [

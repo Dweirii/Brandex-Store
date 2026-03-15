@@ -67,7 +67,19 @@ const useFavorites = create<FavoritesStore>()(
 
                     if (response.ok) {
                         const data = await response.json();
-                        set({ items: data.products || [] });
+                        // Normalize Prisma field names (Image → images, Category → category)
+                        const serverItems: Product[] = (data.products || []).map((p: any) => ({
+                            ...p,
+                            images: p.images || p.Image?.map((img: any) => ({ id: img.id, url: img.url })) || [],
+                            category: p.category || p.Category || null,
+                        }));
+                        const localItems = get().items;
+
+                        // Merge: start with server items, then add any local-only items
+                        // so locally-added favorites that haven't synced yet aren't lost
+                        const serverIds = new Set(serverItems.map((p) => p.id));
+                        const localOnly = localItems.filter((p) => !serverIds.has(p.id));
+                        set({ items: [...serverItems, ...localOnly] });
                     } else if (response.status === 401) {
                         // Not authenticated, use localStorage
                         console.log("Not authenticated, using localStorage favorites");
