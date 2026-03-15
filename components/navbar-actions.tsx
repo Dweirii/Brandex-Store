@@ -48,8 +48,8 @@ const NavbarActions = () => {
         {/* Custom Work — primary */}
         <Link
           href="/custom-work"
-          className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary hover:bg-logogreen-600 text-white transition-all duration-200 group"
-          aria-label="Custom Work"
+          className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary hover:bg-[#009915] text-white transition-all duration-200 group"
+          aria-label="Request a Custom Project"
         >
           <PenLine className="h-3.5 w-3.5 text-white group-hover:scale-110 transition-transform" />
           <span className="text-xs font-semibold text-white whitespace-nowrap">

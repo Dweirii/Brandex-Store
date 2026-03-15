@@ -111,7 +111,7 @@ function DashboardContent() {
   if (!isSignedIn) return null
 
   return (
-    <div className="py-8 px-6 space-y-8 max-w-[1200px]">
+    <div className="py-8 px-2 space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">
@@ -123,51 +123,54 @@ function DashboardContent() {
       </div>
 
       {/* Credits card + stats row */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
         {/* Credits balance */}
-        <div className="lg:col-span-1 bg-primary rounded-2xl p-6 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-28 h-28 bg-white/10 rounded-full -mr-10 -mt-10 pointer-events-none" />
-          <p className="text-[11px] font-semibold uppercase tracking-widest opacity-80 mb-2">
-            Available Balance
+        <div className="lg:col-span-1 bg-primary rounded-xl px-5 py-4 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none" />
+          <p className="text-[10px] font-semibold uppercase tracking-widest opacity-80 mb-1">
+            Credits Available
           </p>
-          <p className="text-4xl font-bold mb-4">
+          <p className="text-2xl font-bold mb-2">
             {creditsLoading ? (
-              <Loader2 className="h-8 w-8 animate-spin" />
+              <Loader2 className="h-6 w-6 animate-spin" />
             ) : (
-              `${balance} Credits`
+              balance
             )}
+          </p>
+          <p className="text-[11px] opacity-70 mb-3">
+            You have {creditsLoading ? "…" : balance} credits available.
           </p>
           <Link
             href="/credits"
-            className="inline-flex items-center gap-1.5 bg-white text-primary text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-white/90 transition-colors"
+            className="inline-flex items-center gap-1.5 bg-white text-primary text-[11px] font-semibold px-2.5 py-1 rounded-md hover:bg-white/90 transition-colors"
           >
-            <Plus className="h-3.5 w-3.5" />
-            Buy Credits →
+            <Plus className="h-3 w-3" />
+            Buy Credits
           </Link>
         </div>
 
         {/* Download stats */}
-        <div className="lg:col-span-3 grid grid-cols-3 gap-4">
-          <div className="bg-card border border-border rounded-2xl p-5 flex flex-col items-center justify-center">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center mb-2">
-              <Download className="h-5 w-5 text-blue-500" />
+        <div className="lg:col-span-3 grid grid-cols-3 gap-3">
+          <div className="bg-card border border-border rounded-xl px-4 py-3 flex flex-col items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mb-1.5">
+              <Download className="h-4 w-4 text-blue-500" />
             </div>
-            <p className="text-2xl font-bold">{dlLoading ? "—" : totalDownloads}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Total Downloads</p>
+            <p className="text-xl font-bold">{dlLoading ? "—" : totalDownloads}</p>
+            <p className="text-[11px] text-muted-foreground">Total Downloads</p>
           </div>
-          <div className="bg-card border border-border rounded-2xl p-5 flex flex-col items-center justify-center">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-2">
-              <Package className="h-5 w-5 text-orange-500" />
+          <div className="bg-card border border-border rounded-xl px-4 py-3 flex flex-col items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mb-1.5">
+              <Package className="h-4 w-4 text-orange-500" />
             </div>
-            <p className="text-2xl font-bold">{dlLoading ? "—" : freeDownloads}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Free Downloads</p>
+            <p className="text-xl font-bold">{dlLoading ? "—" : freeDownloads}</p>
+            <p className="text-[11px] text-muted-foreground">Free Downloads</p>
           </div>
-          <div className="bg-card border border-border rounded-2xl p-5 flex flex-col items-center justify-center">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center mb-2">
-              <Coins className="h-5 w-5 text-purple-500" />
+          <div className="bg-card border border-border rounded-xl px-4 py-3 flex flex-col items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mb-1.5">
+              <Coins className="h-4 w-4 text-purple-500" />
             </div>
-            <p className="text-2xl font-bold">{dlLoading ? "—" : premiumDownloads}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">Premium Downloads</p>
+            <p className="text-xl font-bold">{dlLoading ? "—" : premiumDownloads}</p>
+            <p className="text-[11px] text-muted-foreground">Premium Downloads</p>
           </div>
         </div>
       </div>

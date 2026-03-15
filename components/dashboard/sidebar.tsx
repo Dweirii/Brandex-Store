@@ -39,7 +39,7 @@ export function DashboardSidebar() {
 
   return (
     <aside className="w-56 shrink-0 flex flex-col border-r border-border bg-background sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
-      <div className="flex flex-col gap-5 py-6 px-3 flex-1">
+      <div className="flex flex-col gap-5 py-6 px-3">
 
         {/* Main nav */}
         <div>
@@ -97,13 +97,13 @@ export function DashboardSidebar() {
         </div>
 
         {/* Credits CTA card */}
-        <div className="mt-auto mx-1 rounded-xl bg-foreground text-background p-4">
-          <p className="text-xs font-semibold mb-0.5">Need more credits?</p>
+        <div className="mt-4 mx-1 rounded-xl bg-foreground text-background p-4">
+          <p className="text-xs font-semibold mb-0.5">Need credits?</p>
           <p className="text-[11px] opacity-60 mb-3">
             Each premium download costs 5 credits
           </p>
           <div className="flex items-center justify-between text-[10px] opacity-60 mb-1.5">
-            <span>{balance ?? 0} credits remaining</span>
+            <span>{balance ?? 0} credits available</span>
           </div>
           <div className="w-full bg-white/20 rounded-full h-1 mb-3">
             <div

@@ -38,14 +38,11 @@ const steps = [
 
 export default function CustomWorkPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+    <div className="bg-background">
+      <div className="py-8 px-2">
 
         {/* Header */}
         <div className="max-w-2xl mb-14">
-          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-primary mb-4">
-            Custom Work
-          </span>
           <h1 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight mb-6">
             Custom Work
           </h1>

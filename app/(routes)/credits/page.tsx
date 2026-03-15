@@ -97,21 +97,17 @@ function CreditsPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1320px] mx-auto space-y-8">
+    <div className="bg-background py-8 px-2">
+      <div className="space-y-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-2">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
             Your Credits
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground mt-1">
             Manage your credits and download history
           </p>
-        </motion.div>
+        </div>
 
         {error && (
           <motion.div
@@ -129,24 +125,23 @@ function CreditsPageContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-5 shadow-2xl text-primary-foreground relative overflow-hidden"
+          className="bg-gradient-to-br from-primary to-primary/80 rounded-xl px-5 py-4 shadow-lg text-primary-foreground relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
-          
+          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20" />
+
           <div className="relative z-10">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-2 rounded-xl">
-                  <Coins className="h-5 w-5" />
+                <div className="bg-white/20 p-1.5 rounded-lg">
+                  <Coins className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm opacity-90">Available Balance</p>
-                  <p className="text-3xl font-bold">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest opacity-80">Credits Available</p>
+                  <p className="text-2xl font-bold">
                     {isLoading ? (
-                      <Loader2 className="h-8 w-8 animate-spin inline" />
+                      <Loader2 className="h-6 w-6 animate-spin inline" />
                     ) : (
-                      `${balance} Credits`
+                      balance
                     )}
                   </p>
                 </div>
@@ -155,14 +150,14 @@ function CreditsPageContent() {
                 onClick={() => setShowPurchaseModal(true)}
                 variant="outline"
                 size="sm"
-                className="bg-white text-primary hover:bg-white/90 border-0 shadow-lg"
+                className="bg-white text-primary hover:bg-white/90 border-0 shadow-lg text-xs"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="h-3.5 w-3.5" />
                 Buy Credits
               </Button>
             </div>
-            <p className="text-sm opacity-75">
-              Each premium download costs 5 credits. Free products don&apos;t require credits.
+            <p className="text-xs opacity-70 mt-2">
+              You have {isLoading ? "…" : balance} credits available. Each premium download costs 5 credits.
             </p>
           </div>
         </motion.div>

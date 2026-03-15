@@ -5,7 +5,7 @@ import axios from "axios"
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState, useCallback } from "react"
 import { DownloadButton } from "@/components/ui/download-button"
-import Container from "@/components/ui/container"
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, Loader2, ShoppingBag, CheckCircle2, XCircle, RefreshCw, Calendar, Package, Coins } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -121,16 +121,15 @@ export default function OrdersPage() {
   const getTotalSpent = () => orders.reduce((total, order) => total + order.price, 0)
 
   return (
-    <Container>
-      <div className="py-8 md:py-12 lg:py-16">
-        <div className="text-center mb-12">
-          <motion.h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            My Orders
-          </motion.h1>
-          <motion.p className="text-lg text-muted-foreground max-w-2xl mx-auto" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-            Track your purchases and download your digital products
-          </motion.p>
-        </div>
+    <div className="py-8 px-2">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground">
+          Purchases
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Track your purchases and download your digital products
+        </p>
+      </div>
 
         {/* Stats */}
         {!isLoading && !error && orders.length > 0 && (
@@ -254,7 +253,6 @@ export default function OrdersPage() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-    </Container>
+    </div>
   )
 }
