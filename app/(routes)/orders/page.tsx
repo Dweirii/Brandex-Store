@@ -122,7 +122,7 @@ export default function OrdersPage() {
 
   return (
     <div className="py-4 space-y-8">
-      <div className="mb-6">
+      <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">
           Purchases
         </h1>

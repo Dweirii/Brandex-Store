@@ -41,15 +41,12 @@ export default function CustomWorkPage() {
     <div className="py-4 px-2">
 
         {/* Header */}
-        <div className="max-w-2xl mb-14">
-          <h1 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tight mb-6">
+        <div className="max-w-2xl mb-8">
+          <h1 className="text-2xl font-bold text-foreground mb-1">
             Custom Work
           </h1>
-          <p className="text-base text-muted-foreground leading-relaxed mb-4">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Need something created specifically for your brand? Brandex offers custom design services for businesses, creators, and agencies seeking polished, high-quality visuals tailored to their exact needs.
-          </p>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            From branding and packaging to mockups and print design, every custom request is reviewed individually to understand the scope, creative direction, and overall needs of the project. Once we review the details, we&apos;ll provide a quote before any work begins.
           </p>
         </div>
 

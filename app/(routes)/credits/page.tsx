@@ -100,7 +100,7 @@ function CreditsPageContent() {
     <div className="py-4 px-2">
       <div className="space-y-6">
         {/* Header */}
-        <div>
+        <div className="mb-8">
           <h1 className="text-2xl font-bold text-foreground">
             Your Credits
           </h1>

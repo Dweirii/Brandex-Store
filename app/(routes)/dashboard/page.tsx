@@ -113,7 +113,7 @@ function DashboardContent() {
   return (
     <div className="py-4 space-y-8">
       {/* Header */}
-      <div>
+      <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">
           Welcome to your dashboard, {user?.firstName ?? "there"}!
         </h1>

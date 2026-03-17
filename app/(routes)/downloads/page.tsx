@@ -200,9 +200,9 @@ function DownloadsPageContent() {
 
   return (
     <div className="py-4 space-y-8">
-      <div className="text-left mb-10">
+      <div className="mb-8">
         <motion.h1 
-          className="text-3xl font-bold text-foreground mb-2" 
+          className="text-2xl font-bold text-foreground" 
           initial={{ opacity: 0, y: -20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5 }}
@@ -210,7 +210,7 @@ function DownloadsPageContent() {
           My Downloads
         </motion.h1>
         <motion.p 
-          className="text-base text-muted-foreground" 
+          className="text-sm text-muted-foreground mt-1" 
           initial={{ opacity: 0, y: -10 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5, delay: 0.1 }}

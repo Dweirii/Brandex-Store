@@ -46,16 +46,18 @@ export default function FavoritesPage() {
   return (
     <div className="py-4 space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-0">
-        <div className="flex items-center gap-3">
-          <Heart className="h-6 w-6 text-red-500 fill-current" />
-          <h1 className="text-3xl font-bold text-foreground">My Favorites</h1>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-foreground">
+          My Favorites
           {favorites.items.length > 0 && (
-            <span className="text-sm text-muted-foreground">
+            <span className="ml-3 text-sm font-medium text-muted-foreground">
               ({favorites.items.length} {favorites.items.length === 1 ? 'item' : 'items'})
             </span>
           )}
-        </div>
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Products you&apos;ve saved for later
+        </p>
       </div>
 
       {/* Empty State */}

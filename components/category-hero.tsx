@@ -42,12 +42,12 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
 
   return (
     <section className="w-full bg-background">
-      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-10 sm:pt-12">
+      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-[120px]">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
 
           {/* Left: Text — justify-center keeps content vertically centred against collage */}
           <motion.div
-            className="flex flex-col justify-center gap-3"
+            className="flex flex-col justify-center gap-6"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
@@ -61,7 +61,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
             )}
 
             {/* Headline */}
-            <h1 className="text-[2.1rem] sm:text-[2.6rem] lg:text-[2.75rem] xl:text-5xl font-extrabold tracking-tight leading-[1.07] text-foreground">
+            <h1 className="text-[2.1rem] sm:text-[2.6rem] lg:text-[2.75rem] xl:text-5xl font-extrabold tracking-tight leading-[1.07] text-foreground max-w-[560px]">
               {headline}
             </h1>
 
@@ -71,7 +71,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
             </p>
 
             {/* CTA buttons */}
-            <div className="flex flex-row flex-wrap gap-2.5 mt-1">
+            <div className="flex flex-row flex-wrap gap-3 mt-6">
               <Button
                 size="sm"
                 className="group bg-primary hover:bg-logogreen-600 text-white font-semibold px-5 h-9 text-sm rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
@@ -95,7 +95,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
 
             {/* Icon row — trust signals beneath the CTA buttons */}
             {iconRow && iconRow.length > 0 && (
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-1">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
                 {iconRow.map((item, i) => {
                   const Icon = ICON_MAP[item.icon]
                   return (
@@ -127,7 +127,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
         </div>
 
         {/* Divider — constrained to container width, matching hero + grid alignment */}
-        <div className="border-b border-border mt-10 sm:mt-12" />
+        <div className="border-b border-border mt-[56px]" />
       </div>
     </section>
   )

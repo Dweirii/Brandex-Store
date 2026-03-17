@@ -49,21 +49,6 @@ export default function CategoryNav() {
         })}
       </nav>
 
-      {/* Intake actions — pinned to the right */}
-      <div className="shrink-0 pl-6 border-l border-border/50 flex items-center gap-2">
-        <Link
-          href="/intake/track"
-          className={cn(
-            "h-[42px] flex items-center gap-2 px-4 text-[13px] font-bold rounded-xl whitespace-nowrap transition-all duration-300",
-            pathname.startsWith("/intake/track")
-              ? "text-primary bg-primary/10 ring-1 ring-primary/20"
-              : "text-muted-foreground hover:text-primary hover:bg-primary/10"
-          )}
-        >
-          <Search className="w-4 h-4" />
-          Track Request
-        </Link>
-      </div>
     </div>
   )
 }
