@@ -38,8 +38,7 @@ const steps = [
 
 export default function CustomWorkPage() {
   return (
-    <div className="bg-background">
-      <div className="py-8 px-2">
+    <div className="py-4 px-2">
 
         {/* Header */}
         <div className="max-w-2xl mb-14">
@@ -129,6 +128,5 @@ export default function CustomWorkPage() {
         </section>
 
       </div>
-    </div>
   )
 }

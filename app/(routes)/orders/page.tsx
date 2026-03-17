@@ -121,7 +121,7 @@ export default function OrdersPage() {
   const getTotalSpent = () => orders.reduce((total, order) => total + order.price, 0)
 
   return (
-    <div className="py-8 px-2">
+    <div className="py-4 space-y-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground">
           Purchases

@@ -111,7 +111,7 @@ function DashboardContent() {
   if (!isSignedIn) return null
 
   return (
-    <div className="py-8 px-2 space-y-6">
+    <div className="py-4 space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">

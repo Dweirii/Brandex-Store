@@ -97,7 +97,7 @@ function CreditsPageContent() {
   }
 
   return (
-    <div className="bg-background py-8 px-2">
+    <div className="py-4 px-2">
       <div className="space-y-6">
         {/* Header */}
         <div>

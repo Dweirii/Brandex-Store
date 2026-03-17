@@ -199,26 +199,28 @@ function DownloadsPageContent() {
   const getPaidDownloads = () => downloads.filter((d) => !d.isFree).length
 
   return (
-    <Container>
-      <div className="py-8 md:py-12 lg:py-16">
-        <div className="text-center mb-12">
-          <motion.h1 
-            className="text-4xl md:text-5xl font-bold text-foreground mb-4" 
-            initial={{ opacity: 0, y: -20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5 }}
-          >
-            My Downloads
-          </motion.h1>
-          <motion.p 
-            className="text-lg text-muted-foreground max-w-2xl mx-auto" 
-            initial={{ opacity: 0, y: -10 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            View and re-download your purchased digital products
-          </motion.p>
-        </div>
+    <div className="py-4 space-y-8">
+      <div className="text-left mb-10">
+        <motion.h1 
+          className="text-3xl font-bold text-foreground mb-2" 
+          initial={{ opacity: 0, y: -20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.5 }}
+        >
+          My Downloads
+        </motion.h1>
+        <motion.p 
+          className="text-base text-muted-foreground" 
+          initial={{ opacity: 0, y: -10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          View and re-download your purchased digital products
+        </motion.p>
+      </div>
+
+      {/* Stats */}
+      {/* ... */}
 
         
 
@@ -435,9 +437,7 @@ function DownloadsPageContent() {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
-
-    </Container>
+    </div>
   )
 }
 
@@ -445,14 +445,12 @@ export default function DownloadsPage() {
   return (
     <Suspense
       fallback={
-        <Container>
-          <div className="py-8 md:py-12 lg:py-16">
-            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground bg-card rounded-2xl shadow-lg border border-border">
-              <Loader2 className="h-12 w-12 animate-spin mb-6 text-primary" />
-              <p className="text-xl font-semibold mb-2">Loading downloads...</p>
-            </div>
+        <div className="py-8">
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground bg-card rounded-2xl shadow-lg border border-border">
+            <Loader2 className="h-12 w-12 animate-spin mb-6 text-primary" />
+            <p className="text-xl font-semibold mb-2">Loading downloads...</p>
           </div>
-        </Container>
+        </div>
       }
     >
       <DownloadsPageContent />

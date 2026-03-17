@@ -38,7 +38,7 @@ export function DashboardSidebar() {
   const progressPct = Math.min(((balance ?? 0) / 50) * 100, 100)
 
   return (
-    <aside className="w-56 shrink-0 flex flex-col border-r border-border bg-background sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+    <aside className="w-56 shrink-0 flex flex-col bg-transparent sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
       <div className="flex flex-col gap-5 py-6 px-3">
 
         {/* Main nav */}
