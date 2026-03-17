@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic'
 import axios, { AxiosError } from "axios"
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState, useCallback, Suspense } from "react"
-import Container from "@/components/ui/container"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, Loader2, Download, RefreshCw, Calendar, Package, Filter, DollarSign } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"

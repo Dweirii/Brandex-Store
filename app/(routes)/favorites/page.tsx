@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Container from "@/components/ui/container"
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
 import ProductCard from "@/components/ui/product-card"
 import { Heart } from "lucide-react"
