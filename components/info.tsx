@@ -221,6 +221,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
               className="w-full h-12 text-base font-semibold"
               iconOnly={false}
               customText={isFreeProduct ? "Free Download" : `Download for ${productPrice} Credits`}
+              productName={data.name}
+              creditCost={isFreeProduct ? 0 : productPrice}
             />
           </div>
 
@@ -254,25 +256,25 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           {/* Divider */}
           <div className="border-t border-border" />
 
-          {/* Feature checklist — full width, aligned with button; left column text-left, right column text-right */}
+          {/* Feature checklist */}
           <div className="w-full min-w-0 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-foreground">
-            <div className="flex items-center gap-2 text-left">
-              <Check className="h-4 w-4 shrink-0 text-primary" />
+            <div className="flex items-start gap-2">
+              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
               <span>{FEATURES[0]}</span>
             </div>
-            <div className="flex items-center justify-end gap-2 text-right">
-              <Check className="h-4 w-4 shrink-0 order-2 text-primary" />
-              <span className="order-1">{FEATURES[2]}</span>
+            <div className="flex items-start gap-2">
+              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+              <span>{FEATURES[2]}</span>
             </div>
             {!isFreeProduct && (
-              <div className="flex items-center gap-2 text-left">
-                <Check className="h-4 w-4 shrink-0 text-primary" />
+              <div className="flex items-start gap-2">
+                <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
                 <span>{FEATURES[1]}</span>
               </div>
             )}
-            <div className={isFreeProduct ? "col-span-2 flex items-center gap-2 text-left" : "flex items-center justify-end gap-2 text-right"}>
-              <Check className={isFreeProduct ? "h-4 w-4 shrink-0 text-primary" : "h-4 w-4 shrink-0 order-2 text-primary"} />
-              <span className={isFreeProduct ? "" : "order-1"}>{FEATURES[3]}</span>
+            <div className={isFreeProduct ? "col-span-2 flex items-start gap-2" : "flex items-start gap-2"}>
+              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+              <span>{FEATURES[3]}</span>
             </div>
           </div>
 

@@ -84,7 +84,7 @@ const ProductList: React.FC<ProductListProps> = ({
       const nextPage = page + 1
       const response = await loadMoreProducts({
         page: nextPage,
-        limit: 48,
+        limit: 24,
         categoryId,
         priceFilter,
         sortBy,

@@ -69,7 +69,7 @@ async function FeaturedProducts({
   try {
     const { products, total, page, pageCount } = await getProducts({
       page: 1,
-      limit: 48,
+      limit: 24,
       priceFilter,
       sortBy,
     })
@@ -162,11 +162,11 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
               })}
             </div>
 
-            {/* ── New Releases ────────────────────────────────────────── */}
+            {/* ── Just Added ──────────────────────────────────────────── */}
             {newReleasesData.products.length > 0 && (
               <div className="mb-10">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-base font-bold text-foreground">New Releases</h2>
+                  <h2 className="text-xl font-bold text-foreground">Just Added</h2>
                   <Link
                     href="/?sortBy=newest"
                     className="text-[12px] text-primary font-medium hover:underline flex items-center gap-1"
@@ -184,7 +184,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
 
             {/* ── Featured Product Grid header + filters ──────────────── */}
             <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
-              <h2 className="text-base font-bold text-foreground flex-1">All Assets</h2>
+              <h2 className="text-xl font-bold text-foreground flex-1">All Assets</h2>
               <div className="flex flex-row items-center gap-2">
                 <PriceFilter />
                 <SortFilter />

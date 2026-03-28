@@ -33,7 +33,7 @@ const NavbarActions = () => {
         studioUrl={studioUrl}
       />
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-3">
 
         {/* Studio — secondary, outline style */}
         <button

@@ -42,8 +42,8 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
   home: {
     headline: "Real assets. Real deadlines. Real results.",
     subhead:
-      "Mockups, packaging, vectors, photos and motion — professionally crafted and ready to use today. Stop searching. Start creating.",
-    primaryCTA: { label: "Explore Assets", href: "/products" },
+      "Premium mockups, packaging, vectors, photos, and motion—crafted and ready to use today. Stop searching. Start creating.",
+    primaryCTA: { label: "Browse Assets", href: "/products" },
     secondaryCTA: { label: "See Pricing", href: "/credits" },
     images: [
       "https://Brandex-cdn.b-cdn.net/hero/home-1.jpg",

@@ -7,7 +7,7 @@ import { SearchBarWrapper } from "./search-bar-wrapper"
 
 export function DesktopNavbarSection() {
   return (
-    <div className="hidden md:flex relative px-4 sm:px-6 lg:px-8 items-center justify-between h-16 gap-6">
+    <div className="hidden md:flex relative px-4 sm:px-6 lg:px-8 items-center justify-between h-[70px] gap-8">
       <div className="shrink-0 relative">
         <Logo />
       </div>

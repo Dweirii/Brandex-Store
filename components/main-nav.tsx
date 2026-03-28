@@ -44,11 +44,11 @@ const MainNav = () => {
         scrolled ? "bg-card/90 backdrop-blur-md shadow-sm" : "bg-transparent",
       )}
     >
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Spacer to keep categories centered */}
         <div className="hidden md:block w-36" />
 
-        <nav className="hidden md:flex flex-1 justify-center items-center space-x-1 lg:space-x-4">
+        <nav className="hidden md:flex flex-1 justify-center items-center space-x-2 lg:space-x-6">
           {routes.map((route, index) => (
             <div
               key={route.href}

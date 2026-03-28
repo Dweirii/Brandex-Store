@@ -26,15 +26,22 @@ function colorFromSeed(seed: string) {
 
 interface ImageWithFallbackProps extends Omit<ImageProps, "onError"> {
   fallbackSeed?: string
+  onError?: () => void
 }
 
 export function ImageWithFallback({
   fallbackSeed = "",
   alt,
   className,
+  onError,
   ...props
 }: ImageWithFallbackProps) {
   const [errored, setErrored] = useState(!props.src)
+
+  const handleError = () => {
+    setErrored(true)
+    onError?.()
+  }
 
   if (errored) {
     const [bg, accent] = colorFromSeed(fallbackSeed || String(alt))
@@ -70,7 +77,7 @@ export function ImageWithFallback({
     <Image
       alt={alt}
       className={className}
-      onError={() => setErrored(true)}
+      onError={handleError}
       {...props}
     />
   )

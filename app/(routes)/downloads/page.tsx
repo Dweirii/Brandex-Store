@@ -1,17 +1,15 @@
 "use client"
 
-import dynamic from 'next/dynamic'
 import axios, { AxiosError } from "axios"
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState, useCallback, Suspense } from "react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle, Loader2, Download, RefreshCw, Calendar, Package, Filter, DollarSign } from "lucide-react"
+import { AlertCircle, Loader2, Download, RefreshCw, Package, Filter, DollarSign } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/Button"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { ImageWithFallback } from "@/components/ui/image-with-fallback"
+import ProductCard from "@/components/ui/product-card"
+import type { Product } from "@/types"
 import {
   Select,
   SelectContent,
@@ -21,11 +19,10 @@ import {
 } from "@/components/ui/select"
 import { useSearchParams, useRouter } from "next/navigation"
 
-const DownloadButtonWrapper = dynamic(() => import('@/components/orders/DownloadButtonWrapper'), { ssr: false })
-
 interface DownloadRecord {
   id: string
   productId: string
+  productSlug?: string
   productName: string
   categoryId: string
   categoryName: string
@@ -120,7 +117,8 @@ function DownloadsPageContent() {
           "x-user-id": user.id,
         },
       })
-      const data = response.data; setDownloads(Array.isArray(data) ? data : (data?.downloads || []))
+      const raw = Array.isArray(response.data) ? response.data : (response.data?.downloads || [])
+      setDownloads(raw.filter((d: DownloadRecord) => d.imageUrl))
     } catch (err) {
       const error = err as AxiosError<{ message?: string }> | Error
       console.error("Error fetching downloads:", error)
@@ -183,14 +181,6 @@ function DownloadsPageContent() {
     }
 
     router.push(`?${params.toString()}`)
-  }
-
-  const formatDownloadDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return {
-      date: date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }),
-      time: date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
-    }
   }
 
   const getTotalDownloads = () => downloads.length
@@ -352,86 +342,33 @@ function DownloadsPageContent() {
               )}
             </motion.div>
           ) : (
-            <motion.div 
-              key="downloads-list" 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.3 }} 
-              className="space-y-6"
+            <motion.div
+              key="downloads-list"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {downloads.map((download, index) => {
-                  const { date, time } = formatDownloadDate(download.createdAt)
-                  return (
-                    <motion.div 
-                      key={download.id} 
-                      className="border border-border rounded-2xl overflow-hidden shadow-lg bg-card hover:shadow-xl transition-shadow" 
-                      initial={{ opacity: 0, scale: 0.95, y: 20 }} 
-                      animate={{ opacity: 1, scale: 1, y: 0 }} 
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                    >
-                      {/* Product Image */}
-                      <div className="relative w-full h-48 bg-muted">
-                        <ImageWithFallback
-                          src={download.imageUrl ?? ""}
-                          alt={download.productName}
-                          fallbackSeed={download.productName}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </div>
-
-                      <div className="p-6">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-bold text-foreground mb-2 truncate" title={download.productName}>
-                              {download.productName}
-                            </h3>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                              <Calendar className="h-4 w-4" />
-                              <span>{date} at {time}</span>
-                            </div>
-                            <Badge 
-                              variant="outline" 
-                              className="bg-primary/10 text-primary border-primary/20 mb-2"
-                            >
-                              {download.categoryName}
-                            </Badge>
-                          </div>
-                        </div>
-
-                        <Separator className="bg-border mb-4" />
-
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <Badge
-                              variant={download.isFree ? "default" : "secondary"}
-                              className={
-                                download.isFree
-                                  ? "bg-primary/10 text-primary border-primary/20"
-                                  : "bg-purple-500/10 text-purple-500 border-purple-500/20"
-                              }
-                            >
-                              {download.isFree ? (
-                                <>
-                                  <Package className="h-3 w-3 mr-1" />
-                                  Free
-                                </>
-                              ) : (
-                                <>
-                                  <DollarSign className="h-3 w-3 mr-1" />
-                                  Premium
-                                </>
-                              )}
-                            </Badge>
-                          </div>
-                          <DownloadButtonWrapper storeId={download.storeId} productId={download.productId} />
-                        </div>
-                      </div>
-                    </motion.div>
-                  )
-                })}
+              <div className="border border-border rounded-2xl shadow-lg bg-card p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {downloads.map((download) => {
+                    const product: Product = {
+                      id: download.productId,
+                      slug: download.productSlug,
+                      storeId: download.storeId,
+                      name: download.productName,
+                      price: String(download.price),
+                      isFeatured: false,
+                      keywords: [],
+                      images: download.imageUrl ? [{ id: download.productId, url: download.imageUrl }] : [],
+                      category: {
+                        id: download.categoryId,
+                        name: download.categoryName,
+                        billboard: { id: "", label: "", imageUrl: "" },
+                      },
+                    }
+                    return <ProductCard key={download.id} data={product} />
+                  })}
+                </div>
               </div>
             </motion.div>
           )}

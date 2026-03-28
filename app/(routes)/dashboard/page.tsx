@@ -3,7 +3,6 @@
 import { useEffect, useState, Suspense } from "react"
 import { useUser, useAuth } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
-import dynamic from "next/dynamic"
 import axios from "axios"
 import { ImageWithFallback } from "@/components/ui/image-with-fallback"
 import Link from "next/link"
@@ -19,16 +18,13 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCredits } from "@/hooks/use-credits"
-import { Badge } from "@/components/ui/badge"
-
-const DownloadButtonWrapper = dynamic(
-  () => import("@/components/orders/DownloadButtonWrapper"),
-  { ssr: false }
-)
+import ProductCard from "@/components/ui/product-card"
+import type { Product } from "@/types"
 
 interface DownloadRecord {
   id: string
   productId: string
+  productSlug?: string
   productName: string
   categoryId: string
   categoryName: string
@@ -86,10 +82,12 @@ function DashboardContent() {
   const recentPurchases = purchases.slice(0, 5)
   const recentDownloads = downloads.slice(0, 5)
 
+  const activeDownloads = downloads.filter((d) => d.imageUrl)
+
   const filteredFiles =
     activeTab === "All"
-      ? downloads
-      : downloads.filter((d) =>
+      ? activeDownloads
+      : activeDownloads.filter((d) =>
           d.categoryName?.toLowerCase().includes(activeTab.toLowerCase())
         )
 
@@ -114,10 +112,10 @@ function DashboardContent() {
     <div className="py-4 space-y-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-3xl font-bold text-foreground">
           Welcome to your dashboard, {user?.firstName ?? "there"}!
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-base text-muted-foreground mt-2">
           Manage your account, credits, and download history from here.
         </p>
       </div>
@@ -151,21 +149,21 @@ function DashboardContent() {
 
         {/* Download stats */}
         <div className="lg:col-span-3 grid grid-cols-3 gap-3">
-          <div className="bg-card border border-border rounded-xl px-4 py-3 flex flex-col items-center justify-center">
+          <div className="bg-card border border-border rounded-2xl px-4 py-3 flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center mb-1.5">
               <Download className="h-4 w-4 text-blue-500" />
             </div>
             <p className="text-xl font-bold">{dlLoading ? "—" : totalDownloads}</p>
             <p className="text-[11px] text-muted-foreground">Total Downloads</p>
           </div>
-          <div className="bg-card border border-border rounded-xl px-4 py-3 flex flex-col items-center justify-center">
+          <div className="bg-card border border-border rounded-2xl px-4 py-3 flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
             <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center mb-1.5">
               <Package className="h-4 w-4 text-orange-500" />
             </div>
             <p className="text-xl font-bold">{dlLoading ? "—" : freeDownloads}</p>
             <p className="text-[11px] text-muted-foreground">Free Downloads</p>
           </div>
-          <div className="bg-card border border-border rounded-xl px-4 py-3 flex flex-col items-center justify-center">
+          <div className="bg-card border border-border rounded-2xl px-4 py-3 flex flex-col items-center justify-center shadow-lg hover:shadow-xl transition-shadow">
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center mb-1.5">
               <Coins className="h-4 w-4 text-purple-500" />
             </div>
@@ -179,8 +177,8 @@ function DashboardContent() {
       <div className="bg-card border border-border rounded-2xl p-6">
         <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-muted-foreground" />
-            <h2 className="font-semibold text-sm">My Files</h2>
+            <Package className="h-5 w-5 text-muted-foreground" />
+            <h2 className="font-bold text-xl">My Files</h2>
           </div>
           <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
             {TABS.map((tab) => (
@@ -209,51 +207,25 @@ function DashboardContent() {
             No files found
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredFiles.map((d) => (
-              <div key={d.id} className="group">
-                <div className="aspect-[4/3] rounded-xl overflow-hidden bg-muted mb-2">
-                  {d.imageUrl ? (
-                    <ImageWithFallback
-                      src={d.imageUrl}
-                      alt={d.productName}
-                      fallbackSeed={d.productName}
-                      width={300}
-                      height={225}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Package className="h-8 w-8 text-muted-foreground/40" />
-                    </div>
-                  )}
-                </div>
-                <p className="text-xs font-semibold text-foreground truncate">
-                  {d.productName}
-                </p>
-                <p className="text-[10px] text-muted-foreground mb-2">
-                  {formatDate(d.createdAt)} at{" "}
-                  {new Date(d.createdAt).toLocaleTimeString("en-US", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
-                <div className="flex items-center justify-between gap-2">
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "text-[10px] py-0 h-4 shrink-0",
-                      d.isFree
-                        ? "text-primary border-primary/30 bg-primary/5"
-                        : "text-purple-500 border-purple-500/30 bg-purple-500/5"
-                    )}
-                  >
-                    {d.isFree ? "Free" : "Premium"}
-                  </Badge>
-                  <DownloadButtonWrapper storeId={d.storeId} productId={d.productId} />
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredFiles.map((d) => {
+              const product: Product = {
+                id: d.productId,
+                slug: d.productSlug,
+                storeId: d.storeId,
+                name: d.productName,
+                price: String(d.price),
+                isFeatured: false,
+                keywords: [],
+                images: d.imageUrl ? [{ id: d.productId, url: d.imageUrl }] : [],
+                category: {
+                  id: d.categoryId,
+                  name: d.categoryName,
+                  billboard: { id: "", label: "", imageUrl: "" },
+                },
+              }
+              return <ProductCard key={d.id} data={product} />
+            })}
           </div>
         )}
       </div>

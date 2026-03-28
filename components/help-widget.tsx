@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Mail, Phone, X, HelpCircle } from "lucide-react"
+import { Mail, X, HelpCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const HelpWidget = () => {
@@ -37,13 +37,6 @@ const HelpWidget = () => {
               >
                 <Mail className="h-4 w-4" />
                 team@brandexme.com
-              </a>
-              <a
-                href="tel:+18554042726"
-                className="flex items-center gap-2 border border-border bg-muted/50 hover:bg-muted transition-colors px-4 py-2.5 rounded-md text-sm font-medium w-full justify-center"
-              >
-                <Phone className="h-4 w-4" />
-                +1 (855) 404-2726
               </a>
             </div>
           </div>

@@ -61,7 +61,7 @@ export default function FavoritesPage() {
 
       {/* Empty State */}
       {favorites.items.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="flex flex-col items-center justify-center py-20 text-center border border-border rounded-2xl shadow-lg bg-card">
           <div className="mb-6 p-6 rounded-full bg-muted/50">
             <Heart className="h-16 w-16 text-muted-foreground" />
           </div>
@@ -79,10 +79,12 @@ export default function FavoritesPage() {
 
       {/* Favorites Grid */}
       {favorites.items.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {favorites.items.map((product) => (
-            <ProductCard key={product.id} data={product} />
-          ))}
+        <div className="border border-border rounded-2xl shadow-lg bg-card p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {favorites.items.map((product) => (
+              <ProductCard key={product.id} data={product} />
+            ))}
+          </div>
         </div>
       )}
     </div>

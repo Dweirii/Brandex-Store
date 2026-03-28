@@ -61,7 +61,7 @@ export function useCredits(storeId: string): UseCreditsReturn {
   const [downloads, setDownloads] = useState<Download[]>([]);
 
   const fetchBalance = useCallback(async () => {
-    if (!isSignedIn) {
+    if (!isSignedIn || !storeId) {
       setBalance(0);
       setIsLoading(false);
       return;
@@ -92,7 +92,7 @@ export function useCredits(storeId: string): UseCreditsReturn {
   }, [getToken, isSignedIn, storeId]);
 
   const fetchPurchases = useCallback(async () => {
-    if (!isSignedIn) {
+    if (!isSignedIn || !storeId) {
       setPurchases([]);
       return;
     }
@@ -120,7 +120,7 @@ export function useCredits(storeId: string): UseCreditsReturn {
   }, [getToken, isSignedIn, storeId]);
 
   const fetchTransactions = useCallback(async () => {
-    if (!isSignedIn) {
+    if (!isSignedIn || !storeId) {
       setTransactions([]);
       return;
     }
@@ -148,7 +148,7 @@ export function useCredits(storeId: string): UseCreditsReturn {
   }, [getToken, isSignedIn, storeId]);
 
   const fetchDownloads = useCallback(async () => {
-    if (!isSignedIn) {
+    if (!isSignedIn || !storeId) {
       setDownloads([]);
       return;
     }

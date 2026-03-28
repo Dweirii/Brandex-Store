@@ -5,12 +5,21 @@ import { createPortal } from "react-dom"
 import { useAuth, useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
-import { Download, Loader2, Lock, CheckCircle, Sparkles } from "lucide-react"
+import { Download, Loader2, Lock, CheckCircle, Sparkles, Coins, FileDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { track as vercelTrack } from "@vercel/analytics"
 import { useToast } from "@/components/ui/use-toast"
 import { DownloadProgress } from "@/components/ui/download-progress"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Progress } from "@/components/ui/progress"
 
 type ButtonSize = "sm" | "default" | "lg"
 type ButtonVariant = "default" | "outline" | "ghost" | "premium"
@@ -32,6 +41,10 @@ interface DownloadButtonProps {
   className?: string
   customText?: string
   customIcon?: React.ComponentType<{ className?: string }>
+  /** Shown in the confirmation dialog */
+  productName?: string
+  /** Credits cost — 0 means free */
+  creditCost?: number
 }
 
 // Get the base admin URL without any API path
@@ -61,10 +74,18 @@ export const DownloadButton = ({
   className,
   customText,
   customIcon,
+  productName,
+  creditCost,
 }: DownloadButtonProps) => {
   const [loading, setLoading] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
   const [isClicked, setIsClicked] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [insufficientCredits, setInsufficientCredits] = useState<{
+    required: number
+    balance: number
+    missing: number
+  } | null>(null)
   const { getToken, isSignedIn } = useAuth()
   const { openSignIn } = useClerk()
   const router = useRouter()
@@ -190,6 +211,12 @@ export const DownloadButton = ({
       return
     }
 
+    // Show confirmation dialog (skip for auto-triggered post-login downloads)
+    if (!opts?.isAutoTriggered) {
+      setShowConfirm(true)
+      return
+    }
+
     setIsClicked(true)
     setTimeout(() => setIsClicked(false), 600)
     setLoading(true)
@@ -226,19 +253,25 @@ export const DownloadButton = ({
 
         // Handle specific error cases
         if (res.status === 403) {
-          // Try to parse JSON error response from new tier system
+          // Try to parse JSON error response — may include balance info
           try {
             const errorData = JSON.parse(text)
-            if (errorData.error) {
-              // Show upgrade-specific error with detailed reason
-              throw new Error(`UPGRADE_REQUIRED: ${errorData.error}`)
+            const required = errorData.required ?? creditCost ?? 5
+            const balance  = errorData.balance  ?? 0
+            const missing  = Math.max(0, required - balance)
+
+            // Credits issue — show clean modal instead of toast
+            if (
+              errorData.error?.toLowerCase().includes("credit") ||
+              errorData.insufficientCredits ||
+              missing > 0
+            ) {
+              setInsufficientCredits({ required, balance, missing })
+              return
             }
-          } catch {
-            // If not JSON, use the text as-is
-          }
-          
-          const errorMsg = text || "You don't have access to this product. Purchase it or subscribe to Premium to download."
-          throw new Error(errorMsg)
+          } catch { /* not JSON */ }
+
+          throw new Error(text || "You don't have access to this product.")
         }
 
         if (res.status === 401) {
@@ -382,21 +415,16 @@ export const DownloadButton = ({
         return
       }
 
-      if (msg.includes("Insufficient credits") || msg.includes("credits")) {
+      if (msg.includes("Insufficient credits") || msg.includes("credit")) {
         ga("download_error_insufficient_credits", { product_id: productId, store_id: storeId, message: msg })
         vTrack("download_error_insufficient_credits", { productId, storeId, message: msg })
 
-        toast({
-          title: "Insufficient Credits",
-          description: msg,
-          variant: "default",
-          action: {
-            label: "Buy Credits",
-            onClick: () => {
-              window.location.href = "/credits"
-            },
-          },
-        })
+        // Extract numbers from message as fallback, e.g. "need 5, have 2"
+        const reqMatch = msg.match(/need[^\d]*(\d+)/i)
+        const balMatch = msg.match(/have[^\d]*(\d+)/i)
+        const required = reqMatch ? parseInt(reqMatch[1]) : (creditCost ?? 5)
+        const balance  = balMatch ? parseInt(balMatch[1]) : 0
+        setInsufficientCredits({ required, balance, missing: Math.max(0, required - balance) })
 
         onError?.(msg)
         return
@@ -433,6 +461,21 @@ export const DownloadButton = ({
       clearTimeout(timer)
       setLoading(false)
     }
+  }
+
+  // ── Confirm and proceed ───────────────────────────────────────────────────
+  const confirmAndDownload = () => {
+    setShowConfirm(false)
+    handleDownload(undefined, { isAutoTriggered: true })
+  }
+
+  // ── Buy Credits URL with return-to for auto-resume ────────────────────────
+  const getBuyCreditsUrl = () => {
+    if (typeof window === "undefined") return "/credits"
+    const returnUrl = new URL(window.location.href)
+    returnUrl.searchParams.set("pendingDownload", productId)
+    const params = new URLSearchParams({ returnTo: returnUrl.toString() })
+    return `/credits?${params.toString()}`
   }
 
   // ── UI helpers ────────────────────────────────────────────────────────────
@@ -646,6 +689,133 @@ export const DownloadButton = ({
         </div>,
         document.body
       )}
+
+      {/* Insufficient Credits modal */}
+      <Dialog open={!!insufficientCredits} onOpenChange={() => setInsufficientCredits(null)}>
+        <DialogContent className="sm:max-w-sm" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <Coins className="h-5 w-5 text-amber-500" />
+              Not Enough Credits
+            </DialogTitle>
+            <DialogDescription>
+              {productName
+                ? `Downloading "${productName}" requires more credits than you currently have.`
+                : "You need more credits to download this file."}
+            </DialogDescription>
+          </DialogHeader>
+
+          {insufficientCredits && (
+            <div className="py-2 space-y-4">
+              {/* Credit breakdown */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                  <span className="text-sm text-muted-foreground">Required</span>
+                  <span className="text-sm font-semibold text-foreground">{insufficientCredits.required} credits</span>
+                </div>
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+                  <span className="text-sm text-muted-foreground">Your balance</span>
+                  <span className="text-sm font-semibold text-foreground">{insufficientCredits.balance} credits</span>
+                </div>
+                <div className="flex items-center justify-between px-4 py-3 bg-destructive/5">
+                  <span className="text-sm font-medium text-destructive">You need</span>
+                  <span className="text-sm font-bold text-destructive">{insufficientCredits.missing} more credits</span>
+                </div>
+              </div>
+
+              {/* Visual balance bar */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Current balance</span>
+                  <span>{insufficientCredits.balance} / {insufficientCredits.required}</span>
+                </div>
+                <Progress
+                  value={Math.min(100, (insufficientCredits.balance / insufficientCredits.required) * 100)}
+                  className="h-2"
+                />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                Each credit pack gives you instant access. After purchase you&apos;ll be returned here to download immediately.
+              </p>
+            </div>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setInsufficientCredits(null)} className="flex-1 sm:flex-none">
+              Cancel
+            </Button>
+            <Button
+              asChild
+              className="flex-1 sm:flex-none gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => setInsufficientCredits(null)}
+            >
+              <a href={getBuyCreditsUrl()}>
+                <Coins className="h-4 w-4" />
+                Buy Credits
+              </a>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation dialog */}
+      <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <DialogContent className="sm:max-w-md" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <FileDown className="h-5 w-5 text-primary" />
+              Confirm Download
+            </DialogTitle>
+            {productName && (
+              <DialogDescription className="text-sm text-foreground font-medium pt-1">
+                {productName}
+              </DialogDescription>
+            )}
+          </DialogHeader>
+
+          <div className="py-2 space-y-3">
+            {creditCost !== undefined && creditCost > 0 ? (
+              <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3">
+                <Coins className="h-5 w-5 text-amber-500 shrink-0" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {creditCost} credits will be deducted
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    From your credit balance
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+                <Download className="h-5 w-5 text-primary shrink-0" />
+                <p className="text-sm font-semibold text-primary">This is a free download</p>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              Your file will begin downloading immediately after confirmation.
+            </p>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShowConfirm(false)}
+              className="flex-1 sm:flex-none"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmAndDownload}
+              className="flex-1 sm:flex-none gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <Download className="h-4 w-4" />
+              {creditCost && creditCost > 0 ? `Download for ${creditCost} Credits` : "Download Now"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   )
 }

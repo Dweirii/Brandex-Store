@@ -43,7 +43,7 @@ export function DashboardSidebar() {
 
         {/* Main nav */}
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground px-3 mb-3">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground/70 px-3 mb-3">
             Main
           </p>
           <nav className="flex flex-col gap-0.5">
@@ -67,7 +67,7 @@ export function DashboardSidebar() {
 
         {/* Account nav */}
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground px-3 mb-3">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground/70 px-3 mb-3">
             Account
           </p>
           <nav className="flex flex-col gap-0.5">

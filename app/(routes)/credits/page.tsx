@@ -46,30 +46,38 @@ function CreditsPageContent() {
     // Handle success callback from Stripe
     const success = searchParams.get("success");
     const canceled = searchParams.get("canceled");
-
     if (success === "true") {
+      const returnTo = sessionStorage.getItem("creditsReturnTo");
+      sessionStorage.removeItem("creditsReturnTo");
+
       toast({
         title: "Purchase Successful!",
-        description: "Your credits have been added to your account.",
+        description: returnTo
+          ? "Credits added! Returning you to your download…"
+          : "Your credits have been added to your account.",
         variant: "default",
       });
       refresh();
-      // Clean URL
-      window.history.replaceState({}, "", "/credits");
+
+      if (returnTo) {
+        setTimeout(() => { window.location.href = returnTo }, 1500);
+      } else {
+        window.history.replaceState({}, "", "/credits");
+      }
     } else if (canceled === "true") {
+      sessionStorage.removeItem("creditsReturnTo");
       toast({
         title: "Purchase Canceled",
         description: "Your credit purchase was canceled.",
         variant: "destructive",
       });
-      // Clean URL
       window.history.replaceState({}, "", "/credits");
     }
   }, [isLoaded, isSignedIn, searchParams, router, toast, refresh]);
 
   const handleBuyCredits = async (packId: "PACK_50" | "PACK_100") => {
     const result = await purchaseCredits(packId);
-    
+
     if (result.error) {
       toast({
         title: "Purchase Failed",
@@ -80,6 +88,11 @@ function CreditsPageContent() {
     }
 
     if (result.url) {
+      // Persist returnTo so we can redirect after Stripe brings user back
+      const returnTo = searchParams.get("returnTo");
+      if (returnTo) {
+        sessionStorage.setItem("creditsReturnTo", returnTo);
+      }
       window.location.href = result.url;
     }
   };
@@ -148,7 +161,6 @@ function CreditsPageContent() {
               </div>
               <Button
                 onClick={() => setShowPurchaseModal(true)}
-                variant="outline"
                 size="sm"
                 className="bg-white text-primary hover:bg-white/90 border-0 shadow-lg text-xs"
               >

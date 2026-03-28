@@ -67,7 +67,7 @@ export default function SortFilter({ className }: SortFilterProps) {
         <button
           disabled={isPending}
           className={cn(
-            "h-[42px] px-3 sm:px-4 text-[13px] font-bold rounded-xl border border-border/60 bg-muted/30 hover:bg-muted/50 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 sm:min-w-[160px]",
+            "h-9 px-4 text-sm font-semibold rounded-lg border border-border/60 bg-muted/30 hover:bg-muted/50 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 sm:min-w-[160px]",
             isPending && "opacity-50 cursor-not-allowed",
             className
           )}

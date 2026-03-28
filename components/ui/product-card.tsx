@@ -34,6 +34,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [mediaLoaded, setMediaLoaded] = useState(false)
+  const [imageErrored, setImageErrored] = useState(false)
   const previewModal = usePreviewModal()
 
   // Check if product is free
@@ -143,23 +144,24 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     }
   }, [isMobile, data.videoUrl])
 
-  // Don't render if no media
+  // Don't render if no media or if the image 404'd with no video fallback
   if (!hasVideo && !hasImage) return null
+  if (imageErrored && !hasVideo) return null
 
   return (
     <motion.div
-      whileHover={isMounted && !isMobile ? { scale: 1.02, y: -2 } : {}}
-      transition={{ duration: 0.2, ease: "easeOut" as const }}
+      whileHover={isMounted && !isMobile ? { y: -4 } : {}}
+      transition={{ duration: 0.22, ease: "easeOut" as const }}
       onMouseEnter={() => {
         handleMouseEnter()
         handleMouseEnterCard()
       }}
       onMouseLeave={handleMouseLeave}
       onClick={() => router.push(`/products/${data.slug ?? data.id}`)}
-      className="relative bg-white border border-[#E5E5E5] rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_25px_rgba(17,24,39,0.12)] hover:border-[rgba(0,184,26,0.35)] cursor-pointer group will-change-transform transition-[box-shadow,border-color] duration-200"
+      className="relative bg-white border border-[#ECECEC] rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.10)] cursor-pointer group will-change-transform transition-[box-shadow,border-color] duration-220 ease-[ease]"
     >
       {/* Image/Video Container */}
-      <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-[3/4]">
+      <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-3/4">
         {/* Frosty Reveal Overlay */}
         {!isMobile && (
           <div className="frost-overlay">
@@ -175,7 +177,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             width={800}
             height={1000}
             className={cn(
-              "w-full h-full object-cover transition-all duration-200 group-hover:scale-105 select-none pointer-events-none",
+              "w-full h-full object-cover transition-all duration-220 ease-[ease] group-hover:scale-[1.03] select-none pointer-events-none",
               hasVideo ? "group-hover:brightness-105" : "group-hover:brightness-110 group-hover:saturate-105"
             )}
             onContextMenu={(e) => e.preventDefault()}
@@ -183,6 +185,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
             onLoadingComplete={() => setMediaLoaded(true)}
+            onError={() => setImageErrored(true)}
           />
         )}
 
@@ -191,6 +194,10 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
           className="absolute inset-0 z-20 bg-transparent"
           onContextMenu={(e) => e.preventDefault()}
         />
+
+        {/* Hover dark overlay */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-all duration-220 ease-[ease] pointer-events-none z-25" />
+
 
         {/* Client-side watermark removed (handled by server proxy) */}
 
@@ -204,7 +211,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             playsInline
             preload={hasImage ? "none" : "metadata"}
             className={cn(
-              "transition-all duration-200 group-hover:scale-105 group-hover:brightness-105",
+              "transition-all duration-220 ease-[ease] group-hover:scale-[1.03] group-hover:brightness-105",
               hasImage ? "absolute inset-0 w-full h-full object-cover z-10" : "w-full h-full object-cover",
               (hasImage && !isHovered && !isMobile) ? "opacity-0" : "opacity-100"
             )}
@@ -226,10 +233,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
           <Skeleton className="absolute inset-0 z-20 rounded-lg bg-muted/20 animate-pulse pointer-events-none" />
         )}
 
-        {/* Overlay for non-video items */}
-        {!hasVideo && hasImage && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
-        )}
 
         {!isFree && (
           <div
@@ -408,7 +411,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
         {/* Mobile: Always Visible Buttons */}
         {isMounted && isMobile && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-3 z-40">
+          <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 via-black/60 to-transparent p-3 z-40">
             <div className="flex gap-2">
               {isFree ? (
                 <>
