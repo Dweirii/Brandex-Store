@@ -3,17 +3,15 @@ import Image from "next/image"
 import type { Metadata } from "next"
 import {
   ArrowRight,
-  ChevronDown,
   ClipboardList,
-  Pencil,
-  FileCheck,
+  Search,
+  FileText,
+  PenTool,
   Package,
   Layers,
+  Printer,
   Sparkles,
-  Play,
-  ImageIcon,
 } from "lucide-react"
-import getProducts from "@/actions/get-products"
 
 export const metadata: Metadata = {
   title: "Custom Work — Brandex",
@@ -21,275 +19,171 @@ export const metadata: Metadata = {
     "Custom design services for businesses, creators, and agencies seeking polished, high-quality visuals tailored to their exact needs.",
 }
 
-const MOCKUPS_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
-
-const WHAT_WE_CREATE = [
+const WHAT_WE_OFFER = [
+  { label: "Branding & Identity", icon: PenTool },
   { label: "Packaging Design", icon: Package },
-  { label: "Product Mockups", icon: Layers },
-  { label: "Brand Visuals", icon: Sparkles },
-  { label: "Social Media Assets", icon: ImageIcon },
-  { label: "Motion Graphics", icon: Play },
+  { label: "Custom Mockups", icon: Layers },
+  { label: "Print Design", icon: Printer },
+  { label: "Other Creative\nRequests", icon: Sparkles },
 ]
 
 const HOW_IT_WORKS = [
   {
+    step: "1",
     icon: ClipboardList,
-    title: "Tell us what you need",
-    description: "Fill out the form with your project details.",
+    title: "Submit Your Request",
+    description: "Share your project details, goals, and any references.",
   },
   {
-    icon: Pencil,
-    title: "We design it",
-    description: "Our team creates a custom design tailored to your brand.",
+    step: "2",
+    icon: Search,
+    title: "Request Review",
+    description: "We review the scope, creative direction, and project needs.",
   },
   {
-    icon: FileCheck,
-    title: "You get final files",
-    description: "Review, revise if needed, and download your final files.",
+    step: "3",
+    icon: FileText,
+    title: "Receive a Quote",
+    description: "We'll follow up with pricing and next steps before any work begins.",
   },
 ]
 
-const OUR_WORK_META = [
-  {
-    title: "Custom Packaging",
-    description: "Fill out the form with your project details.",
-  },
-  {
-    title: "Product Mockup",
-    description: "Our team creates a custom design tailored to your brand.",
-  },
-  {
-    title: "Brand Visuals",
-    description: "Review, revise if needed and download your final files.",
-  },
-]
-
-export default async function CustomWorkPage() {
-  const { products } = await getProducts({
-    categoryId: MOCKUPS_CATEGORY_ID,
-    limit: 10,
-    sortBy: "newest",
-  })
-
-  const imgUrls = products
-    .map((p) => p.images?.[0]?.url)
-    .filter((u): u is string => Boolean(u))
-
-  // Distribute images across sections
-  const heroImg = imgUrls[0]
-  const categoryImgs = imgUrls.slice(0, 5)
-  const workImgs = imgUrls.slice(1, 4)
-  const howItWorksImg = imgUrls[4] ?? imgUrls[0]
-  const ctaImg = imgUrls[3] ?? imgUrls[0]
-
+export default function CustomWorkPage() {
   return (
-    <div className="space-y-0 -mx-2">
-
+    <div className="space-y-16 pb-8">
       {/* ── Hero ──────────────────────────────────────────────── */}
-      <section className="rounded-2xl overflow-hidden mb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch gap-0">
-          {/* Left — copy */}
-          <div className="px-8 py-10 lg:py-14 lg:pl-10 flex flex-col justify-center">
-            <h1 className="text-3xl lg:text-4xl font-extrabold text-foreground leading-tight mb-3">
-              Custom design,<br />built for your brand.
-            </h1>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-7 max-w-sm">
-              Need something specific? We create mockups, packaging, and assets
-              uniquely tailored to fit your brand.
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/intake"
-                className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary/90 transition-colors shadow"
-              >
-                Start a Project
-                <ChevronDown className="w-4 h-4" />
-              </Link>
-              <Link
-                href="#our-work"
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-background text-foreground px-5 py-2.5 text-sm font-medium hover:bg-muted/50 transition-colors"
-              >
-                View Examples
-              </Link>
-            </div>
+      <section className="grid grid-cols-1 lg:grid-cols-[40%_60%] lg:gap-4 pt-6 lg:items-center overflow-hidden">
+        <div className="flex flex-col justify-center">
+          <div className="inline-block max-w-fit px-2 py-1 bg-[#f0f8f4] dark:bg-primary/10 rounded flex items-center justify-center mb-10">
+            <span className="text-[10px] font-bold text-primary tracking-widest uppercase">
+              CUSTOM WORK
+            </span>
           </div>
-
-          {/* Right — hero image */}
-          <div className="relative h-56 lg:h-full min-h-[240px] overflow-hidden">
-            {heroImg ? (
-              <Image
-                src={heroImg}
-                alt="Custom design example"
-                fill
-                className="object-cover object-center"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                priority
-              />
-            ) : (
-              <div className="w-full h-full bg-muted/50" />
-            )}
-            <div className="absolute inset-0 bg-linear-to-l from-transparent to-[#f5f4f0]/20 dark:to-transparent pointer-events-none" />
-          </div>
-        </div>
-      </section>
-
-      {/* ── What We Create ────────────────────────────────────── */}
-      <section className="mb-10 px-2">
-        <h2 className="text-xl font-bold text-foreground mb-1">What We Create</h2>
-        <p className="text-sm text-muted-foreground mb-6 max-w-md">
-          Packaging, design, products, photography, and assets tailored to your brand.
-        </p>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {WHAT_WE_CREATE.map(({ label, icon: Icon }, i) => (
-            <div key={label} className="group flex flex-col gap-2.5">
-              {/* Square image with rounded corners — no card border */}
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
-                {categoryImgs[i] ? (
-                  <Image
-                    src={categoryImgs[i]}
-                    alt={label}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Icon className="w-8 h-8 text-muted-foreground/30" />
-                  </div>
-                )}
-              </div>
-              {/* Label sits below the image */}
-              <p className="text-sm font-medium text-foreground text-center">{label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Our Work ──────────────────────────────────────────── */}
-      <section id="our-work" className="mb-10 px-2">
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="text-xl font-bold text-foreground">Our Work</h2>
-          <Link
-            href="/category/mockups"
-            className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
-          >
-            Browse All <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-        <p className="text-sm text-muted-foreground mb-6">
-          Examples of custom designs we&apos;ve created for clients.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {OUR_WORK_META.map(({ title, description }, i) => (
-            <div
-              key={title}
-              className="rounded-xl bg-background border border-border overflow-hidden group"
+          
+          <h1 className="text-4xl lg:text-[2.75rem] font-[800] text-foreground leading-[1.1] tracking-[-0.02em] mb-4">
+            Design Made for<br />Your Brand
+          </h1>
+          
+          <h2 className="text-xl font-medium text-muted-foreground mb-6">
+            Custom design services built around your brand
+          </h2>
+          
+          <p className="text-[13px] text-muted-foreground leading-[1.6] mb-8 max-w-md">
+            From branding and packaging to mockups and print design, Brandex helps
+            businesses, creators, and agencies get polished visuals tailored to their goals.
+            Submit your request, and we&apos;ll review the details and send a quote before work
+            begins.
+          </p>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/intake"
+              className="inline-flex items-center justify-center rounded-lg bg-[#00A63E] hover:bg-[#00A63E]/90 text-white px-5 py-2.5 text-sm font-semibold transition-colors shadow-sm"
             >
-              <div className="relative aspect-4/3 bg-muted overflow-hidden">
-                {workImgs[i] ? (
-                  <Image
-                    src={workImgs[i]}
-                    alt={title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 640px) 100vw, 33vw"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-muted" />
-                )}
+              Start Your Request
+            </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center rounded-lg border border-border bg-background text-foreground px-5 py-2.5 text-sm font-medium hover:bg-muted/50 transition-colors shadow-sm"
+            >
+              Track Your Project
+            </Link>
+          </div>
+        </div>
+
+        {/* Right — image */}
+        <div className="relative w-full mt-10 lg:mt-0 flex items-center justify-end lg:-mr-16">
+          <Image
+            src="/custom-page-hero.webp"
+            alt="Design showcase"
+            width={2000}
+            height={1000}
+            className="w-[160%] h-auto object-contain"
+            priority
+          />
+        </div>
+      </section>
+
+      {/* ── What We Offer ────────────────────────────────────── */}
+      <section>
+        <h2 className="text-xs font-bold text-muted-foreground tracking-widest uppercase mb-6">
+          WHAT WE OFFER
+        </h2>
+
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          {WHAT_WE_OFFER.map(({ label, icon: Icon }) => (
+            <div
+              key={label}
+              className="border border-[#e9e9e9] dark:border-border/80 bg-background rounded-xl p-5 flex flex-col items-start gap-4 aspect-auto h-32 hover:border-border transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+            >
+              <div className="w-8 h-8 rounded shrink-0 bg-[#f0f8f4] dark:bg-primary/10 flex items-center justify-center text-[#00A63E]">
+                <Icon className="w-4 h-4" />
               </div>
-              <div className="p-4">
-                <h3 className="text-sm font-bold text-foreground mb-1">{title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
-                <Link
-                  href="/intake"
-                  className="text-xs font-medium text-primary hover:underline mt-2 inline-block"
-                >
-                  Start this project →
-                </Link>
-              </div>
+              <p className="text-[13px] font-medium text-foreground whitespace-pre-line leading-tight">
+                {label}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── How It Works ──────────────────────────────────────── */}
-      <section className="mb-8 px-2">
-        <h2 className="text-xl font-bold text-foreground mb-1">How It Works</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Examples of custom designs we&apos;ve created for clients.
-        </p>
+      <section>
+        <h2 className="text-xs font-bold text-muted-foreground tracking-widest uppercase mb-6">
+          HOW IT WORKS
+        </h2>
 
-        <div className="rounded-2xl bg-[#f5f4f0] dark:bg-muted/40 overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-0">
-            {/* Steps */}
-            <div className="p-7 lg:p-10">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {HOW_IT_WORKS.map(({ icon: Icon, title, description }) => (
-                  <div key={title} className="flex flex-col gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-white border border-[#E5E5E5] dark:bg-background dark:border-border flex items-center justify-center shadow-sm">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-foreground mb-1">{title}</p>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
-                    </div>
-                  </div>
-                ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {HOW_IT_WORKS.map(({ step, icon: Icon, title, description }) => (
+            <div
+              key={title}
+              className="border border-[#e9e9e9] dark:border-border/80 bg-background rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+            >
+              <div className="flex items-center gap-2.5 mb-5">
+                <div className="w-6 h-6 rounded-full border border-[#00A63E]/20 bg-[#f0f8f4] dark:bg-primary/5 flex items-center justify-center text-[#00A63E] font-bold text-[11px]">
+                  {step}
+                </div>
+                <Icon className="w-4 h-4 text-muted-foreground/80" />
               </div>
+              <h3 className="text-sm font-bold text-foreground mb-2.5">{title}</h3>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">
+                {description}
+              </p>
             </div>
-
-            {/* Side image (hidden on small screens) */}
-            {howItWorksImg && (
-              <div className="relative hidden lg:block w-52 overflow-hidden">
-                <Image
-                  src={howItWorksImg}
-                  alt="How it works"
-                  fill
-                  className="object-cover object-center"
-                  sizes="208px"
-                />
-                <div className="absolute inset-0 bg-linear-to-r from-[#f5f4f0]/80 to-transparent dark:from-transparent pointer-events-none" />
-              </div>
-            )}
-          </div>
+          ))}
         </div>
       </section>
 
       {/* ── CTA Banner ────────────────────────────────────────── */}
-      <section className="rounded-2xl overflow-hidden bg-[#1B3A2B] relative px-2">
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_auto] items-center gap-0">
-          <div className="px-8 py-10">
-            <h2 className="text-2xl lg:text-3xl font-extrabold text-white leading-tight mb-4">
-              Let&apos;s build something custom
-            </h2>
+      <section className="bg-[#f7f7f7] dark:bg-muted/40 rounded-2xl p-8 md:p-10 relative mt-8">
+        <div className="max-w-2xl">
+          <h2 className="text-[1.15rem] font-bold text-foreground mb-2">
+            Start Your Request
+          </h2>
+          <p className="text-[13px] text-muted-foreground mb-8 text-balance">
+            Send us your project details and we&apos;ll review your request and provide a quote.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3 mb-6">
             <Link
               href="/intake"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-5 py-2.5 text-sm font-semibold hover:bg-primary/80 transition-colors shadow"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#00A63E] hover:bg-[#00A63E]/90 text-white px-5 py-2.5 text-sm font-semibold transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
             >
-              Start a Project
+              Start Your Request
               <ArrowRight className="w-4 h-4" />
             </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center rounded-lg border border-border/80 bg-background text-foreground px-5 py-2.5 text-sm font-medium hover:bg-muted/50 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+            >
+              Track Your Project
+            </Link>
           </div>
-
-          {/* Right image */}
-          {ctaImg && (
-            <div className="relative hidden lg:block h-40 w-52 overflow-hidden opacity-70">
-              <Image
-                src={ctaImg}
-                alt="Let's build something custom"
-                fill
-                className="object-cover object-center"
-                sizes="208px"
-              />
-              <div className="absolute inset-0 bg-linear-to-r from-[#1B3A2B]/80 to-transparent pointer-events-none" />
-            </div>
-          )}
+          <p className="text-[11px] text-muted-foreground max-w-lg leading-relaxed">
+            Already submitted a request? View your project status using the tracking link above.
+          </p>
         </div>
       </section>
-
     </div>
   )
 }

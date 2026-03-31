@@ -36,45 +36,38 @@ interface HeroSectionProps {
   categoryLabel?: string
 }
 
-export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
+export function HeroSection({ config }: HeroSectionProps) {
   const router = useRouter()
   const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow, trustLine, tileStyle } = config
 
   return (
     <section className="w-full bg-background">
-      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-[120px]">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
+      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-[120px] pb-10">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
-          {/* Left: Text — justify-center keeps content vertically centred against collage */}
+          {/* Left: Text */}
           <motion.div
-            className="flex flex-col justify-center gap-6"
+            className="flex flex-col justify-center gap-5"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
           >
-            {/* Category badge — category pages only */}
-            {categoryLabel && (
-              <div className="inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[0.7rem] font-semibold uppercase tracking-wide">
-                <Sparkles className="w-2.5 h-2.5" />
-                {categoryLabel}
-              </div>
-            )}
 
             {/* Headline */}
-            <h1 className="text-[2.1rem] sm:text-[2.6rem] lg:text-[2.75rem] xl:text-5xl font-extrabold tracking-tight leading-[1.07] text-foreground max-w-[560px]">
+            <h1 className="text-[2.6rem] sm:text-[3rem] lg:text-[3.1rem] xl:text-[3.4rem] font-black tracking-tight leading-[1.05] text-foreground max-w-140">
               {headline}
             </h1>
 
             {/* Subhead */}
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-[34rem]">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-136">
               {subhead}
             </p>
 
             {/* CTA buttons */}
-            <div className="flex flex-row flex-wrap gap-3 mt-6">
+            <div className="flex flex-row flex-wrap gap-3">
               <Button
                 size="sm"
-                className="group bg-primary hover:bg-logogreen-600 text-white font-semibold px-5 h-9 text-sm rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
+                className="group bg-primary hover:bg-logogreen-600 text-white font-semibold px-6 h-11 text-sm rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
                 onClick={() => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })}
               >
                 <span className="flex items-center gap-1.5">
@@ -86,7 +79,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
               <Button
                 variant="outline"
                 size="sm"
-                className="font-semibold px-5 h-9 text-sm rounded-lg border border-border hover:border-foreground/40 transition-all duration-300"
+                className="font-semibold px-6 h-11 text-sm rounded-lg border border-border hover:border-foreground/40 transition-all duration-300"
                 onClick={() => router.push(secondaryCTA.href)}
               >
                 {secondaryCTA.label}
@@ -95,13 +88,13 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
 
             {/* Icon row — trust signals beneath the CTA buttons */}
             {iconRow && iconRow.length > 0 && (
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
                 {iconRow.map((item, i) => {
                   const Icon = ICON_MAP[item.icon]
                   return (
                     <div key={i} className="flex items-center gap-2">
-                      {i > 0 && <span className="w-px h-5 bg-border shrink-0" />}
-                      <Icon className="h-5 w-5 text-primary shrink-0" strokeWidth={2} />
+                      {i > 0 && <span className="w-px h-4 bg-border shrink-0" />}
+                      <Icon className="h-4 w-4 text-primary shrink-0" strokeWidth={2} />
                       <span className="text-sm font-medium text-foreground">{item.label}</span>
                     </div>
                   )
@@ -111,7 +104,7 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
 
             {/* Trust line */}
             {trustLine && (
-              <p className="text-sm text-muted-foreground">{trustLine}</p>
+              <p className="text-sm text-muted-foreground -mt-1">{trustLine}</p>
             )}
           </motion.div>
 
@@ -126,8 +119,8 @@ export function HeroSection({ config, categoryLabel }: HeroSectionProps) {
 
         </div>
 
-        {/* Divider — constrained to container width, matching hero + grid alignment */}
-        <div className="border-b border-border mt-[56px]" />
+        {/* Divider */}
+        <div className="border-b border-border mt-10" />
       </div>
     </section>
   )
@@ -153,13 +146,13 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
 
   if (tiles.length === 1) {
     return (
-      <Tile src={tiles[0]} className="aspect-[4/3] w-full" priority sizes="(max-width: 1024px) 100vw, 50vw" tileStyle={tileStyle} />
+      <Tile src={tiles[0]} className="aspect-4/3 w-full" priority sizes="(max-width: 1024px) 100vw, 50vw" tileStyle={tileStyle} />
     )
   }
 
   if (tiles.length === 2) {
     return (
-      <div className="grid grid-cols-2 gap-2 h-[220px] sm:h-[260px] lg:h-[280px]">
+      <div className="grid grid-cols-2 gap-2 h-60 sm:h-72.5 lg:h-80">
         <Tile src={tiles[0]} className="h-full" priority sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
         <Tile src={tiles[1]} className="h-full" sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
       </div>
@@ -168,7 +161,7 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
 
   // 3- or 4-image: col1 row-span-2 | col2 row-span-2 | col3 top + col3 bottom
   return (
-    <div className="grid grid-cols-3 grid-rows-2 gap-2 h-[220px] sm:h-[260px] lg:h-[280px]">
+    <div className="grid grid-cols-3 grid-rows-2 gap-2 h-60 sm:h-72.5 lg:h-80 *:min-h-0">
       {/* Col 1 — full height */}
       <Tile
         src={tiles[0]}
@@ -215,8 +208,8 @@ function Tile({ src, className = "", priority, sizes, tileStyle = "cover" }: Til
   // Contain mode: clean white frame + subtle border + gentle shadow
   // so transparent vector art has clear visual separation from the page.
   const frameClasses = isContain
-    ? `relative rounded-xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
-    : `relative rounded-xl overflow-hidden bg-muted border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
+    ? `relative h-full w-full rounded-xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
+    : `relative h-full w-full rounded-xl overflow-hidden bg-muted border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
 
   return (
     <div className={frameClasses}>

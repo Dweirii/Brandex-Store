@@ -106,12 +106,8 @@ function DownloadsPageContent() {
       }
 
       const categoryParam = selectedCategoryId ? `?category=${selectedCategoryId}` : ""
-      // Match the pattern used for orders - NEXT_PUBLIC_API_URL likely already includes the storeId path
-      const fullApiUrl = `${apiUrl}/downloads${categoryParam}`
-      console.log("Fetching downloads from:", fullApiUrl)
-      console.log("User ID:", user.id)
-      console.log("Store ID:", storeId)
-      
+      const fullApiUrl = `/api/downloads${categoryParam}`
+
       const response = await axios.get(fullApiUrl, {
         headers: {
           "x-user-id": user.id,
@@ -327,7 +323,7 @@ function DownloadsPageContent() {
               <p className="text-lg text-center max-w-md mb-8 leading-relaxed">
                 {selectedCategoryId
                   ? "You haven't downloaded any products from this category yet."
-                  : "It looks like you haven't downloaded any products yet. Start shopping to build your collection!"}
+                  : "It looks like you haven't downloaded any products yet. Explore our store to build your collection!"}
               </p>
               {selectedCategoryId ? (
                 <Button onClick={() => handleCategoryChange("all")} variant="outline" size="lg">
@@ -336,7 +332,7 @@ function DownloadsPageContent() {
               ) : (
                 <Button asChild size="lg" className="bg-primary text-primary-foreground">
                   <Link href="/">
-                    <Package className="h-5 w-5 mr-2" /> Start Shopping
+                    <Package className="h-5 w-5 mr-2" /> Explore Products
                   </Link>
                 </Button>
               )}

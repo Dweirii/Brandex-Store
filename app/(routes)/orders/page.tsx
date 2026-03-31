@@ -188,7 +188,7 @@ export default function OrdersPage() {
               </p>
               <Button asChild size="lg" className="bg-primary text-primary-foreground">
                 <Link href="/">
-                  <ShoppingBag className="h-5 w-5 mr-2" /> Start Shopping
+                  <ShoppingBag className="h-5 w-5 mr-2" /> Explore Products
                 </Link>
               </Button>
             </motion.div>

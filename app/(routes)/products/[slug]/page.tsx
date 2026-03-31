@@ -213,13 +213,19 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 /** Resolve a route param that may be a UUID (old links) or a slug (new links). */
 async function resolveProduct(param: string): Promise<{ product: Product; canonical: string } | null> {
   if (UUID_RE.test(param)) {
-    // Old UUID-based URL — fetch by ID and redirect to the slug URL
-    const product = await getProduct(param);
-    if (!product) return null;
-    const canonical = product.slug ?? param;
-    return { product, canonical };
+    // UUID-based URL — try to fetch by ID, get the slug, then redirect
+    try {
+      const product = await getProduct(param);
+      if (!product) return null;
+      // If the product has no slug, we can't build a canonical URL — bail out
+      if (!product.slug) return null;
+      return { product, canonical: product.slug };
+    } catch {
+      // Backend doesn't support ID-based lookup — return null so the page redirects home
+      return null;
+    }
   }
-  // New slug-based URL
+  // Slug-based URL
   const product = await getProductBySlug(param);
   if (!product) return null;
   return { product, canonical: param };
@@ -233,6 +239,8 @@ interface ProductPageProps {
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   try {
     const { slug } = await params;
+    // Don't bother generating metadata for UUID-based URLs — they'll redirect
+    if (UUID_RE.test(slug)) return { title: "Brandex" };
     const resolved = await resolveProduct(slug);
     if (!resolved) {
       return {
@@ -433,12 +441,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const { slug } = await params;
     const resolved = await resolveProduct(slug);
 
-    if (!resolved) throw new Error("Product not found");
+    // UUID with no resolvable slug → redirect home (never show an ID-based error page)
+    if (!resolved) {
+      if (UUID_RE.test(slug)) redirect("/");
+      throw new Error("Product not found");
+    }
 
     const { product, canonical } = resolved;
 
-    // Redirect old UUID-based URLs to their slug URL
-    if (UUID_RE.test(slug) && canonical !== slug) {
+    // Redirect UUID-based URLs to their slug URL
+    if (UUID_RE.test(slug)) {
       redirect(`/products/${canonical}`);
     }
 

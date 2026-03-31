@@ -149,16 +149,27 @@ export const DownloadButton = ({
 
   const extractFileName = (cdHeader: string | null, fallback: string) => {
     if (fileNameOverride) return fileNameOverride
-    const fallbackSafe = fallback.replace(/[^\w.\-()\[\]\s]+/g, "_")
-    if (!cdHeader) return fallbackSafe
-    const starMatch = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(cdHeader)
-    const plainMatch = /filename\s*=\s*"?([^";]+)"?/i.exec(cdHeader)
-    let raw = starMatch?.[1] ?? plainMatch?.[1] ?? fallbackSafe
-    try {
-      raw = decodeURIComponent(raw)
-    } catch { }
-    const base = raw.split(/[\\/]/).pop() || fallbackSafe
-    return base.replace(/[^\w.\-()\[\]\s]+/g, "_")
+
+    // Extract file extension from the server's Content-Disposition header
+    let ext = ""
+    if (cdHeader) {
+      const starMatch = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(cdHeader)
+      const plainMatch = /filename\s*=\s*"?([^";]+)"?/i.exec(cdHeader)
+      let raw = starMatch?.[1] ?? plainMatch?.[1] ?? ""
+      try { raw = decodeURIComponent(raw) } catch { }
+      const serverFile = (raw.split(/[\\/]/).pop() || "").replace(/[^\w.\-()\[\]\s]+/g, "_")
+      const dotIdx = serverFile.lastIndexOf(".")
+      if (dotIdx > 0) ext = serverFile.slice(dotIdx)
+    }
+
+    // Build name from slug: strip trailing ID-like segment (8+ alphanumeric chars), append -mockup
+    const base = productSlug ?? fallback
+    const slugWithoutId = base.replace(/-[a-z0-9]{8,}$/i, "")
+    const named = slugWithoutId || base
+    const withMockup = named.endsWith("-mockup") ? named : `${named}-mockup`
+    const safeName = withMockup.replace(/[^\w.\-()\[\]\s]+/g, "_")
+
+    return ext ? `${safeName}${ext}` : safeName
   }
 
   const revokeObjectUrl = () => {
@@ -411,7 +422,7 @@ export const DownloadButton = ({
       if (isAccessDenied && opts?.isAutoTriggered) {
         ga("download_error_access_denied_auto", { product_id: productId, store_id: storeId, message: msg })
         vTrack("download_error_access_denied_auto", { productId, storeId, message: msg })
-        router.push(`/products/${productSlug ?? productId}`)
+        router.push(productSlug ? `/products/${productSlug}` : "/")
         return
       }
 

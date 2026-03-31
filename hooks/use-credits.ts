@@ -32,6 +32,7 @@ interface CreditTransaction {
 interface Download {
   id: string;
   productId: string;
+  productSlug?: string;
   productName: string;
   productImage?: string;
   categoryName?: string;

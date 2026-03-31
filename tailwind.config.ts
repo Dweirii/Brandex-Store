@@ -73,9 +73,13 @@ module.exports = {
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: "8px",
+        DEFAULT: "8px",
+        md: "10px",
+        lg: "10px",
+        xl: "12px",
+        "2xl": "12px",
+        "3xl": "12px",
       },
       fontFamily: {
         sans: ["var(--font-urbanist)", "var(--font-sans)", ...fontFamily.sans],

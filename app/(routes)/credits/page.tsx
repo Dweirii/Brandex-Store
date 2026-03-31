@@ -338,9 +338,10 @@ function CreditsPageContent() {
                 </div>
               ) : (
                 downloads.map((download) => (
-                  <div
+                  <button
                     key={download.id}
-                    className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 transition-colors"
+                    onClick={() => router.push(`/products/${download.productSlug ?? download.productId}`)}
+                    className="w-full flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 hover:border-primary/30 transition-colors text-left cursor-pointer"
                   >
                     {download.productImage && (
                       <Image
@@ -348,7 +349,7 @@ function CreditsPageContent() {
                         alt={download.productName}
                         width={48}
                         height={48}
-                        className="w-12 h-12 rounded object-cover"
+                        className="w-12 h-12 rounded object-cover shrink-0"
                       />
                     )}
                     <div className="flex-1 min-w-0">
@@ -358,15 +359,12 @@ function CreditsPageContent() {
                         {new Date(download.createdAt).toLocaleDateString()}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className={cn(
-                        "text-sm font-semibold",
-                        download.isFree ? "text-primary" : "text-primary"
-                      )}>
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-semibold text-primary">
                         {download.isFree ? "Free" : `${download.creditsUsed} credits`}
                       </p>
                     </div>
-                  </div>
+                  </button>
                 ))
               )}
             </div>

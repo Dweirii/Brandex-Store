@@ -18,7 +18,7 @@ const EmptyCartState = () => {
       
       <h2 className="text-3xl font-bold text-foreground mb-3">Your Cart is Empty</h2>
       <p className="text-muted-foreground text-center max-w-md mb-8">
-        Looks like you haven&apos;t added anything to your cart yet. Start shopping to find amazing mockups and design resources!
+        Looks like you haven&apos;t added anything to your cart yet. Explore our store to find amazing mockups and design resources!
       </p>
       
       <Button

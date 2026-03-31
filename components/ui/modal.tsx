@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, children, title, descripti
       <DialogContent
         className={cn(
           "sm:max-w-[90%] md:max-w-2xl lg:max-w-4xl w-full p-0 gap-0 shadow-lg",
-          "max-h-[80vh] overflow-y-auto",
+          "max-h-[72vh] overflow-y-auto",
           "bg-card border border-border text-foreground", // Apply theme colors here
           className,
         )}
@@ -34,7 +34,7 @@ const Modal: React.FC<ModalProps> = ({ open, onClose, children, title, descripti
             </DialogHeader>
           )}
           {/* Main content area where the image and details go side by side */}
-          <div className="p-4 sm:p-6 lg:p-8 pt-2">{children}</div>
+          <div className="p-3 sm:p-4 lg:p-5 pt-2">{children}</div>
         </div>
       </DialogContent>
     </Dialog>

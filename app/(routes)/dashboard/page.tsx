@@ -62,12 +62,10 @@ function DashboardContent() {
 
   useEffect(() => {
     if (!user?.id) return
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    if (!apiUrl) return
 
     setDlLoading(true)
     axios
-      .get(`${apiUrl}/downloads`, { headers: { "x-user-id": user.id } })
+      .get(`/api/downloads`, { headers: { "x-user-id": user.id } })
       .then((res) => {
         const data = res.data
         setDownloads(Array.isArray(data) ? data : data?.downloads ?? [])

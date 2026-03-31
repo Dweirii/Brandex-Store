@@ -109,18 +109,18 @@ const PreviewModal = () => {
   const creditsNeeded   = Math.max(0, productPrice - currentBalance)
 
   return (
-    <Modal open={previewModal.isOpen} onClose={previewModal.onClose} className="sm:max-w-[94%] lg:max-w-5xl xl:max-w-6xl">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8">
+    <Modal open={previewModal.isOpen} onClose={previewModal.onClose} className="sm:max-w-[92%] lg:max-w-4xl xl:max-w-5xl">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5">
 
         {/* ── Left column: image + checklist ── */}
-        <div className="md:col-span-7 flex flex-col gap-5">
+        <div className="md:col-span-7 flex flex-col gap-3">
           <Gallery data={product} />
 
           {/* Feature checklist — below image */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-foreground">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground">
             {features.map((f) => (
-              <div key={f} className="flex items-start gap-2">
-                <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+              <div key={f} className="flex items-start gap-1.5">
+                <Check className="h-3.5 w-3.5 shrink-0 text-primary mt-0.5" />
                 <span>{f}</span>
               </div>
             ))}
@@ -128,11 +128,11 @@ const PreviewModal = () => {
         </div>
 
         {/* ── Right column: info ── */}
-        <div className="md:col-span-5 flex flex-col gap-4">
+        <div className="md:col-span-5 flex flex-col gap-3">
           {/* Title + badge */}
           <div>
-            <h2 className="text-2xl font-bold text-foreground leading-snug">{product.name}</h2>
-            <div className="flex items-center gap-2 mt-2">
+            <h2 className="text-lg font-bold text-foreground leading-snug">{product.name}</h2>
+            <div className="flex items-center gap-2 mt-1.5">
               {isFree ? (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
                   <Download className="h-3.5 w-3.5" /> Free
@@ -156,7 +156,7 @@ const PreviewModal = () => {
               {specs.map(({ label, value }, i) => (
                 <div
                   key={label}
-                  className={`grid grid-cols-2 gap-4 px-4 py-2.5 text-sm ${i < specs.length - 1 ? "border-b border-border" : ""}`}
+                  className={`grid grid-cols-2 gap-3 px-3 py-1.5 text-xs ${i < specs.length - 1 ? "border-b border-border" : ""}`}
                 >
                   <span className="font-medium text-foreground">{label}</span>
                   <span className="text-muted-foreground text-right">{value}</span>
@@ -166,14 +166,14 @@ const PreviewModal = () => {
           )}
 
           {/* Download button */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <DownloadButton
               storeId={product.storeId}
               productId={product.id}
               productSlug={product.slug ?? product.id}
-              size="lg"
+              size="default"
               variant="premium"
-              className="w-full h-12 text-base font-semibold"
+              className="w-full h-10 text-sm font-semibold"
               iconOnly={false}
               customText={isFree ? "Free Download" : `Download for ${productPrice} Credits`}
               productName={product.name}
@@ -198,7 +198,7 @@ const PreviewModal = () => {
           </div>
 
           {/* Trust row */}
-          <div className="border-t border-border pt-3 flex items-center justify-between gap-2 text-[10px] text-muted-foreground flex-wrap">
+          <div className="border-t border-border pt-2 flex items-center justify-between gap-2 text-[10px] text-muted-foreground flex-wrap">
             <span className="flex items-center gap-1">
               <Download className="h-3 w-3" />
               {getDisplayDownloadCount(product.id, product.downloadCount)} downloads
@@ -215,7 +215,7 @@ const PreviewModal = () => {
 
           {/* Full Artwork — packaging only */}
           {isPackaging && (
-            <div className="border-t border-border pt-3">
+            <div className="border-t border-border pt-2">
               <p className="text-sm font-bold tracking-widest uppercase text-foreground flex items-center gap-1">
                 Full Artwork <ArrowRight className="h-3.5 w-3.5" />
               </p>
@@ -223,7 +223,7 @@ const PreviewModal = () => {
           )}
 
           {/* View full page link */}
-          <div className="border-t border-border pt-3">
+          <div className="border-t border-border pt-2">
             <Link
               href={`/products/${product.slug ?? product.id}`}
               onClick={previewModal.onClose}
