@@ -138,7 +138,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
       <HeroSection config={homeHeroConfig} />
 
       <Container>
-        <div className="min-h-screen py-6 sm:py-8">
+        <div className="min-h-screen pt-6 pb-6 sm:pb-8">
           <div className="px-4 sm:px-6 lg:px-8">
 
             {/* ── Category Quick Links ────────────────────────────────── */}

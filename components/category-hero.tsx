@@ -42,7 +42,7 @@ export function HeroSection({ config }: HeroSectionProps) {
 
   return (
     <section className="w-full bg-background">
-      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-[120px] pb-10">
+      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-[120px] pb-6">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
           {/* Left: Text */}
@@ -119,8 +119,6 @@ export function HeroSection({ config }: HeroSectionProps) {
 
         </div>
 
-        {/* Divider */}
-        <div className="border-b border-border mt-10" />
       </div>
     </section>
   )

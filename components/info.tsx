@@ -136,21 +136,14 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const iconSrc = getIconSrc()
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Title + Share */}
       <div className="flex items-start justify-between gap-4">
-        <h1 className="text-3xl font-bold text-foreground flex-1 leading-tight">
+        <h1 className="text-2xl font-bold text-foreground flex-1 leading-tight">
           {data.name}
         </h1>
         <ProductShare productId={data.slug ?? data.id} productName={data.name} />
       </div>
-
-      {/* Description */}
-      {data.description && (
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {data.description}
-        </p>
-      )}
 
       {/* Keyword Tags — max 4 visible; rest behind "Show more" */}
       {cleanTags.length > 0 && (
@@ -206,9 +199,9 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         )}
       </div>
 
-      {/* Download Card — no text-center so feature list & trust row alignment are not affected */}
-      <div className="border border-[#E5E5E5] dark:border-border rounded-xl overflow-hidden bg-card">
-        <div className="p-5 space-y-4">
+      {/* Download Card */}
+      <div className="border border-[#E5E5E5] dark:border-border rounded-xl overflow-hidden bg-card shadow-[0_1px_4px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)]">
+        <div className="p-4 space-y-3.5">
 
           {/* Top Download Button — wrapper ensures full width so sections below match */}
           <div className="w-full min-w-0">

@@ -10,7 +10,7 @@ import type { Product } from "@/types";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Gift, ClipboardList, Lightbulb } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Container from "@/components/ui/container";
 import { ProductBackButton } from "@/components/product-back-button";
@@ -25,7 +25,6 @@ import {
 import { ProductBreadcrumb } from "@/components/product-breadcrumb";
 import { CATEGORY_SLUG_MAP } from "@/lib/category-slugs";
 
-/** Category IDs for What's Included and other category-specific content */
 const CATEGORY_IDS = {
   images: "6214c586-a7c7-4f71-98ab-e1bc147a07f4",
   motion: "c302954a-6cd2-43a7-9916-16d9252f754c",
@@ -44,164 +43,11 @@ const RELATED_HEADING: Record<string, string> = {
   [CATEGORY_IDS.motion]:    "Related Motion",
 };
 
-/** What's Included copy per category */
-const WHATS_INCLUDED_BY_CATEGORY: Record<string, string[]> = {
-  [CATEGORY_IDS.images]: [
-    "High-resolution image files",
-    "Multiple formats and sizes",
-    "Ready for web and print",
-    "Usage guide included",
-  ],
-  [CATEGORY_IDS.motion]: [
-    "Video file(s) in common formats",
-    "Multiple resolutions when applicable",
-    "Ready to use in your edits",
-    "Usage guide included",
-  ],
-  [CATEGORY_IDS.packaging]: [
-    "High-resolution PSD mockup",
-    "Smart Object layers for easy editing",
-    "Organized Photoshop layers",
-    "Front + back label layouts",
-    "Help guide included",
-    "Editable text layers (vector-based fonts — change text without losing quality)",
-  ],
-  [CATEGORY_IDS.psd]: [
-    "High-resolution PSD file",
-    "Smart Object layers for easy editing",
-    "Organized Photoshop layers",
-    "Help guide included",
-  ],
-  [CATEGORY_IDS.vectors]: [
-    "Scalable vector files (AI, EPS, or SVG)",
-    "Editable shapes and paths",
-    "Crisp at any size — no pixelation",
-    "Usage guide included",
-  ],
-  [CATEGORY_IDS.mockups]: [
-    "High-resolution PSD mockup",
-    "Smart Object layers for easy editing",
-    "Organized Photoshop layers",
-    "Help guide included",
-  ],
-};
-
-const DEFAULT_WHATS_INCLUDED = [
-  "High-resolution PSD mockup",
-  "Smart Object layers for easy editing",
-  "Organized Photoshop layers",
-  "Help guide included",
-];
-
-type SpecEntry = { label: string; value: string };
-
-/** Specifications per category */
-const SPECIFICATIONS_BY_CATEGORY: Record<string, SpecEntry[]> = {
-  [CATEGORY_IDS.images]: [
-    { label: "File Type", value: "PNG, JPG" },
-    { label: "Resolution", value: "High-resolution" },
-    { label: "Usage", value: "Web & print ready" },
-    { label: "Color Space", value: "RGB" },
-  ],
-  [CATEGORY_IDS.motion]: [
-    { label: "Format", value: "MP4, MOV" },
-    { label: "Resolution", value: "1080p / 4K" },
-    { label: "Frame Rate", value: "24–30 fps" },
-    { label: "Usage", value: "Ready for editing" },
-  ],
-  [CATEGORY_IDS.packaging]: [
-    { label: "Application", value: "Adobe Photoshop" },
-    { label: "File Type", value: "PSD" },
-    { label: "Resolution", value: "4500 × 3000 px" },
-    { label: "DPI", value: "300" },
-    { label: "Color Space", value: "RGB" },
-    { label: "Layered", value: "Yes" },
-  ],
-  [CATEGORY_IDS.psd]: [
-    { label: "Application", value: "Adobe Photoshop" },
-    { label: "File Type", value: "PSD" },
-    { label: "Resolution", value: "4500 × 3000 px" },
-    { label: "DPI", value: "300" },
-    { label: "Color Space", value: "RGB" },
-    { label: "Layered", value: "Yes" },
-  ],
-  [CATEGORY_IDS.vectors]: [
-    { label: "Application", value: "Adobe Illustrator / vector editor" },
-    { label: "File Type", value: "AI, EPS, SVG" },
-    { label: "Scalable", value: "Yes — no quality loss" },
-    { label: "Editable", value: "Shapes, paths, text" },
-  ],
-  [CATEGORY_IDS.mockups]: [
-    { label: "Application", value: "Adobe Photoshop" },
-    { label: "File Type", value: "PSD" },
-    { label: "Resolution", value: "4500 × 3000 px" },
-    { label: "DPI", value: "300" },
-    { label: "Color Space", value: "RGB" },
-    { label: "Layered", value: "Yes" },
-  ],
-};
-
-const DEFAULT_SPECIFICATIONS: SpecEntry[] = [
-  { label: "Application", value: "Adobe Photoshop" },
-  { label: "File Type", value: "PSD" },
-  { label: "Resolution", value: "4500 × 3000 px" },
-  { label: "DPI", value: "300" },
-  { label: "Color Space", value: "RGB" },
-  { label: "Layered", value: "Yes" },
-];
-
-/** How It Works steps per category */
-const HOW_IT_WORKS_BY_CATEGORY: Record<string, string[]> = {
-  [CATEGORY_IDS.images]: [
-    "Download the image files",
-    "Open or import into your project",
-    "Use for web, print, or social",
-    "Export at the size you need",
-  ],
-  [CATEGORY_IDS.motion]: [
-    "Download the video file(s)",
-    "Import into your video editor",
-    "Place in your timeline or composition",
-    "Export your final video",
-  ],
-  [CATEGORY_IDS.packaging]: [
-    "Open the PSD in Photoshop",
-    "Double-click the Smart Object layer",
-    "Paste your design",
-    "Save and export your mockup",
-  ],
-  [CATEGORY_IDS.psd]: [
-    "Open the PSD in Photoshop",
-    "Double-click the Smart Object layer",
-    "Paste your design",
-    "Save and export your mockup",
-  ],
-  [CATEGORY_IDS.vectors]: [
-    "Open the file in Illustrator or your vector editor",
-    "Edit shapes, paths, and text as needed",
-    "Export to AI, EPS, SVG, or PDF",
-    "Use at any size without quality loss",
-  ],
-  [CATEGORY_IDS.mockups]: [
-    "Open the PSD in Photoshop",
-    "Double-click the Smart Object layer",
-    "Paste your design",
-    "Save and export your mockup",
-  ],
-};
-
-const DEFAULT_HOW_IT_WORKS = [
-  "Open the PSD in Photoshop",
-  "Double-click the Smart Object layer",
-  "Paste your design",
-  "Save and export your mockup",
-];
-
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
-    <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
+    <div className="w-full overflow-hidden rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)]">
       <div className="relative aspect-4/3 w-full">
-        <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
+        <Skeleton className="absolute inset-0 w-full h-full rounded-2xl" />
       </div>
     </div>
   ),
@@ -256,112 +102,6 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description: "Explore details about this product.",
     };
   }
-}
-
-function ProductDetails({ product }: { product: Product }) {
-  const categoryId = product.category?.id;
-  const isImages = categoryId === CATEGORY_IDS.images;
-
-  // PNG detection: check keywords and gallery image URLs
-  const hasPng =
-    isImages &&
-    (product.keywords?.some((k: string) => k.toLowerCase().includes("png")) ||
-      product.images?.some((img: { url: string }) =>
-        img.url.toLowerCase().includes(".png")
-      ));
-
-  const fileCount = product.images?.length ?? 1;
-
-  const whatsIncluded: string[] = isImages
-    ? [
-        "High-resolution image file(s) (JPG/JPEG)",
-        ...(hasPng ? ["PNG version included"] : []),
-        "Commercial license included",
-      ]
-    : (categoryId && WHATS_INCLUDED_BY_CATEGORY[categoryId]) || DEFAULT_WHATS_INCLUDED;
-
-  const specifications: SpecEntry[] = isImages
-    ? [
-        { label: "File Type", value: hasPng ? "JPG/JPEG + PNG" : "JPG/JPEG" },
-        { label: "Quantity", value: fileCount === 1 ? "1 file" : `${fileCount} files` },
-        { label: "Resolution", value: "High-resolution" },
-        { label: "Color Mode", value: "RGB" },
-        { label: "Software Needed", value: "None" },
-        { label: "Delivery", value: "Instant download" },
-      ]
-    : (categoryId && SPECIFICATIONS_BY_CATEGORY[categoryId]) || DEFAULT_SPECIFICATIONS;
-
-  const howItWorks: string[] = isImages
-    ? [
-        "Click Download to save the file(s) to your device.",
-        "Open in any app (Photos, Preview, Canva, Photoshop, etc.).",
-        "Use for web, social, presentations, or print.",
-        "Re-download anytime from My Downloads.",
-      ]
-    : (categoryId && HOW_IT_WORKS_BY_CATEGORY[categoryId]) || DEFAULT_HOW_IT_WORKS;
-
-  return (
-    <div className="mt-5 border border-[#E5E5E5] dark:border-border rounded-xl overflow-hidden bg-card">
-      <div className="grid grid-cols-3 divide-x divide-[#E5E5E5] dark:divide-border">
-        {/* What's Included */}
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Gift className="h-4 w-4 text-muted-foreground shrink-0" />
-            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">
-              What&apos;s Included
-            </h3>
-          </div>
-          <ul className="space-y-1.5">
-            {whatsIncluded.map((item) => (
-              <li key={item} className="text-xs text-muted-foreground leading-snug">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Specifications */}
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <ClipboardList className="h-4 w-4 text-muted-foreground shrink-0" />
-            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">
-              Specifications
-            </h3>
-          </div>
-          <ul className="space-y-1.5">
-            {specifications.map(({ label, value }) => (
-              <li key={label} className="text-xs text-muted-foreground leading-snug">
-                <span className="font-medium text-foreground/70">{label}:</span>{" "}
-                {value}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* How It Works */}
-        <div className="p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Lightbulb className="h-4 w-4 text-muted-foreground shrink-0" />
-            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">
-              How It Works
-            </h3>
-          </div>
-          <ol className="space-y-1.5 list-decimal list-inside">
-            {howItWorks.map((step) => (
-              <li key={step} className="text-xs text-muted-foreground leading-snug">
-                {step}
-              </li>
-            ))}
-          </ol>
-          {isImages && (
-            <p className="mt-3 text-[11px] text-muted-foreground/70 italic leading-snug">
-              This is a ready-to-use image file (not a PSD template).
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
 }
 
 async function RelatedProducts({ currentProduct }: { currentProduct: Product }) {
@@ -488,15 +228,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
               subcategory={product.subcategory}
               productName={product.name}
             />
-            <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-12">
-              {/* Left column: Gallery + details sections */}
+            <div className="lg:grid lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px] lg:items-start lg:gap-x-8">
+              {/* Left column: Gallery (dominant) */}
               <div className="w-full">
                 {product.videoUrl || product.images?.length > 0 ? (
                   <Suspense
                     fallback={
-                      <div className="w-full overflow-hidden bg-background shadow-md border border-border rounded-xl">
+                      <div className="w-full overflow-hidden rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)]">
                         <div className="relative aspect-4/3 w-full">
-                          <Skeleton className="absolute inset-0 w-full h-full rounded-xl" />
+                          <Skeleton className="absolute inset-0 w-full h-full rounded-2xl" />
                         </div>
                       </div>
                     }
@@ -504,16 +244,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     <Gallery data={product} />
                   </Suspense>
                 ) : (
-                  <div className="h-96 bg-muted/10 flex items-center justify-center rounded-xl">
+                  <div className="h-96 bg-muted/10 flex items-center justify-center rounded-2xl">
                     <p className="text-muted-foreground">No media available</p>
                   </div>
                 )}
-                {/* What's Included / Specifications / How It Works */}
-                <ProductDetails product={product} />
               </div>
 
-              {/* Right column: Product Info */}
-              <div className="mt-10 lg:mt-0">
+              {/* Right column: Compact info panel */}
+              <div className="mt-8 lg:mt-0 lg:sticky lg:top-24">
                 <Info data={product} />
               </div>
             </div>

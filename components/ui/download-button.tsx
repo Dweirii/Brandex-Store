@@ -772,56 +772,58 @@ export const DownloadButton = ({
 
       {/* Confirmation dialog */}
       <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <DialogContent className="sm:max-w-md" onClick={(e) => e.stopPropagation()}>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg">
-              <FileDown className="h-5 w-5 text-primary" />
+        <DialogContent className="sm:max-w-xs gap-2! p-5!" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader className="gap-0.5">
+            <DialogTitle className="flex items-center gap-1.5 text-sm font-semibold">
+              <FileDown className="h-3.5 w-3.5 text-primary" />
               Confirm Download
             </DialogTitle>
             {productName && (
-              <DialogDescription className="text-sm text-foreground font-medium pt-1">
+              <DialogDescription className="text-xs text-muted-foreground font-normal leading-snug">
                 {productName}
               </DialogDescription>
             )}
           </DialogHeader>
 
-          <div className="py-2 space-y-3">
+          <div className="space-y-1.5">
             {creditCost !== undefined && creditCost > 0 ? (
-              <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3">
-                <Coins className="h-5 w-5 text-amber-500 shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
+              <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-2.5 py-2">
+                <Coins className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                <div className="leading-tight">
+                  <p className="text-xs font-medium text-foreground">
                     {creditCost} credits will be deducted
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[10px] text-muted-foreground">
                     From your credit balance
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
-                <Download className="h-5 w-5 text-primary shrink-0" />
-                <p className="text-sm font-semibold text-primary">This is a free download</p>
+              <div className="flex items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-2.5 py-2">
+                <Download className="h-3.5 w-3.5 text-primary shrink-0" />
+                <p className="text-xs font-medium text-primary">This is a free download</p>
               </div>
             )}
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground leading-normal">
               Your file will begin downloading immediately after confirmation.
             </p>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2 sm:gap-2 pt-0.5">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setShowConfirm(false)}
-              className="flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none h-8 text-xs"
             >
               Cancel
             </Button>
             <Button
+              size="sm"
               onClick={confirmAndDownload}
-              className="flex-1 sm:flex-none gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+              className="flex-1 sm:flex-none gap-1.5 h-8 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-3 w-3" />
               {creditCost && creditCost > 0 ? `Download for ${creditCost} Credits` : "Download Now"}
             </Button>
           </DialogFooter>
