@@ -772,58 +772,59 @@ export const DownloadButton = ({
 
       {/* Confirmation dialog */}
       <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
-        <DialogContent className="sm:max-w-xs gap-2! p-5!" onClick={(e) => e.stopPropagation()}>
-          <DialogHeader className="gap-0.5">
-            <DialogTitle className="flex items-center gap-1.5 text-sm font-semibold">
-              <FileDown className="h-3.5 w-3.5 text-primary" />
+        <DialogContent className="sm:max-w-md" onClick={(e) => e.stopPropagation()}>
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">
               Confirm Download
             </DialogTitle>
             {productName && (
-              <DialogDescription className="text-xs text-muted-foreground font-normal leading-snug">
+              <DialogDescription className="text-sm text-muted-foreground">
                 {productName}
               </DialogDescription>
             )}
           </DialogHeader>
 
-          <div className="space-y-1.5">
+          <div className="space-y-3 py-1">
             {creditCost !== undefined && creditCost > 0 ? (
-              <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-2.5 py-2">
-                <Coins className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                <div className="leading-tight">
-                  <p className="text-xs font-medium text-foreground">
+              <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-500/10">
+                  <Coins className="h-4 w-4 text-amber-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
                     {creditCost} credits will be deducted
                   </p>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     From your credit balance
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 rounded-md border border-primary/20 bg-primary/5 px-2.5 py-2">
-                <Download className="h-3.5 w-3.5 text-primary shrink-0" />
-                <p className="text-xs font-medium text-primary">This is a free download</p>
+              <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                  <Download className="h-4 w-4 text-primary" />
+                </div>
+                <p className="text-sm font-semibold text-primary">This is a free download</p>
               </div>
             )}
-            <p className="text-[10px] text-muted-foreground leading-normal">
+            <p className="text-xs text-muted-foreground">
               Your file will begin downloading immediately after confirmation.
             </p>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-2 pt-0.5">
+          <DialogFooter className="gap-2 sm:gap-2">
             <Button
               variant="outline"
-              size="sm"
               onClick={() => setShowConfirm(false)}
-              className="flex-1 sm:flex-none h-8 text-xs"
+              className="flex-1 sm:flex-none"
             >
               Cancel
             </Button>
             <Button
-              size="sm"
               onClick={confirmAndDownload}
-              className="flex-1 sm:flex-none gap-1.5 h-8 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+              className="flex-1 sm:flex-none gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              <Download className="h-3 w-3" />
+              <Download className="h-4 w-4" />
               {creditCost && creditCost > 0 ? `Download for ${creditCost} Credits` : "Download Now"}
             </Button>
           </DialogFooter>

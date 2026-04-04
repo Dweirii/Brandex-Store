@@ -54,12 +54,6 @@ export default function CustomWorkPage() {
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-[40%_60%] lg:gap-4 pt-6 lg:items-center overflow-hidden">
         <div className="flex flex-col justify-center">
-          <div className="inline-block max-w-fit px-2 py-1 bg-[#f0f8f4] dark:bg-primary/10 rounded flex items-center justify-center mb-10">
-            <span className="text-[10px] font-bold text-primary tracking-widest uppercase">
-              CUSTOM WORK
-            </span>
-          </div>
-          
           <h1 className="text-4xl lg:text-[2.75rem] font-[800] text-foreground leading-[1.1] tracking-[-0.02em] mb-4">
             Design Made for<br />Your Brand
           </h1>
