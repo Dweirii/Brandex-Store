@@ -229,7 +229,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               subcategory={product.subcategory}
               productName={product.name}
             />
-            <div className="lg:grid lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_420px] lg:items-start lg:gap-x-8">
+            <div className="lg:grid lg:grid-cols-[1fr_420px] xl:grid-cols-[1fr_460px] lg:items-start lg:gap-x-8">
               {/* Left column: Gallery (dominant) */}
               <div className="w-full">
                 {product.videoUrl || product.images?.length > 0 ? (
