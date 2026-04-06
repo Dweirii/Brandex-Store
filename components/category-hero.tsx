@@ -42,7 +42,7 @@ export function HeroSection({ config }: HeroSectionProps) {
 
   return (
     <section className="w-full bg-background">
-      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-[120px] pb-6">
+      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-10 pb-6">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
           {/* Left: Text */}
@@ -88,14 +88,14 @@ export function HeroSection({ config }: HeroSectionProps) {
 
             {/* Icon row — trust signals beneath the CTA buttons */}
             {iconRow && iconRow.length > 0 && (
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 {iconRow.map((item, i) => {
                   const Icon = ICON_MAP[item.icon]
                   return (
-                    <div key={i} className="flex items-center gap-2">
-                      {i > 0 && <span className="w-px h-4 bg-border shrink-0" />}
-                      <Icon className="h-4 w-4 text-primary shrink-0" strokeWidth={2} />
-                      <span className="text-sm font-medium text-foreground">{item.label}</span>
+                    <div key={i} className="flex items-center gap-1.5">
+                      {i > 0 && <span className="w-px h-3.5 bg-border shrink-0" />}
+                      <Icon className="h-3.5 w-3.5 text-primary shrink-0" strokeWidth={2} />
+                      <span className="text-xs font-medium text-foreground">{item.label}</span>
                     </div>
                   )
                 })}
@@ -150,7 +150,7 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
 
   if (tiles.length === 2) {
     return (
-      <div className="grid grid-cols-2 gap-2 h-60 sm:h-72.5 lg:h-80">
+      <div className="grid grid-cols-2 gap-3 h-60 sm:h-72.5 lg:h-80">
         <Tile src={tiles[0]} className="h-full" priority sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
         <Tile src={tiles[1]} className="h-full" sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
       </div>
@@ -159,7 +159,7 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
 
   // 3- or 4-image: col1 row-span-2 | col2 row-span-2 | col3 top + col3 bottom
   return (
-    <div className="grid grid-cols-3 grid-rows-2 gap-2 h-60 sm:h-72.5 lg:h-80 *:min-h-0">
+    <div className="grid grid-cols-3 grid-rows-2 gap-3 h-60 sm:h-72.5 lg:h-80 *:min-h-0">
       {/* Col 1 — full height */}
       <Tile
         src={tiles[0]}

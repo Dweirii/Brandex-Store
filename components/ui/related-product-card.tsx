@@ -91,7 +91,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={() => router.push(`/products/${data.slug ?? data.id}`)}
-            className="relative aspect-[3/4] bg-white border border-[#E5E5E5] rounded-xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_25px_rgba(17,24,39,0.12)] hover:border-[rgba(0,184,26,0.35)] transition-[box-shadow,border-color] duration-300 cursor-pointer group"
+            className="relative aspect-[3/4] bg-white border border-[#E5E5E5] rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_10px_25px_rgba(17,24,39,0.12)] hover:border-[rgba(0,184,26,0.35)] transition-[box-shadow,border-color] duration-300 cursor-pointer group"
         >
             {/* Media Layer */}
             <div className="absolute inset-0 z-0">

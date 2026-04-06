@@ -154,11 +154,11 @@ const ProductList: React.FC<ProductListProps> = ({
       <div className="overflow-x-hidden">
       <Masonry
         breakpointCols={variant === 'related' ? relatedBreakpointColumnsObj : breakpointColumnsObj}
-        className="flex w-auto -ml-6 sm:-ml-8"
-        columnClassName="pl-6 sm:pl-8 bg-clip-padding"
+        className="flex w-auto -ml-3 sm:-ml-4"
+        columnClassName="pl-3 sm:pl-4 bg-clip-padding"
       >
         {visibleItems.map((item) => (
-          <div key={item.id} className="mb-6 sm:mb-8">
+          <div key={item.id} className="mb-3 sm:mb-4">
             {variant === 'related' ? (
               <RelatedProductCard data={item} />
             ) : (
@@ -169,7 +169,7 @@ const ProductList: React.FC<ProductListProps> = ({
 
         {/* Loading Skeletons */}
         {loading && Array.from({ length: 4 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="mb-6 sm:mb-8">
+          <div key={`skeleton-${i}`} className="mb-3 sm:mb-4">
             <Skeleton className="aspect-[3/4] w-full rounded-xl" />
           </div>
         ))}

@@ -74,10 +74,13 @@ async function FeaturedProducts({
       sortBy,
     })
 
+    // Shuffle products on "newest" (default) so the grid feels fresh every visit
+    const displayProducts = (!sortBy || sortBy === "newest") ? shuffle(products) : products
+
     return (
       <ProductList
         title=""
-        items={products}
+        items={displayProducts}
         total={total}
         page={page}
         pageCount={pageCount}
@@ -98,20 +101,20 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
   const { priceFilter, sortBy } = await searchParams
 
   const [mockupData, packagingData, imagesData, motionData, newReleasesData] = await Promise.all([
-    getProducts({ categoryId: MOCKUPS_CATEGORY_ID, page: 1, limit: 2 }),
-    getProducts({ categoryId: PACKAGING_CATEGORY_ID, page: 1, limit: 2 }),
-    getProducts({ categoryId: IMAGES_CATEGORY_ID, page: 1, limit: 2 }),
-    getProducts({ categoryId: MOTION_CATEGORY_ID, page: 1, limit: 2 }),
+    getProducts({ categoryId: MOCKUPS_CATEGORY_ID, page: 1, limit: 20 }),
+    getProducts({ categoryId: PACKAGING_CATEGORY_ID, page: 1, limit: 20 }),
+    getProducts({ categoryId: IMAGES_CATEGORY_ID, page: 1, limit: 20 }),
+    getProducts({ categoryId: MOTION_CATEGORY_ID, page: 1, limit: 20 }),
     getProducts({ sortBy: "newest", limit: 8 }),
   ])
 
   // Mix one image from each category for the hero collage
   const heroImagePool = shuffle(
     [
-      ...mockupData.products.map((p) => p.images?.[0]?.url),
-      ...packagingData.products.map((p) => p.images?.[0]?.url),
-      ...imagesData.products.map((p) => p.images?.[0]?.url),
-      ...motionData.products.map((p) => p.images?.[0]?.url),
+      ...shuffle(mockupData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
+      ...shuffle(packagingData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
+      ...shuffle(imagesData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
+      ...shuffle(motionData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
     ].filter((url): url is string => Boolean(url))
   ).slice(0, 4)
 
@@ -175,7 +178,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
                   </Link>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                  {newReleasesData.products.slice(0, 4).map((product) => (
+                  {shuffle(newReleasesData.products).slice(0, 4).map((product) => (
                     <ProductCard key={product.id} data={product} />
                   ))}
                 </div>

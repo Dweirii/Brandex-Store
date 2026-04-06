@@ -158,7 +158,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
       }}
       onMouseLeave={handleMouseLeave}
       onClick={() => router.push(`/products/${data.slug ?? data.id}`)}
-      className="relative bg-white border border-[#ECECEC] rounded-2xl overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.10)] cursor-pointer group will-change-transform transition-[box-shadow,border-color] duration-220 ease-[ease]"
+      className="relative bg-white border border-[#ECECEC] rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.10)] cursor-pointer group will-change-transform transition-[box-shadow,border-color] duration-220 ease-[ease]"
     >
       {/* Image/Video Container */}
       <div ref={containerRef} className="relative w-full overflow-hidden bg-muted/5 aspect-3/4">

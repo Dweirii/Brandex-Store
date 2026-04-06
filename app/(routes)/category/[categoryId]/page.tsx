@@ -105,10 +105,13 @@ async function CategoryProducts({
     )
   }
 
+  // Shuffle products on "newest" (default) so the grid feels fresh every visit
+  const displayProducts = (!sortBy || sortBy === "newest") ? shuffle(products) : products
+
   return (
     <ProductList
       title=""
-      items={products}
+      items={displayProducts}
       total={total}
       page={current}
       pageCount={pageCount}
@@ -177,7 +180,7 @@ export default async function CategoryPage({
   const [category, heroProductData] = await Promise.all([
     getCategory(uuid),
     heroConfigBase
-      ? getProducts({ categoryId: uuid, page: 1, limit: 8 })
+      ? getProducts({ categoryId: uuid, page: 1, limit: 30 })
       : Promise.resolve({ products: [] as Product[] }),
   ])
 
