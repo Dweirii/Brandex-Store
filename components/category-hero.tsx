@@ -34,15 +34,17 @@ interface HeroSectionProps {
   config: HeroConfig
   /** Category name shown as a small badge above the headline (omit for home page) */
   categoryLabel?: string
+  /** Less bottom padding for category pages */
+  compact?: boolean
 }
 
-export function HeroSection({ config }: HeroSectionProps) {
+export function HeroSection({ config, compact }: HeroSectionProps) {
   const router = useRouter()
   const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow, trustLine, tileStyle } = config
 
   return (
     <section className="w-full bg-background">
-      <div className="mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+      <div className={`mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-12 ${compact ? "pb-0" : "pb-8"}`}>
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
           {/* Left: Text */}
@@ -138,7 +140,8 @@ interface ImageCollageProps {
 }
 
 function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
-  const tiles = images.slice(0, 4)
+  // Only use tiles that have a real image URL
+  const tiles = images.filter((url) => Boolean(url?.trim())).slice(0, 4)
 
   if (tiles.length === 0) return null
 
@@ -150,17 +153,40 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
 
   if (tiles.length === 2) {
     return (
-      <div className="grid grid-cols-2 gap-3 h-60 sm:h-72.5 lg:h-80">
+      <div className="grid grid-cols-2 gap-3 aspect-2/1">
         <Tile src={tiles[0]} className="h-full" priority sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
         <Tile src={tiles[1]} className="h-full" sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
       </div>
     )
   }
 
-  // 3- or 4-image: col1 row-span-2 | col2 row-span-2 | col3 top + col3 bottom
+  if (tiles.length === 3) {
+    return (
+      <div className="grid grid-cols-2 grid-rows-2 gap-3 aspect-video *:min-h-0">
+        <Tile
+          src={tiles[0]}
+          className="row-span-2"
+          priority
+          sizes="(max-width: 1024px) 50vw, 25vw"
+          tileStyle={tileStyle}
+        />
+        <Tile
+          src={tiles[1]}
+          sizes="(max-width: 1024px) 50vw, 25vw"
+          tileStyle={tileStyle}
+        />
+        <Tile
+          src={tiles[2]}
+          sizes="(max-width: 1024px) 50vw, 25vw"
+          tileStyle={tileStyle}
+        />
+      </div>
+    )
+  }
+
+  // 4 images: col1 row-span-2 | col2 row-span-2 | col3 top + col3 bottom
   return (
-    <div className="grid grid-cols-3 grid-rows-2 gap-3 h-60 sm:h-72.5 lg:h-80 *:min-h-0">
-      {/* Col 1 — full height */}
+    <div className="grid grid-cols-3 grid-rows-2 gap-3 aspect-video *:min-h-0">
       <Tile
         src={tiles[0]}
         className="row-span-2"
@@ -168,22 +194,19 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
       />
-      {/* Col 2 — full height */}
       <Tile
         src={tiles[1]}
         className="row-span-2"
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
       />
-      {/* Col 3 top */}
       <Tile
-        src={tiles[2] ?? ""}
+        src={tiles[2]}
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
       />
-      {/* Col 3 bottom */}
       <Tile
-        src={tiles[3] ?? ""}
+        src={tiles[3]}
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
       />

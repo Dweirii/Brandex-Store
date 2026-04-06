@@ -219,6 +219,7 @@ export default async function CategoryPage({
       {heroConfig && (
         <HeroSection
           config={heroConfig}
+          compact
           categoryLabel={
             // When landing on a group slug with no sub-type selected (e.g. /category/graphics),
             // use the group's display name ("Graphics") rather than the underlying
