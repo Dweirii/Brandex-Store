@@ -317,32 +317,33 @@ function DashboardContent() {
               </p>
             ) : (
               recentDownloads.map((d) => (
-                <div key={d.id} className="flex items-center gap-3">
+                <Link
+                  key={d.id}
+                  href={`/products/${d.productSlug ?? d.productId}`}
+                  className="w-full flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50 hover:bg-muted/50 hover:border-primary/30 transition-colors"
+                >
                   {d.imageUrl ? (
                     <ImageWithFallback
                       src={d.imageUrl}
                       alt={d.productName}
                       fallbackSeed={d.productName}
-                      width={36}
-                      height={36}
-                      className="w-9 h-9 rounded-lg object-cover shrink-0"
+                      width={48}
+                      height={48}
+                      className="w-12 h-12 rounded object-cover shrink-0"
                     />
                   ) : (
-                    <div className="w-9 h-9 rounded-lg bg-muted shrink-0" />
+                    <div className="w-12 h-12 rounded bg-muted shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{d.productName}</p>
+                    <p className="font-medium truncate">{d.productName}</p>
                     <p className="text-xs text-muted-foreground">{formatDate(d.createdAt)}</p>
                   </div>
-                  <span
-                    className={cn(
-                      "text-xs font-semibold shrink-0",
-                      d.isFree ? "text-primary" : "text-purple-500"
-                    )}
-                  >
-                    {d.isFree ? "Free" : `${d.price} credits`}
-                  </span>
-                </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-semibold text-primary">
+                      {d.isFree ? "Free" : `${d.price} credits`}
+                    </p>
+                  </div>
+                </Link>
               ))
             )}
           </div>

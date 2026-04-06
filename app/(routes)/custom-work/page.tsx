@@ -104,16 +104,16 @@ export default function CustomWorkPage() {
           WHAT WE OFFER
         </h2>
 
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 border-none ">
           {WHAT_WE_OFFER.map(({ label, icon: Icon }) => (
             <div
               key={label}
-              className="border border-[#e9e9e9] dark:border-border/80 bg-background rounded-xl p-5 flex flex-col items-start gap-4 aspect-auto h-32 hover:border-border transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+              className="border-none shadow-sm dark:border-border/80 bg-background rounded-xl p-5 flex flex-col items-start gap-4 aspect-auto h-32 hover:border-border transition-colors hover:text-foreground cursor-pointer"
             >
               <div className="w-8 h-8 rounded shrink-0 bg-[#f0f8f4] dark:bg-primary/10 flex items-center justify-center text-[#00A63E]">
-                <Icon className="w-4 h-4" />
+                <Icon className="w-4 h-4 hover:text-[#00A63E]" />
               </div>
-              <p className="text-[13px] font-medium text-foreground whitespace-pre-line leading-tight">
+              <p className="text-[13px] font-medium text-foreground whitespace-pre-line leading-tight hover:font-bold transition-all">
                 {label}
               </p>
             </div>

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProductBySlug from "@/actions/get-product-by-slug";
@@ -290,6 +291,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
     );
   } catch (error) {
+    // Re-throw Next.js redirect errors so the redirect actually happens
+    if (isRedirectError(error)) throw error;
+
     console.error("Error loading product page:", error);
     return (
       <div className="px-4 py-10">
