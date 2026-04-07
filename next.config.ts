@@ -64,6 +64,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "Brandex-cdn.b-cdn.net",
+      },
+      {
+        protocol: "https",
         hostname: "wg-global.b-cdn.net",
       },
       {
