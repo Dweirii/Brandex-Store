@@ -112,9 +112,11 @@ export function UserDropdown() {
           </DropdownMenuItem>
 
           {/* Settings */}
-          <DropdownMenuItem onClick={() => openUserProfile()} className="cursor-pointer rounded-md my-0.5 px-3 py-2.5 group transition-colors focus:bg-transparent hover:bg-muted/50">
-            <Settings className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors mr-3" />
-            <span className="text-sm font-medium group-hover:text-foreground transition-colors">Settings</span>
+          <DropdownMenuItem asChild className="cursor-pointer rounded-md my-0.5 transition-colors focus:bg-transparent hover:bg-muted/50">
+            <button type="button" onClick={() => openUserProfile()} className="flex items-center gap-3 px-3 py-2.5 group w-full">
+              <Settings className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <span className="flex-1 text-sm font-medium group-hover:text-foreground transition-colors text-left">Settings</span>
+            </button>
           </DropdownMenuItem>
 
           {/* Help */}

@@ -1,5 +1,4 @@
 import { Metadata } from "next"
-import type { Product } from "@/types"
 import { Suspense } from "react"
 import { redirect } from "next/navigation"
 import getCategory from "@/actions/get-category"
@@ -175,20 +174,9 @@ export default async function CategoryPage({
     if (subtab) uuid = subtab.id
   }
 
-  const heroConfigBase = getHeroConfigById(uuid)
+  const heroConfig = getHeroConfigById(uuid)
 
-  const [category, heroProductData] = await Promise.all([
-    getCategory(uuid),
-    heroConfigBase
-      ? getProducts({ categoryId: uuid, page: 1, limit: 30 })
-      : Promise.resolve({ products: [] as Product[] }),
-  ])
-
-  const heroImages = shuffle(
-    heroProductData.products
-      .map((p) => p.images?.[0]?.url)
-      .filter((url): url is string => Boolean(url))
-  ).slice(0, 4)
+  const category = await getCategory(uuid)
 
   // Canonical URL always uses the slug
   const siteUrl = getSiteUrl()
@@ -197,10 +185,6 @@ export default async function CategoryPage({
       { name: "Home", url: siteUrl },
       { name: category.name, url: `${siteUrl}/category/${slug}` },
     ])
-    : null
-
-  const heroConfig = heroConfigBase
-    ? { ...heroConfigBase, images: heroImages.length > 0 ? heroImages : heroConfigBase.images }
     : null
 
   return (
@@ -219,7 +203,6 @@ export default async function CategoryPage({
       {heroConfig && (
         <HeroSection
           config={heroConfig}
-          compact
           categoryLabel={
             // When landing on a group slug with no sub-type selected (e.g. /category/graphics),
             // use the group's display name ("Graphics") rather than the underlying

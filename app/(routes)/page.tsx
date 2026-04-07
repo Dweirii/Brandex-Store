@@ -23,10 +23,6 @@ import {
 
 export const metadata: Metadata = generateHomeMetadata()
 
-const MOCKUPS_CATEGORY_ID = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
-const PACKAGING_CATEGORY_ID = "fd995552-baa8-4b86-bf7e-0acbefd43fd6"
-const IMAGES_CATEGORY_ID = "6214c586-a7c7-4f71-98ab-e1bc147a07f4"
-const MOTION_CATEGORY_ID = "c302954a-6cd2-43a7-9916-16d9252f754c"
 
 const CATEGORY_LINKS = [
   {
@@ -100,28 +96,9 @@ async function FeaturedProducts({
 const HomePage = async ({ searchParams }: HomePageProps) => {
   const { priceFilter, sortBy } = await searchParams
 
-  const [mockupData, packagingData, imagesData, motionData, newReleasesData] = await Promise.all([
-    getProducts({ categoryId: MOCKUPS_CATEGORY_ID, page: 1, limit: 20 }),
-    getProducts({ categoryId: PACKAGING_CATEGORY_ID, page: 1, limit: 20 }),
-    getProducts({ categoryId: IMAGES_CATEGORY_ID, page: 1, limit: 20 }),
-    getProducts({ categoryId: MOTION_CATEGORY_ID, page: 1, limit: 20 }),
-    getProducts({ sortBy: "newest", limit: 8 }),
-  ])
+  const newReleasesData = await getProducts({ sortBy: "newest", limit: 8 })
 
-  // Mix one image from each category for the hero collage
-  const heroImagePool = shuffle(
-    [
-      ...shuffle(mockupData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
-      ...shuffle(packagingData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
-      ...shuffle(imagesData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
-      ...shuffle(motionData.products).slice(0, 1).map((p) => p.images?.[0]?.url),
-    ].filter((url): url is string => Boolean(url))
-  ).slice(0, 4)
-
-  const homeHeroConfig = {
-    ...heroConfigs.home,
-    images: heroImagePool.length > 0 ? heroImagePool : heroConfigs.home.images,
-  }
+  const homeHeroConfig = heroConfigs.home
 
   const websiteStructuredData = generateWebsiteStructuredData()
   const organizationStructuredData = generateOrganizationStructuredData()
@@ -141,7 +118,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
       <HeroSection config={homeHeroConfig} />
 
       <Container>
-        <div className="min-h-screen pt-6 pb-6 sm:pb-8">
+        <div className="min-h-screen pt-12 pb-6 sm:pb-8">
           <div className="px-4 sm:px-6 lg:px-8">
 
             {/* ── Category Quick Links ────────────────────────────────── */}
@@ -154,7 +131,9 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
                     href={cat.href}
                     className="group flex items-center gap-3.5 rounded-xl border border-border bg-background p-4 sm:p-5 hover:border-primary/50 transition-all duration-200"
                   >
-                    <Icon className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-primary transition-colors duration-200" />
+                    <div className="flex items-center justify-center w-10 h-10 shrink-0 rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors duration-200">
+                      <Icon className="w-4.5 h-4.5 text-primary" />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-foreground">{cat.name}</p>
                       <p className="text-[11px] text-muted-foreground leading-snug mt-0.5 truncate">{cat.description}</p>

@@ -17,6 +17,10 @@ export interface HeroConfig {
   secondaryCTA: { label: string; href: string }
   /** Pass 2–4 image URLs; the collage auto-adapts to the count */
   images: string[]
+  /** Pool of tall images (for row-span-2 slots); 2 picked randomly per load */
+  tallImages?: string[]
+  /** Pool of square images (for single-row slots); 2 picked randomly per load */
+  squareImages?: string[]
   /** Optional icon + label pairs shown below the CTAs */
   iconRow?: HeroIconItem[]
   /** Optional dot-separated trust line shown below the icon row */
@@ -45,11 +49,36 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "Premium mockups, packaging, vectors, photos, and motion—crafted and ready to use today. Stop searching. Start creating.",
     primaryCTA: { label: "Browse Assets", href: "/products" },
     secondaryCTA: { label: "See Pricing", href: "/credits" },
-    images: [
-      "https://Brandex-cdn.b-cdn.net/hero/home-1.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/home-2.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/home-3.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/home-4.jpg",
+    images: [],
+    tallImages: [
+      // Mockups
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Cans%203D%20Mockup%207.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Paper%20Bag%20Mockup2.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Shika%20breath%20freshener%20Packaging.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Jam%20Jar%20Mockup%201140194562.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Water%20Sport%20Cup%20Mockup%201140194593.jpeg",
+      // Packaging
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Pizza%20Packaging%201140194612.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Shaving%20Machine%20Packaging%201140194603.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Proten%20Carbonated%20Drink%20Packaging%20Large.jpeg",
+      // Photos
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/9537fb8e723747539ee577ccbfbbaaf8.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/9c1af39880254a84a4c37920604fa853.jpg",
+    ],
+    squareImages: [
+      // Mockups
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Billboard%20Mockup1140194687.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Cosmetic%20Container%20Mockup365792114524.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20I%20Phone%2017%20Pro%20Mockup%2014019471.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/mockup4.jpeg",
+      // Packaging
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Dark%20Chocolate%20With%20Hazelnut%20Bar%20Packaging%201140194668.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Sereal%20Packaging%201140194532.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Natural%20Drink%20Packaging%20Large.jpeg",
+      // Photos
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/a-delightful-depiction-of-a-plate-of-golden-brown-.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/chicken-with-creamy-dijon-sauce-and-mashed-potatoe.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/chinese-chicken-on-a-stick-.jpg",
     ],
     iconRow: [
       { icon: "download", label: "Instant download" },
@@ -65,11 +94,21 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "Print-ready packaging assets with dielines, structured layouts, and fully editable files—built for real-world production and fast approvals.",
     primaryCTA: { label: "Browse Packaging", href: "/category/packaging" },
     secondaryCTA: { label: "View Newest", href: "/category/packaging?sortBy=newest" },
-    images: [
-      "https://Brandex-cdn.b-cdn.net/hero/packaging-1.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/packaging-2.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/packaging-3.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/packaging-4.jpg",
+    images: [],
+    tallImages: [
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Pizza%20Packaging%201140194612.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Shaving%20Machine%20Packaging%201140194603.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Proten%20Carbonated%20Drink%20Packaging%20Large.jpeg",
+    ],
+    squareImages: [
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Butter%20Cookies%20Bag%20Packaging%201140194590.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Dark%20Chocolate%20With%20Hazelnut%20Bar%20Packaging%201140194668.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Dark%20Chocolate%20With%20Pistachios%20Bar%20Packaging%201140194667.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Brandex%20Sereal%20Packaging%201140194532.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Metallic_Juice_Box_Mockup-2.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Natural%20Drink%20Packaging%20Large.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Nutcracker%20Brew%20Packaging%20Large.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pack/Paper%20Packaging%20Mockup%202%20Large.jpeg",
     ],
     iconRow: [
       { icon: "package", label: "Print-ready templates" },
@@ -84,11 +123,30 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "Realistic scenes with smart-object workflows—drop in artwork, fine-tune lighting, and export client-ready visuals in minutes.",
     primaryCTA: { label: "Browse Mockups", href: "/category/mockups" },
     secondaryCTA: { label: "View Newest", href: "/category/mockups?sortBy=newest" },
-    images: [
-      "https://Brandex-cdn.b-cdn.net/hero/mockup-1.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/mockup-2.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/mockup-3.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/mockup-4.jpg",
+    images: [],
+    tallImages: [
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Cans%203D%20Mockup%207.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Paper%20Bag%20Mockup2.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Shika%20breath%20freshener%20Packaging.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Latterhead%20Mockup1140194690.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Carbonated%20Can%20330ml%20Sleek%20Design%20Mockup%201140194677.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Jam%20Jar%20Mockup%201140194562.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Fluz%20orange%20Juice%201%20Liter%20Box%20Mockup.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Water%20Sport%20Cup%20Mockup%201140194593.jpeg",
+    ],
+    squareImages: [
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Billboard%20Mockup1140194687.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Carbonated%20Can%20250ml%20Sleek%20Design%20Mockup%201140194674.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Cosmetic%20Container%20Mockup365792114524.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Door%20Hanging%20Mockup682480034.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20Drink%20Bottle%20Mockup05795621279.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20I%20Phone%2017%20Pro%20Mockup%2014019471.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Brandex%20I%20Phone%20Mockup%201140194682.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/hhhhhs45d4d5296.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Laptop%20Computer%20Mockup1140194571.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/mockup4.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Moto%20Gum%20Packaging%20poster.jpeg",
+      "https://Brandex-cdn.b-cdn.net/Heros/mok/Poster%20Reakoffs%20Gum%20Packaging.jpeg",
     ],
     iconRow: [
       { icon: "layers", label: "Layered PSD" },
@@ -105,11 +163,18 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "Curated images, vectors, and PSDs built for landing pages, ads, and product storytelling—clean, modern, and ready to use.",
     primaryCTA: { label: "Browse Graphics", href: "/category/graphics" },
     secondaryCTA: { label: "View Newest", href: "/category/graphics?sortBy=newest" },
-    images: [
-      "https://Brandex-cdn.b-cdn.net/hero/images-1.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/images-2.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/images-3.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/images-4.jpg",
+    images: [],
+    tallImages: [
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/9537fb8e723747539ee577ccbfbbaaf8.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/9c1af39880254a84a4c37920604fa853.jpg",
+    ],
+    squareImages: [
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/a-delightful-depiction-of-a-plate-of-golden-brown-.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/a-delightful-depiction-of-a-plate-of-spaghetti-wit.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/an-inviting-depiction-of-a-bowl-of-hearty-vegetabl.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/an-inviting-illustration-of-a-platter-of-tacos--fi.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/chicken-with-creamy-dijon-sauce-and-mashed-potatoe.jpg",
+      "https://Brandex-cdn.b-cdn.net/Heros/pho/chinese-chicken-on-a-stick-.jpg",
     ],
     iconRow: [
       { icon: "layers", label: "Images + vectors + PSD" },

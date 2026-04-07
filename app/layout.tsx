@@ -19,6 +19,7 @@ import { HelpWidget } from "@/components/help-widget";
 import { BackToTop } from "@/components/back-to-top";
 import { CompareButton } from "@/components/compare-button";
 import { CookieConsent } from "@/components/cookie-consent";
+import { ScrollToTop } from "@/components/scroll-to-top";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -160,6 +161,7 @@ export default function RootLayout({
               <HelpWidget />
               <BackToTop />
               <CompareButton />
+              <Suspense><ScrollToTop /></Suspense>
               <CookieConsent />
             </Providers>
           </ThemeProvider>

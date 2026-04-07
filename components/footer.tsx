@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Mail, Instagram, ArrowUpRight } from "lucide-react"
-import Image from "next/image"
+import Logo from "./logo"
 const XIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -49,15 +49,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-8">
           {/* Brand Section */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="inline-block">
-              <Image
-                src="/Logo.svg"
-                alt="Brandex Logo"
-                width={120}
-                height={30}
-                className="h-7 w-auto dark:invert"
-              />
-            </Link>
+            <Logo />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Premium creative assets including mockups, graphics, packaging, and motion. Instant downloads, commercial-ready, built for real-world projects.
             </p>

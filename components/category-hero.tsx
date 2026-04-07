@@ -1,33 +1,11 @@
 "use client"
 
 import Image from "next/image"
-import {
-  ArrowRight,
-  Sparkles,
-  Download,
-  Zap,
-  Shield,
-  Star,
-  Package,
-  Layers,
-  Check,
-  type LucideIcon,
-} from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/Button"
-import type { HeroConfig, HeroIconKey } from "@/lib/heroConfig"
 
-const ICON_MAP: Record<HeroIconKey, LucideIcon> = {
-  download: Download,
-  zap:      Zap,
-  shield:   Shield,
-  star:     Star,
-  package:  Package,
-  layers:   Layers,
-  check:    Check,
-  sparkles: Sparkles,
-}
+import { Button } from "@/components/ui/Button"
+import type { HeroConfig } from "@/lib/heroConfig"
 
 
 interface HeroSectionProps {
@@ -38,30 +16,39 @@ interface HeroSectionProps {
   compact?: boolean
 }
 
+function pickRandom<T>(arr: T[], count: number): T[] {
+  const shuffled = [...arr].sort(() => Math.random() - 0.5)
+  return shuffled.slice(0, count)
+}
+
 export function HeroSection({ config, compact }: HeroSectionProps) {
-  const router = useRouter()
-  const { headline, subhead, primaryCTA, secondaryCTA, images, iconRow, trustLine, tileStyle } = config
+  const { headline, subhead, primaryCTA, secondaryCTA, images, tallImages, squareImages, iconRow, trustLine, tileStyle } = config
+
+  // If tall/square pools exist, pick 2 tall + 2 square for the 4-image layout
+  const resolvedImages = (tallImages?.length && squareImages?.length)
+    ? [...pickRandom(tallImages, 2), ...pickRandom(squareImages, 2)]
+    : images
 
   return (
-    <section className="w-full bg-background">
-      <div className={`mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-12 ${compact ? "pb-0" : "pb-8"}`}>
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+    <section className="w-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-background.png')" }}>
+      <div className={`mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-16 ${compact ? "pb-16" : "pb-16"}`}>
+        <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-12 items-stretch">
 
           {/* Left: Text */}
           <motion.div
-            className="flex flex-col justify-center gap-5"
+            className="flex flex-col justify-between gap-5"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
           >
 
             {/* Headline */}
-            <h1 className="text-[2.6rem] sm:text-[3rem] lg:text-[3.1rem] xl:text-[3.4rem] font-black tracking-tight leading-[1.05] text-foreground max-w-140">
+            <h1 className="text-[2.6rem] sm:text-[3rem] lg:text-[3.1rem] xl:text-[3.4rem] font-black tracking-tight leading-[1.05] text-white max-w-140">
               {headline}
             </h1>
 
             {/* Subhead */}
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-136">
+            <p className="text-sm text-white/70 leading-relaxed max-w-136">
               {subhead}
             </p>
 
@@ -81,8 +68,8 @@ export function HeroSection({ config, compact }: HeroSectionProps) {
               <Button
                 variant="outline"
                 size="sm"
-                className="font-semibold px-6 h-11 text-sm rounded-lg border border-border hover:border-foreground/40 transition-all duration-300"
-                onClick={() => router.push(secondaryCTA.href)}
+                className="font-semibold px-6 h-11 text-sm rounded-lg bg-white text-foreground border-0 hover:bg-white/90 transition-all duration-300"
+                onClick={() => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })}
               >
                 {secondaryCTA.label}
               </Button>
@@ -91,22 +78,18 @@ export function HeroSection({ config, compact }: HeroSectionProps) {
             {/* Icon row — trust signals beneath the CTA buttons */}
             {iconRow && iconRow.length > 0 && (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                {iconRow.map((item, i) => {
-                  const Icon = ICON_MAP[item.icon]
-                  return (
-                    <div key={i} className="flex items-center gap-1.5">
-                      {i > 0 && <span className="w-px h-3.5 bg-border shrink-0" />}
-                      <Icon className="h-3.5 w-3.5 text-primary shrink-0" strokeWidth={2} />
-                      <span className="text-xs font-medium text-foreground">{item.label}</span>
-                    </div>
-                  )
-                })}
+                {iconRow.map((item, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    {i > 0 && <span className="w-px h-3.5 bg-white/30 shrink-0" />}
+                    <span className="text-xs font-medium text-white">{item.label}</span>
+                  </div>
+                ))}
               </div>
             )}
 
             {/* Trust line */}
             {trustLine && (
-              <p className="text-sm text-muted-foreground -mt-1">{trustLine}</p>
+              <p className="text-sm text-white/60 -mt-1">{trustLine}</p>
             )}
           </motion.div>
 
@@ -116,7 +99,7 @@ export function HeroSection({ config, compact }: HeroSectionProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
           >
-            <ImageCollage images={images} tileStyle={tileStyle} />
+            <ImageCollage images={resolvedImages} tileStyle={tileStyle} />
           </motion.div>
 
         </div>
@@ -224,39 +207,20 @@ interface TileProps {
 
 function Tile({ src, className = "", priority, sizes, tileStyle = "cover" }: TileProps) {
   const hasImage = Boolean(src?.trim())
-  const isContain = tileStyle === "contain"
 
-  // Contain mode: clean white frame + subtle border + gentle shadow
-  // so transparent vector art has clear visual separation from the page.
-  const frameClasses = isContain
-    ? `relative h-full w-full rounded-xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
-    : `relative h-full w-full rounded-xl overflow-hidden bg-muted border border-neutral-200 dark:border-neutral-700 shadow-[0_1px_6px_rgba(0,0,0,0.07)] dark:shadow-[0_1px_6px_rgba(0,0,0,0.3)] ${className}`
+  const frameClasses = `relative h-full w-full rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 shadow-[8px_12px_24px_rgba(0,40,25,0.45),14px_20px_50px_rgba(0,40,25,0.25)] ${className}`
 
   return (
     <div className={frameClasses}>
       {hasImage && (
-        isContain ? (
-          // Inner wrapper creates uniform padding so art never touches the frame edge
-          <div className="absolute inset-[10%]">
-            <Image
-              src={src}
-              alt=""
-              fill
-              className="object-contain"
-              sizes={sizes}
-              priority={priority}
-            />
-          </div>
-        ) : (
-          <Image
-            src={src}
-            alt=""
-            fill
-            className="object-cover"
-            sizes={sizes}
-            priority={priority}
-          />
-        )
+        <Image
+          src={src}
+          alt=""
+          fill
+          className={tileStyle === "contain" ? "object-contain p-2" : "object-cover"}
+          sizes={sizes}
+          priority={priority}
+        />
       )}
     </div>
   )
