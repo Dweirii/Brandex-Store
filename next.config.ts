@@ -99,6 +99,7 @@ const nextConfig = {
       "worker-src 'self' blob:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https:",
+      "media-src 'self' data: blob: https:",
       "font-src 'self' https://fonts.gstatic.com data:",
       isDev
         ? "connect-src 'self' https: ws: http://localhost:3001 http://localhost:3002 http://localhost:3003"
