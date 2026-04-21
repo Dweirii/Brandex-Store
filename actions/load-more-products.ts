@@ -1,8 +1,7 @@
 "use server"
 
 import getProducts from "@/actions/get-products"
-import { Product } from "@/types"
-import { shuffle } from "@/lib/utils"
+import { interleaveByDay } from "@/lib/utils"
 
 interface LoadMoreQuery {
   categoryId?: string
@@ -15,11 +14,14 @@ interface LoadMoreQuery {
 
 export async function loadMoreProducts(query: LoadMoreQuery) {
   const result = await getProducts(query)
-  
-  // Shuffle products on each page load for variety
+
+  // On newest (default) sort, interleave by day so same-day items don't cluster.
+  // Other sorts (price, name, oldest, mostPopular) must preserve their order.
+  const shouldInterleave = !query.sortBy || query.sortBy === "newest"
+
   return {
     ...result,
-    products: shuffle(result.products)
+    products: shouldInterleave ? interleaveByDay(result.products) : result.products,
   }
 }
 

@@ -13,7 +13,7 @@ import SortFilter from "@/components/sort-filter"
 import CategoryNav from "@/components/category-nav"
 import { HeroSection } from "@/components/category-hero"
 import { getHeroConfigById } from "@/lib/heroConfig"
-import { shuffle } from "@/lib/utils"
+import { interleaveByDay } from "@/lib/utils"
 import {
   generateCategoryMetadata,
   generateBreadcrumbStructuredData,
@@ -84,7 +84,8 @@ async function CategoryProducts({
   priceFilter,
   sortBy,
 }: CategoryProductsProps) {
-  const PAGE_SIZE = 16
+  // Fetch a larger pool so day-based interleaving has enough variety to mix
+  const PAGE_SIZE = 48
 
   const [category, { products, total, page: current, pageCount }] =
     await Promise.all([
@@ -106,8 +107,9 @@ async function CategoryProducts({
     )
   }
 
-  // Shuffle products on "newest" (default) so the grid feels fresh every visit
-  const displayProducts = (!sortBy || sortBy === "newest") ? shuffle(products) : products
+  // Interleave products by day on "newest" (default) so same-day items
+  // don't cluster in the same batch
+  const displayProducts = (!sortBy || sortBy === "newest") ? interleaveByDay(products) : products
 
   return (
     <ProductList

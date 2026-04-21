@@ -299,7 +299,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       {/* What's included */}
       <div className="space-y-3">
         <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          What's included
+          What&apos;s included
         </h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-foreground">
           <li className="flex items-start gap-2">
