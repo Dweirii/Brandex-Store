@@ -5,10 +5,13 @@ import usePreviewModal from "@/hooks/use-preview-modal"
 import Modal from "./ui/modal"
 import Gallery from "./gallery"
 import { DownloadButton } from "@/components/ui/download-button"
-import { Check, Download, Coins, Shield, Lock, Sparkles, ArrowRight } from "lucide-react"
+import { Check, Download, Coins, Shield, Lock, Sparkles, ArrowRight, Ruler, HardDrive } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@clerk/nextjs"
 import { useCredits } from "@/hooks/use-credits"
+import { useFileSize } from "@/hooks/use-file-size"
+import { formatBytes } from "@/lib/utils"
+import { getProductDimensions } from "@/lib/product-specs"
 
 // ─── Category IDs ────────────────────────────────────────────────────────────
 const CAT_MOCKUP    = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
@@ -93,6 +96,7 @@ const PreviewModal = () => {
   const product = usePreviewModal((state) => state.data)
   const { isSignedIn } = useAuth()
   const { balance } = useCredits(product?.storeId ?? "")
+  const fileSizeBytes = useFileSize(product?.storeId, product?.id)
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
@@ -102,6 +106,8 @@ const PreviewModal = () => {
   const productPrice  = 5
   const catId         = product.category?.id ?? ""
   const specs         = SPECS[catId] ?? []
+  const fileSizeLabel = formatBytes(fileSizeBytes)
+  const dimensions    = getProductDimensions(catId)
   const features      = FEATURES[catId] ?? DEFAULT_FEATURES
   const isPackaging   = catId === CAT_PACKAGING
 
@@ -178,14 +184,34 @@ const PreviewModal = () => {
               customText={isFree ? "Free Download" : `Download for ${productPrice} Credits`}
               productName={product.name}
               creditCost={isFree ? 0 : productPrice}
+              fileSizeBytes={fileSizeBytes ?? undefined}
             />
+
+            {/* File info chips */}
+            {(dimensions || fileSizeLabel) && (
+              <div className="flex items-center justify-center gap-1.5 pt-0.5">
+                {dimensions && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-muted/60 text-muted-foreground border border-border/60">
+                    <Ruler className="h-3 w-3" />
+                    {dimensions}
+                  </span>
+                )}
+                {fileSizeLabel && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-muted/60 text-muted-foreground border border-border/60">
+                    <HardDrive className="h-3 w-3" />
+                    {fileSizeLabel}
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* Credit balance — signed-in + premium only */}
             {mounted && isSignedIn && !isFree && (
-              <div className="text-xs text-center text-muted-foreground space-y-0.5">
+              <div className="flex items-center justify-center gap-1.5 flex-wrap text-xs text-muted-foreground">
                 <p>Balance: <span className="font-semibold text-orange-500">{currentBalance} credits</span></p>
+                <span className="text-muted-foreground/50">•</span>
                 {creditsNeeded > 0 ? (
-                  <p className="flex items-center justify-center gap-1 flex-wrap">
+                  <p className="flex items-center gap-1">
                     Need <span className="font-semibold text-orange-500">{creditsNeeded} more</span>
                     <ArrowRight className="h-3 w-3" />
                     <Link href="/credits" className="font-semibold text-primary hover:underline">Buy Credits</Link>

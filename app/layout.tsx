@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
+import getCategories from "@/actions/get-categories";
 import ModalProvider from "@/providers/model-provider";
 import ToastProvider from "@/providers/toast.provider";
 import { Providers } from "@/providers/Providers";
@@ -96,13 +97,15 @@ export const metadata: Metadata = {
   },
 };
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-1YRZK4HX52";
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-ZC53X5YNP9";
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-PGQM63SC";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const categories = await getCategories().catch(() => []);
   return (
     <ClerkProvider signInFallbackRedirectUrl="/downloads">
       <html lang="en" className="h-full" suppressHydrationWarning>
@@ -140,11 +143,35 @@ export default function RootLayout({
               });
             `}
           </Script>
+          {/*
+           * Google Tag Manager — loads after consent defaults are set so GTM
+           * respects the Consent Mode v2 state. GTM and gtag share the same
+           * `dataLayer`, so the CookieConsent component's consent updates are
+           * picked up by both GTM tags and the direct GA4 config above.
+           */}
+          <Script id="gtm-init" strategy="afterInteractive">
+            {`
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${GTM_ID}');
+            `}
+          </Script>
         </head>
 
         <body
           className={`${font.className} ${font.variable} h-full flex flex-col min-h-screen bg-background text-foreground transition-colors overflow-x-hidden`}
         >
+          {/* Google Tag Manager (noscript) — per Google's install spec. */}
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Providers>
               <ModalProvider />
@@ -152,7 +179,7 @@ export default function RootLayout({
               <GeoInitializer />
               <Suspense fallback={<div className="h-20 shadow-[0_0_10px_0_rgba(0,0,0,0.6)]" />}>
                 <header className="sticky top-0 z-50 flex flex-col">
-                  <Navbar />
+                  <Navbar categories={categories} />
                 </header>
               </Suspense>
               <main className="flex-1 pb-0">{children}</main>

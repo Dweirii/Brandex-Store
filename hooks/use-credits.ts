@@ -10,7 +10,6 @@ const getAdminBaseUrl = () => {
 };
 
 const ADMIN_BASE_URL = getAdminBaseUrl();
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 interface CreditPurchase {
   id: string;
@@ -172,51 +171,10 @@ export function useCredits(storeId: string): UseCreditsReturn {
 
       const data = await response.json();
       const raw: Download[] = data.downloads || [];
-
-      // Enrich downloads with product slugs when missing
-      const missingSlugIds = raw
-        .filter((d) => !d.productSlug && d.productId)
-        .map((d) => d.productId);
-
-      const slugMap: Record<string, string> = {};
-
-      if (missingSlugIds.length > 0 && API_URL) {
-        // Try bulk fetch first
-        try {
-          const productsRes = await fetch(`${API_URL}/products?limit=1000`, { cache: "no-store" });
-          if (productsRes.ok) {
-            const productsData = await productsRes.json();
-            const products: { id: string; slug?: string }[] = productsData?.products ?? productsData ?? [];
-            for (const p of products) {
-              if (p.id && p.slug) slugMap[p.id] = p.slug;
-            }
-          }
-        } catch {
-          // ignore
-        }
-
-        // For any still missing, fetch individually
-        const stillMissing = missingSlugIds.filter((id) => !slugMap[id]);
-        if (stillMissing.length > 0) {
-          const fetched = await Promise.all(
-            stillMissing.map((id) =>
-              fetch(`${API_URL}/products/${id}`, { cache: "no-store" })
-                .then((r) => (r.ok ? r.json() : null))
-                .catch(() => null)
-            )
-          );
-          for (const p of fetched) {
-            if (p?.id && p?.slug) slugMap[p.id] = p.slug;
-          }
-        }
-      }
-
-      const enriched = raw.map((d) => ({
-        ...d,
-        productSlug: d.productSlug || slugMap[d.productId] || undefined,
-      }));
-
-      setDownloads(enriched);
+      // Product slug enrichment happens server-side via /api/downloads when needed;
+      // consumers here fall back to productId in URLs if productSlug is missing,
+      // and the product route transparently redirects UUID → slug.
+      setDownloads(raw);
     } catch (err) {
       console.error("[useCredits] Error fetching downloads:", err);
     }

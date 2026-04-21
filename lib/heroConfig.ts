@@ -259,7 +259,24 @@ const CATEGORY_ID_MAP: Partial<Record<string, HeroPageKey>> = {
  */
 export function getHeroConfigById(categoryId: string): HeroConfig | null {
   const key = CATEGORY_ID_MAP[categoryId]
-  return key ? heroConfigs[key] : null
+  if (!key) return null
+
+  const config = heroConfigs[key]
+
+  // Motion products are videos and don't contribute usable hero visuals,
+  // so borrow the images category's photo pool for the collage while keeping
+  // motion's own headline, subhead, and CTAs.
+  if (key === "motion-library") {
+    const imagesConfig = heroConfigs["images"]
+    return {
+      ...config,
+      images: imagesConfig.images,
+      tallImages: imagesConfig.tallImages,
+      squareImages: imagesConfig.squareImages,
+    }
+  }
+
+  return config
 }
 
 /**

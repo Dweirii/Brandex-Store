@@ -1,16 +1,13 @@
 import Link from "next/link"
 import Image from "next/image"
+import { Fragment } from "react"
 import type { Metadata } from "next"
 import {
   ArrowRight,
-  ClipboardList,
-  Search,
-  FileText,
   PenTool,
   Package,
   Layers,
   Printer,
-  Sparkles,
 } from "lucide-react"
 
 export const metadata: Metadata = {
@@ -20,29 +17,41 @@ export const metadata: Metadata = {
 }
 
 const WHAT_WE_OFFER = [
-  { label: "Branding & Identity", icon: PenTool },
-  { label: "Packaging Design", icon: Package },
-  { label: "Custom Mockups", icon: Layers },
-  { label: "Print Design", icon: Printer },
-  { label: "Other Creative\nRequests", icon: Sparkles },
+  {
+    label: "Branding & Identity",
+    description: "Unique logos, color palettes, and brand guidelines.",
+    icon: PenTool,
+  },
+  {
+    label: "Packaging Design",
+    description: "Eye-catching packaging that stands out on shelves.",
+    icon: Package,
+  },
+  {
+    label: "Custom Mockups",
+    description: "Realistic, high-quality mockups for presentations.",
+    icon: Layers,
+  },
+  {
+    label: "Print Design",
+    description: "Business cards, brochures, posters, and more.",
+    icon: Printer,
+  },
 ]
 
 const HOW_IT_WORKS = [
   {
     step: "1",
-    icon: ClipboardList,
     title: "Submit Your Request",
     description: "Share your project details, goals, and any references.",
   },
   {
     step: "2",
-    icon: Search,
     title: "Request Review",
     description: "We review the scope, creative direction, and project needs.",
   },
   {
     step: "3",
-    icon: FileText,
     title: "Receive a Quote",
     description: "We'll follow up with pricing and next steps before any work begins.",
   },
@@ -54,27 +63,23 @@ export default function CustomWorkPage() {
       {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-[40%_60%] lg:gap-4 pt-6 lg:items-center overflow-hidden">
         <div className="flex flex-col justify-center">
-          <h1 className="text-4xl lg:text-[2.75rem] font-[800] text-foreground leading-[1.1] tracking-[-0.02em] mb-4">
-            Design Made for<br />Your Brand
+          <h1 className="text-4xl lg:text-[2.75rem] font-extrabold text-foreground leading-[1.1] tracking-[-0.02em] mb-5">
+            World-Class Design Services Tailored for Your Brand
           </h1>
-          
-          <h2 className="text-xl font-medium text-muted-foreground mb-6">
-            Custom design services built around your brand
-          </h2>
-          
-          <p className="text-[13px] text-muted-foreground leading-[1.6] mb-8 max-w-md">
-            From branding and packaging to mockups and print design, Brandex helps
-            businesses, creators, and agencies get polished visuals tailored to their goals.
-            Submit your request, and we&apos;ll review the details and send a quote before work
-            begins.
+
+          <p className="text-[14px] text-muted-foreground leading-[1.6] mb-8 max-w-md">
+            Elevate your brand with custom designs crafted to impress. From logos and packaging
+            to marketing materials and mockups, we bring your vision to life with polished
+            designs that sell.
           </p>
-          
-          <div className="flex flex-wrap items-center gap-3">
+
+          <div className="flex flex-wrap items-center gap-3 mb-5">
             <Link
               href="/intake"
-              className="inline-flex items-center justify-center rounded-lg bg-[#00A63E] hover:bg-[#00A63E]/90 text-white px-5 py-2.5 text-sm font-semibold transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#00A63E] hover:bg-[#00A63E]/90 text-white px-5 py-2.5 text-sm font-semibold transition-colors shadow-sm"
             >
               Start Your Request
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/dashboard"
@@ -82,6 +87,21 @@ export default function CustomWorkPage() {
             >
               Track Your Project
             </Link>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] font-medium text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <span className="w-1 h-1 rounded-full bg-[#00A63E]" />
+              Professional designers
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1 h-1 rounded-full bg-[#00A63E]" />
+              Free revisions
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1 h-1 rounded-full bg-[#00A63E]" />
+              100% satisfied clients
+            </span>
           </div>
         </div>
 
@@ -104,17 +124,20 @@ export default function CustomWorkPage() {
           WHAT WE OFFER
         </h2>
 
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 border-none ">
-          {WHAT_WE_OFFER.map(({ label, icon: Icon }) => (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {WHAT_WE_OFFER.map(({ label, description, icon: Icon }) => (
             <div
               key={label}
-              className="border-none shadow-sm dark:border-border/80 bg-background rounded-xl p-5 flex flex-col items-start gap-4 aspect-auto h-32 hover:border-border transition-colors hover:text-foreground cursor-pointer"
+              className="bg-background border border-[#ECECEC] dark:border-border/60 rounded-xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
             >
-              <div className="w-8 h-8 rounded shrink-0 bg-[#f0f8f4] dark:bg-primary/10 flex items-center justify-center text-[#00A63E]">
-                <Icon className="w-4 h-4 hover:text-[#00A63E]" />
+              <div className="w-12 h-12 rounded-2xl bg-[#00A63E]/10 flex items-center justify-center mb-4">
+                <Icon className="w-5 h-5 text-[#00A63E]" strokeWidth={2} />
               </div>
-              <p className="text-[13px] font-medium text-foreground whitespace-pre-line leading-tight hover:font-bold transition-all">
+              <h3 className="text-sm font-bold text-foreground mb-1">
                 {label}
+              </h3>
+              <p className="text-xs text-muted-foreground leading-snug">
+                {description}
               </p>
             </div>
           ))}
@@ -127,23 +150,30 @@ export default function CustomWorkPage() {
           HOW IT WORKS
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {HOW_IT_WORKS.map(({ step, icon: Icon, title, description }) => (
-            <div
-              key={title}
-              className="border border-[#e9e9e9] dark:border-border/80 bg-background rounded-xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
-            >
-              <div className="flex items-center gap-2.5 mb-5">
-                <div className="w-6 h-6 rounded-full border border-[#00A63E]/20 bg-[#f0f8f4] dark:bg-primary/5 flex items-center justify-center text-[#00A63E] font-bold text-[11px]">
-                  {step}
+        <div className="flex flex-col md:flex-row md:items-stretch gap-4">
+          {HOW_IT_WORKS.map(({ step, title, description }, i) => (
+            <Fragment key={title}>
+              <div className="flex-1 bg-background border border-[#ECECEC] dark:border-border/60 rounded-xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-[#00A63E] text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                    {step}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-bold text-foreground mb-1.5 leading-tight">
+                      {title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground leading-snug">
+                      {description}
+                    </p>
+                  </div>
                 </div>
-                <Icon className="w-4 h-4 text-muted-foreground/80" />
               </div>
-              <h3 className="text-sm font-bold text-foreground mb-2.5">{title}</h3>
-              <p className="text-[13px] text-muted-foreground leading-relaxed">
-                {description}
-              </p>
-            </div>
+              {i < HOW_IT_WORKS.length - 1 && (
+                <div className="hidden md:flex items-center shrink-0">
+                  <ArrowRight className="w-5 h-5 text-muted-foreground/40" strokeWidth={2} />
+                </div>
+              )}
+            </Fragment>
           ))}
         </div>
       </section>

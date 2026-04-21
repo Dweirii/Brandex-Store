@@ -3,14 +3,15 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import type { Product } from "@/types"
-import { Sparkles, Download, Coins, Check, Shield, Lock, ArrowRight } from "lucide-react"
+import { Sparkles, Download, Coins, Check, ArrowRight, Ruler, HardDrive } from "lucide-react"
 import { DownloadButton } from "@/components/ui/download-button"
 import { ProductShare } from "@/components/product-share"
-import { useTheme } from "next-themes"
-import Image from "next/image"
 import Link from "next/link"
 import { useAuth } from "@clerk/nextjs"
 import { useCredits } from "@/hooks/use-credits"
+import { useFileSize } from "@/hooks/use-file-size"
+import { formatBytes } from "@/lib/utils"
+import { getProductDimensions } from "@/lib/product-specs"
 
 interface InfoProps {
   data: Product
@@ -105,9 +106,11 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const isPremiumProduct = !isFreeProduct
   const FEATURES = (data.category?.id && FEATURES_BY_CATEGORY[data.category.id]) || DEFAULT_FEATURES
   const productPrice = 5
-  const { theme, systemTheme } = useTheme()
   const { isSignedIn } = useAuth()
   const { balance } = useCredits(data.storeId)
+  const fileSizeBytes = useFileSize(data.storeId, data.id)
+  const fileSizeLabel = formatBytes(fileSizeBytes)
+  const dimensions    = getProductDimensions(data.category?.id)
   const [mounted, setMounted] = useState(false)
   const [tagsExpanded, setTagsExpanded] = useState(false)
 
@@ -121,194 +124,205 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const currentBalance = mounted && isSignedIn ? (balance ?? 0) : 0
   const creditsNeeded = Math.max(0, productPrice - currentBalance)
 
-  const getIconSrc = () => {
-    if (!mounted) {
-      if (typeof window !== "undefined") {
-        const systemPreference = window.matchMedia("(prefers-color-scheme: dark)").matches
-        return systemPreference ? "/icons-black.png" : "/icons-white.png"
-      }
-      return "/icons-white.png"
-    }
-    const currentTheme = theme === "system" ? systemTheme : theme
-    return currentTheme === "dark" ? "/icons-black.png" : "/icons-white.png"
-  }
-
-  const iconSrc = getIconSrc()
+  const downloadsLabel = getDisplayDownloadCount(data.id, data.downloadCount)
 
   return (
-    <div className="space-y-4">
-      {/* Title + Share */}
-      <div className="flex items-start justify-between gap-4">
-        <h1 className="text-2xl font-bold text-foreground flex-1 leading-tight">
-          {data.name}
-        </h1>
-        <ProductShare productId={data.slug ?? data.id} productName={data.name} />
+    <div className="space-y-6">
+      {/* Header: category eyebrow → title → share */}
+      <div className="space-y-3">
+        {data.category?.name && (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            {data.category.name}
+          </p>
+        )}
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="text-[26px] sm:text-[28px] font-bold text-foreground flex-1 leading-[1.2] tracking-tight">
+            {data.name}
+          </h1>
+          <ProductShare productId={data.slug ?? data.id} productName={data.name} />
+        </div>
+
+        {/* Downloads count — subtle social proof under title */}
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Download className="h-3.5 w-3.5" />
+          <span>
+            <span className="font-semibold text-foreground">{downloadsLabel}</span> downloads
+          </span>
+        </div>
       </div>
 
-      {/* Keyword Tags — max 4 visible; rest behind "Show more" */}
+      {/* Keyword Tags — subtler, smaller, pill style */}
       {cleanTags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {visibleTags.map((keyword: string) => (
             <Link
               key={keyword}
               href={`/products/search?query=${encodeURIComponent(keyword)}`}
-              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground border border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs text-muted-foreground bg-muted/60 hover:bg-accent hover:text-accent-foreground transition-colors"
             >
               {keyword}
             </Link>
           ))}
-          {hasHiddenTags && !tagsExpanded && (
+          {hasHiddenTags && (
             <button
               type="button"
-              onClick={() => setTagsExpanded(true)}
-              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-muted-foreground border border-border hover:bg-accent hover:text-accent-foreground transition-colors"
+              onClick={() => setTagsExpanded((v) => !v)}
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              Show more ({hiddenCount})
-            </button>
-          )}
-          {hasHiddenTags && tagsExpanded && (
-            <button
-              type="button"
-              onClick={() => setTagsExpanded(false)}
-              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-muted-foreground border border-border hover:bg-accent hover:text-accent-foreground transition-colors"
-            >
-              Show less
+              {tagsExpanded ? "Show less" : `+${hiddenCount} more`}
             </button>
           )}
         </div>
       )}
 
-      {/* Product Type Badge */}
-      <div className="flex items-center gap-3 flex-wrap">
-        {isPremiumProduct ? (
-          <>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-              <Sparkles className="h-4 w-4" />
-              Premium
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20 dark:text-amber-400">
-              <Coins className="h-4 w-4" />
-              {productPrice} Credits
-            </span>
-          </>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold bg-primary/10 text-primary border border-primary/20">
-            <Download className="h-4 w-4" />
-            Free
+      {/* Price & Download — hero card */}
+      <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)]">
+        {/* Price / type row */}
+        <div className="flex items-end justify-between gap-3 mb-4">
+          <div className="flex flex-col">
+            {isPremiumProduct ? (
+              <>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-0.5">
+                  Price
+                </span>
+                <div className="flex items-baseline gap-1.5">
+                  <Coins className="h-5 w-5 text-amber-500 self-center" />
+                  <span className="text-3xl font-bold text-foreground leading-none tracking-tight">
+                    {productPrice}
+                  </span>
+                  <span className="text-sm font-medium text-muted-foreground">credits</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground mb-0.5">
+                  Price
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-foreground leading-none tracking-tight">
+                    Free
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+
+          <span
+            className={
+              isPremiumProduct
+                ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-gradient-to-r from-amber-500/15 to-amber-500/5 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                : "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20"
+            }
+          >
+            {isPremiumProduct ? (
+              <>
+                <Sparkles className="h-3 w-3" /> Premium
+              </>
+            ) : (
+              <>
+                <Download className="h-3 w-3" /> Free
+              </>
+            )}
           </span>
+        </div>
+
+        {/* Primary CTA */}
+        <DownloadButton
+          storeId={data.storeId}
+          productId={data.id}
+          productSlug={data.slug ?? data.id}
+          size="lg"
+          variant="premium"
+          className="w-full h-12 text-base font-semibold"
+          iconOnly={false}
+          customText={isFreeProduct ? "Free Download" : `Download for ${productPrice} Credits`}
+          productName={data.name}
+          creditCost={isFreeProduct ? 0 : productPrice}
+          fileSizeBytes={fileSizeBytes ?? undefined}
+        />
+
+        {/* File meta — subtle inline text, no chips */}
+        {(dimensions || fileSizeLabel) && (
+          <div className="mt-3 flex items-center justify-center gap-3 text-xs text-muted-foreground">
+            {dimensions && (
+              <span className="inline-flex items-center gap-1.5">
+                <Ruler className="h-3.5 w-3.5" />
+                {dimensions}
+              </span>
+            )}
+            {dimensions && fileSizeLabel && (
+              <span className="text-muted-foreground/40">•</span>
+            )}
+            {fileSizeLabel && (
+              <span className="inline-flex items-center gap-1.5">
+                <HardDrive className="h-3.5 w-3.5" />
+                {fileSizeLabel}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Credit balance indicator */}
+        {mounted && isSignedIn && isPremiumProduct && (
+          <div className="mt-4 pt-4 border-t border-border/60 text-sm text-center">
+            {creditsNeeded > 0 ? (
+              <p className="text-muted-foreground inline-flex items-center gap-1.5 flex-wrap justify-center">
+                <span>
+                  Balance:{" "}
+                  <span className="font-semibold text-foreground">{currentBalance}</span>
+                </span>
+                <span className="text-muted-foreground/40">·</span>
+                <span>
+                  Need{" "}
+                  <span className="font-semibold text-amber-600 dark:text-amber-400">
+                    {creditsNeeded} more
+                  </span>
+                </span>
+                <Link
+                  href="/credits"
+                  className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
+                >
+                  Buy credits
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </p>
+            ) : (
+              <p className="inline-flex items-center gap-1.5 text-primary font-medium justify-center">
+                <Check className="h-4 w-4" />
+                You have enough credits ({currentBalance})
+              </p>
+            )}
+          </div>
         )}
       </div>
 
-      {/* Download Card */}
-      <div className="border border-[#E5E5E5] dark:border-border rounded-xl overflow-hidden bg-card shadow-[0_1px_4px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.06)]">
-        <div className="p-4 space-y-3.5">
-
-          {/* Top Download Button — wrapper ensures full width so sections below match */}
-          <div className="w-full min-w-0">
-            <DownloadButton
-              storeId={data.storeId}
-              productId={data.id}
-              productSlug={data.slug ?? data.id}
-              size="lg"
-              variant="premium"
-              className="w-full h-12 text-base font-semibold"
-              iconOnly={false}
-              customText={isFreeProduct ? "Free Download" : `Download for ${productPrice} Credits`}
-              productName={data.name}
-              creditCost={isFreeProduct ? 0 : productPrice}
-            />
-          </div>
-
-          {/* Credit balance — signed-in + premium only */}
-          {mounted && isSignedIn && isPremiumProduct && (
-            <div className="text-sm space-y-1 text-center">
-              <p className="text-muted-foreground">
-                Credit Balance:{" "}
-                <span className="font-semibold text-orange-500">{currentBalance} credits</span>
-              </p>
-              {creditsNeeded > 0 ? (
-                <p className="text-muted-foreground flex items-center justify-center gap-1 flex-wrap">
-                  You need{" "}
-                  <span className="font-semibold text-orange-500">{creditsNeeded} more credits</span>
-                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
-                  <Link
-                    href="/credits"
-                    className="font-semibold text-primary hover:underline"
-                  >
-                    Buy Credits
-                  </Link>
-                </p>
-              ) : (
-                <p className="font-medium text-primary">
-                  You have enough credits ✓
-                </p>
-              )}
-            </div>
+      {/* What's included */}
+      <div className="space-y-3">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          What's included
+        </h2>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-foreground">
+          <li className="flex items-start gap-2">
+            <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <span>{FEATURES[0]}</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <span>{FEATURES[2]}</span>
+          </li>
+          {!isFreeProduct && (
+            <li className="flex items-start gap-2">
+              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+              <span>{FEATURES[1]}</span>
+            </li>
           )}
-
-          {/* Divider */}
-          <div className="border-t border-border" />
-
-          {/* Feature checklist */}
-          <div className="w-full min-w-0 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-foreground">
-            <div className="flex items-start gap-2">
-              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-              <span>{FEATURES[0]}</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-              <span>{FEATURES[2]}</span>
-            </div>
-            {!isFreeProduct && (
-              <div className="flex items-start gap-2">
-                <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-                <span>{FEATURES[1]}</span>
-              </div>
-            )}
-            <div className={isFreeProduct ? "col-span-2 flex items-start gap-2" : "flex items-start gap-2"}>
-              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
-              <span>{FEATURES[3]}</span>
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-border" />
-
-          {/* Trust row — full width, same as button; three segments spread edge-to-edge */}
-          <div className="w-full min-w-0 flex items-center justify-between gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1 shrink-0">
-              <Download className="h-3 w-3" />
-              {getDisplayDownloadCount(data.id, data.downloadCount)} downloads
-            </span>
-            <span className="flex items-center gap-1 shrink-0">
-              <Shield className="h-3 w-3" />
-              Secure checkout powered by Stripe
-            </span>
-            <span className="flex items-center gap-1 shrink-0">
-              <Lock className="h-3 w-3" />
-              Login secured by Clerk
-            </span>
-          </div>
-
-        </div>
+          <li className="flex items-start gap-2">
+            <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <span>{FEATURES[3]}</span>
+          </li>
+        </ul>
       </div>
 
-      {/* Full Artwork — Packaging category only */}
-      {data.category?.id === "fd995552-baa8-4b86-bf7e-0acbefd43fd6" && (
-        <div className="pt-2 flex flex-col items-center justify-center">
-          <p className="text-xl md:text-foreground font-bold tracking-wide uppercase text-muted-foreground mb-3">
-            Full Artwork
-          </p>
-          <Image
-            src={iconSrc}
-            alt="Full Artwork — PSD, Vector, Layers, Smart Object"
-            width={1024}
-            height={100}
-            className="w-full md:w-2/3 lg:w-1/2 h-auto mx-auto opacity-90"
-            priority={false}
-          />
-        </div>
-      )}
     </div>
   )
 }

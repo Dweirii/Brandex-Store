@@ -84,13 +84,15 @@ async function CategoryProducts({
   priceFilter,
   sortBy,
 }: CategoryProductsProps) {
+  const PAGE_SIZE = 16
+
   const [category, { products, total, page: current, pageCount }] =
     await Promise.all([
       getCategory(categoryId),
       getProducts({
         categoryId,
         page: 1,
-        limit: 48,
+        limit: PAGE_SIZE,
         priceFilter,
         sortBy,
       }),
@@ -117,6 +119,8 @@ async function CategoryProducts({
       categoryId={categoryId}
       priceFilter={priceFilter}
       sortBy={sortBy}
+      loadMoreMode="button"
+      pageSize={PAGE_SIZE}
     />
   )
 }

@@ -38,7 +38,9 @@ export async function GET(req: NextRequest) {
   // Build id -> slug map: try products list first
   const slugMap: Record<string, string> = {}
 
-  const productsRes = await fetch(`${apiUrl}/products?limit=1000`, { cache: "no-store" })
+  const productsRes = await fetch(`${apiUrl}/products?limit=1000`, {
+    next: { revalidate: 300, tags: ["products"] },
+  })
   if (productsRes.ok) {
     const productsData = await productsRes.json()
     const products: { id: string; slug?: string }[] = productsData?.products ?? productsData ?? []
@@ -58,7 +60,9 @@ export async function GET(req: NextRequest) {
   if (missingIds.length > 0) {
     const fetched = await Promise.all(
       missingIds.map((id) =>
-        fetch(`${apiUrl}/products/${id}`, { cache: "no-store" })
+        fetch(`${apiUrl}/products/${id}`, {
+          next: { revalidate: 300, tags: ["products", `product-${id}`] },
+        })
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null)
       )

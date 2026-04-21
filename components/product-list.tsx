@@ -20,6 +20,10 @@ interface ProductListProps {
   sortBy?: string
   isFeatured?: boolean
   variant?: 'default' | 'related'
+  /** How additional pages are loaded. Default: 'infinite' (IntersectionObserver). */
+  loadMoreMode?: 'infinite' | 'button' | 'none'
+  /** Items requested per "load more" call. Default: 24. */
+  pageSize?: number
 }
 
 // Memoize ProductCard to prevent unnecessary re-renders
@@ -49,7 +53,9 @@ const ProductList: React.FC<ProductListProps> = ({
   priceFilter,
   sortBy,
   isFeatured,
-  variant = 'default'
+  variant = 'default',
+  loadMoreMode = 'infinite',
+  pageSize = 24,
 }) => {
   const [products, setProducts] = useState<Product[]>(items)
   const [page, setPage] = useState(initialPage)
@@ -84,7 +90,7 @@ const ProductList: React.FC<ProductListProps> = ({
       const nextPage = page + 1
       const response = await loadMoreProducts({
         page: nextPage,
-        limit: 24,
+        limit: pageSize,
         categoryId,
         priceFilter,
         sortBy,
@@ -108,10 +114,11 @@ const ProductList: React.FC<ProductListProps> = ({
     } finally {
       setLoading(false)
     }
-  }, [page, loading, hasMore, categoryId, priceFilter, sortBy, isFeatured])
+  }, [page, loading, hasMore, categoryId, priceFilter, sortBy, isFeatured, pageSize])
 
-  // Intersection Observer for infinite scroll
+  // Intersection Observer for infinite scroll (only when mode is 'infinite')
   useEffect(() => {
+    if (loadMoreMode !== 'infinite') return
     if (loading || !hasMore) return
 
     if (observer.current) observer.current.disconnect()
@@ -129,7 +136,7 @@ const ProductList: React.FC<ProductListProps> = ({
     return () => {
       if (observer.current) observer.current.disconnect()
     }
-  }, [loadMore, loading, hasMore])
+  }, [loadMore, loading, hasMore, loadMoreMode])
 
   // Only render items that have at least one image URL or a video URL
   const visibleItems = products.filter((item) => {
@@ -176,10 +183,30 @@ const ProductList: React.FC<ProductListProps> = ({
       </Masonry>
       </div>
 
-      {/* Infinite Scroll Trigger */}
-      {hasMore && (
+      {/* Load more trigger */}
+      {hasMore && loadMoreMode === 'infinite' && (
         <div ref={lastElementRef} className="h-20 w-full flex items-center justify-center">
           {!loading && <div className="h-8 w-8" />}
+        </div>
+      )}
+
+      {hasMore && loadMoreMode === 'button' && (
+        <div className="flex justify-center pt-6">
+          <button
+            type="button"
+            onClick={loadMore}
+            disabled={loading}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed text-primary-foreground px-6 py-3 text-sm font-semibold transition-colors shadow-sm"
+          >
+            {loading ? (
+              <>
+                <span className="inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Load more"
+            )}
+          </button>
         </div>
       )}
     </div>

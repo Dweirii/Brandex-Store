@@ -45,13 +45,8 @@ function DashboardContent() {
   const [downloads, setDownloads] = useState<DownloadRecord[]>([])
   const [dlLoading, setDlLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("All")
-  const [mounted, setMounted] = useState(false)
 
   const { balance, isLoading: creditsLoading, purchases } = useCredits(storeId)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   useEffect(() => {
     if (!isLoaded) return
@@ -96,15 +91,7 @@ function DashboardContent() {
       year: "numeric",
     })
 
-  if (!mounted || !isLoaded) {
-    return (
-      <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  if (!isSignedIn) return null
+  if (isLoaded && !isSignedIn) return null
 
   return (
     <div className="py-4 space-y-8">

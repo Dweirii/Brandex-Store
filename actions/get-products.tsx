@@ -34,7 +34,13 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
     })
 
     const res = await fetch(url, {
-      cache: "no-store",
+      next: {
+        revalidate: 60,
+        tags: [
+          "products",
+          query.categoryId ? `products-cat-${query.categoryId}` : "products-all",
+        ],
+      },
       headers: {
         'Content-Type': 'application/json',
       }

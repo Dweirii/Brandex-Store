@@ -35,6 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false)
   const [mediaLoaded, setMediaLoaded] = useState(false)
   const [imageErrored, setImageErrored] = useState(false)
+  const [videoError, setVideoError] = useState<string | null>(null)
   const previewModal = usePreviewModal()
 
   // Check if product is free
@@ -68,9 +69,21 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     setIsMounted(true)
   }, [])
 
-  // Lazy load videos only when in viewport using Intersection Observer
+  // Motion-only cards (no image fallback) need the video loaded immediately
+  // so there's something to show — otherwise the card is blank.
+  const isVideoOnly = hasVideo && !hasImage
+
   useEffect(() => {
-    if (!isMobile && hasVideo && containerRef.current) {
+    if (!hasVideo) return
+
+    // Video-only cards or mobile: load immediately
+    if (isVideoOnly || isMobile) {
+      setShouldLoadVideo(true)
+      return
+    }
+
+    // Image + video cards on desktop: lazy-load the video via IntersectionObserver
+    if (containerRef.current) {
       const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
@@ -78,19 +91,70 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             observer.disconnect()
           }
         },
-        {
-          rootMargin: '200px' // Start loading 200px before entering viewport
-        }
+        { rootMargin: '200px' }
       )
-
       observer.observe(containerRef.current)
-
       return () => observer.disconnect()
-    } else if (isMobile && hasVideo) {
-      // On mobile, load videos immediately but with lower priority
-      setShouldLoadVideo(true)
     }
-  }, [isMobile, hasVideo])
+  }, [isMobile, hasVideo, isVideoOnly])
+
+  // Safety net: if no media event fires within 3s for a motion-only card,
+  // dismiss the skeleton so we can see whatever the video element is doing.
+  useEffect(() => {
+    if (!isVideoOnly || mediaLoaded) return
+    const t = window.setTimeout(() => setMediaLoaded(true), 3000)
+    return () => window.clearTimeout(t)
+  }, [isVideoOnly, mediaLoaded])
+
+  // Paint the thumbnail frame ONCE per element instance.
+  // Runs autoplay → short delay → pause on a mid-video content frame.
+  // Using useEffect (not an inline ref callback) so re-renders don't retrigger it.
+  useEffect(() => {
+    if (!isVideoOnly || !shouldLoadVideo) return
+    const el = videoRef.current
+    if (!el) return
+
+    let paintTimer: number | undefined
+    let done = false
+
+    const tryPaintFrame = () => {
+      if (done) return
+      done = true
+      el.muted = true
+      const targetTime = el.duration && isFinite(el.duration) ? el.duration * 0.5 : 1.0
+      try { el.currentTime = targetTime } catch {}
+      const playPromise = el.play()
+      if (playPromise && typeof playPromise.then === "function") {
+        playPromise
+          .then(() => {
+            paintTimer = window.setTimeout(() => {
+              if (!el.isConnected) return
+              // If the user is hovering, don't interrupt playback.
+              if (!el.paused && el.currentTime > targetTime + 0.2) return
+              try {
+                el.pause()
+                el.currentTime = targetTime
+              } catch {}
+            }, 300)
+          })
+          .catch((err) => {
+            console.warn("[ProductCard] video play() failed:", err?.message ?? err)
+            setVideoError(err?.message ?? "play failed")
+          })
+      }
+    }
+
+    if (el.readyState >= 1) {
+      tryPaintFrame()
+    } else {
+      el.addEventListener("loadedmetadata", tryPaintFrame, { once: true })
+    }
+
+    return () => {
+      if (paintTimer) window.clearTimeout(paintTimer)
+      el.removeEventListener("loadedmetadata", tryPaintFrame)
+    }
+  }, [isVideoOnly, shouldLoadVideo])
 
   // CHECK IF PRODUCT IS FREE variable already calculated at top level
   // const isFree = Number(data.price) === 0 // Removed redeclaration
@@ -127,7 +191,11 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     if (!isMobile) {
       setIsHovered(true)
       if (videoRef.current && data.videoUrl) {
-        videoRef.current.play().catch(() => { })
+        const v = videoRef.current
+        // Restart from the beginning so hover plays the full video.
+        // `loop` will make it keep running as long as the mouse stays over.
+        try { v.currentTime = 0 } catch {}
+        v.play().catch(() => { })
         setIsPlaying(true)
       }
     }
@@ -137,12 +205,18 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     if (!isMobile) {
       setIsHovered(false)
       if (videoRef.current && data.videoUrl) {
-        videoRef.current.pause()
-        videoRef.current.currentTime = 0
+        const v = videoRef.current
+        v.pause()
+        // For motion-only cards, seek back to the middle (where the thumbnail
+        // was set on mount). For image+video cards, reset to 0 since the image
+        // takes over as the visible state.
+        v.currentTime = isVideoOnly
+          ? (v.duration && isFinite(v.duration) ? v.duration * 0.5 : 1.0)
+          : 0
         setIsPlaying(false)
       }
     }
-  }, [isMobile, data.videoUrl])
+  }, [isMobile, data.videoUrl, isVideoOnly])
 
   // Don't render if no media or if the image 404'd with no video fallback
   if (!hasVideo && !hasImage) return null
@@ -209,14 +283,33 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             muted
             loop
             playsInline
-            preload={hasImage ? "none" : "metadata"}
+            preload={hasImage ? "none" : "auto"}
             className={cn(
-              "transition-all duration-220 ease-[ease] group-hover:scale-[1.03] group-hover:brightness-105",
-              hasImage ? "absolute inset-0 w-full h-full object-cover z-10" : "w-full h-full object-cover",
+              "absolute inset-0 w-full h-full object-cover transition-all duration-220 ease-[ease] group-hover:scale-[1.03] group-hover:brightness-105",
+              hasImage ? "z-10" : "z-0",
               (hasImage && !isHovered && !isMobile) ? "opacity-0" : "opacity-100"
             )}
             onLoadedData={() => setMediaLoaded(true)}
+            onLoadedMetadata={() => setMediaLoaded(true)}
+            onCanPlay={() => setMediaLoaded(true)}
+            onError={(e) => {
+              const err = (e.currentTarget as HTMLVideoElement).error
+              const msg = err ? `code ${err.code}: ${err.message}` : "unknown"
+              console.warn("[ProductCard] video error:", msg, "src:", data.videoUrl)
+              setVideoError(msg)
+              setMediaLoaded(true)
+            }}
           />
+        )}
+
+        {/* Graceful fallback when the video file uses a codec the browser can't decode */}
+        {isVideoOnly && videoError && (
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-1.5 bg-muted/40 text-muted-foreground pointer-events-none">
+            <svg className="w-8 h-8 opacity-60" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <p className="text-[10px] font-medium">Preview unavailable</p>
+          </div>
         )}
 
         {hasVideo && (

@@ -5,9 +5,9 @@ import { createPortal } from "react-dom"
 import { useAuth, useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/Button"
-import { Download, Loader2, Lock, CheckCircle, Sparkles, Coins } from "lucide-react"
+import { Download, Loader2, Lock, CheckCircle, Sparkles, Coins, FileArchive } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { cn } from "@/lib/utils"
+import { cn, formatBytes } from "@/lib/utils"
 import { track as vercelTrack } from "@vercel/analytics"
 import { useToast } from "@/components/ui/use-toast"
 import { DownloadProgress } from "@/components/ui/download-progress"
@@ -45,6 +45,8 @@ interface DownloadButtonProps {
   productName?: string
   /** Credits cost — 0 means free */
   creditCost?: number
+  /** File size in bytes — shown in the confirmation dialog */
+  fileSizeBytes?: number
 }
 
 // Get the base admin URL without any API path
@@ -76,6 +78,7 @@ export const DownloadButton = ({
   customIcon,
   productName,
   creditCost,
+  fileSizeBytes,
 }: DownloadButtonProps) => {
   const [loading, setLoading] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
@@ -805,6 +808,21 @@ export const DownloadButton = ({
                   <Download className="h-4 w-4 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-primary">This is a free download</p>
+              </div>
+            )}
+            {fileSizeBytes != null && fileSizeBytes > 0 && (
+              <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                  <FileArchive className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    File size: {formatBytes(fileSizeBytes)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Make sure you have enough space and a stable connection
+                  </p>
+                </div>
               </div>
             )}
             <p className="text-xs text-muted-foreground">

@@ -36,10 +36,16 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
     const rawFirstImageUrl = data.images?.find((img) => img?.url)?.url
     const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
     const hasVideo = Boolean(data.videoUrl)
+    const isVideoOnly = hasVideo && !rawFirstImageUrl
 
-    // Intersection Observer for lazy loading video
+    // Video loading: immediate for motion-only cards, lazy for image+video cards
     useEffect(() => {
-        if (hasVideo && containerRef.current) {
+        if (!hasVideo) return
+        if (isVideoOnly) {
+            setShouldLoadVideo(true)
+            return
+        }
+        if (containerRef.current) {
             const observer = new IntersectionObserver(
                 ([entry]) => {
                     if (entry.isIntersecting) {
@@ -52,13 +58,15 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             observer.observe(containerRef.current)
             return () => observer.disconnect()
         }
-    }, [hasVideo])
+    }, [hasVideo, isVideoOnly])
 
     const handleMouseEnter = useCallback(() => {
         if (!isMobile) {
             setIsHovered(true)
             if (videoRef.current && data.videoUrl) {
-                videoRef.current.play().catch(() => { })
+                const v = videoRef.current
+                try { v.currentTime = 0 } catch {}
+                v.play().catch(() => { })
             }
         }
     }, [isMobile, data.videoUrl])
@@ -68,10 +76,12 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             setIsHovered(false)
             if (videoRef.current && data.videoUrl) {
                 videoRef.current.pause()
-                videoRef.current.currentTime = 0
+                videoRef.current.currentTime = isVideoOnly
+                    ? Math.min(0.5, (videoRef.current.duration || 1) * 0.1)
+                    : 0
             }
         }
-    }, [isMobile, data.videoUrl])
+    }, [isMobile, data.videoUrl, isVideoOnly])
 
     const handleViewClick = useCallback(
         (e: React.MouseEvent) => {
@@ -117,10 +127,25 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
                         muted
                         loop
                         playsInline
+                        autoPlay={isVideoOnly}
+                        preload={rawFirstImageUrl ? "none" : "auto"}
                         className={cn(
                             "absolute inset-0 w-full h-full object-cover transition-opacity duration-300",
-                            (isHovered || isMobile) ? "opacity-100" : "opacity-0"
+                            (!rawFirstImageUrl || isHovered || isMobile) ? "opacity-100" : "opacity-0"
                         )}
+                        onLoadedData={() => setMediaLoaded(true)}
+                        onLoadedMetadata={() => setMediaLoaded(true)}
+                        onCanPlay={() => setMediaLoaded(true)}
+                        onError={() => setMediaLoaded(true)}
+                        onPlaying={(e) => {
+                            if (isVideoOnly && !isHovered) {
+                                const v = e.currentTarget
+                                try {
+                                    v.pause()
+                                    v.currentTime = Math.min(0.5, (v.duration || 1) * 0.1)
+                                } catch {}
+                            }
+                        }}
                     />
                 )}
 

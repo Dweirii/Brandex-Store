@@ -37,6 +37,12 @@ export function DashboardSidebar() {
 
   const progressPct = Math.min(((balance ?? 0) / 50) * 100, 100)
 
+  const progressColor =
+    progressPct < 15 ? "bg-red-500"
+    : progressPct < 35 ? "bg-orange-500"
+    : progressPct < 70 ? "bg-yellow-500"
+    : "bg-green-500"
+
   return (
     <aside className="w-56 shrink-0 flex flex-col bg-transparent sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
       <div className="flex flex-col gap-5 py-6 px-3">
@@ -105,9 +111,12 @@ export function DashboardSidebar() {
           <div className="flex items-center justify-between text-[10px] opacity-60 mb-1.5">
             <span>{balance ?? 0} credits available</span>
           </div>
-          <div className="w-full bg-white/20 rounded-full h-1 mb-3">
+          <div className="w-full bg-black/10 rounded-full h-1.5 mb-3 overflow-hidden">
             <div
-              className="bg-primary h-1 rounded-full transition-all"
+              className={cn(
+                "h-full rounded-full transition-[width,background-color] duration-700 ease-out",
+                progressColor
+              )}
               style={{ width: `${progressPct}%` }}
             />
           </div>
