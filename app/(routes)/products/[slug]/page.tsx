@@ -6,7 +6,12 @@ import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProductBySlug from "@/actions/get-product-by-slug";
 import getProducts from "@/actions/get-products";
-import { getRelatedProductsWithAI, getRelatedProductsFallback, scoreCandidate } from "@/lib/ai-recommender";
+import {
+  getRelatedProductsByEmbedding,
+  getRelatedProductsWithAI,
+  getRelatedProductsFallback,
+  scoreCandidate,
+} from "@/lib/ai-recommender";
 import type { Product } from "@/types";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
@@ -119,32 +124,34 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
 
   if (candidates.length === 0) return null;
 
-  // Pre-score every candidate using multi-signal scoring
-  const scoreMap = new Map<string, number>(
-    candidates.map((c) => [c.id, scoreCandidate(currentProduct, c)])
-  );
+  // Primary path: semantic embeddings (cosine similarity over Google
+  // text-embedding-004 vectors, cached per product for 30 days).
+  let relatedItems: Product[] = await getRelatedProductsByEmbedding(currentProduct, candidates);
 
-  // Sort by score descending — top 30 go to AI for semantic re-ranking
-  const sortedCandidates = [...candidates].sort(
-    (a, b) => (scoreMap.get(b.id) ?? 0) - (scoreMap.get(a.id) ?? 0)
-  );
-  const aiPool = sortedCandidates.slice(0, 30);
-
-  let relatedItems: Product[] = [];
-
-  // Try AI semantic re-ranking
-  const aiRecommendedIds = await getRelatedProductsWithAI(currentProduct, aiPool, scoreMap);
-
-  if (aiRecommendedIds.length > 0) {
-    relatedItems = aiRecommendedIds
-      .map((id) => candidates.find((c) => c.id === id))
-      .filter((p): p is Product => !!p)
-      .slice(0, 4);
-  }
-
-  // Fallback: pure scoring
+  // Fallback chain only kicks in when embeddings are unavailable (no API key,
+  // API failure, or every candidate is below the similarity threshold).
   if (relatedItems.length === 0) {
-    relatedItems = getRelatedProductsFallback(currentProduct, sortedCandidates);
+    const scoreMap = new Map<string, number>(
+      candidates.map((c) => [c.id, scoreCandidate(currentProduct, c)])
+    );
+    const sortedCandidates = [...candidates].sort(
+      (a, b) => (scoreMap.get(b.id) ?? 0) - (scoreMap.get(a.id) ?? 0)
+    );
+
+    const aiRecommendedIds = await getRelatedProductsWithAI(
+      currentProduct,
+      sortedCandidates.slice(0, 30),
+      scoreMap
+    );
+
+    if (aiRecommendedIds.length > 0) {
+      relatedItems = aiRecommendedIds
+        .map((id) => candidates.find((c) => c.id === id))
+        .filter((p): p is Product => !!p)
+        .slice(0, 4);
+    } else {
+      relatedItems = getRelatedProductsFallback(currentProduct, sortedCandidates);
+    }
   }
 
   if (relatedItems.length === 0) return null;

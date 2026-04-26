@@ -1,5 +1,6 @@
-import { generateObject } from "ai"
+import { embed, generateObject } from "ai"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
+import { unstable_cache } from "next/cache"
 import { z } from "zod"
 import type { Product } from "@/types"
 
@@ -215,4 +216,109 @@ Return 0-4 IDs from the list above. Best match first. Returning fewer is better 
     console.error("AI Recommender Error:", err instanceof Error ? err.message : err)
     return []
   }
+}
+
+// ---------------------------------------------------------------------------
+// Semantic embeddings — primary recommendation path
+//
+// Each product is converted to a 768-dim vector via Google text-embedding-004.
+// Vectors are cached in `unstable_cache` (30-day TTL); the cache key includes
+// the embedding source text, so any product update auto-invalidates without
+// needing explicit `revalidateTag` calls. Ranking is deterministic cosine
+// similarity — no LLM in the hot path.
+// ---------------------------------------------------------------------------
+
+const EMBEDDING_MODEL = "text-embedding-004"
+// Empirically: same theme ~0.75+, related theme ~0.6-0.75, off-topic <0.55.
+// Below this threshold we'd rather hide the section than mislead the user.
+const MIN_EMBEDDING_SIMILARITY = 0.55
+const EMBEDDING_CACHE_SECONDS = 60 * 60 * 24 * 30 // 30 days
+
+function buildEmbeddingText(p: Product): string {
+  return [
+    p.name,
+    p.category?.name,
+    p.subcategory?.name,
+    (p.keywords ?? []).join(", "),
+    (p.description ?? "").slice(0, 400),
+  ]
+    .filter((s): s is string => typeof s === "string" && s.length > 0)
+    .join(" | ")
+}
+
+function cosineSimilarity(a: number[], b: number[]): number {
+  let dot = 0
+  let magA = 0
+  let magB = 0
+  const len = Math.min(a.length, b.length)
+  for (let i = 0; i < len; i++) {
+    const ai = a[i]
+    const bi = b[i]
+    dot += ai * bi
+    magA += ai * ai
+    magB += bi * bi
+  }
+  if (magA === 0 || magB === 0) return 0
+  return dot / Math.sqrt(magA * magB)
+}
+
+// `unstable_cache` keys derive from function args + keyParts. Including the
+// source text means content changes (renamed product, new keywords, edited
+// description) automatically write a fresh entry on next read.
+const getProductEmbedding = unstable_cache(
+  async (productId: string, text: string): Promise<number[] | null> => {
+    const client = buildGoogleClient()
+    if (!client) return null
+    try {
+      const { embedding } = await embed({
+        model: client.textEmbeddingModel(EMBEDDING_MODEL),
+        value: text,
+      })
+      return embedding
+    } catch (err) {
+      console.error(
+        `[embeddings] Failed for product ${productId}:`,
+        err instanceof Error ? err.message : err
+      )
+      return null
+    }
+  },
+  ["product-embedding-v1"],
+  { revalidate: EMBEDDING_CACHE_SECONDS, tags: ["product-embeddings"] }
+)
+
+/**
+ * Embedding-based recommender. Returns up to 4 semantically similar products,
+ * deduped by name-prefix, filtered by a quality threshold. Returns [] if
+ * embeddings are unavailable or no candidate clears the threshold — caller
+ * should fall back to keyword/AI scoring in that case.
+ */
+export async function getRelatedProductsByEmbedding(
+  currentProduct: Product,
+  candidates: Product[]
+): Promise<Product[]> {
+  if (!buildGoogleClient()) return []
+  if (candidates.length === 0) return []
+
+  // Cap pool to bound cold-start latency. Cache hits are free; misses cost
+  // ~100-200ms each but parallelize.
+  const pool = candidates.slice(0, 60)
+
+  const [currentEmb, candidateEmbs] = await Promise.all([
+    getProductEmbedding(currentProduct.id, buildEmbeddingText(currentProduct)),
+    Promise.all(pool.map((c) => getProductEmbedding(c.id, buildEmbeddingText(c)))),
+  ])
+
+  if (!currentEmb) return []
+
+  const scored = pool
+    .map((product, i) => {
+      const emb = candidateEmbs[i]
+      const score = emb ? cosineSimilarity(currentEmb, emb) : 0
+      return { product, score }
+    })
+    .filter((x) => x.score >= MIN_EMBEDDING_SIMILARITY)
+    .sort((a, b) => b.score - a.score)
+
+  return dedupeVariants(scored).slice(0, 4).map((x) => x.product)
 }
