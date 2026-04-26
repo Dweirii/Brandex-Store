@@ -66,12 +66,36 @@ export function scoreCandidate(current: Product, candidate: Product): number {
     }
   }
 
+  // --- 5. Subcategory match (strong signal — separates boxes from bottles within Packaging) ---
+  if (current.subcategory?.id && candidate.subcategory?.id === current.subcategory.id) {
+    score += 15
+  }
+
   return score
 }
 
 /**
+ * Group near-identical products (color/size variants of the same base item) and
+ * keep only the highest-scored representative from each group. Two products are
+ * considered variants if their normalised names share the same first 4 tokens.
+ */
+function dedupeVariants<T extends { product: Product; score: number }>(scored: T[]): T[] {
+  const seen = new Set<string>()
+  const result: T[] = []
+  for (const item of scored) {
+    const tokens = tokenise(item.product.name).slice(0, 4)
+    const key = tokens.length >= 3 ? tokens.join(" ") : item.product.id
+    if (seen.has(key)) continue
+    seen.add(key)
+    result.push(item)
+  }
+  return result
+}
+
+/**
  * Pure scoring fallback — ranks candidates by multi-signal relevance, returns top 4.
- * Includes zero-score candidates (same-category neighbors) when no signal matches exist.
+ * Only returns items with a positive score; if nothing matches, returns [] so the
+ * Related section is hidden rather than filled with random same-category items.
  */
 export function getRelatedProductsFallback(
   currentProduct: Product,
@@ -79,12 +103,10 @@ export function getRelatedProductsFallback(
 ): Product[] {
   const scored = candidates
     .map((c) => ({ product: c, score: scoreCandidate(currentProduct, c) }))
+    .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score)
 
-  // Prefer scored matches, but include unscored same-category items to fill up to 4
-  const withScore = scored.filter((x) => x.score > 0)
-  const withoutScore = scored.filter((x) => x.score === 0)
-  return [...withScore, ...withoutScore].slice(0, 4).map((x) => x.product)
+  return dedupeVariants(scored).slice(0, 4).map((x) => x.product)
 }
 
 // ---------------------------------------------------------------------------
@@ -135,7 +157,7 @@ export async function getRelatedProductsWithAI(
         recommendedIds: z
           .array(z.string())
           .max(4)
-          .describe("Up to 4 product IDs, best match first"),
+          .describe("0-4 product IDs, best match first. Return fewer (or none) rather than padding with weak matches."),
       }),
       prompt: `
 You are a smart recommendation engine for Brandex — a design asset marketplace selling mockup templates, PSD label designs, packaging artwork, and brand asset files for designers and businesses.
@@ -143,35 +165,52 @@ You are a smart recommendation engine for Brandex — a design asset marketplace
 A customer is currently viewing this product:
 - Name: "${currentProduct.name}"
 - Category: "${currentProduct.category?.name ?? "N/A"}"
+- Subcategory: "${currentProduct.subcategory?.name ?? "N/A"}"
 - Tags: ${(currentProduct.keywords ?? []).slice(0, 10).join(", ") || "none"}
 - Description: "${(currentProduct.description ?? "N/A").slice(0, 250)}"
 
-Your job: choose the 4 products below that this customer would MOST WANT to download next.
+Your job: pick up to 4 products this customer would genuinely want next. **Quality over quantity** — if only 2 are truly relevant, return 2. If none are relevant, return an empty list.
 
 Think like a designer browsing for assets:
-- What is the PRIMARY USE CASE of the current product? (label design, product mockup, social post, etc.)
-- What INDUSTRY or THEME does it serve? (food, tech, beauty, fashion, etc.)
-- What FORMAT or PRODUCT TYPE is it? (bottle, box, pouch, smartwatch, phone, etc.)
-- A good recommendation serves the SAME USE CASE or SAME THEME — ideally both.
+- PRIMARY USE CASE? (label design, product mockup, social post, etc.)
+- INDUSTRY / THEME? (food, beverage, beauty, tech, holiday, etc.)
+- PRODUCT TYPE / FORMAT? (bottle, box, pouch, phone, etc.)
+- A good recommendation matches at least the THEME or USE CASE. A great one matches both.
 
-Avoid recommending:
-- Products that are near-identical to the current one (same item, slightly different name)
-- Products with no thematic or use-case connection
+HARD RULES — do not violate:
+1. **No near-duplicates.** If two candidates are clearly variants of the same base item (same name with only a colour/size/number swap, e.g. "Christmas Bottle Red" + "Christmas Bottle Blue"), pick AT MOST ONE.
+2. **No off-theme padding.** Do not include a product just because it's the same category. A pudding box and a Christmas whisky bottle share "packaging" but serve completely different designers — skip it.
+3. **Prefer same subcategory.** If the current product is a "Box" (subcategory), strongly prefer other Box-shaped items over Bottles, Pouches, etc.
 
-CANDIDATES (sorted by keyword/name relevance score — higher score = stronger signal):
+CANDIDATES (sorted by keyword/name relevance score — higher = stronger keyword signal, but use your judgement):
 ${pool
   .map(
     (p) =>
-      `[${p.id}] score:${scores.get(p.id) ?? 0} | "${p.name}" | ${p.category?.name ?? "?"} | Tags: ${(p.keywords ?? []).slice(0, 6).join(", ") || "none"} | "${(p.description ?? "").slice(0, 100)}"`
+      `[${p.id}] score:${scores.get(p.id) ?? 0} | "${p.name}" | ${p.category?.name ?? "?"} / ${p.subcategory?.name ?? "?"} | Tags: ${(p.keywords ?? []).slice(0, 6).join(", ") || "none"} | "${(p.description ?? "").slice(0, 100)}"`
   )
   .join("\n")}
 
-Return exactly 4 IDs from the list above (fewer only if the pool has fewer than 4 truly relevant items). Best match first.
+Return 0-4 IDs from the list above. Best match first. Returning fewer is better than returning wrong ones.
       `.trim(),
     })
 
     const validIds = new Set(pool.map((p) => p.id))
-    return object.recommendedIds.filter((id) => validIds.has(id))
+    const filtered = object.recommendedIds.filter((id) => validIds.has(id))
+
+    // Belt-and-braces: even if the AI slips a near-duplicate through, dedupe by name prefix.
+    const productById = new Map(pool.map((p) => [p.id, p]))
+    const picked: string[] = []
+    const seenPrefix = new Set<string>()
+    for (const id of filtered) {
+      const product = productById.get(id)
+      if (!product) continue
+      const tokens = tokenise(product.name).slice(0, 4)
+      const key = tokens.length >= 3 ? tokens.join(" ") : id
+      if (seenPrefix.has(key)) continue
+      seenPrefix.add(key)
+      picked.push(id)
+    }
+    return picked
   } catch (err) {
     console.error("AI Recommender Error:", err instanceof Error ? err.message : err)
     return []
