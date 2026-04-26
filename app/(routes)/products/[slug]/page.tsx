@@ -35,14 +35,7 @@ const CATEGORY_IDS = {
   mockups: "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a",
 } as const;
 
-const RELATED_HEADING: Record<string, string> = {
-  [CATEGORY_IDS.mockups]:   "Related Mockups",
-  [CATEGORY_IDS.images]:    "Related Images",
-  [CATEGORY_IDS.vectors]:   "Related Vectors",
-  [CATEGORY_IDS.packaging]: "Related Packaging",
-  [CATEGORY_IDS.psd]:       "Related PSDs",
-  [CATEGORY_IDS.motion]:    "Related Motion",
-};
+const RELATED_HEADING = "You may also like";
 
 const Gallery = dynamic(() => import("@/components/gallery"), {
   loading: () => (
@@ -161,7 +154,7 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
       <Container>
         <div className="px-4 py-12 sm:px-6 lg:px-8 border-t border-[#E5E5E5] dark:border-border">
           <h2 className="text-xl font-bold text-foreground mb-6">
-            {(categoryId && RELATED_HEADING[categoryId]) ?? "Related Products"}
+            {RELATED_HEADING}
           </h2>
           <ProductList
             title=""
