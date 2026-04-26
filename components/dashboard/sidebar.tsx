@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCredits } from "@/hooks/use-credits"
+import { useBuyCreditsModal } from "@/hooks/use-buy-credits-modal"
 
 const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || ""
 
@@ -34,6 +35,7 @@ export function DashboardSidebar() {
   const pathname = usePathname()
   const { openUserProfile } = useClerk()
   const { balance } = useCredits(storeId)
+  const buyCreditsModal = useBuyCreditsModal()
 
   const progressPct = Math.min(((balance ?? 0) / 50) * 100, 100)
 
@@ -120,13 +122,14 @@ export function DashboardSidebar() {
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <Link
-            href="/credits"
+          <button
+            type="button"
+            onClick={() => buyCreditsModal.onOpen()}
             className="flex items-center justify-center gap-1.5 w-full bg-primary text-white text-xs font-semibold py-2 rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" />
             Buy Credits →
-          </Link>
+          </button>
         </div>
 
       </div>
