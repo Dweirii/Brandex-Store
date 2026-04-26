@@ -31,15 +31,6 @@ import {
 import { ProductBreadcrumb } from "@/components/product-breadcrumb";
 import { CATEGORY_SLUG_MAP } from "@/lib/category-slugs";
 
-const CATEGORY_IDS = {
-  images: "6214c586-a7c7-4f71-98ab-e1bc147a07f4",
-  motion: "c302954a-6cd2-43a7-9916-16d9252f754c",
-  packaging: "fd995552-baa8-4b86-bf7e-0acbefd43fd6",
-  psd: "1364f5f9-6f45-48fd-8cd1-09815e1606c0",
-  vectors: "b0469986-6cb9-4a35-8cd6-6cc9ec51a561",
-  mockups: "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a",
-} as const;
-
 const RELATED_HEADING = "You may also like";
 
 const Gallery = dynamic(() => import("@/components/gallery"), {

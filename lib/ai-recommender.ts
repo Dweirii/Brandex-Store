@@ -265,27 +265,37 @@ function cosineSimilarity(a: number[], b: number[]): number {
 // `unstable_cache` keys derive from function args + keyParts. Including the
 // source text means content changes (renamed product, new keywords, edited
 // description) automatically write a fresh entry on next read.
-const getProductEmbedding = unstable_cache(
-  async (productId: string, text: string): Promise<number[] | null> => {
+//
+// IMPORTANT: this throws on failure rather than returning null. `unstable_cache`
+// does not cache thrown errors, so transient failures (rate limit, missing key
+// at deploy time) won't poison the cache. The caller catches and falls back.
+const getProductEmbeddingCached = unstable_cache(
+  async (productId: string, text: string): Promise<number[]> => {
     const client = buildGoogleClient()
-    if (!client) return null
-    try {
-      const { embedding } = await embed({
-        model: client.textEmbeddingModel(EMBEDDING_MODEL),
-        value: text,
-      })
-      return embedding
-    } catch (err) {
-      console.error(
-        `[embeddings] Failed for product ${productId}:`,
-        err instanceof Error ? err.message : err
-      )
-      return null
+    if (!client) {
+      throw new Error("GOOGLE_GENERATIVE_AI_API_KEY (or AI_GATEWAY_API_KEY) not configured")
     }
+    const { embedding } = await embed({
+      model: client.textEmbeddingModel(EMBEDDING_MODEL),
+      value: text,
+    })
+    return embedding
   },
   ["product-embedding-v1"],
   { revalidate: EMBEDDING_CACHE_SECONDS, tags: ["product-embeddings"] }
 )
+
+async function getProductEmbedding(productId: string, text: string): Promise<number[] | null> {
+  try {
+    return await getProductEmbeddingCached(productId, text)
+  } catch (err) {
+    console.error(
+      `[embeddings] Failed for product ${productId}:`,
+      err instanceof Error ? err.message : err
+    )
+    return null
+  }
+}
 
 /**
  * Embedding-based recommender. Returns up to 4 semantically similar products,
@@ -297,7 +307,10 @@ export async function getRelatedProductsByEmbedding(
   currentProduct: Product,
   candidates: Product[]
 ): Promise<Product[]> {
-  if (!buildGoogleClient()) return []
+  if (!buildGoogleClient()) {
+    console.warn("[recommender] embeddings skipped — no GOOGLE_GENERATIVE_AI_API_KEY")
+    return []
+  }
   if (candidates.length === 0) return []
 
   // Cap pool to bound cold-start latency. Cache hits are free; misses cost
@@ -309,7 +322,10 @@ export async function getRelatedProductsByEmbedding(
     Promise.all(pool.map((c) => getProductEmbedding(c.id, buildEmbeddingText(c)))),
   ])
 
-  if (!currentEmb) return []
+  if (!currentEmb) {
+    console.warn(`[recommender] embeddings unavailable for current product ${currentProduct.id}`)
+    return []
+  }
 
   const scored = pool
     .map((product, i) => {
@@ -317,8 +333,16 @@ export async function getRelatedProductsByEmbedding(
       const score = emb ? cosineSimilarity(currentEmb, emb) : 0
       return { product, score }
     })
-    .filter((x) => x.score >= MIN_EMBEDDING_SIMILARITY)
     .sort((a, b) => b.score - a.score)
 
-  return dedupeVariants(scored).slice(0, 4).map((x) => x.product)
+  const passing = scored.filter((x) => x.score >= MIN_EMBEDDING_SIMILARITY)
+  const top4 = dedupeVariants(passing).slice(0, 4)
+
+  console.log(
+    `[recommender] embeddings ranked ${pool.length} candidates for "${currentProduct.name}" — ` +
+    `top scores: ${scored.slice(0, 6).map((s) => s.score.toFixed(2)).join(", ")} — ` +
+    `${top4.length} passed threshold ${MIN_EMBEDDING_SIMILARITY}`
+  )
+
+  return top4.map((x) => x.product)
 }
