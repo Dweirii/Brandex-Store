@@ -6,12 +6,7 @@ import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProductBySlug from "@/actions/get-product-by-slug";
 import getProducts from "@/actions/get-products";
-import {
-  getRelatedProductsByEmbedding,
-  getRelatedProductsWithAI,
-  getRelatedProductsFallback,
-  scoreCandidate,
-} from "@/lib/ai-recommender";
+import { getRelatedProducts } from "@/actions/get-related-products";
 import type { Product } from "@/types";
 import Info from "@/components/info";
 import ProductList from "@/components/product-list";
@@ -29,7 +24,7 @@ import {
   getSiteUrl,
 } from "@/lib/seo";
 import { ProductBreadcrumb } from "@/components/product-breadcrumb";
-import { CATEGORY_SLUG_MAP } from "@/lib/category-slugs";
+import { CATEGORY_SLUG_MAP, isHiddenCategory } from "@/lib/category-slugs";
 
 const RELATED_HEADING = "You may also like";
 
@@ -69,7 +64,7 @@ async function resolveProduct(param: string): Promise<{ product: Product; canoni
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ page?: string }>;
+  searchParams?: Promise<{ page?: string; debug?: string }>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -94,56 +89,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-async function RelatedProducts({ currentProduct }: { currentProduct: Product }) {
-  const categoryId = currentProduct.category?.id;
-
-  // Build a rich candidate pool: same-category neighbors + store-wide keyword matches
-  const [{ products: categoryProducts }, { products: storeProducts }] = await Promise.all([
-    categoryId ? getProducts({ categoryId, limit: 60 }) : Promise.resolve({ products: [] }),
-    getProducts({ limit: 120 }),
-  ]);
-
-  // Merge and deduplicate — category products first (stronger contextual signal)
-  const seen = new Set<string>([currentProduct.id]);
-  const candidates: Product[] = [];
-  for (const p of [...categoryProducts, ...storeProducts]) {
-    if (!seen.has(p.id)) {
-      seen.add(p.id);
-      candidates.push(p);
-    }
-  }
-
-  if (candidates.length === 0) return null;
-
-  // Primary path: semantic embeddings (cosine similarity over Google
-  // text-embedding-004 vectors, cached per product for 30 days).
-  let relatedItems: Product[] = await getRelatedProductsByEmbedding(currentProduct, candidates);
-
-  // Fallback chain only kicks in when embeddings are unavailable (no API key,
-  // API failure, or every candidate is below the similarity threshold).
-  if (relatedItems.length === 0) {
-    const scoreMap = new Map<string, number>(
-      candidates.map((c) => [c.id, scoreCandidate(currentProduct, c)])
-    );
-    const sortedCandidates = [...candidates].sort(
-      (a, b) => (scoreMap.get(b.id) ?? 0) - (scoreMap.get(a.id) ?? 0)
-    );
-
-    const aiRecommendedIds = await getRelatedProductsWithAI(
-      currentProduct,
-      sortedCandidates.slice(0, 30),
-      scoreMap
-    );
-
-    if (aiRecommendedIds.length > 0) {
-      relatedItems = aiRecommendedIds
-        .map((id) => candidates.find((c) => c.id === id))
-        .filter((p): p is Product => !!p)
-        .slice(0, 4);
-    } else {
-      relatedItems = getRelatedProductsFallback(currentProduct, sortedCandidates);
-    }
-  }
+async function RelatedProducts({
+  currentProduct,
+}: {
+  currentProduct: Product;
+}) {
+  const relatedItems = await getRelatedProducts(currentProduct.id);
 
   if (relatedItems.length === 0) return null;
 
@@ -168,9 +119,11 @@ async function RelatedProducts({ currentProduct }: { currentProduct: Product }) 
   );
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   try {
     const { slug } = await params;
+    const sp = (await searchParams) ?? {};
+    const debug = sp.debug === "related";
     const resolved = await resolveProduct(slug);
 
     // UUID with no resolvable slug → redirect home (never show an ID-based error page)
@@ -180,6 +133,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     }
 
     const { product, canonical } = resolved;
+
+    // Products in hidden categories (e.g. IMAGES) are not browsable — send visitors home
+    if (isHiddenCategory(product.category?.id)) {
+      redirect("/");
+    }
 
     // Redirect UUID-based URLs to their slug URL
     if (UUID_RE.test(slug)) {
