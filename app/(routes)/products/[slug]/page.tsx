@@ -5,7 +5,6 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProductBySlug from "@/actions/get-product-by-slug";
-import getProducts from "@/actions/get-products";
 import { getRelatedProducts } from "@/actions/get-related-products";
 import type { Product } from "@/types";
 import Info from "@/components/info";
@@ -119,11 +118,9 @@ async function RelatedProducts({
   );
 }
 
-export default async function ProductPage({ params, searchParams }: ProductPageProps) {
+export default async function ProductPage({ params }: ProductPageProps) {
   try {
     const { slug } = await params;
-    const sp = (await searchParams) ?? {};
-    const debug = sp.debug === "related";
     const resolved = await resolveProduct(slug);
 
     // UUID with no resolvable slug → redirect home (never show an ID-based error page)
