@@ -63,7 +63,6 @@ async function resolveProduct(param: string): Promise<{ product: Product; canoni
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ page?: string; debug?: string }>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
