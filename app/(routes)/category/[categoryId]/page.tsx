@@ -3,17 +3,11 @@ import { Suspense } from "react"
 import { redirect } from "next/navigation"
 import getCategory from "@/actions/get-category"
 
-import getProducts from "@/actions/get-products"
-import Container from "@/components/ui/container"
-import ProductList from "@/components/product-list"
-import { ProductListSkeleton } from "@/components/product-list-skeleton"
+import { loadArchiveProducts } from "@/actions/load-archive-products"
+import getSubcategories from "@/actions/get-subcategories"
+import ArchiveView from "@/components/archive/archive-view"
+import ArchiveSkeleton from "@/components/archive/archive-skeleton"
 import { ScrollToTop } from "@/components/scroll-to-top"
-import PriceFilter from "@/components/price-filter"
-import SortFilter from "@/components/sort-filter"
-import CategoryNav from "@/components/category-nav"
-import { HeroSection } from "@/components/category-hero"
-import { getHeroConfigById } from "@/lib/heroConfig"
-import { interleaveByDay } from "@/lib/utils"
 import {
   generateCategoryMetadata,
   generateBreadcrumbStructuredData,
@@ -26,8 +20,8 @@ import {
   CATEGORY_GROUPS,
   SLUG_TO_GROUP_MAP,
   CATEGORY_SLUG_MAP,
+  isHiddenCategory,
 } from "@/lib/category-slugs"
-import { CategorySubNav } from "@/components/category-sub-nav"
 
 // ─── Metadata ────────────────────────────────────────────────────────────────
 
@@ -71,58 +65,49 @@ export async function generateMetadata({
   }
 }
 
-// ─── Category Products sub-component ─────────────────────────────────────────
+// ─── Category Archive sub-component ───────────────────────────────────────────
 
-interface CategoryProductsProps {
+const PAGE_SIZE = 24
+
+interface CategoryArchiveProps {
   categoryId: string
+  heading: string
   priceFilter?: "paid" | "free" | "all"
   sortBy?: string
+  subcategoryId?: string
 }
 
-async function CategoryProducts({
+async function CategoryArchive({
   categoryId,
+  heading,
   priceFilter,
   sortBy,
-}: CategoryProductsProps) {
-  // Fetch a larger pool so day-based interleaving has enough variety to mix
-  const PAGE_SIZE = 48
-
-  const [category, { products, total, page: current, pageCount }] =
-    await Promise.all([
-      getCategory(categoryId),
-      getProducts({
-        categoryId,
-        page: 1,
-        limit: PAGE_SIZE,
-        priceFilter,
-        sortBy,
-      }),
-    ])
-
-  if (!category) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-sm text-muted-foreground">Category not found</p>
-      </div>
-    )
-  }
-
-  // Interleave products by day on "newest" (default) so same-day items
-  // don't cluster in the same batch
-  const displayProducts = (!sortBy || sortBy === "newest") ? interleaveByDay(products) : products
+  subcategoryId,
+}: CategoryArchiveProps) {
+  const [{ products, total, pageCount }, subcategories] = await Promise.all([
+    loadArchiveProducts({
+      scope: categoryId,
+      page: 1,
+      limit: PAGE_SIZE,
+      priceFilter,
+      sortBy,
+      subcategoryId,
+    }),
+    getSubcategories(categoryId),
+  ])
 
   return (
-    <ProductList
-      title=""
-      items={displayProducts}
-      total={total}
-      page={current}
+    <ArchiveView
+      heading={heading}
+      products={products}
       pageCount={pageCount}
-      categoryId={categoryId}
+      total={total}
+      scope={categoryId}
+      pageSize={PAGE_SIZE}
       priceFilter={priceFilter}
       sortBy={sortBy}
-      loadMoreMode="button"
-      pageSize={PAGE_SIZE}
+      subcategories={subcategories}
+      subcategoryId={subcategoryId}
     />
   )
 }
@@ -134,13 +119,14 @@ export default async function CategoryPage({
   searchParams,
 }: {
   params: Promise<{ categoryId: string }>
-  searchParams?: Promise<{ priceFilter?: "paid" | "free" | "all"; sortBy?: string; type?: string }>
+  searchParams?: Promise<{ priceFilter?: "paid" | "free" | "all"; sortBy?: string; type?: string; subcategory?: string }>
 }) {
   const { categoryId: param } = await params
   const searchParamsData = await searchParams
   const priceFilter = searchParamsData?.priceFilter
   const sortBy = searchParamsData?.sortBy
   const type = searchParamsData?.type
+  const subcategoryId = searchParamsData?.subcategory
 
   // 1. 301-redirect old member slugs to group slugs (e.g., /category/images -> /category/graphics?type=images)
   const groupSlugFromOldMember = SLUG_TO_GROUP_MAP[param]
@@ -180,9 +166,27 @@ export default async function CategoryPage({
     if (subtab) uuid = subtab.id
   }
 
-  const heroConfig = getHeroConfigById(uuid)
+  // Hidden categories (e.g. IMAGES) are not browsable — send visitors home
+  if (isHiddenCategory(uuid)) {
+    redirect("/")
+  }
+
+  // Only Packaging and Mockups are browsable — every other category redirects
+  // home so products from other categories are never shown.
+  const ALLOWED_SLUGS = ["packaging", "mockups"]
+  if (!ALLOWED_SLUGS.includes(slug)) {
+    redirect("/")
+  }
 
   const category = await getCategory(uuid)
+
+  // When landing on a group slug with no sub-type selected (e.g. /category/graphics),
+  // use the group's display name ("Graphics") rather than the underlying
+  // sub-category name ("Images") that the UUID resolves to.
+  const heading =
+    CATEGORY_GROUPS[slug] && !type
+      ? CATEGORY_GROUPS[slug].name
+      : category?.name || "Resources"
 
   // Canonical URL always uses the slug
   const siteUrl = getSiteUrl()
@@ -205,59 +209,26 @@ export default async function CategoryPage({
         />
       )}
 
-      {/* Full-width hero — only rendered for configured categories */}
-      {heroConfig && (
-        <HeroSection
-          config={heroConfig}
-          categoryLabel={
-            // When landing on a group slug with no sub-type selected (e.g. /category/graphics),
-            // use the group's display name ("Graphics") rather than the underlying
-            // sub-category name ("Images") that the UUID resolves to.
-            CATEGORY_GROUPS[slug] && !type
-              ? CATEGORY_GROUPS[slug].name
-              : category?.name
-          }
-        />
-      )}
-
-      <Container>
-        <div className="min-h-screen py-6 sm:py-8">
-          {/* Header with Categories and Filters */}
-          <div className="px-4 sm:px-6 lg:px-8 mb-8">
-            <div className="flex items-center gap-3 py-4 sm:py-5">
-              {/* Categories Bar — desktop only */}
-              <div className="flex-1 min-w-0 overflow-hidden hidden md:flex">
-                <CategoryNav />
-              </div>
-              {/* Filters — full-width on mobile, auto on desktop */}
-              <div className="flex flex-row items-center gap-2 w-full md:w-auto md:shrink-0">
-                <div className="flex-1 md:flex-none">
-                  <PriceFilter />
-                </div>
-                <SortFilter />
-              </div>
+      <main className="min-h-screen bg-[#FAFAFA] pb-10 dark:bg-background">
+        <Suspense
+          key={uuid}
+          fallback={
+            <div className="w-full px-4 pt-8 sm:px-6 lg:px-8">
+              <ArchiveSkeleton />
             </div>
+          }
+        >
+          <CategoryArchive
+            categoryId={uuid}
+            heading={heading}
+            priceFilter={priceFilter}
+            sortBy={sortBy || "newest"}
+            subcategoryId={subcategoryId}
+          />
+        </Suspense>
+      </main>
 
-            {/* Sub-navigation for groups (Mockups, Graphics) */}
-            <CategorySubNav groupSlug={slug} currentType={type} />
-          </div>
-
-          {/* Products Grid */}
-          <div id="product-grid" className="px-4 sm:px-6 lg:px-8">
-            <Suspense
-              key={`${uuid}-${priceFilter || "all"}-${sortBy || "newest"}`}
-              fallback={<ProductListSkeleton title="" />}
-            >
-              <CategoryProducts
-                categoryId={uuid}
-                priceFilter={priceFilter}
-                sortBy={sortBy || "newest"}
-              />
-            </Suspense>
-          </div>
-        </div>
-        <ScrollToTop />
-      </Container>
+      <ScrollToTop />
     </>
   )
 }

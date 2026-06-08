@@ -5,23 +5,32 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 
-const Logo = () => {
+interface LogoProps {
+  /** Use the tagline-free "mark" version (cleaner on mobile). */
+  compact?: boolean
+}
+
+const Logo = ({ compact = false }: LogoProps) => {
   const { theme, systemTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
+  // Pick the right pair (full wordmark+tagline, or compact mark) per theme.
+  const light = compact ? "/Brandex-mark.svg" : "/Brandex.svg"
+  const dark = compact ? "/Brandex-mark-dark.svg" : "/Brandex-dark.svg"
+
   const getLogoSrc = () => {
     if (!mounted) {
       if (typeof window !== "undefined") {
         const systemPreference = window.matchMedia("(prefers-color-scheme: dark)").matches
-        return systemPreference ? "/Logo-white.png" : "/Logo.svg"
+        return systemPreference ? dark : light
       }
-      return "/Logo.svg"
+      return light
     }
 
     const currentTheme = theme === "system" ? systemTheme : theme
-    return currentTheme === "dark" ? "/Logo-white.png" : "/Logo.svg"
+    return currentTheme === "dark" ? dark : light
   }
 
   const logoSrc = getLogoSrc()
@@ -41,11 +50,11 @@ const Logo = () => {
     <Link href="/" className="flex items-center gap-x-2 relative pointer-events-auto group">
       <Image
         src={logoSrc}
-        width={200}
-        height={40}
+        width={218}
+        height={48}
         alt="Brandex Logo"
         priority
-        className="transition-all duration-200 group-hover:opacity-80 h-6 w-auto md:h-8"
+        className="transition-all duration-200 group-hover:opacity-80 h-9 w-auto md:h-10"
         sizes="(max-width: 640px) 100px, 200px"
         placeholder="blur"
         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="

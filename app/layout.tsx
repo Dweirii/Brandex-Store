@@ -21,6 +21,7 @@ import { BackToTop } from "@/components/back-to-top";
 import { CompareButton } from "@/components/compare-button";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollToTop } from "@/components/scroll-to-top";
+import { WelcomeCreditsPopup } from "@/components/welcome-credits-popup";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -97,8 +98,8 @@ export const metadata: Metadata = {
   },
 };
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-ZC53X5YNP9";
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "GTM-PGQM63SC";
+const GTM_ID = "GTM-PM89X24C";
+const META_PIXEL_ID = "561913850219327";
 
 export default async function RootLayout({
   children,
@@ -129,25 +130,11 @@ export default async function RootLayout({
               });
             `}
           </Script>
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-            strategy="afterInteractive"
-          />
-          <Script id="ga4-init" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_ID}', {
-                anonymize_ip: true
-              });
-            `}
-          </Script>
           {/*
            * Google Tag Manager — loads after consent defaults are set so GTM
-           * respects the Consent Mode v2 state. GTM and gtag share the same
-           * `dataLayer`, so the CookieConsent component's consent updates are
-           * picked up by both GTM tags and the direct GA4 config above.
+           * respects the Consent Mode v2 state. The CookieConsent component's
+           * consent updates flow through `dataLayer` to all GTM-managed tags
+           * (GA4, Google Ads, etc.).
            */}
           <Script id="gtm-init" strategy="afterInteractive">
             {`
@@ -156,6 +143,27 @@ export default async function RootLayout({
               j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
               })(window,document,'script','dataLayer','${GTM_ID}');
+            `}
+          </Script>
+          {/*
+           * Meta Pixel — loaded with consent revoked by default. The
+           * CookieConsent component calls fbq('consent','grant') once the
+           * visitor opts in to marketing cookies, mirroring the Google
+           * Consent Mode v2 flow above.
+           */}
+          <Script id="meta-pixel-init" strategy="afterInteractive">
+            {`
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('consent', 'revoke');
+              fbq('init', '${META_PIXEL_ID}');
+              fbq('track', 'PageView');
             `}
           </Script>
         </head>
@@ -170,6 +178,17 @@ export default async function RootLayout({
               height="0"
               width="0"
               style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+          {/* Meta Pixel (noscript) — per Meta's install spec. */}
+          <noscript>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              height="1"
+              width="1"
+              style={{ display: "none" }}
+              src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+              alt=""
             />
           </noscript>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -189,6 +208,7 @@ export default async function RootLayout({
               <BackToTop />
               <CompareButton />
               <Suspense><ScrollToTop /></Suspense>
+              <WelcomeCreditsPopup />
               <CookieConsent />
             </Providers>
           </ThemeProvider>

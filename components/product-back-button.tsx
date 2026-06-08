@@ -22,7 +22,7 @@ const ProductBackButton = () => {
       variant="outline"
       size="sm"
       onClick={handleBack}
-      className="mb-4 hover:bg-primary hover:text-primary-foreground transition-colors"
+      className="mb-4 rounded-full hover:bg-foreground hover:text-background hover:border-transparent transition-colors"
     >
       <ArrowLeft className="h-4 w-4 mr-2" />
       Back

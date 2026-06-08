@@ -1,15 +1,13 @@
 import { useFavoritesWithAuth } from "@/hooks/use-favorites"
-import { Coins, Heart, Sparkles, PenLine } from "lucide-react"
+import { Coins, Heart, PenLine } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useAuth } from "@clerk/nextjs"
 import { useCredits } from "@/hooks/use-credits"
-import { StudioPromoModal } from "./studio-promo-modal"
 
 const NavbarActions = () => {
   const [isMounted, setIsMounted] = useState(false)
-  const [showStudioModal, setShowStudioModal] = useState(false)
   const favorites = useFavoritesWithAuth()
   const router = useRouter()
   const { isSignedIn } = useAuth()
@@ -23,36 +21,17 @@ const NavbarActions = () => {
 
   if (!isMounted) return null
 
-  const studioUrl = "https://studio.brandexme.com"
-
   return (
-    <>
-      <StudioPromoModal
-        open={showStudioModal}
-        onOpenChange={setShowStudioModal}
-        studioUrl={studioUrl}
-      />
-
-      <div className="ml-auto flex items-center gap-3">
-
-        {/* Studio — secondary, outline style */}
-        <button
-          onClick={() => setShowStudioModal(true)}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border hover:border-foreground/30 hover:bg-muted/50 transition-all duration-200 cursor-pointer group"
-          aria-label="Open Brandex Studio"
-        >
-          <Sparkles className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
-          <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors whitespace-nowrap">Studio</span>
-        </button>
+    <div className="ml-auto flex items-center gap-2">
 
         {/* Custom Work — primary */}
         <Link
           href="/custom-work"
-          className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary hover:bg-[#009915] text-white transition-all duration-200 group"
+          className="hidden sm:flex h-9 items-center gap-1.5 px-4 rounded-full bg-foreground hover:bg-foreground/90 text-background transition-all duration-200 group"
           aria-label="Request a Custom Project"
         >
-          <PenLine className="h-3.5 w-3.5 text-white group-hover:scale-110 transition-transform" />
-          <span className="text-xs font-semibold text-white whitespace-nowrap">
+          <PenLine className="h-3.5 w-3.5 text-background group-hover:scale-110 transition-transform" />
+          <span className="text-xs font-semibold text-background whitespace-nowrap">
             Custom Work
           </span>
         </Link>
@@ -61,10 +40,10 @@ const NavbarActions = () => {
         {isSignedIn && (
           <Link
             href="/credits"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/15 transition-all cursor-pointer group"
+            className="hidden sm:flex h-9 items-center gap-1.5 px-3.5 rounded-full bg-[#F4F4F4] hover:bg-[#ededed] dark:bg-muted/30 dark:hover:bg-muted/50 transition-all cursor-pointer group"
           >
-            <Coins className="h-3.5 w-3.5 text-primary group-hover:rotate-12 transition-transform" />
-            <span className="text-xs font-semibold text-primary">
+            <Coins className="h-3.5 w-3.5 text-foreground/70 group-hover:rotate-12 transition-transform" />
+            <span className="text-xs font-semibold text-foreground">
               {balance} Credits
             </span>
           </Link>
@@ -73,19 +52,18 @@ const NavbarActions = () => {
         {/* Favorites */}
         <button
           onClick={() => router.push("/favorites")}
-          className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-background hover:bg-muted/50 transition-all duration-200 group"
+          className="relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-[#F4F4F4] dark:hover:bg-muted/40 bg-[#F4F4F4] dark:bg-muted/30 transition-all duration-200 group"
           aria-label={`Favorites with ${favorites.items.length} items`}
         >
-          <Heart className="h-4 w-4 text-foreground" />
+          <Heart className="h-4 w-4 text-foreground " />
           {favorites.items.length > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground px-1 shadow-sm">
+            <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-foreground text-[10px] font-semibold text-background px-1 shadow-sm">
               {favorites.items.length > 99 ? "99+" : favorites.items.length}
             </span>
           )}
         </button>
 
-      </div>
-    </>
+    </div>
   )
 }
 

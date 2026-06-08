@@ -9,6 +9,10 @@ import { ImageSearchButton } from "./image-search-button"
 
 interface GlobalSearchBarProps {
   className?: string
+  /** Extra classes merged onto the <Input> (last-wins) so the bar can be
+   *  flattened when embedded inside another container, e.g. the Row 2 toolbar. */
+  inputClassName?: string
+  placeholder?: string
 }
 
 interface AutocompleteResponse {
@@ -17,7 +21,7 @@ interface AutocompleteResponse {
 
 const DEFAULT_CATEGORY_ID = "all"
 
-export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
+export default function GlobalSearchBar({ className, inputClassName, placeholder = "Search products..." }: GlobalSearchBarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -281,7 +285,7 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
             )}
             <Input
               type="text"
-              placeholder="Search products..."
+              placeholder={placeholder}
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value)
@@ -306,7 +310,8 @@ export default function GlobalSearchBar({ className }: GlobalSearchBarProps) {
                 isFocused
                   ? "bg-background border-primary/30 shadow-md ring-2 ring-primary/5"
                   : "",
-                "focus-visible:outline-none focus-visible:ring-0"
+                "focus-visible:outline-none focus-visible:ring-0",
+                inputClassName
               )}
             />
           </div>

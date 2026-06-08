@@ -10,6 +10,8 @@ interface LoadMoreQuery {
   limit?: number
   priceFilter?: 'paid' | 'free' | 'all'
   sortBy?: string
+  fileType?: string
+  size?: string
 }
 
 export async function loadMoreProducts(query: LoadMoreQuery) {

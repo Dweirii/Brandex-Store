@@ -1,6 +1,7 @@
 "use client"
 
 import { memo, useState, useEffect, useRef, useCallback } from "react"
+import { usePathname } from "next/navigation"
 import Masonry from "react-masonry-css"
 import type { Product } from "@/types"
 import { loadMoreProducts } from "@/actions/load-more-products"
@@ -18,6 +19,8 @@ interface ProductListProps {
   categoryId?: string
   priceFilter?: 'paid' | 'free' | 'all'
   sortBy?: string
+  fileType?: string
+  size?: string
   isFeatured?: boolean
   variant?: 'default' | 'related'
   /** How additional pages are loaded. Default: 'infinite' (IntersectionObserver). */
@@ -28,6 +31,20 @@ interface ProductListProps {
 
 // Memoize ProductCard to prevent unnecessary re-renders
 const MemoizedProductCard = memo(ProductCard)
+
+// The page's scroll container is ambiguous: `html, body { overflow-x: hidden }`
+// + a fixed height can make <body> (not window) the actual scroller, so
+// window.scrollY/scrollTo become no-ops. Read/write whichever element scrolls.
+function getScrollTop(): number {
+  if (typeof window === "undefined") return 0
+  return window.scrollY || document.documentElement?.scrollTop || document.body?.scrollTop || 0
+}
+function setScrollTop(y: number): void {
+  if (typeof window === "undefined") return
+  window.scrollTo(0, y)
+  if (document.documentElement) document.documentElement.scrollTop = y
+  if (document.body) document.body.scrollTop = y
+}
 
 const breakpointColumnsObj = {
   default: 4,
@@ -52,6 +69,8 @@ const ProductList: React.FC<ProductListProps> = ({
   categoryId,
   priceFilter,
   sortBy,
+  fileType,
+  size,
   isFeatured,
   variant = 'default',
   loadMoreMode = 'infinite',
@@ -65,8 +84,121 @@ const ProductList: React.FC<ProductListProps> = ({
   const lastElementRef = useRef<HTMLDivElement | null>(null)
 
   // Track the key combination to detect filter/sort changes
-  const filterKey = `${categoryId}-${priceFilter}-${sortBy}`
+  const filterKey = `${categoryId}-${priceFilter}-${sortBy}-${fileType}-${size}`
   const prevFilterKeyRef = useRef(filterKey)
+
+  // ── Scroll/state restoration on back navigation ──────────────────────────
+  // Persist the loaded list + scroll position so returning from a product page
+  // restores exactly where the user was (infinite scroll resets to page 1
+  // otherwise, losing the items they'd scrolled past).
+  const pathname = usePathname()
+  const persist = variant !== "related" && loadMoreMode !== "none"
+  const dataKey = `plist:data:${pathname}:${filterKey}`
+  const scrollKey = `plist:scroll:${pathname}:${filterKey}`
+  const skipSaveRef = useRef(true)
+
+  // Restore once on mount (runs before the save effect below)
+  useEffect(() => {
+    if (!persist) return
+
+    // Only restore on a back/forward navigation — not on a fresh forward visit
+    // (e.g. clicking the logo). The flag is set by ScrollToTop's popstate handler.
+    // Note: do NOT consume (remove) the flag here — React StrictMode double-mounts
+    // effects in dev, and the first mount removing it would make the real second
+    // mount bail. ScrollToTop clears it on the next forward navigation instead.
+    let isBackForward = false
+    try {
+      const popAt = Number(sessionStorage.getItem("brandex:popnav") || 0)
+      isBackForward = Date.now() - popAt < 4000
+    } catch { /* ignore */ }
+    if (!isBackForward) return
+
+    // Take manual control so the browser's native scroll restoration (which
+    // fires before our lazy-loaded grid is tall enough) doesn't fight us.
+    try { if ("scrollRestoration" in history) history.scrollRestoration = "manual" } catch { /* ignore */ }
+
+    let targetY = 0
+    try {
+      const raw = sessionStorage.getItem(dataKey)
+      if (raw) {
+        const saved = JSON.parse(raw)
+        if (saved?.filterKey === filterKey && Array.isArray(saved.products) && saved.products.length > items.length) {
+          setProducts(saved.products)
+          setPage(saved.page ?? initialPage)
+          setHasMore(Boolean(saved.hasMore))
+        }
+      }
+      targetY = Number(sessionStorage.getItem(scrollKey) || 0)
+    } catch { /* ignore */ }
+
+    if (targetY <= 0) return
+
+    // Re-assert the position every frame as the grid renders, images load, and
+    // the page grows tall enough to actually reach targetY. Only stop once we've
+    // HELD the target for several frames (page is tall + stable) — or time out /
+    // the user scrolls themselves.
+    let cancelled = false
+    let heldFrames = 0
+    const cleanup = () => {
+      window.removeEventListener("wheel", onUserScroll)
+      window.removeEventListener("touchmove", onUserScroll)
+      window.removeEventListener("keydown", onKey)
+    }
+    const onUserScroll = () => { cancelled = true; cleanup() }
+    const onKey = (e: KeyboardEvent) => {
+      if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "].includes(e.key)) onUserScroll()
+    }
+    window.addEventListener("wheel", onUserScroll, { passive: true })
+    window.addEventListener("touchmove", onUserScroll, { passive: true })
+    window.addEventListener("keydown", onKey)
+
+    const start = Date.now()
+    const tick = () => {
+      if (cancelled) return
+      setScrollTop(targetY)
+      const cur = getScrollTop()
+      const reached = Math.abs(cur - targetY) <= 2
+      heldFrames = reached ? heldFrames + 1 : 0
+      const elapsed = Date.now() - start
+      if ((reached && heldFrames >= 5) || elapsed > 6000) {
+        cleanup()
+        return
+      }
+      requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+
+    return () => { cancelled = true; cleanup() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Persist loaded items whenever they change (skips the initial mount render
+  // so it doesn't clobber the snapshot we just restored)
+  useEffect(() => {
+    if (!persist) return
+    if (skipSaveRef.current) { skipSaveRef.current = false; return }
+    try {
+      sessionStorage.setItem(dataKey, JSON.stringify({ filterKey, products, page, hasMore }))
+    } catch { /* quota/unavailable — ignore */ }
+  }, [products, page, hasMore, persist, dataKey, filterKey])
+
+  // Persist scroll position (cheap, throttled to one write per frame).
+  // capture:true so we still catch scroll when <body> is the scroller (its
+  // scroll event doesn't bubble to window).
+  useEffect(() => {
+    if (!persist) return
+    let raf = 0
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        try { sessionStorage.setItem(scrollKey, String(getScrollTop())) } catch { /* ignore */ }
+      })
+    }
+    const opts = { passive: true, capture: true } as const
+    window.addEventListener("scroll", onScroll, opts)
+    return () => { window.removeEventListener("scroll", onScroll, opts); if (raf) cancelAnimationFrame(raf) }
+  }, [persist, scrollKey])
 
   // Reset state when filters change OR when initial items change
   useEffect(() => {
@@ -75,12 +207,16 @@ const ProductList: React.FC<ProductListProps> = ({
     prevFilterKeyRef.current = filterKey
 
     if (filtersChanged) {
-      // Filters changed - reset everything
+      // Filters changed - reset everything and drop any stale saved snapshot
       setProducts(items)
       setPage(initialPage)
       setHasMore(initialPage < initialPageCount)
+      try {
+        sessionStorage.removeItem(dataKey)
+        sessionStorage.removeItem(scrollKey)
+      } catch { /* ignore */ }
     }
-  }, [filterKey, items, initialPage, initialPageCount])
+  }, [filterKey, items, initialPage, initialPageCount, dataKey, scrollKey])
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return
@@ -94,6 +230,8 @@ const ProductList: React.FC<ProductListProps> = ({
         categoryId,
         priceFilter,
         sortBy,
+        fileType,
+        size,
         isFeatured
       })
 
@@ -114,7 +252,7 @@ const ProductList: React.FC<ProductListProps> = ({
     } finally {
       setLoading(false)
     }
-  }, [page, loading, hasMore, categoryId, priceFilter, sortBy, isFeatured, pageSize])
+  }, [page, loading, hasMore, categoryId, priceFilter, sortBy, fileType, size, isFeatured, pageSize])
 
   // Intersection Observer for infinite scroll (only when mode is 'infinite')
   useEffect(() => {

@@ -5,13 +5,11 @@ import usePreviewModal from "@/hooks/use-preview-modal"
 import Modal from "./ui/modal"
 import Gallery from "./gallery"
 import { DownloadButton } from "@/components/ui/download-button"
-import { Check, Download, Coins, Shield, Lock, Sparkles, ArrowRight, Ruler, HardDrive } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@clerk/nextjs"
 import { useCredits } from "@/hooks/use-credits"
 import { useFileSize } from "@/hooks/use-file-size"
 import { formatBytes } from "@/lib/utils"
-import { getProductDimensions } from "@/lib/product-specs"
 
 // ─── Category IDs ────────────────────────────────────────────────────────────
 const CAT_MOCKUP    = "960cb6f5-8dc1-48cf-900f-aa60dd8ac66a"
@@ -107,8 +105,14 @@ const PreviewModal = () => {
   const catId         = product.category?.id ?? ""
   const specs         = SPECS[catId] ?? []
   const fileSizeLabel = formatBytes(fileSizeBytes)
-  const dimensions    = getProductDimensions(catId)
   const features      = FEATURES[catId] ?? DEFAULT_FEATURES
+
+  // Spec rows + dynamic file size & downloads appended into the same table
+  const tableRows = [
+    ...specs,
+    ...(fileSizeLabel ? [{ label: "File Size", value: fileSizeLabel }] : []),
+    { label: "Downloads", value: getDisplayDownloadCount(product.id, product.downloadCount) },
+  ]
   const isPackaging   = catId === CAT_PACKAGING
 
   const currentBalance  = mounted && isSignedIn ? (balance ?? 0) : 0
@@ -122,13 +126,10 @@ const PreviewModal = () => {
         <div className="md:col-span-7 flex flex-col gap-3">
           <Gallery data={product} />
 
-          {/* Feature checklist — below image */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground">
+          {/* What's included — clean text, no icons */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-muted-foreground">
             {features.map((f) => (
-              <div key={f} className="flex items-start gap-1.5">
-                <Check className="h-3.5 w-3.5 shrink-0 text-primary mt-0.5" />
-                <span>{f}</span>
-              </div>
+              <span key={f} className="leading-snug">{f}</span>
             ))}
           </div>
         </div>
@@ -137,32 +138,32 @@ const PreviewModal = () => {
         <div className="md:col-span-5 flex flex-col gap-3">
           {/* Title + badge */}
           <div>
-            <h2 className="text-lg font-bold text-foreground leading-snug">{product.name}</h2>
-            <div className="flex items-center gap-2 mt-1.5">
+            <h2 className="text-xl font-bold text-foreground leading-snug">{product.name}</h2>
+            <div className="flex items-center gap-2 mt-2">
               {isFree ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-                  <Download className="h-3.5 w-3.5" /> Free
+                <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                  Free
                 </span>
               ) : (
                 <>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-                    <Sparkles className="h-3.5 w-3.5" /> Premium
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                    Premium
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20 dark:text-amber-400">
-                    <Coins className="h-3.5 w-3.5" /> {productPrice} Credits
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20 dark:text-amber-400">
+                    {productPrice} Credits
                   </span>
                 </>
               )}
             </div>
           </div>
 
-          {/* Spec table */}
-          {specs.length > 0 && (
+          {/* Spec table (includes file size) */}
+          {tableRows.length > 0 && (
             <div className="border border-border rounded-xl overflow-hidden">
-              {specs.map(({ label, value }, i) => (
+              {tableRows.map(({ label, value }, i) => (
                 <div
                   key={label}
-                  className={`grid grid-cols-2 gap-3 px-3 py-1.5 text-xs ${i < specs.length - 1 ? "border-b border-border" : ""}`}
+                  className={`grid grid-cols-2 gap-3 px-3 py-1.5 text-xs ${i < tableRows.length - 1 ? "border-b border-border" : ""}`}
                 >
                   <span className="font-medium text-foreground">{label}</span>
                   <span className="text-muted-foreground text-right">{value}</span>
@@ -187,24 +188,6 @@ const PreviewModal = () => {
               fileSizeBytes={fileSizeBytes ?? undefined}
             />
 
-            {/* File info chips */}
-            {(dimensions || fileSizeLabel) && (
-              <div className="flex items-center justify-center gap-1.5 pt-0.5">
-                {dimensions && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-muted/60 text-muted-foreground border border-border/60">
-                    <Ruler className="h-3 w-3" />
-                    {dimensions}
-                  </span>
-                )}
-                {fileSizeLabel && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-muted/60 text-muted-foreground border border-border/60">
-                    <HardDrive className="h-3 w-3" />
-                    {fileSizeLabel}
-                  </span>
-                )}
-              </div>
-            )}
-
             {/* Credit balance — signed-in + premium only */}
             {mounted && isSignedIn && !isFree && (
               <div className="flex items-center justify-center gap-1.5 flex-wrap text-xs text-muted-foreground">
@@ -213,50 +196,33 @@ const PreviewModal = () => {
                 {creditsNeeded > 0 ? (
                   <p className="flex items-center gap-1">
                     Need <span className="font-semibold text-orange-500">{creditsNeeded} more</span>
-                    <ArrowRight className="h-3 w-3" />
                     <Link href="/credits" className="font-semibold text-primary hover:underline">Buy Credits</Link>
                   </p>
                 ) : (
-                  <p className="text-primary font-medium">You have enough credits ✓</p>
+                  <p className="text-primary font-medium">You have enough credits</p>
                 )}
               </div>
             )}
           </div>
 
-          {/* Trust row */}
-          <div className="border-t border-border pt-2 flex items-center justify-between gap-2 text-[10px] text-muted-foreground flex-wrap">
-            <span className="flex items-center gap-1">
-              <Download className="h-3 w-3" />
-              {getDisplayDownloadCount(product.id, product.downloadCount)} downloads
-            </span>
-            <span className="flex items-center gap-1">
-              <Shield className="h-3 w-3" />
-              Secure checkout by Stripe
-            </span>
-            <span className="flex items-center gap-1">
-              <Lock className="h-3 w-3" />
-              Login by Clerk
-            </span>
-          </div>
-
-          {/* Full Artwork — packaging only */}
-          {isPackaging && (
-            <div className="border-t border-border pt-2">
-              <p className="text-sm font-bold tracking-widest uppercase text-foreground flex items-center gap-1">
-                Full Artwork <ArrowRight className="h-3.5 w-3.5" />
-              </p>
-            </div>
-          )}
-
-          {/* View full page link */}
-          <div className="border-t border-border pt-2">
+          {/* Links row */}
+          <div className="border-t border-border pt-2.5 flex items-center gap-4">
             <Link
               href={`/products/${product.slug ?? product.id}`}
               onClick={previewModal.onClose}
-              className="text-sm font-semibold text-primary hover:underline flex items-center gap-1"
+              className="text-sm font-semibold text-primary hover:underline"
             >
-              View full details <ArrowRight className="h-3.5 w-3.5" />
+              View full details
             </Link>
+            {isPackaging && (
+              <Link
+                href={`/products/${product.slug ?? product.id}`}
+                onClick={previewModal.onClose}
+                className="text-sm font-semibold text-foreground hover:underline"
+              >
+                Full Artwork
+              </Link>
+            )}
           </div>
         </div>
 

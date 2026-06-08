@@ -1,5 +1,4 @@
 import { Suspense } from "react"
-import Container from "@/components/ui/container"
 import { MobileNavbarSection } from "./mobile-navbar-section"
 import { DesktopNavbarSection } from "./desktop-navbar-section"
 import type { Category } from "@/types"
@@ -16,13 +15,11 @@ const Navbar = ({ categories }: NavbarProps) => {
   )
 
   return (
-    <div className="overflow-visible pt-1.5 pb-3 bg-background/95 backdrop-blur-lg shadow-sm">
-      <Container>
-        <Suspense fallback={<div className="md:hidden h-16" />}>
-          <MobileNavbarSection categories={visibleCategories} />
-        </Suspense>
-        <DesktopNavbarSection />
-      </Container>
+    <div className="w-full overflow-visible bg-background/95 backdrop-blur-lg shadow-sm">
+      <Suspense fallback={<div className="md:hidden h-16" />}>
+        <MobileNavbarSection categories={visibleCategories} />
+      </Suspense>
+      <DesktopNavbarSection categories={visibleCategories} />
     </div>
   )
 }

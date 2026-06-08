@@ -189,12 +189,8 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "Editable vector assets for packaging, labels, icons, and layouts—structured for consistency and fast production work.",
     primaryCTA: { label: "Browse Vectors", href: "/category/vectors" },
     secondaryCTA: { label: "View Newest", href: "/category/vectors?sortBy=newest" },
-    images: [
-      "https://Brandex-cdn.b-cdn.net/hero/vectors-1.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/vectors-2.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/vectors-3.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/vectors-4.jpg",
-    ],
+    // No hero collage — placeholder images excluded (renders a clean text hero)
+    images: [],
     tileStyle: "contain",
     iconRow: [
       { icon: "layers", label: "Scalable vectors" },
@@ -209,12 +205,8 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "Fully layered files with precision smart objects and production-structured organization—made for real-world production.",
     primaryCTA: { label: "Browse PSD Lab", href: "/category/psd-lab" },
     secondaryCTA: { label: "View Newest", href: "/category/psd-lab?sortBy=newest" },
-    images: [
-      "https://Brandex-cdn.b-cdn.net/hero/psd-lab-1.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/psd-lab-2.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/psd-lab-3.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/psd-lab-4.jpg",
-    ],
+    // No hero collage — placeholder images excluded (renders a clean text hero)
+    images: [],
     iconRow: [
       { icon: "layers", label: "Layered PSD" },
       { icon: "zap", label: "Smart objects" },
@@ -228,12 +220,8 @@ export const heroConfigs: Record<HeroPageKey, HeroConfig> = {
       "High-resolution motion elements designed for modern creative—clean, flexible, and ready to drop into edits.",
     primaryCTA: { label: "Browse Motion", href: "/category/motion" },
     secondaryCTA: { label: "View Newest", href: "/category/motion?sortBy=newest" },
-    images: [
-      "https://Brandex-cdn.b-cdn.net/hero/motion-1.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/motion-2.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/motion-3.jpg",
-      "https://Brandex-cdn.b-cdn.net/hero/motion-4.jpg",
-    ],
+    // Placeholder images excluded; getHeroConfigById borrows a real photo pool below
+    images: [],
     iconRow: [
       { icon: "download", label: "Motion assets" },
       { icon: "zap", label: "Instant download" },

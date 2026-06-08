@@ -158,7 +158,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
             <Link
               key={keyword}
               href={`/products/search?query=${encodeURIComponent(keyword)}`}
-              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs text-muted-foreground bg-muted/60 hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="inline-flex items-center px-2.5 py-1 rounded-full text-xs text-muted-foreground bg-[#F4F4F4] hover:bg-[#ededed] hover:text-foreground dark:bg-muted/40 dark:hover:bg-muted/60 transition-colors"
             >
               {keyword}
             </Link>
@@ -176,7 +176,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       )}
 
       {/* Price & Download — hero card */}
-      <div className="relative rounded-2xl border border-border bg-card p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06)]">
+      <div className="relative rounded-2xl border border-border/60 bg-card p-5">
         {/* Price / type row */}
         <div className="flex items-end justify-between gap-3 mb-4">
           <div className="flex flex-col">
@@ -186,7 +186,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                   Price
                 </span>
                 <div className="flex items-baseline gap-1.5">
-                  <Coins className="h-5 w-5 text-amber-500 self-center" />
+                  <Coins className="h-5 w-5 text-foreground/50 self-center" />
                   <span className="text-3xl font-bold text-foreground leading-none tracking-tight">
                     {productPrice}
                   </span>
@@ -210,8 +210,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           <span
             className={
               isPremiumProduct
-                ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-gradient-to-r from-amber-500/15 to-amber-500/5 text-amber-600 dark:text-amber-400 border border-amber-500/20"
-                : "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20"
+                ? "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-foreground/6 text-foreground/70"
+                : "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-primary/10 text-primary"
             }
           >
             {isPremiumProduct ? (
@@ -274,7 +274,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
                 <span className="text-muted-foreground/40">·</span>
                 <span>
                   Need{" "}
-                  <span className="font-semibold text-amber-600 dark:text-amber-400">
+                  <span className="font-semibold text-foreground">
                     {creditsNeeded} more
                   </span>
                 </span>
@@ -303,21 +303,21 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         </h2>
         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 text-sm text-foreground">
           <li className="flex items-start gap-2">
-            <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <Check className="h-4 w-4 shrink-0 text-foreground/45 mt-0.5" />
             <span>{FEATURES[0]}</span>
           </li>
           <li className="flex items-start gap-2">
-            <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <Check className="h-4 w-4 shrink-0 text-foreground/45 mt-0.5" />
             <span>{FEATURES[2]}</span>
           </li>
           {!isFreeProduct && (
             <li className="flex items-start gap-2">
-              <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+              <Check className="h-4 w-4 shrink-0 text-foreground/45 mt-0.5" />
               <span>{FEATURES[1]}</span>
             </li>
           )}
           <li className="flex items-start gap-2">
-            <Check className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+            <Check className="h-4 w-4 shrink-0 text-foreground/45 mt-0.5" />
             <span>{FEATURES[3]}</span>
           </li>
         </ul>

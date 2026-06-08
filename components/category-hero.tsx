@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { useState } from "react"
 import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
 
@@ -29,10 +30,14 @@ export function HeroSection({ config, compact }: HeroSectionProps) {
     ? [...pickRandom(tallImages, 2), ...pickRandom(squareImages, 2)]
     : images
 
+  // Only keep tiles that have a real URL; when none, render a clean text-only hero
+  const collageImages = resolvedImages.filter((url) => Boolean(url?.trim()))
+  const hasImages = collageImages.length > 0
+
   return (
     <section className="w-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-background.png')" }}>
       <div className={`mx-auto max-w-[1320px] w-full px-4 sm:px-6 lg:px-8 pt-16 ${compact ? "pb-16" : "pb-16"}`}>
-        <div className="grid lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-12 items-stretch">
+        <div className={`grid gap-8 lg:gap-12 items-stretch ${hasImages ? "lg:grid-cols-[1fr_1.1fr]" : "lg:grid-cols-1"}`}>
 
           {/* Left: Text */}
           <motion.div
@@ -93,14 +98,16 @@ export function HeroSection({ config, compact }: HeroSectionProps) {
             )}
           </motion.div>
 
-          {/* Right: Image collage — stacks below on mobile */}
-          <motion.div
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
-          >
-            <ImageCollage images={resolvedImages} tileStyle={tileStyle} />
-          </motion.div>
+          {/* Right: Image collage — stacks below on mobile; omitted entirely when there are no images */}
+          {hasImages && (
+            <motion.div
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
+            >
+              <ImageCollage images={collageImages} tileStyle={tileStyle} />
+            </motion.div>
+          )}
 
         </div>
 
@@ -123,22 +130,27 @@ interface ImageCollageProps {
 }
 
 function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
-  // Only use tiles that have a real image URL
-  const tiles = images.filter((url) => Boolean(url?.trim())).slice(0, 4)
+  // Exclude any image that fails to load so a broken URL never shows a broken tile
+  const [failed, setFailed] = useState<Set<string>>(new Set())
+  const markFailed = (src: string) =>
+    setFailed((prev) => (prev.has(src) ? prev : new Set(prev).add(src)))
+
+  // Only use tiles that have a real image URL and haven't failed to load
+  const tiles = images.filter((url) => Boolean(url?.trim()) && !failed.has(url)).slice(0, 4)
 
   if (tiles.length === 0) return null
 
   if (tiles.length === 1) {
     return (
-      <Tile src={tiles[0]} className="aspect-4/3 w-full" priority sizes="(max-width: 1024px) 100vw, 50vw" tileStyle={tileStyle} />
+      <Tile src={tiles[0]} className="aspect-4/3 w-full" priority sizes="(max-width: 1024px) 100vw, 50vw" tileStyle={tileStyle} onFail={markFailed} />
     )
   }
 
   if (tiles.length === 2) {
     return (
       <div className="grid grid-cols-2 gap-3 aspect-2/1">
-        <Tile src={tiles[0]} className="h-full" priority sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
-        <Tile src={tiles[1]} className="h-full" sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} />
+        <Tile src={tiles[0]} className="h-full" priority sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} onFail={markFailed} />
+        <Tile src={tiles[1]} className="h-full" sizes="(max-width: 1024px) 50vw, 25vw" tileStyle={tileStyle} onFail={markFailed} />
       </div>
     )
   }
@@ -152,16 +164,19 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
           priority
           sizes="(max-width: 1024px) 50vw, 25vw"
           tileStyle={tileStyle}
+          onFail={markFailed}
         />
         <Tile
           src={tiles[1]}
           sizes="(max-width: 1024px) 50vw, 25vw"
           tileStyle={tileStyle}
+          onFail={markFailed}
         />
         <Tile
           src={tiles[2]}
           sizes="(max-width: 1024px) 50vw, 25vw"
           tileStyle={tileStyle}
+          onFail={markFailed}
         />
       </div>
     )
@@ -176,22 +191,26 @@ function ImageCollage({ images, tileStyle = "cover" }: ImageCollageProps) {
         priority
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
+        onFail={markFailed}
       />
       <Tile
         src={tiles[1]}
         className="row-span-2"
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
+        onFail={markFailed}
       />
       <Tile
         src={tiles[2]}
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
+        onFail={markFailed}
       />
       <Tile
         src={tiles[3]}
         sizes="(max-width: 1024px) 33vw, 17vw"
         tileStyle={tileStyle}
+        onFail={markFailed}
       />
     </div>
   )
@@ -203,9 +222,11 @@ interface TileProps {
   priority?: boolean
   sizes?: string
   tileStyle?: "cover" | "contain"
+  /** Called with the src when the image fails to load, so the collage can drop it */
+  onFail?: (src: string) => void
 }
 
-function Tile({ src, className = "", priority, sizes, tileStyle = "cover" }: TileProps) {
+function Tile({ src, className = "", priority, sizes, tileStyle = "cover", onFail }: TileProps) {
   const hasImage = Boolean(src?.trim())
 
   const frameClasses = `relative h-full w-full rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 shadow-[8px_12px_24px_rgba(0,40,25,0.45),14px_20px_50px_rgba(0,40,25,0.25)] ${className}`
@@ -220,6 +241,7 @@ function Tile({ src, className = "", priority, sizes, tileStyle = "cover" }: Til
           className={tileStyle === "contain" ? "object-contain p-2" : "object-cover"}
           sizes={sizes}
           priority={priority}
+          onError={() => onFail?.(src)}
         />
       )}
     </div>

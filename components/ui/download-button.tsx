@@ -790,8 +790,8 @@ export const DownloadButton = ({
           <div className="space-y-3 py-1">
             {creditCost !== undefined && creditCost > 0 ? (
               <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-500/10">
-                  <Coins className="h-4 w-4 text-amber-500" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-foreground/5 dark:bg-foreground/10">
+                  <Coins className="h-4 w-4 text-foreground/60" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">
@@ -812,8 +812,8 @@ export const DownloadButton = ({
             )}
             {fileSizeBytes != null && fileSizeBytes > 0 && (
               <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                  <FileArchive className="h-4 w-4 text-primary" />
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-foreground/5 dark:bg-foreground/10">
+                  <FileArchive className="h-4 w-4 text-foreground/60" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">

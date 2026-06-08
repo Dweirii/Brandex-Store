@@ -1,7 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
-import { useTransition } from "react"
+import { useSearchParams, usePathname } from "next/navigation"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Check, ArrowUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useArchiveFilter } from "@/components/archive/archive-filter-provider"
 
 interface SortFilterProps {
   className?: string
@@ -29,36 +29,27 @@ const sortOptions: SortOption[] = [
 ]
 
 export default function SortFilter({ className }: SortFilterProps) {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
-  const [isPending, startTransition] = useTransition()
+  const { navigate, isPending } = useArchiveFilter()
 
   const currentSort = searchParams.get('sortBy') || 'newest'
   const currentSortLabel = sortOptions.find(opt => opt.value === currentSort)?.label || "Newest"
 
   const handleSortChange = (sortValue: string) => {
-    startTransition(() => {
-      try {
-        const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams.toString())
 
-        if (sortValue === 'newest') {
-          params.delete('sortBy')
-        } else {
-          params.set('sortBy', sortValue)
-        }
+    if (sortValue === 'newest') {
+      params.delete('sortBy')
+    } else {
+      params.set('sortBy', sortValue)
+    }
 
-        // Reset to first page when sort changes
-        params.delete('page')
+    // Reset to first page when sort changes
+    params.delete('page')
 
-        const queryString = params.toString()
-        const newUrl = queryString ? `${pathname}?${queryString}` : pathname
-
-        router.push(newUrl)
-      } catch (error) {
-        console.error('Error applying sort filter:', error)
-      }
-    })
+    const queryString = params.toString()
+    navigate(queryString ? `${pathname}?${queryString}` : pathname)
   }
 
   return (
@@ -67,7 +58,7 @@ export default function SortFilter({ className }: SortFilterProps) {
         <button
           disabled={isPending}
           className={cn(
-            "h-9 px-4 text-sm font-semibold rounded-lg border border-border/60 bg-muted/30 hover:bg-muted/50 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 sm:min-w-[160px]",
+            "h-9 px-4 text-sm font-semibold rounded-full border border-border/60 bg-[#F4F4F4] hover:bg-[#ededed] dark:bg-muted/30 dark:hover:bg-muted/50 transition-all duration-300 flex items-center gap-1.5 sm:gap-2 sm:min-w-[160px]",
             isPending && "opacity-50 cursor-not-allowed",
             className
           )}

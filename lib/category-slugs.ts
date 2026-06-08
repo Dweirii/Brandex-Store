@@ -7,6 +7,19 @@
  * already imports this; routing/SEO utils shouldn't depend on hero images.
  */
 
+/**
+ * Category IDs hidden from the storefront. Products stay in the DB and admin —
+ * they just don't appear on the store. To re-show, remove the ID and redeploy.
+ */
+export const HIDDEN_CATEGORY_IDS: readonly string[] = [
+    "6214c586-a7c7-4f71-98ab-e1bc147a07f4", // IMAGES (~63K products) — hidden 2026-05-31
+];
+
+/** True if the given category ID is hidden from the storefront. */
+export function isHiddenCategory(id: string | undefined | null): boolean {
+    return !!id && HIDDEN_CATEGORY_IDS.includes(id);
+}
+
 /** UUID → readable URL slug */
 export const CATEGORY_SLUG_MAP: Record<string, string> = {
     "fd995552-baa8-4b86-bf7e-0acbefd43fd6": "packaging",
@@ -28,13 +41,12 @@ export const CATEGORY_GROUPS: Record<string, { name: string; ids: string[]; subt
     },
     "graphics": {
         name: "Graphics",
+        // IMAGES (6214c586…) intentionally omitted — hidden from storefront via HIDDEN_CATEGORY_IDS
         ids: [
-            "6214c586-a7c7-4f71-98ab-e1bc147a07f4",
             "b0469986-6cb9-4a35-8cd6-6cc9ec51a561",
             "1364f5f9-6f45-48fd-8cd1-09815e1606c0"
         ],
         subtabs: [
-            { label: "Images", id: "6214c586-a7c7-4f71-98ab-e1bc147a07f4", slug: "images" },
             { label: "Vectors", id: "b0469986-6cb9-4a35-8cd6-6cc9ec51a561", slug: "vectors" },
             { label: "PSD", id: "1364f5f9-6f45-48fd-8cd1-09815e1606c0", slug: "psd-lab" }
         ]
@@ -44,7 +56,7 @@ export const CATEGORY_GROUPS: Record<string, { name: string; ids: string[]; subt
 /** Map individual slugs to their group slugs */
 export const SLUG_TO_GROUP_MAP: Record<string, string> = {
     "mockup-studio": "mockups",
-    "images": "graphics",
+    // "images" intentionally omitted — IMAGES is hidden from the storefront
     "vectors": "graphics",
     "psd-lab": "graphics",
 };

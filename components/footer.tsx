@@ -26,7 +26,7 @@ const quickLinks = [
 const socialLinks = [
   {
     label: "X (Twitter)",
-    href: "https://x.com/brandexme",
+    href: "https://x.com/BRANDEXME_LLC",
     icon: XIcon,
   },
   {

@@ -1,20 +1,10 @@
 import { Metadata } from "next"
 import { Suspense } from "react"
-import Link from "next/link"
-import { Package, Layers, Sparkles, Play, ArrowRight } from "lucide-react"
 
-import getProducts from "@/actions/get-products"
-import ProductList from "@/components/product-list"
-import ProductCard from "@/components/ui/product-card"
-import Container from "@/components/ui/container"
-import { ProductListSkeleton } from "@/components/product-list-skeleton"
+import { loadArchiveProducts } from "@/actions/load-archive-products"
+import ArchiveView from "@/components/archive/archive-view"
+import ArchiveSkeleton from "@/components/archive/archive-skeleton"
 import { ScrollToTop } from "@/components/scroll-to-top"
-import PriceFilter from "@/components/price-filter"
-import SortFilter from "@/components/sort-filter"
-import { RecentlyViewed } from "@/components/recently-viewed"
-import { HeroSection } from "@/components/category-hero"
-import { heroConfigs } from "@/lib/heroConfig"
-import { shuffle } from "@/lib/utils"
 import {
   generateHomeMetadata,
   generateWebsiteStructuredData,
@@ -23,82 +13,47 @@ import {
 
 export const metadata: Metadata = generateHomeMetadata()
 
-
-const CATEGORY_LINKS = [
-  {
-    name: "Packaging",
-    description: "Print-ready templates with dielines",
-    href: "/category/packaging",
-    icon: Package,
-  },
-  {
-    name: "Mockups",
-    description: "Smart-object PSD scenes",
-    href: "/category/mockups",
-    icon: Layers,
-  },
-  {
-    name: "Graphics",
-    description: "Images, vectors & PSD assets",
-    href: "/category/graphics",
-    icon: Sparkles,
-  },
-  {
-    name: "Motion Library",
-    description: "Ready-to-drop video elements",
-    href: "/category/motion-library",
-    icon: Play,
-  },
-] as const
+// Items per page fetched as the user scrolls (small = fast first paint).
+const PAGE_SIZE = 24
 
 interface HomePageProps {
-  searchParams: Promise<{ priceFilter?: "paid" | "free" | "all"; sortBy?: string }>
+  searchParams: Promise<{
+    priceFilter?: "paid" | "free" | "all"
+    sortBy?: string
+  }>
 }
 
-async function FeaturedProducts({
+async function HomeArchive({
   priceFilter,
   sortBy,
 }: {
   priceFilter?: "paid" | "free" | "all"
   sortBy?: string
 }) {
-  try {
-    const { products, total, page, pageCount } = await getProducts({
-      page: 1,
-      limit: 24,
-      priceFilter,
-      sortBy,
-    })
+  const { products, pageCount, total } = await loadArchiveProducts({
+    scope: "home",
+    page: 1,
+    limit: PAGE_SIZE,
+    priceFilter,
+    sortBy,
+  })
 
-    // Shuffle products on "newest" (default) so the grid feels fresh every visit
-    const displayProducts = (!sortBy || sortBy === "newest") ? shuffle(products) : products
-
-    return (
-      <ProductList
-        title=""
-        items={displayProducts}
-        total={total}
-        page={page}
-        pageCount={pageCount}
-        priceFilter={priceFilter}
-        sortBy={sortBy}
-      />
-    )
-  } catch {
-    return (
-      <div className="text-center py-12">
-        <p className="text-sm text-muted-foreground">Unable to load products. Please try again later.</p>
-      </div>
-    )
-  }
+  return (
+    <ArchiveView
+      heading="All resources"
+      products={products}
+      pageCount={pageCount}
+      total={total}
+      scope="home"
+      pageSize={PAGE_SIZE}
+      priceFilter={priceFilter}
+      sortBy={sortBy}
+    />
+  )
 }
 
 const HomePage = async ({ searchParams }: HomePageProps) => {
   const { priceFilter, sortBy } = await searchParams
-
-  const newReleasesData = await getProducts({ sortBy: "newest", limit: 8 })
-
-  const homeHeroConfig = heroConfigs.home
 
   const websiteStructuredData = generateWebsiteStructuredData()
   const organizationStructuredData = generateOrganizationStructuredData()
@@ -114,84 +69,20 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationStructuredData) }}
       />
 
-      {/* Hero — mixed thumbnails, library-wide messaging */}
-      <HeroSection config={homeHeroConfig} />
-
-      <Container>
-        <div className="min-h-screen pt-12 pb-6 sm:pb-8">
-          <div className="px-4 sm:px-6 lg:px-8">
-
-            {/* ── Category Quick Links ────────────────────────────────── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
-              {CATEGORY_LINKS.map((cat) => {
-                const Icon = cat.icon
-                return (
-                  <Link
-                    key={cat.href}
-                    href={cat.href}
-                    className="group flex items-center gap-3.5 rounded-xl border border-border bg-background p-4 sm:p-5 hover:border-primary/50 transition-all duration-200"
-                  >
-                    <div className="flex items-center justify-center w-10 h-10 shrink-0 rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors duration-200">
-                      <Icon className="w-4.5 h-4.5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{cat.name}</p>
-                      <p className="text-[11px] text-muted-foreground leading-snug mt-0.5 truncate">{cat.description}</p>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
-                  </Link>
-                )
-              })}
+      <main className="min-h-screen bg-[#FAFAFA] pb-10 dark:bg-background">
+        <Suspense
+          key="home-archive"
+          fallback={
+            <div className="w-full px-4 pt-8 sm:px-6 lg:px-8">
+              <ArchiveSkeleton withPills={false} />
             </div>
+          }
+        >
+          <HomeArchive priceFilter={priceFilter} sortBy={sortBy || "newest"} />
+        </Suspense>
+      </main>
 
-            {/* ── Just Added ──────────────────────────────────────────── */}
-            {newReleasesData.products.length > 0 && (
-              <div className="mb-10">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-foreground">Just Added</h2>
-                  <Link
-                    href="/?sortBy=newest"
-                    className="text-[12px] text-primary font-medium hover:underline flex items-center gap-1"
-                  >
-                    Browse All <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                  {shuffle(newReleasesData.products).slice(0, 4).map((product) => (
-                    <ProductCard key={product.id} data={product} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ── Featured Product Grid header + filters ──────────────── */}
-            <div className="flex items-center gap-3 mb-6 py-4 sm:py-5">
-              <h2 className="text-xl font-bold text-foreground flex-1">All Assets</h2>
-              <div className="flex flex-row items-center gap-2">
-                <PriceFilter />
-                <SortFilter />
-              </div>
-            </div>
-
-          </div>
-
-          {/* ── Product Grid ────────────────────────────────────────── */}
-          <div id="product-grid" className="px-4 sm:px-6 lg:px-8">
-            <Suspense
-              key={`${priceFilter || "all"}-${sortBy || "newest"}`}
-              fallback={<ProductListSkeleton title="" />}
-            >
-              <FeaturedProducts
-                priceFilter={priceFilter}
-                sortBy={sortBy || "newest"}
-              />
-            </Suspense>
-          </div>
-        </div>
-
-        <RecentlyViewed />
-        <ScrollToTop />
-      </Container>
+      <ScrollToTop />
     </>
   )
 }

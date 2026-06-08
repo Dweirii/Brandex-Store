@@ -23,7 +23,8 @@ import {
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
 
-export function UserDropdown() {
+export function UserDropdown({ size = "default" }: { size?: "default" | "lg" }) {
+  const avatarSize = size === "lg" ? "h-10 w-10" : "h-8 w-8 sm:h-9 sm:w-9"
   const { user, isLoaded } = useUser()
   const { signOut, openUserProfile } = useClerk()
   const { setTheme } = useTheme()
@@ -65,10 +66,10 @@ export function UserDropdown() {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex-shrink-0 transition-all duration-200"
+            className="rounded-full focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:ring-offset-2 shrink-0 transition-all duration-200"
             aria-label="User menu"
           >
-            <Avatar className="cursor-pointer border-2 border-border hover:border-primary hover:shadow-md transition-all duration-200 h-8 w-8 sm:h-9 sm:w-9">
+            <Avatar className={`cursor-pointer border-2 border-border hover:border-foreground/40 hover:shadow-md transition-all duration-200 ${avatarSize}`}>
               <AvatarImage
                 src={user?.imageUrl || "/placeholder.svg"}
                 alt={`${user?.firstName || 'User'}'s avatar`}

@@ -5,11 +5,16 @@ const URL = `${process.env.NEXT_PUBLIC_API_URL}/products`
 
 interface Query {
   categoryId?: string
+  subcategoryId?: string
   isFeatured?: boolean
   page?: number
   limit?: number
   priceFilter?: 'paid' | 'free' | 'all'
   sortBy?: string
+  /** Comma-separated canonical file types, e.g. "PSD,SVG" */
+  fileType?: string
+  /** Comma-separated size buckets, e.g. "small,large" */
+  size?: string
 }
 
 interface ProductResponse {
@@ -25,11 +30,14 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
       url: URL,
       query: {
         categoryId: query.categoryId || undefined,
+        subcategoryId: query.subcategoryId || undefined,
         isFeatured: query.isFeatured,
         page: query.page || 1,
         limit: query.limit || 24,
         priceFilter: query.priceFilter || undefined,
         sortBy: query.sortBy || undefined,
+        fileType: query.fileType || undefined,
+        size: query.size || undefined,
       },
     })
 

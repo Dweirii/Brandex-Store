@@ -8,6 +8,7 @@ import Link from "next/link"
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void
+    fbq?: (...args: unknown[]) => void
   }
 }
 
@@ -29,6 +30,16 @@ function pushGtagConsent(analytics: boolean, marketing: boolean) {
   })
 }
 
+function pushMetaConsent(marketing: boolean) {
+  if (typeof window === "undefined" || !window.fbq) return
+  window.fbq("consent", marketing ? "grant" : "revoke")
+}
+
+function applyConsent(analytics: boolean, marketing: boolean) {
+  pushGtagConsent(analytics, marketing)
+  pushMetaConsent(marketing)
+}
+
 function readStoredConsent(): StoredConsent | null {
   try {
     const raw = localStorage.getItem(CONSENT_KEY)
@@ -46,7 +57,7 @@ function persistConsent(analytics: boolean, marketing: boolean) {
     timestamp: new Date().toISOString(),
   }
   localStorage.setItem(CONSENT_KEY, JSON.stringify(record))
-  pushGtagConsent(analytics, marketing)
+  applyConsent(analytics, marketing)
 }
 
 // ─── Toggle switch ─────────────────────────────────────────────────────────────
@@ -89,7 +100,7 @@ export function CookieConsent() {
   useEffect(() => {
     const stored = readStoredConsent()
     if (stored) {
-      pushGtagConsent(stored.analytics, stored.marketing)
+      applyConsent(stored.analytics, stored.marketing)
       return
     }
     const t = setTimeout(() => setShow(true), 600)
@@ -181,7 +192,7 @@ export function CookieConsent() {
                 <div>
                   <p className="text-sm font-medium">Marketing Cookies</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Used for conversion measurement via Google Ads. We do not run retargeting ads.
+                    Used for conversion measurement and audience building via Google Ads and the Meta Pixel.
                   </p>
                 </div>
                 <Toggle
@@ -216,8 +227,8 @@ export function CookieConsent() {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold mb-1">We use cookies</p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                We use cookies to improve your experience, measure site performance, and support Google
-                Ads conversion measurement. Read our{" "}
+                We use cookies to improve your experience, measure site performance, and support
+                Google Ads and Meta Pixel conversion measurement. Read our{" "}
                 <Link href="/privacy-policy" className="text-primary underline underline-offset-2">
                   Privacy Policy
                 </Link>

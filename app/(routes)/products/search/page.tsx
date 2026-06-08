@@ -14,6 +14,7 @@ import Container from "@/components/ui/container"
 import { getStoredImageData } from "@/components/image-search-button"
 import { SearchLoadingState } from "@/components/search-loading-state"
 import PriceFilter from "@/components/price-filter"
+import { FilterBar } from "@/components/filter-bar"
 
 interface SearchResponse {
   results: Product[]
@@ -167,7 +168,7 @@ export default function ProductSearchPage() {
   )
 
   const performSearch = useCallback(
-    async (searchQuery: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID, priceFilter: string = "all") => {
+    async (searchQuery: string, page: number = 1, categoryId: string = DEFAULT_CATEGORY_ID, priceFilter: string = "all", fileType: string = "", size: string = "") => {
       // Allow searching even if query is short if a specific category is selected
       // But for global search, we still want a minimum query length
       if (!searchQuery.trim() && categoryId === DEFAULT_CATEGORY_ID) {
@@ -205,6 +206,8 @@ export default function ProductSearchPage() {
         if (priceFilter && priceFilter !== "all") {
           params.set("priceFilter", priceFilter)
         }
+        if (fileType) params.set("fileType", fileType)
+        if (size) params.set("size", size)
 
         const res = await fetch(`${apiUrl}/products/search?${params}`, {
           signal: controller.signal,
@@ -244,6 +247,8 @@ export default function ProductSearchPage() {
     const currentPage = parseInt(searchParams.get("page") || "1", 10)
     const currentCategoryId = searchParams.get("categoryId") || DEFAULT_CATEGORY_ID
     const currentPriceFilter = searchParams.get("priceFilter") || "all"
+    const currentFileType = searchParams.get("fileType") || ""
+    const currentSize = searchParams.get("size") || ""
     const imageSearchParam = searchParams.get("imageSearch")
     const imageId = searchParams.get("imageId")
 
@@ -272,7 +277,7 @@ export default function ProductSearchPage() {
 
     if (currentQuery.trim().length >= 2) {
       // No debounce here - the search bar already debounces before updating the URL
-      performSearch(currentQuery, currentPage, currentCategoryId, currentPriceFilter)
+      performSearch(currentQuery, currentPage, currentCategoryId, currentPriceFilter, currentFileType, currentSize)
     } else if (currentQuery.trim().length === 0 && currentCategoryId === DEFAULT_CATEGORY_ID) {
       setProducts([])
       setHasSearched(false)
@@ -352,6 +357,13 @@ export default function ProductSearchPage() {
               </span>
             )}
           </div>
+
+          {/* Discovery filters */}
+          {(queryParam || hasSearched) && (
+            <div className="mt-1 mb-2">
+              <FilterBar />
+            </div>
+          )}
 
           {!queryParam && !hasSearched && !isImageSearch && (
             <div className="text-center py-12 text-muted-foreground border border-dashed rounded-2xl bg-muted/5 mt-4">
