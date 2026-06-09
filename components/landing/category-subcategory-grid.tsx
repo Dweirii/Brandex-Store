@@ -30,7 +30,10 @@ export default function CategorySubcategoryGrid({ subcategories, hrefBase }: Cat
               src={s.image}
               alt={s.name}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              width={640}
+              height={800}
               loading="lazy"
+              decoding="async"
               draggable={false}
             />
           ) : (

@@ -102,7 +102,7 @@ export default function AboutPage() {
             <div className="flex items-center gap-3 shrink-0">
               <Button
                 asChild
-                className="bg-primary hover:bg-logogreen-600 text-white font-semibold h-9 px-5 text-sm rounded-lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-9 px-5 text-sm rounded-lg"
               >
                 <Link href="/">
                   Browse Assets

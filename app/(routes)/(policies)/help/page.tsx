@@ -317,7 +317,7 @@ export default function HelpPage() {
                   </p>
                   <Button
                     asChild
-                    className="bg-primary hover:bg-logogreen-600 text-white font-semibold h-9 px-5 text-sm rounded-lg"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-9 px-5 text-sm rounded-lg"
                   >
                     <a href="mailto:team@brandexme.com">
                       team@brandexme.com

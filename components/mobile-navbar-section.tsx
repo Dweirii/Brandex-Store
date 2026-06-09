@@ -41,7 +41,7 @@ export function MobileNavbarSection({ categories }: MobileNavbarSectionProps) {
             <SignInButton mode="modal">
               <button
                 type="button"
-                className="inline-flex h-9 items-center rounded-full bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-[#009915]"
+                className="inline-flex h-9 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Login
               </button>

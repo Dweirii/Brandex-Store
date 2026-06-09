@@ -8,6 +8,7 @@ import { Coins, ShoppingBag, Download, Calendar, Check, AlertCircle, Loader2, Pl
 import { Button } from "@/components/ui/Button";
 import { useCredits } from "@/hooks/use-credits";
 import { useBuyCreditsModal } from "@/hooks/use-buy-credits-modal";
+import { trackPurchase } from "@/lib/analytics";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -49,6 +50,26 @@ function CreditsPageContent() {
     if (success === "true") {
       const returnTo = sessionStorage.getItem("creditsReturnTo");
       sessionStorage.removeItem("creditsReturnTo");
+
+      // GA4 purchase — fire once using the pack stashed before the Stripe redirect.
+      try {
+        const pendingRaw = sessionStorage.getItem("brandex_pending_credit_purchase");
+        if (pendingRaw) {
+          const pending = JSON.parse(pendingRaw) as { packId: string; credits: number; price: number };
+          sessionStorage.removeItem("brandex_pending_credit_purchase");
+          trackPurchase({
+            transaction_id: `credits_${pending.packId}_${Date.now()}`,
+            value: pending.price,
+            currency: "USD",
+            items: [{
+              item_id: pending.packId,
+              item_name: `${pending.credits} Credits`,
+              item_category: "credits",
+              price: pending.price,
+            }],
+          });
+        }
+      } catch { /* ignore */ }
 
       toast({
         title: "Purchase Successful!",
@@ -145,7 +166,7 @@ function CreditsPageContent() {
               <Button
                 onClick={openPurchase}
                 size="sm"
-                className="bg-white text-primary hover:bg-white/90 border-0 shadow-lg text-xs"
+                className="bg-background text-foreground hover:bg-background/90 border-0 shadow-lg text-xs"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Buy Credits

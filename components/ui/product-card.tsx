@@ -60,7 +60,11 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
   const rawFirstImageUrl = data.images?.find((img) => img?.url)?.url
   // Use our helper to determine the source URL (watermarked if paid)
   // Always use watermark for paid products to protect content
-  const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
+  const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree, {
+    width: 1280,
+    quality: 86,
+    useProxyForFree: true,
+  })
 
   const hasVideo = Boolean(data.videoUrl)
   const hasImage = Boolean(rawFirstImageUrl)
@@ -98,13 +102,16 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
     }
   }, [isMobile, hasVideo, isVideoOnly])
 
-  // Safety net: if no media event fires within 3s for a motion-only card,
-  // dismiss the skeleton so we can see whatever the video element is doing.
+  // Safety net: never leave the loading skeleton stuck on top of a card if no
+  // media event ever fires — cached images (where onLoad/onLoadingComplete can
+  // be missed), decode hiccups, or an undecodable video codec. Without this the
+  // pulsing `absolute inset-0 z-20` overlay would permanently cover a product
+  // that has actually loaded (the "skeletons block the new products" bug).
   useEffect(() => {
-    if (!isVideoOnly || mediaLoaded) return
-    const t = window.setTimeout(() => setMediaLoaded(true), 3000)
+    if (mediaLoaded || (!hasImage && !hasVideo)) return
+    const t = window.setTimeout(() => setMediaLoaded(true), isVideoOnly ? 3000 : 1500)
     return () => window.clearTimeout(t)
-  }, [isVideoOnly, mediaLoaded])
+  }, [isVideoOnly, hasImage, hasVideo, mediaLoaded])
 
   // Paint the thumbnail frame ONCE per element instance.
   // Runs autoplay → short delay → pause on a mid-video content frame.
@@ -250,6 +257,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             fallbackSeed={data.name}
             width={800}
             height={1000}
+            quality={90}
             className={cn(
               "w-full h-full object-cover transition-all duration-220 ease-[ease] group-hover:scale-[1.03] select-none pointer-events-none",
               hasVideo ? "group-hover:brightness-105" : "group-hover:brightness-110 group-hover:saturate-105"
@@ -258,7 +266,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
             draggable={false}
             loading="lazy"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, (max-width: 1920px) 33vw, 40vw"
-            onLoadingComplete={() => setMediaLoaded(true)}
+            onLoad={() => setMediaLoaded(true)}
             onError={() => setImageErrored(true)}
           />
         )}
@@ -342,7 +350,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ data }) => {
 
         {/* Free Badge */}
         {isFree && (
-          <div className="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-1 rounded-md z-10">
+          <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md z-10">
             Free
           </div>
         )}

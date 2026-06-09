@@ -63,7 +63,6 @@ const relatedBreakpointColumnsObj = {
 const ProductList: React.FC<ProductListProps> = ({
   title,
   items,
-  total,
   page: initialPage = 1,
   pageCount: initialPageCount = 1,
   categoryId,
@@ -290,7 +289,6 @@ const ProductList: React.FC<ProductListProps> = ({
       {title && (
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-3xl text-foreground">{title}</h3>
-          <span className="text-sm text-muted-foreground">{total} items</span>
         </div>
       )}
 
@@ -311,15 +309,24 @@ const ProductList: React.FC<ProductListProps> = ({
             )}
           </div>
         ))}
-
-        {/* Loading Skeletons */}
-        {loading && Array.from({ length: 4 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="mb-3 sm:mb-4">
-            <Skeleton className="aspect-[3/4] w-full rounded-xl" />
-          </div>
-        ))}
       </Masonry>
       </div>
+
+      {/* Loading skeletons — rendered as a separate row BELOW the grid, not as
+          Masonry children. Inside the grid they were distributed into the
+          columns round-robin and inserted/removed on every load, shoving the
+          real cards around and appearing to "block" the new products as they
+          streamed in. Out here they're a clean, stable loading strip. */}
+      {loading && (
+        <div
+          aria-hidden
+          className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
+        >
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={`load-skeleton-${i}`} className="aspect-3/4 w-full rounded-xl" />
+          ))}
+        </div>
+      )}
 
       {/* Load more trigger */}
       {hasMore && loadMoreMode === 'infinite' && (

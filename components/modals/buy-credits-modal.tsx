@@ -10,6 +10,13 @@ import { useToast } from "@/components/ui/use-toast"
 
 const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || "a940170f-71ea-4c2b-b0ec-e2e9e3c68567"
 
+// Pack pricing (must mirror the admin checkout config). Stashed before the
+// Stripe redirect so the /credits success page can fire the GA4 `purchase` event.
+const CREDIT_PACKS: Record<"PACK_50" | "PACK_100", { credits: number; price: number }> = {
+  PACK_50: { credits: 50, price: 6.99 },
+  PACK_100: { credits: 100, price: 11.99 },
+}
+
 export function BuyCreditsModal() {
   const { isOpen, returnTo, onClose } = useBuyCreditsModal()
   const { balance, isLoading, purchaseCredits } = useCredits(storeId)
@@ -34,6 +41,13 @@ export function BuyCreditsModal() {
       if (returnTo) {
         sessionStorage.setItem("creditsReturnTo", returnTo)
       }
+      // Stash pack details so the success page can fire the GA4 purchase event.
+      try {
+        sessionStorage.setItem(
+          "brandex_pending_credit_purchase",
+          JSON.stringify({ packId, ...CREDIT_PACKS[packId] }),
+        )
+      } catch { /* ignore */ }
       window.location.href = result.url
     }
   }

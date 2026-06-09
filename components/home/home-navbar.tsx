@@ -83,7 +83,7 @@ export function HomeNavbar() {
             {/* Asset Library Button */}
             <Button
               asChild
-              className="hidden md:inline-flex bg-[#00B81A] text-white hover:opacity-90 h-9 rounded-full px-4 transition-opacity"
+              className="hidden md:inline-flex bg-primary text-primary-foreground hover:bg-primary/90 h-9 rounded-full px-4 transition-colors"
             >
               <Link href="/downloads">
                 <span className="mr-1.5">📦</span>
@@ -98,8 +98,8 @@ export function HomeNavbar() {
             </button>
 
             {/* User Avatar */}
-            <Link href="/profile" className="w-9 h-9 rounded-full bg-[#00B81A] flex items-center justify-center shrink-0 hover:opacity-90 transition-opacity">
-              <span className="text-white font-semibold text-sm">U</span>
+            <Link href="/profile" className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0 hover:bg-primary/90 transition-colors">
+              <span className="text-primary-foreground font-semibold text-sm">U</span>
             </Link>
 
             {/* Mobile Menu Toggle */}

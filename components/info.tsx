@@ -3,7 +3,7 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import type { Product } from "@/types"
-import { Sparkles, Download, Coins, Check, ArrowRight, Ruler, HardDrive } from "lucide-react"
+import { Sparkles, Download, Coins, Check, ArrowRight, Ruler, HardDrive, ImageDown } from "lucide-react"
 import { DownloadButton } from "@/components/ui/download-button"
 import { ProductShare } from "@/components/product-share"
 import Link from "next/link"
@@ -12,6 +12,7 @@ import { useCredits } from "@/hooks/use-credits"
 import { useFileSize } from "@/hooks/use-file-size"
 import { formatBytes } from "@/lib/utils"
 import { getProductDimensions } from "@/lib/product-specs"
+import { getDisplayImageUrl } from "@/lib/image-utils"
 
 interface InfoProps {
   data: Product
@@ -125,6 +126,11 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const creditsNeeded = Math.max(0, productPrice - currentBalance)
 
   const downloadsLabel = getDisplayDownloadCount(data.id, data.downloadCount)
+  const rawPreviewImage = data.images?.find((img) => img?.url)?.url
+  const displayPreviewImage = getDisplayImageUrl(rawPreviewImage, isFreeProduct, { width: 1600, quality: 82 })
+  const imageDownloadHref = rawPreviewImage
+    ? `/api/product-image-download?src=${encodeURIComponent(displayPreviewImage)}&name=${encodeURIComponent(data.name)}`
+    : null
 
   return (
     <div className="space-y-6">
@@ -240,6 +246,18 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           creditCost={isFreeProduct ? 0 : productPrice}
           fileSizeBytes={fileSizeBytes ?? undefined}
         />
+
+        {/* Always-free preview image download */}
+        {imageDownloadHref && (
+          <a
+            href={imageDownloadHref}
+            className="mt-2.5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-border/70 bg-background text-sm font-semibold text-foreground transition-colors hover:bg-muted/50"
+            download
+          >
+            <ImageDown className="h-4 w-4" />
+            Download Product Image (Free)
+          </a>
+        )}
 
         {/* File meta — subtle inline text, no chips */}
         {(dimensions || fileSizeLabel) && (

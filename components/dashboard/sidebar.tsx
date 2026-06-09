@@ -125,7 +125,7 @@ export function DashboardSidebar() {
           <button
             type="button"
             onClick={() => buyCreditsModal.onOpen()}
-            className="flex items-center justify-center gap-1.5 w-full bg-primary text-white text-xs font-semibold py-2 rounded-lg hover:bg-primary/90 transition-colors"
+            className="flex items-center justify-center gap-1.5 w-full bg-primary text-primary-foreground text-xs font-semibold py-2 rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" />
             Buy Credits →

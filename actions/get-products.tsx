@@ -24,6 +24,24 @@ interface ProductResponse {
   pageCount: number
 }
 
+function normalizeImages(product: any): { url: string }[] {
+  const rawImages = Array.isArray(product?.images)
+    ? product.images
+    : Array.isArray(product?.Image)
+      ? product.Image
+      : Array.isArray(product?.Images)
+        ? product.Images
+        : []
+
+  return rawImages
+    .map((img: any) => {
+      if (typeof img === "string") return { url: img }
+      const url = img?.url || img?.Url || img?.src || img?.imageUrl
+      return url ? { url } : null
+    })
+    .filter((img: { url: string } | null): img is { url: string } => Boolean(img?.url))
+}
+
 const getProducts = async (query: Query): Promise<ProductResponse> => {
   try {
     const url = qs.stringifyUrl({
@@ -61,10 +79,15 @@ const getProducts = async (query: Query): Promise<ProductResponse> => {
 
     const data = await res.json()
 
-    const processedProducts = data.products.map((product: Product) => ({
+    const processedProducts = data.products.map((product: Product & { [key: string]: any }) => ({
       ...product,
       category: product.Category || product.category,
-      images: product.Image?.map((img: { url: string }) => ({ url: img.url })) || [],
+      subcategory:
+        product.subcategory ||
+        product.Subcategory ||
+        product.ProductSubcategories?.[0]?.Subcategory ||
+        undefined,
+      images: normalizeImages(product),
     }))
 
     return {

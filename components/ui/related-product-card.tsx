@@ -34,9 +34,21 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
 
     const isFree = Number(data.price) === 0
     const rawFirstImageUrl = data.images?.find((img) => img?.url)?.url
-    const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree)
+    const firstImageUrl = getDisplayImageUrl(rawFirstImageUrl, isFree, {
+        width: 1280,
+        quality: 86,
+        useProxyForFree: true,
+    })
     const hasVideo = Boolean(data.videoUrl)
     const isVideoOnly = hasVideo && !rawFirstImageUrl
+
+    // Safety net so the loading skeleton can never stay stuck pulsing over the
+    // card if no media event fires (cached images, decode hiccups, bad codec).
+    useEffect(() => {
+        if (mediaLoaded || (!rawFirstImageUrl && !hasVideo)) return
+        const t = window.setTimeout(() => setMediaLoaded(true), isVideoOnly ? 3000 : 1500)
+        return () => window.clearTimeout(t)
+    }, [mediaLoaded, rawFirstImageUrl, hasVideo, isVideoOnly])
 
     // Video loading: immediate for motion-only cards, lazy for image+video cards
     useEffect(() => {
@@ -111,11 +123,12 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
                         alt={data.name}
                         fallbackSeed={data.name}
                         fill
+                        quality={90}
                         className={cn(
                             "object-cover transition-transform duration-500 group-hover:scale-110",
                             hasVideo && isHovered && !isMobile ? "opacity-0" : "opacity-100"
                         )}
-                        onLoadingComplete={() => setMediaLoaded(true)}
+                        onLoad={() => setMediaLoaded(true)}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 )}
@@ -161,7 +174,7 @@ const RelatedProductCard: React.FC<RelatedProductCardProps> = memo(({ data }) =>
             {/* Badge Layer */}
             <div className="absolute top-3 left-3 z-20 flex gap-2">
                 {isFree ? (
-                    <div className="px-3 py-1 bg-primary/90 dark:bg-primary/90 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
+                    <div className="px-3 py-1 bg-primary/90 dark:bg-primary/90 backdrop-blur-md text-primary-foreground text-xs font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
                         Free
                     </div>
                 ) : (

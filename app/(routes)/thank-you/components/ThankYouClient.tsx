@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic"
 
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Check, Clock, AlertTriangle, Download } from "lucide-react"
@@ -11,6 +11,7 @@ import useCart from "@/hooks/use-cart"
 import { Button } from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
 import { useApiRequest } from "@/hooks/use-api-request"
+import { trackPurchase } from "@/lib/analytics"
 
 interface OrderItem {
   id: string
@@ -25,6 +26,7 @@ export default function ThankYouPage() {
   const [timeLeft, setTimeLeft] = useState(30 * 60)
   const searchParams = useSearchParams()
   const sessionId = searchParams.get("session_id")
+  const purchaseFiredRef = useRef(false)
 
   const { apiRequest } = useApiRequest()
 
@@ -59,6 +61,23 @@ export default function ThankYouPage() {
 
         if (data.status === "paid") {
           cart.removeAll()
+
+          // GA4 purchase — fire once. The checkout/session API doesn't return a
+          // monetary total client-side, so value is left at 0 (configure revenue
+          // in GTM/server-side if the order total becomes available here).
+          if (!purchaseFiredRef.current) {
+            purchaseFiredRef.current = true
+            trackPurchase({
+              transaction_id: sessionId,
+              value: 0,
+              currency: "USD",
+              items: (data.orderItems || []).map((it: OrderItem) => ({
+                item_id: it.productId,
+                item_name: it.productName,
+                item_category: "digital_asset",
+              })),
+            })
+          }
         }
 
       } catch (error) {

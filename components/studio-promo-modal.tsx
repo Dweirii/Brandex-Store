@@ -91,7 +91,7 @@ export function StudioPromoModal({ open, onOpenChange, studioUrl }: StudioPromoM
         <div className="mt-4 sm:mt-6 md:mt-8 space-y-2 sm:space-y-3">
           <Button
             onClick={handleGoToStudio}
-            className="w-full bg-[#00B81A] hover:bg-[#00B81A]/90 text-white font-semibold h-10 sm:h-11 rounded-lg text-sm sm:text-base"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-10 sm:h-11 rounded-lg text-sm sm:text-base"
           >
             Launch Brandex Studio
           </Button>

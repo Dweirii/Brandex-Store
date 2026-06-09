@@ -1,8 +1,4 @@
-"use client"
-
-import { motion } from "framer-motion"
-
-/** Fade + rise into view on scroll (once). */
+/** Lightweight fade + rise entrance (no client-side runtime). */
 export default function Reveal({
   children,
   className,
@@ -12,15 +8,10 @@ export default function Reveal({
   className?: string
   delay?: number
 }) {
+  const classes = className ? `packaging-reveal ${className}` : "packaging-reveal"
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.55, ease: "easeOut", delay }}
-    >
+    <div className={classes} style={{ animationDelay: `${delay}s` }}>
       {children}
-    </motion.div>
+    </div>
   )
 }

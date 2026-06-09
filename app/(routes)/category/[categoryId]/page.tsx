@@ -75,6 +75,7 @@ interface CategoryArchiveProps {
   priceFilter?: "paid" | "free" | "all"
   sortBy?: string
   subcategoryId?: string
+  page: number
 }
 
 async function CategoryArchive({
@@ -83,11 +84,12 @@ async function CategoryArchive({
   priceFilter,
   sortBy,
   subcategoryId,
+  page,
 }: CategoryArchiveProps) {
   const [{ products, total, pageCount }, subcategories] = await Promise.all([
     loadArchiveProducts({
       scope: categoryId,
-      page: 1,
+      page,
       limit: PAGE_SIZE,
       priceFilter,
       sortBy,
@@ -100,14 +102,10 @@ async function CategoryArchive({
     <ArchiveView
       heading={heading}
       products={products}
+      page={page}
       pageCount={pageCount}
       total={total}
-      scope={categoryId}
-      pageSize={PAGE_SIZE}
-      priceFilter={priceFilter}
-      sortBy={sortBy}
       subcategories={subcategories}
-      subcategoryId={subcategoryId}
     />
   )
 }
@@ -119,7 +117,7 @@ export default async function CategoryPage({
   searchParams,
 }: {
   params: Promise<{ categoryId: string }>
-  searchParams?: Promise<{ priceFilter?: "paid" | "free" | "all"; sortBy?: string; type?: string; subcategory?: string }>
+  searchParams?: Promise<{ priceFilter?: "paid" | "free" | "all"; sortBy?: string; type?: string; subcategory?: string; page?: string }>
 }) {
   const { categoryId: param } = await params
   const searchParamsData = await searchParams
@@ -127,6 +125,7 @@ export default async function CategoryPage({
   const sortBy = searchParamsData?.sortBy
   const type = searchParamsData?.type
   const subcategoryId = searchParamsData?.subcategory
+  const page = Math.max(1, Number(searchParamsData?.page) || 1)
 
   // 1. 301-redirect old member slugs to group slugs (e.g., /category/images -> /category/graphics?type=images)
   const groupSlugFromOldMember = SLUG_TO_GROUP_MAP[param]
@@ -224,6 +223,7 @@ export default async function CategoryPage({
             priceFilter={priceFilter}
             sortBy={sortBy || "newest"}
             subcategoryId={subcategoryId}
+            page={page}
           />
         </Suspense>
       </main>

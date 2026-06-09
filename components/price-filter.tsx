@@ -48,7 +48,7 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         className={cn(
           "h-full px-4 text-sm font-semibold rounded-md transition-all duration-300",
           currentFilter === 'all'
-            ? "bg-primary text-white shadow-sm"
+            ? "bg-primary text-primary-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground hover:bg-background/40",
           isPending && "opacity-50 cursor-not-allowed"
         )}
@@ -62,7 +62,7 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         className={cn(
           "h-full px-4 text-sm font-semibold rounded-md transition-all duration-300",
           currentFilter === 'paid'
-            ? "bg-primary text-white shadow-sm"
+            ? "bg-primary text-primary-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground hover:bg-background/40",
           isPending && "opacity-50 cursor-not-allowed"
         )}
@@ -76,7 +76,7 @@ export default function PriceFilter({ className }: PriceFilterProps) {
         className={cn(
           "h-full px-4 text-sm font-semibold rounded-md transition-all duration-300",
           currentFilter === 'free'
-            ? "bg-primary text-white shadow-sm"
+            ? "bg-primary text-primary-foreground shadow-sm"
             : "text-muted-foreground hover:text-foreground hover:bg-background/40",
           isPending && "opacity-50 cursor-not-allowed"
         )}

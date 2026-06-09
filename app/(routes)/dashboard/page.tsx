@@ -108,7 +108,7 @@ function DashboardContent() {
       {/* Credits card + stats row */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
         {/* Credits balance */}
-        <div className="lg:col-span-1 bg-primary rounded-xl px-5 py-4 text-white relative overflow-hidden">
+        <div className="lg:col-span-1 bg-primary rounded-xl px-5 py-4 text-primary-foreground relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-8 -mt-8 pointer-events-none" />
           <p className="text-[10px] font-semibold uppercase tracking-widest opacity-80 mb-1">
             Credits Available
@@ -125,7 +125,7 @@ function DashboardContent() {
           </p>
           <Link
             href="/credits"
-            className="inline-flex items-center gap-1.5 bg-white text-primary text-[11px] font-semibold px-2.5 py-1 rounded-md hover:bg-white/90 transition-colors"
+            className="inline-flex items-center gap-1.5 bg-primary-foreground text-primary text-[11px] font-semibold px-2.5 py-1 rounded-md hover:opacity-90 transition-colors"
           >
             <Plus className="h-3 w-3" />
             Buy Credits

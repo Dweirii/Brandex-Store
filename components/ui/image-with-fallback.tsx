@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import Image, { type ImageProps } from "next/image"
 import { ImageOff } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -24,9 +24,10 @@ function colorFromSeed(seed: string) {
   return PALETTE[h % PALETTE.length]
 }
 
-interface ImageWithFallbackProps extends Omit<ImageProps, "onError"> {
+interface ImageWithFallbackProps extends Omit<ImageProps, "onError" | "onLoad"> {
   fallbackSeed?: string
   onError?: () => void
+  onLoad?: () => void
 }
 
 export function ImageWithFallback({
@@ -34,6 +35,7 @@ export function ImageWithFallback({
   alt,
   className,
   onError,
+  onLoad,
   ...props
 }: ImageWithFallbackProps) {
   const [errored, setErrored] = useState(!props.src)
@@ -42,6 +44,18 @@ export function ImageWithFallback({
     setErrored(true)
     onError?.()
   }
+
+  // next/image fires neither onLoad nor onLoadingComplete when the image is
+  // already complete in the browser cache by the time React attaches the
+  // listener — extremely common during infinite scroll. A callback ref catches
+  // that case so any loading skeleton layered over the image is never left
+  // stuck pulsing on top of an image that actually finished loading.
+  const handleImgRef = useCallback(
+    (img: HTMLImageElement | null) => {
+      if (img && img.complete && img.naturalWidth > 0) onLoad?.()
+    },
+    [onLoad]
+  )
 
   if (errored) {
     const [bg, accent] = colorFromSeed(fallbackSeed || String(alt))
@@ -77,8 +91,10 @@ export function ImageWithFallback({
     <Image
       alt={alt}
       className={className}
-      onError={handleError}
       {...props}
+      ref={handleImgRef}
+      onError={handleError}
+      onLoad={() => onLoad?.()}
     />
   )
 }

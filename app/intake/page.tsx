@@ -15,6 +15,30 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { trackGenerateLead } from "@/lib/analytics";
+
+declare global {
+  interface Window {
+    dataLayer?: Array<Record<string, unknown> | unknown[]>;
+  }
+}
+
+function trackLeadSubmission(needsCount: number) {
+  if (typeof window === "undefined") return;
+
+  // GA4 standard lead event (GTM → GA4 → imported into Google Ads as a conversion)
+  trackGenerateLead({ value: 1, form_name: "intake_request" });
+
+  // Keep the custom event in case existing GTM triggers rely on it.
+  try {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: "lead_form_submit",
+      form_name: "intake_request",
+      needs_count: needsCount,
+    });
+  } catch { }
+}
 
 const schema = z
   .object({
@@ -135,6 +159,7 @@ export default function IntakePage() {
 
       const data = await res.json() as { uploadToken?: string };
       setTrackToken(data.uploadToken ?? null);
+      trackLeadSubmission(values.needs.length);
       setSubmitted(true);
     } catch (err) {
       setServerError(err instanceof Error ? err.message : "Unknown error");

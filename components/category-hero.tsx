@@ -61,7 +61,7 @@ export function HeroSection({ config, compact }: HeroSectionProps) {
             <div className="flex flex-row flex-wrap gap-3">
               <Button
                 size="sm"
-                className="group bg-primary hover:bg-logogreen-600 text-white font-semibold px-6 h-11 text-sm rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
+                className="group bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 h-11 text-sm rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
                 onClick={() => document.getElementById("product-grid")?.scrollIntoView({ behavior: "smooth" })}
               >
                 <span className="flex items-center gap-1.5">

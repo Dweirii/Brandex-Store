@@ -22,6 +22,7 @@ import { CompareButton } from "@/components/compare-button";
 import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { WelcomeCreditsPopup } from "@/components/welcome-credits-popup";
+import { AuthAnalytics } from "@/components/auth-analytics";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -99,7 +100,7 @@ export const metadata: Metadata = {
 };
 
 const GTM_ID = "GTM-PM89X24C";
-const META_PIXEL_ID = "561913850219327";
+const META_PIXEL_ID = "9516200848496260";
 
 export default async function RootLayout({
   children,
@@ -210,6 +211,7 @@ export default async function RootLayout({
               <Suspense><ScrollToTop /></Suspense>
               <WelcomeCreditsPopup />
               <CookieConsent />
+              <AuthAnalytics />
             </Providers>
           </ThemeProvider>
           <Analytics />

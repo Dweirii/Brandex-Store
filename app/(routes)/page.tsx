@@ -20,19 +20,22 @@ interface HomePageProps {
   searchParams: Promise<{
     priceFilter?: "paid" | "free" | "all"
     sortBy?: string
+    page?: string
   }>
 }
 
 async function HomeArchive({
   priceFilter,
   sortBy,
+  page,
 }: {
   priceFilter?: "paid" | "free" | "all"
   sortBy?: string
+  page: number
 }) {
   const { products, pageCount, total } = await loadArchiveProducts({
     scope: "home",
-    page: 1,
+    page,
     limit: PAGE_SIZE,
     priceFilter,
     sortBy,
@@ -41,19 +44,18 @@ async function HomeArchive({
   return (
     <ArchiveView
       heading="All resources"
+      subtitle="Premium and free design resources, all in one place."
       products={products}
+      page={page}
       pageCount={pageCount}
       total={total}
-      scope="home"
-      pageSize={PAGE_SIZE}
-      priceFilter={priceFilter}
-      sortBy={sortBy}
     />
   )
 }
 
 const HomePage = async ({ searchParams }: HomePageProps) => {
-  const { priceFilter, sortBy } = await searchParams
+  const { priceFilter, sortBy, page: pageParam } = await searchParams
+  const page = Math.max(1, Number(pageParam) || 1)
 
   const websiteStructuredData = generateWebsiteStructuredData()
   const organizationStructuredData = generateOrganizationStructuredData()
@@ -78,7 +80,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
             </div>
           }
         >
-          <HomeArchive priceFilter={priceFilter} sortBy={sortBy || "newest"} />
+          <HomeArchive priceFilter={priceFilter} sortBy={sortBy || "newest"} page={page} />
         </Suspense>
       </main>
 

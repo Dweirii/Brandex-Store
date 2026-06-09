@@ -206,7 +206,7 @@ export default function ExclusiveGallery() {
           </p>
 
           <div className="flex flex-col gap-3 mt-2">
-            <Link href="/products" className="w-full text-center rounded-full bg-[#00B81A] px-6 py-3.5 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+            <Link href="/products" className="w-full text-center rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity">
               Browse Products
             </Link>
             <Link href="/category/free" className="w-full text-center rounded-full bg-transparent px-6 py-3.5 text-sm font-medium text-foreground hover:bg-muted transition-colors border border-border">

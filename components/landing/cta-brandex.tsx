@@ -40,7 +40,7 @@ export default function HeroBanner() {
           Perfect for agencies, designers, and creative professionals.
         </p>
         <div className="mt-5">
-          <Link href="/products" className="inline-block rounded-full bg-[#00B81A] px-6 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00B81A] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          <Link href="/products" className="inline-block rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-black">
             Browse Collection
           </Link>
         </div>

@@ -76,7 +76,7 @@ export default function CustomWorkPage() {
           <div className="flex flex-wrap items-center gap-3 mb-5">
             <Link
               href="/intake"
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#00A63E] hover:bg-[#00A63E]/90 text-white px-5 py-2.5 text-sm font-semibold transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 text-sm font-semibold transition-colors shadow-sm"
             >
               Start Your Request
               <ArrowRight className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function CustomWorkPage() {
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <Link
               href="/intake"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#00A63E] hover:bg-[#00A63E]/90 text-white px-5 py-2.5 text-sm font-semibold transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2.5 text-sm font-semibold transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
             >
               Start Your Request
               <ArrowRight className="w-4 h-4" />

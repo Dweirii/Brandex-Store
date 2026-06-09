@@ -34,7 +34,7 @@ export default function CategoryNav() {
               className={cn(
                 "h-full flex items-center px-4 text-sm font-semibold rounded-md transition-all duration-300 shrink-0",
                 isActive
-                  ? "text-white bg-primary shadow-sm"
+                  ? "text-primary-foreground bg-primary shadow-sm"
                   : "text-muted-foreground hover:text-foreground hover:bg-background/40"
               )}
             >

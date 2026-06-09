@@ -80,7 +80,7 @@ export default async function SignatureServicesPage() {
               <div className="flex flex-wrap justify-center gap-3 mt-6">
                 <Link
                   href="/contact"
-                  className="px-6 py-3.5 rounded-xl bg-[#00B81A] text-[#0b1a10] font-black text-sm no-underline transition-opacity hover:opacity-90"
+                  className="px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-black text-sm no-underline transition-opacity hover:opacity-90"
                 >
                   Start a Signature Project
                 </Link>
@@ -206,7 +206,7 @@ export default async function SignatureServicesPage() {
               <div className="flex flex-wrap justify-center gap-3">
                 <Link
                   href="/contact"
-                  className="px-6 py-3.5 rounded-xl bg-[#00B81A] text-[#0b1a10] font-black text-sm no-underline transition-opacity hover:opacity-90"
+                  className="px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-black text-sm no-underline transition-opacity hover:opacity-90"
                 >
                   Get Started
                 </Link>
@@ -586,7 +586,7 @@ export default async function SignatureServicesPage() {
                   <div className="flex flex-wrap justify-center gap-3">
                     <button
                       type="submit"
-                      className="px-6 py-3.5 rounded-xl bg-[#00B81A] text-[#0b1a10] font-black text-sm border-none cursor-pointer transition-opacity hover:opacity-90"
+                      className="px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-black text-sm border-none cursor-pointer transition-opacity hover:opacity-90"
                     >
                       Send Intake Form
                     </button>

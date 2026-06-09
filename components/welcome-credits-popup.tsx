@@ -101,7 +101,7 @@ function ClassicMinimal({ onClose }: { onClose: () => void }) {
           <p className="text-gray-500 mb-6">Unlock your credits instantly.</p>
           <Link
             href={SIGN_IN_HREF}
-            className="w-full bg-[#05b819] hover:bg-[#04a016] text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-6 rounded-lg transition-colors text-center"
           >
             Sign In Now
           </Link>
@@ -127,7 +127,7 @@ function CompactPill({ onClose }: { onClose: () => void }) {
       </div>
       <Link
         href={SIGN_IN_HREF}
-        className="bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded-full transition-colors flex-shrink-0"
+        className="bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium py-2 px-4 rounded-full transition-colors flex-shrink-0"
       >
         Sign In
       </Link>

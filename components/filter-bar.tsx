@@ -121,7 +121,7 @@ function Chip({
       className={cn(
         "shrink-0 h-8 px-3.5 rounded-full text-sm font-medium border transition-colors whitespace-nowrap",
         active
-          ? "bg-primary text-white border-primary"
+          ? "bg-primary text-primary-foreground border-primary"
           : "bg-background text-foreground border-border hover:border-primary/50"
       )}
     >

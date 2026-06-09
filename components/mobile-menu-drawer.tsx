@@ -133,7 +133,7 @@ export function MobileMenuDrawer({ open, onClose }: MobileMenuDrawerProps) {
               <SignUpButton mode="modal">
                 <button
                   type="button"
-                  className="h-11 flex-1 rounded-full bg-primary text-sm font-semibold text-white transition-colors hover:bg-[#009915]"
+                  className="h-11 flex-1 rounded-full bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
                   Sign Up
                 </button>

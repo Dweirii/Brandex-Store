@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button"
 import { Download, Loader2, Lock, CheckCircle, Sparkles, Coins, FileArchive } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn, formatBytes } from "@/lib/utils"
+import { trackFileDownload, trackSpendVirtualCurrency } from "@/lib/analytics"
 import { track as vercelTrack } from "@vercel/analytics"
 import { useToast } from "@/components/ui/use-toast"
 import { DownloadProgress } from "@/components/ui/download-progress"
@@ -57,7 +58,6 @@ const getAdminBaseUrl = () => {
   return match ? match[1] : url
 }
 const ADMIN_BASE_URL = getAdminBaseUrl()
-const ADS_SEND_TO = process.env.NEXT_PUBLIC_GOOGLE_ADS_SEND_TO || ""
 const GA_EVENT_DEFAULT = "download_complete"
 
 export const DownloadButton = ({
@@ -122,22 +122,6 @@ export const DownloadButton = ({
           event_label: productId,
           store_id: storeId,
           ...params,
-        })
-      }
-    } catch { }
-  }
-
-  const adsConversion = (value?: number) => {
-    if (!ADS_SEND_TO) return
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (typeof window !== "undefined" && (window as any).gtag) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ; (window as any).gtag("event", "conversion", {
-          send_to: ADS_SEND_TO,
-          value: value ?? 1,
-          currency: "USD",
-          items: [{ item_id: productId, item_category: "digital_asset" }],
         })
       }
     } catch { }
@@ -398,7 +382,19 @@ export const DownloadButton = ({
 
       ga(gaEventName, { product_id: productId, store_id: storeId, file_name: name, bytes: blob.size })
       vTrack("download_success", { productId, storeId, fileName: name, bytes: blob.size })
-      adsConversion(1)
+
+      // GA4 / Google Ads conversions via the GTM dataLayer
+      const ext = name.includes(".") ? name.split(".").pop() : undefined
+      trackFileDownload({
+        item_id: productId,
+        item_name: productName,
+        file_name: name,
+        file_extension: ext,
+        credit_cost: creditCost,
+      })
+      if (creditCost && creditCost > 0) {
+        trackSpendVirtualCurrency({ value: creditCost, item_name: productName })
+      }
 
       onSuccess?.({ fileName: name, bytes: blob.size })
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any

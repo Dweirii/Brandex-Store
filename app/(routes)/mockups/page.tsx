@@ -17,34 +17,33 @@ import LandingCtaBand from "@/components/landing/landing-cta-band"
 import { ScrollToTop } from "@/components/scroll-to-top"
 
 const SITE_URL = getSiteUrl()
-const BROWSE_HREF = "/category/packaging"
+const BROWSE_HREF = "/category/mockups"
 // Marketing display figures — intentionally rounded/inflated, NOT the live catalogue counts.
-const TEMPLATE_COUNT = "12,000+"
-const CATEGORY_COUNT = "60+"
-const PAGE_TITLE = "Packaging Design Templates — Print-Ready PSD, AI & EPS | Brandex"
+const MOCKUP_COUNT = "8,000+"
+const CATEGORY_COUNT = "45+"
+const PAGE_TITLE = "Mockup Templates — Editable PSD Scenes for Branding & Product Presentation | Brandex"
 const PAGE_DESC =
-  "Browse hundreds of print-ready packaging design templates — boxes, pouches, bottles, cans, labels and more across dozens of categories. Fully editable PSD, AI & EPS with accurate dielines and a commercial license. Instant download."
+  "Browse premium mockup templates for packaging, products, labels, and brand presentations. Fully editable high-resolution PSD scenes with smart objects and commercial licensing."
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
   description: PAGE_DESC,
   keywords: [
-    "packaging design templates",
+    "mockup templates",
+    "psd mockup",
+    "product mockups",
     "packaging mockups",
-    "box packaging template",
-    "pouch mockup",
-    "bottle label template",
-    "print-ready dieline",
-    "editable PSD packaging",
-    "AI EPS packaging",
-    "food packaging design",
-    "Brandex packaging",
+    "branding mockup scene",
+    "smart object mockup",
+    "high resolution mockup",
+    "commercial mockup license",
+    "Brandex mockups",
   ],
-  alternates: { canonical: `${SITE_URL}/packaging` },
+  alternates: { canonical: `${SITE_URL}/mockups` },
   openGraph: {
     title: PAGE_TITLE,
     description: PAGE_DESC,
-    url: `${SITE_URL}/packaging`,
+    url: `${SITE_URL}/mockups`,
     siteName: "Brandex",
     type: "website",
   },
@@ -52,14 +51,14 @@ export const metadata: Metadata = {
 }
 
 const VALUE_PROPS = [
-  { icon: Download, title: "Instant download", desc: "Grab the source files the moment you need them — no waiting." },
-  { icon: BadgeCheck, title: "Commercial license", desc: "Use every template in client and commercial projects." },
-  { icon: Ruler, title: "Print-ready dielines", desc: "Accurate cut & fold guides at 300 DPI, built for production." },
-  { icon: Layers, title: "Fully editable", desc: "Layered PSD / AI / EPS with smart objects — swap art in seconds." },
+  { icon: Download, title: "Instant download", desc: "Get your source files immediately and start presenting fast." },
+  { icon: BadgeCheck, title: "Commercial license", desc: "Use each mockup in client, brand, and commercial projects." },
+  { icon: Ruler, title: "High resolution", desc: "Sharp, presentation-ready visuals with realistic detail and depth." },
+  { icon: Layers, title: "Smart objects", desc: "Layered PSD files built for quick edits and clean customization." },
 ]
 
-export default async function PackagingLandingPage() {
-  const categoryId = categoryParamToId("packaging")
+export default async function MockupsLandingPage() {
+  const categoryId = categoryParamToId("mockups")
 
   const [newest, subcategories] = await Promise.all([
     getProducts({ categoryId, sortBy: "newest", limit: 14 }),
@@ -98,16 +97,16 @@ export default async function PackagingLandingPage() {
   // ── Structured data ──
   const breadcrumb = generateBreadcrumbStructuredData([
     { name: "Home", url: SITE_URL },
-    { name: "Packaging", url: `${SITE_URL}/packaging` },
+    { name: "Mockups", url: `${SITE_URL}/mockups` },
   ])
   const collection = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Packaging Design Templates",
+    name: "Mockup Templates",
     description: PAGE_DESC,
-    url: `${SITE_URL}/packaging`,
+    url: `${SITE_URL}/mockups`,
     isPartOf: { "@type": "WebSite", name: "Brandex", url: SITE_URL },
-    about: { "@type": "Thing", name: "Packaging design templates" },
+    about: { "@type": "Thing", name: "Mockup templates" },
   }
 
   return (
@@ -117,19 +116,19 @@ export default async function PackagingLandingPage() {
 
       {/* Hero */}
       <CategoryLandingHero
-        eyebrow="Packaging Templates"
-        titleLead="Packaging design,"
-        titleAccent="ready to brand."
-        subtitle="Premium and free packaging templates, all in one place. From coffee bags to cosmetics, every Brandex packaging template ships print-ready with accurate dielines and editable PSD, AI & EPS files. Pick a design, drop in your brand, and send it straight to print."
+        eyebrow="Mockup Templates"
+        titleLead="Mockup scenes,"
+        titleAccent="ready to present."
+        subtitle="Premium and free mockup templates, all in one place. From product shots to branded packaging previews, every Brandex mockup is built with editable smart objects and clean layered files. Drop in your design and deliver polished visuals in minutes."
         browseHref={BROWSE_HREF}
-        browseLabel={`Browse ${TEMPLATE_COUNT} templates`}
+        browseLabel={`Browse ${MOCKUP_COUNT} mockups`}
         secondaryHref="#categories"
         secondaryLabel="Explore categories"
-        badges={["Editable PSD · AI · EPS", "Print-ready dielines", "Commercial license"]}
+        badges={["Editable smart objects", "High-resolution assets", "Commercial license"]}
         stats={[
-          { value: TEMPLATE_COUNT, label: "Templates" },
+          { value: MOCKUP_COUNT, label: "Mockups" },
           { value: CATEGORY_COUNT, label: "Categories" },
-          { value: "300 DPI", label: "Print quality" },
+          { value: "PSD Ready", label: "Source files" },
         ]}
         images={heroImages}
       />
@@ -167,7 +166,7 @@ export default async function PackagingLandingPage() {
             <div className="mb-7 flex items-end justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Just added</h2>
-                <p className="mt-1.5 text-sm text-muted-foreground">Fresh packaging templates, hot off the press.</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">Fresh mockup scenes, ready for your next presentation.</p>
               </div>
               <Link
                 href={BROWSE_HREF}
@@ -209,28 +208,26 @@ export default async function PackagingLandingPage() {
           <div className="grid gap-8 rounded-3xl border border-border/60 bg-background p-8 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:gap-12">
             <div>
               <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                Packaging templates built for speed
+                Mockup templates built for faster presentations
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                Brandex is a library of {TEMPLATE_COUNT} professionally crafted packaging designs — spanning{" "}
-                {CATEGORY_COUNT} categories from chocolate bars and coffee bags to cosmetics, beverages and
-                pharmaceuticals. Every template is production-ready, so brands, designers and agencies can move from idea
-                to shelf in hours, not weeks.
+                Brandex includes {MOCKUP_COUNT} professionally crafted mockup templates across {CATEGORY_COUNT} categories.
+                Whether you are presenting packaging, product labels, or full brand visuals, each scene is designed to make
+                your work look production-ready with minimal setup.
               </p>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-                Each design ships as editable PSD, AI or EPS with smart objects and accurate dielines at 300 DPI. Swap in
-                your logo, colours and copy, export, and send straight to your printer — with a commercial license
-                included on everything.
+                Every mockup ships with editable smart objects, organized layers, and high-resolution files so you can
+                replace artwork quickly and export polished previews for clients, ads, and launch decks.
               </p>
             </div>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {[
-                "Print-ready dielines with cut & fold guides",
-                "Editable PSD, AI & EPS source files",
-                "Smart objects for one-click branding",
-                "300 DPI, CMYK-friendly artwork",
+                "High-resolution mockup scenes",
+                "Editable smart object layers",
+                "Layered PSD source files",
+                "Realistic lighting and shadows",
                 "Commercial license on every download",
-                "New designs added every week",
+                "New scenes added every week",
               ].map((item) => (
                 <li
                   key={item}
@@ -249,10 +246,10 @@ export default async function PackagingLandingPage() {
       <section className="mx-auto w-full max-w-[1320px] px-4 pt-16 sm:px-6">
         <Reveal>
           <LandingCtaBand
-            title="Find your next packaging design"
-            subtitle={`${TEMPLATE_COUNT} editable, print-ready templates across ${CATEGORY_COUNT} categories.`}
+            title="Find your next mockup template"
+            subtitle={`${MOCKUP_COUNT} editable mockups across ${CATEGORY_COUNT} categories.`}
             href={BROWSE_HREF}
-            label="Browse the full library"
+            label="Browse the full mockup library"
             images={ctaImages}
           />
         </Reveal>

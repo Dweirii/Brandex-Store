@@ -1,16 +1,46 @@
 
+interface DisplayImageOptions {
+  width?: number
+  quality?: number
+  /**
+   * When true, free images also use the image proxy for resize/compression.
+   * Watermark remains disabled for free products.
+   */
+  useProxyForFree?: boolean
+}
+
 /**
  * Helper to get the display URL for an image.
  * If the product is paid, it returns a proxy URL that serves a watermarked image.
- * If free, it returns the original URL.
+ * Free products use the original URL by default, or the proxy (wm=0) when
+ * `useProxyForFree` is enabled.
  */
-export const getDisplayImageUrl = (originalUrl: string | undefined, isFree: boolean): string => {
-    if (!originalUrl) return "/placeholder.jpg";
-    if (isFree) return originalUrl;
+export const getDisplayImageUrl = (
+  originalUrl: string | undefined,
+  isFree: boolean,
+  options?: DisplayImageOptions
+): string => {
+  if (!originalUrl) return "/placeholder.jpg"
 
-    // Return the proxy URL
-    // We use encodeURIComponent to ensure the URL is safely passed
-    // We add a cache-busting param (v=2) to force browsers to re-request the image
-    // instead of using the cached non-watermarked version.
-    return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}&v=2`;
-};
+  const shouldUseProxy = !isFree || Boolean(options?.useProxyForFree)
+  if (!shouldUseProxy) return originalUrl
+
+  const params = new URLSearchParams({
+    url: originalUrl,
+    // Keep v=2 for cache-busting compatibility with previous behaviour.
+    v: "2",
+  })
+  if (isFree) {
+    // Free products should never be watermarked.
+    params.set("wm", "0")
+  }
+
+  if (options?.width && Number.isFinite(options.width)) {
+    params.set("w", String(Math.round(options.width)))
+  }
+  if (options?.quality && Number.isFinite(options.quality)) {
+    params.set("q", String(Math.round(options.quality)))
+  }
+
+  return `/api/image-proxy?${params.toString()}`
+}

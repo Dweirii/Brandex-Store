@@ -5,11 +5,10 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import dynamic from "next/dynamic";
 import getProduct from "@/actions/get-product";
 import getProductBySlug from "@/actions/get-product-by-slug";
-import { getRelatedProducts } from "@/actions/get-related-products";
 import getProducts from "@/actions/get-products";
 import type { Product } from "@/types";
 import Info from "@/components/info";
-import ArchiveCardGrid from "@/components/archive/archive-card-grid";
+import RelatedProductGrid from "@/components/ui/related-product-grid";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -97,26 +96,17 @@ async function RelatedProducts({
 }) {
   const subcategoryId = currentProduct.subcategory?.id;
   const categoryId = currentProduct.category?.id;
+  if (!subcategoryId || !categoryId) return null;
 
-  let relatedItems: Product[] = [];
-
-  // 1) Prefer products from the SAME subcategory (when the product has one).
-  if (subcategoryId && categoryId) {
-    const { products } = await getProducts({
-      categoryId,
-      subcategoryId,
-      limit: RELATED_LIMIT + 4, // fetch a few extra to drop the current product
-      sortBy: "mostPopular",
-    });
-    relatedItems = products
-      .filter((p) => p.id !== currentProduct.id)
-      .slice(0, RELATED_LIMIT);
-  }
-
-  // 2) Fall back to the deterministic related engine (no subcategory, or none found).
-  if (relatedItems.length === 0) {
-    relatedItems = await getRelatedProducts(currentProduct.id);
-  }
+  const { products } = await getProducts({
+    categoryId,
+    subcategoryId,
+    limit: RELATED_LIMIT + 4, // fetch a few extra to drop the current product
+    sortBy: "mostPopular",
+  });
+  const relatedItems = products
+    .filter((p) => p.id !== currentProduct.id)
+    .slice(0, RELATED_LIMIT);
 
   if (relatedItems.length === 0) return null;
 
@@ -127,7 +117,7 @@ async function RelatedProducts({
           <h2 className="text-xl font-bold text-foreground mb-6">
             {RELATED_HEADING}
           </h2>
-          <ArchiveCardGrid products={relatedItems} />
+          <RelatedProductGrid products={relatedItems} />
         </div>
       </Container>
     </div>

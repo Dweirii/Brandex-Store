@@ -1,7 +1,4 @@
-"use client"
-
 import Link from "next/link"
-import { motion } from "framer-motion"
 
 interface MarqueeItem {
   id: string
@@ -21,11 +18,7 @@ export default function CategoryMarquee({ items, hrefBase }: CategoryMarqueeProp
 
   return (
     <div className="relative overflow-hidden border-y border-border/60 bg-background/60 py-4">
-      <motion.div
-        className="flex w-max gap-3"
-        animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-      >
+      <div className="packaging-marquee-track" style={{ animationDuration: "45s" }}>
         {track.map((s, i) => (
           <Link
             key={`${s.id}-${i}`}
@@ -40,7 +33,7 @@ export default function CategoryMarquee({ items, hrefBase }: CategoryMarqueeProp
             )}
           </Link>
         ))}
-      </motion.div>
+      </div>
 
       {/* Edge fades */}
       <div className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#FAFAFA] to-transparent dark:from-background" />
