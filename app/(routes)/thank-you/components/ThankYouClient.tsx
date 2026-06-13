@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/Button"
 import { DownloadButton } from "@/components/ui/download-button"
 import { useApiRequest } from "@/hooks/use-api-request"
 import { trackPurchase } from "@/lib/analytics"
+import { metaPurchase } from "@/lib/meta-pixel"
 
 interface OrderItem {
   id: string
@@ -76,6 +77,14 @@ export default function ThankYouPage() {
                 item_name: it.productName,
                 item_category: "digital_asset",
               })),
+            })
+            // Meta Pixel Purchase (cart checkout — order total not exposed client-side, value left 0)
+            metaPurchase({
+              value: 0,
+              currency: "USD",
+              content_ids: (data.orderItems || []).map((it: OrderItem) => it.productId),
+              content_type: "product",
+              num_items: (data.orderItems || []).length,
             })
           }
         }

@@ -54,8 +54,24 @@ export async function generateMetadata({
       }
     }
 
-    // Always generate canonical with the slug
-    return generateCategoryMetadata(category, slug)
+    // Custom SEO titles for the browsable category pages (clean — the root
+    // layout template appends "| Brandex" once).
+    const CATEGORY_TITLES: Record<string, string> = {
+      packaging: "Packaging Design Templates, PSD Mockups & Product Branding Assets",
+      mockups: "Professional Mockup Templates for Branding, Packaging & Marketing",
+      "psd-lab": "Editable PSD Templates for Branding, Packaging & Graphic Design",
+    }
+    const base = generateCategoryMetadata(category, slug)
+    const customTitle = CATEGORY_TITLES[slug]
+    if (customTitle) {
+      return {
+        ...base,
+        title: customTitle,
+        openGraph: { ...base.openGraph, title: customTitle },
+        twitter: { ...base.twitter, title: customTitle },
+      }
+    }
+    return base
   } catch (error) {
     console.error("Error generating category metadata:", error)
     return {
@@ -105,6 +121,11 @@ async function CategoryArchive({
       page={page}
       pageCount={pageCount}
       total={total}
+      scope={categoryId}
+      priceFilter={priceFilter}
+      sortBy={sortBy}
+      subcategoryId={subcategoryId}
+      pageSize={PAGE_SIZE}
       subcategories={subcategories}
     />
   )
@@ -170,9 +191,9 @@ export default async function CategoryPage({
     redirect("/")
   }
 
-  // Only Packaging and Mockups are browsable — every other category redirects
+  // Only these categories are browsable — every other category redirects
   // home so products from other categories are never shown.
-  const ALLOWED_SLUGS = ["packaging", "mockups"]
+  const ALLOWED_SLUGS = ["packaging", "mockups", "psd-lab"]
   if (!ALLOWED_SLUGS.includes(slug)) {
     redirect("/")
   }
@@ -182,10 +203,17 @@ export default async function CategoryPage({
   // When landing on a group slug with no sub-type selected (e.g. /category/graphics),
   // use the group's display name ("Graphics") rather than the underlying
   // sub-category name ("Images") that the UUID resolves to.
+  // Custom on-page headings for the browsable category pages.
+  const CATEGORY_HEADINGS: Record<string, string> = {
+    packaging: "Packaging Design Templates, PSD Mockups & Product Branding Assets",
+    mockups: "Professional Mockup Templates for Branding, Packaging & Marketing",
+    "psd-lab": "Editable PSD Templates for Branding, Packaging & Graphic Design",
+  }
   const heading =
-    CATEGORY_GROUPS[slug] && !type
+    CATEGORY_HEADINGS[slug] ??
+    (CATEGORY_GROUPS[slug] && !type
       ? CATEGORY_GROUPS[slug].name
-      : category?.name || "Resources"
+      : category?.name || "Resources")
 
   // Canonical URL always uses the slug
   const siteUrl = getSiteUrl()

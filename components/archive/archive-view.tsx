@@ -1,11 +1,10 @@
 import type { Product } from "@/types"
 import type { ApprovedSubcategory } from "@/actions/get-subcategories"
-import ArchiveCard from "./archive-card"
+import ArchiveInfinite from "./archive-infinite"
 import ArchiveFilterTabs from "./archive-filter-tabs"
 import ArchiveSubcategoryPills from "./archive-subcategory-pills"
 import { ArchiveFilterProvider } from "./archive-filter-provider"
 import ArchiveGridDimmer from "./archive-grid-dimmer"
-import ArchivePagination from "./archive-pagination"
 import SortFilter from "@/components/sort-filter"
 
 interface ArchiveViewProps {
@@ -15,6 +14,13 @@ interface ArchiveViewProps {
   page: number
   pageCount: number
   total: number
+  /** Passed to loadArchiveProducts for infinite scroll: "home" or a categoryId. */
+  scope: string
+  priceFilter?: "paid" | "free" | "all"
+  sortBy?: string
+  subcategoryId?: string
+  /** Items per page fetched as the user scrolls. */
+  pageSize: number
   /** Optional tagline shown under the heading (e.g. on the home page). */
   subtitle?: string
   /** Subcategory pills (empty → no pills row). */
@@ -34,6 +40,11 @@ export default function ArchiveView({
   products,
   page,
   pageCount,
+  scope,
+  priceFilter,
+  sortBy,
+  subcategoryId,
+  pageSize,
   subtitle,
   subcategories = [],
 }: ArchiveViewProps) {
@@ -47,8 +58,8 @@ export default function ArchiveView({
         {/* Toolbar: title + count (left) · filters + sort (right) */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-xl font-bold capitalize text-foreground sm:text-2xl">
-              {heading.toLowerCase()}
+            <h1 className="text-xl font-bold text-foreground sm:text-2xl">
+              {heading}
             </h1>
             {subtitle && (
               <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
@@ -77,14 +88,18 @@ export default function ArchiveView({
             {visible.length === 0 ? (
               <p className="py-16 text-center text-sm text-muted-foreground">No resources found.</p>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2100px]:grid-cols-6">
-                {visible.map((product) => (
-                  <ArchiveCard key={product.id} data={product} />
-                ))}
-              </div>
+              <ArchiveInfinite
+                key={`${scope}-${priceFilter ?? "all"}-${sortBy ?? "newest"}-${subcategoryId ?? ""}`}
+                initialProducts={products}
+                scope={scope}
+                priceFilter={priceFilter}
+                sortBy={sortBy}
+                subcategoryId={subcategoryId}
+                initialPage={page}
+                pageCount={pageCount}
+                pageSize={pageSize}
+              />
             )}
-
-            <ArchivePagination page={page} pageCount={pageCount} />
           </div>
         </ArchiveGridDimmer>
       </div>

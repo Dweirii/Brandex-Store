@@ -21,7 +21,7 @@ const BROWSE_HREF = "/category/mockups"
 // Marketing display figures — intentionally rounded/inflated, NOT the live catalogue counts.
 const MOCKUP_COUNT = "8,000+"
 const CATEGORY_COUNT = "45+"
-const PAGE_TITLE = "Mockup Templates — Editable PSD Scenes for Branding & Product Presentation | Brandex"
+const PAGE_TITLE = "Professional Mockup Templates for Branding, Packaging & Marketing"
 const PAGE_DESC =
   "Browse premium mockup templates for packaging, products, labels, and brand presentations. Fully editable high-resolution PSD scenes with smart objects and commercial licensing."
 

@@ -12,6 +12,9 @@ interface ArchiveSkeletonProps {
 const shimmer =
   "relative overflow-hidden bg-neutral-200/70 dark:bg-neutral-800/60 before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-white/55 before:to-transparent dark:before:via-white/10"
 
+// Varied ratios so the loading state mirrors the real variable-height masonry.
+const SKELETON_RATIOS = ["4 / 5", "1 / 1", "3 / 4", "4 / 3", "2 / 3", "5 / 6"]
+
 /** Shimmer skeleton for the archive's responsive grid (server-rendered). */
 export default function ArchiveSkeleton({ count = 12, withHeader = true, withPills = true, className }: ArchiveSkeletonProps) {
   return (
@@ -38,10 +41,14 @@ export default function ArchiveSkeleton({ count = 12, withHeader = true, withPil
         </>
       )}
 
-      {/* Grid */}
-      <div className={cn("grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 min-[2100px]:grid-cols-6", withHeader && "pt-6")}>
+      {/* Masonry placeholder — varied heights, CSS columns (matches the live grid) */}
+      <div className={cn("columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4 2xl:columns-5 min-[2100px]:columns-6", withHeader && "pt-6")}>
         {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className={cn(shimmer, "aspect-[4/5] rounded-[14px]")} />
+          <div
+            key={i}
+            className={cn(shimmer, "mb-5 w-full break-inside-avoid rounded-[14px]")}
+            style={{ aspectRatio: SKELETON_RATIOS[i % SKELETON_RATIOS.length] }}
+          />
         ))}
       </div>
     </div>

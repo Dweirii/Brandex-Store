@@ -21,7 +21,7 @@ const BROWSE_HREF = "/category/packaging"
 // Marketing display figures — intentionally rounded/inflated, NOT the live catalogue counts.
 const TEMPLATE_COUNT = "12,000+"
 const CATEGORY_COUNT = "60+"
-const PAGE_TITLE = "Packaging Design Templates — Print-Ready PSD, AI & EPS | Brandex"
+const PAGE_TITLE = "Packaging Design Templates, PSD Mockups & Product Branding Assets"
 const PAGE_DESC =
   "Browse hundreds of print-ready packaging design templates — boxes, pouches, bottles, cans, labels and more across dozens of categories. Fully editable PSD, AI & EPS with accurate dielines and a commercial license. Instant download."
 

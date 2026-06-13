@@ -23,6 +23,7 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { WelcomeCreditsPopup } from "@/components/welcome-credits-popup";
 import { AuthAnalytics } from "@/components/auth-analytics";
+import { MetaPixelRouteTracker } from "@/components/meta-pixel-route-tracker";
 
 const font = Urbanist({
   subsets: ["latin"],
@@ -212,6 +213,7 @@ export default async function RootLayout({
               <WelcomeCreditsPopup />
               <CookieConsent />
               <AuthAnalytics />
+              <MetaPixelRouteTracker />
             </Providers>
           </ThemeProvider>
           <Analytics />

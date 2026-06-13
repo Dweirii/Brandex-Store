@@ -14,6 +14,7 @@ import Currency from "@/components/ui/currency"
 import { Separator } from "@/components/ui/separator"
 import useCart from "@/hooks/use-cart"
 import { TrustBadges } from "@/components/trust-badges"
+import { metaInitiateCheckout } from "@/lib/meta-pixel"
 
 const Summary = () => {
   const searchParams = useSearchParams()
@@ -152,6 +153,13 @@ const Summary = () => {
       )
 
       if (response.data?.url) {
+        // Meta Pixel InitiateCheckout — heading to the payment provider.
+        metaInitiateCheckout({
+          value: totalPrice,
+          currency: "USD",
+          content_ids: productIds,
+          num_items: productIds.length,
+        })
         window.location.href = response.data.url
       } else {
         throw new Error("No redirect URL in response")

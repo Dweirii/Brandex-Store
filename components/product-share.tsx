@@ -88,9 +88,9 @@ const ProductShare = ({ productId, productName }: ProductShareProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2 shrink-0" aria-label="Share">
           <Share2 className="h-4 w-4" />
-          Share
+          <span className="hidden sm:inline">Share</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">

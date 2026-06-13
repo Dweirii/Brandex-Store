@@ -43,12 +43,16 @@ async function HomeArchive({
 
   return (
     <ArchiveView
-      heading="All resources"
+      heading="Premium PSD Mockups, Packaging Templates & Design Resources"
       subtitle="Premium and free design resources, all in one place."
       products={products}
       page={page}
       pageCount={pageCount}
       total={total}
+      scope="home"
+      priceFilter={priceFilter}
+      sortBy={sortBy}
+      pageSize={PAGE_SIZE}
     />
   )
 }

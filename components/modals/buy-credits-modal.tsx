@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button"
 import { useBuyCreditsModal } from "@/hooks/use-buy-credits-modal"
 import { useCredits } from "@/hooks/use-credits"
 import { useToast } from "@/components/ui/use-toast"
+import { metaInitiateCheckout } from "@/lib/meta-pixel"
 
 const storeId = process.env.NEXT_PUBLIC_DEFAULT_STORE_ID || "a940170f-71ea-4c2b-b0ec-e2e9e3c68567"
 
@@ -48,6 +49,13 @@ export function BuyCreditsModal() {
           JSON.stringify({ packId, ...CREDIT_PACKS[packId] }),
         )
       } catch { /* ignore */ }
+      // Meta Pixel InitiateCheckout — user is heading to Stripe to pay.
+      metaInitiateCheckout({
+        value: CREDIT_PACKS[packId].price,
+        currency: "USD",
+        content_ids: [packId],
+        num_items: 1,
+      })
       window.location.href = result.url
     }
   }

@@ -512,6 +512,8 @@
   position: relative;
   display: block;
   width: 100%;
+  /* aspect-ratio is set inline per-card from the image's natural dimensions
+     (defaults to 4/5 until loaded) so the masonry gets real variable heights. */
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: #eef0f2;

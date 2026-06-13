@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react"
 import useRecentlyViewed from "@/hooks/use-recently-viewed"
 import { trackViewItem } from "@/lib/analytics"
+import { metaViewContent } from "@/lib/meta-pixel"
 import type { Product } from "@/types"
 
 interface ProductViewTrackerProps {
@@ -27,6 +28,13 @@ const ProductViewTracker = ({ product }: ProductViewTrackerProps) => {
       item_name: product.name,
       item_category: product.category?.name,
       price: Number(product.price) || 0,
+    })
+    // Meta Pixel ViewContent (value is the product's price field — see report note on credits vs USD)
+    metaViewContent({
+      content_ids: [product.id],
+      content_name: product.name,
+      value: Number(product.price) || 0,
+      currency: "USD",
     })
   }, [product])
 

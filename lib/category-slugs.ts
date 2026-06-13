@@ -58,7 +58,8 @@ export const SLUG_TO_GROUP_MAP: Record<string, string> = {
     "mockup-studio": "mockups",
     // "images" intentionally omitted — IMAGES is hidden from the storefront
     "vectors": "graphics",
-    "psd-lab": "graphics",
+    // "psd-lab" intentionally omitted — PSD is shown as its own browsable
+    // top-level category (/category/psd-lab), not nested under the Graphics group.
 };
 
 /** Slug → UUID (reverse of CATEGORY_SLUG_MAP) */

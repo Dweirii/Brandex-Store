@@ -15,10 +15,11 @@ interface DesktopNavbarSectionProps {
 }
 
 // The top nav always shows ONLY these links (in this order), regardless of what
-// else exists in the data (Images, Motion, PSD, Vectors, etc. are hidden).
+// else exists in the data (Images, Motion, Vectors, etc. are hidden).
 const NAV_LINKS = [
   { label: "Packaging", href: "/category/packaging" },
   { label: "Mockups", href: "/category/mockups" },
+  { label: "PSD", href: "/category/psd-lab" },
 ]
 
 export function DesktopNavbarSection({ categories }: DesktopNavbarSectionProps) {

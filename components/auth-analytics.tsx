@@ -43,8 +43,11 @@ export function AuthAnalytics() {
       /* sessionStorage unavailable — fall through and fire anyway */
     }
 
-    if (isNewSignUp) trackSignUp("Clerk")
-    else trackLogin("Clerk")
+    const provider = user.externalAccounts?.[0]?.provider
+    const method = provider ? provider.replace(/^oauth_/, "") : "email"
+
+    if (isNewSignUp) trackSignUp(method)
+    else trackLogin(method)
   }, [isLoaded, isSignedIn, user])
 
   return null

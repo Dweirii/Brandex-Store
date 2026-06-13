@@ -183,11 +183,11 @@ export function generateHomeMetadata(): Metadata {
   const description = "Premium mockups, packaging designs & layered PSD files for designers & marketers. Professional quality, instant download. Shop now at Brandex!";
 
   return {
-    title: "Brandex — Premium Mockups & Design Resources",
+    title: "Premium PSD Mockups, Packaging Templates & Design Resources",
     description,
     keywords: "mockups, packaging design, PSD files, design resources, brand assets, premium designs, design templates, professional mockups",
     openGraph: {
-      title: "Brandex — Premium Mockups & Design Resources",
+      title: "Premium PSD Mockups, Packaging Templates & Design Resources",
       description,
       url: siteUrl,
       siteName: "Brandex",
@@ -203,7 +203,7 @@ export function generateHomeMetadata(): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Brandex — Premium Mockups & Design Resources",
+      title: "Premium PSD Mockups, Packaging Templates & Design Resources",
       description,
       images: [defaultImage],
     },

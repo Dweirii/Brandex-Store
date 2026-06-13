@@ -10,7 +10,7 @@ import Link from "next/link"
 import { useAuth } from "@clerk/nextjs"
 import { useCredits } from "@/hooks/use-credits"
 import { useFileSize } from "@/hooks/use-file-size"
-import { formatBytes } from "@/lib/utils"
+import { cn, formatBytes } from "@/lib/utils"
 import { getProductDimensions } from "@/lib/product-specs"
 import { getDisplayImageUrl } from "@/lib/image-utils"
 
@@ -114,6 +114,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
   const dimensions    = getProductDimensions(data.category?.id)
   const [mounted, setMounted] = useState(false)
   const [tagsExpanded, setTagsExpanded] = useState(false)
+  const [descExpanded, setDescExpanded] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
@@ -124,6 +125,9 @@ const Info: React.FC<InfoProps> = ({ data }) => {
 
   const currentBalance = mounted && isSignedIn ? (balance ?? 0) : 0
   const creditsNeeded = Math.max(0, productPrice - currentBalance)
+
+  const descriptionText = data.description?.trim() ?? ""
+  const isLongDesc = descriptionText.length > 300
 
   const downloadsLabel = getDisplayDownloadCount(data.id, data.downloadCount)
   const rawPreviewImage = data.images?.find((img) => img?.url)?.url
@@ -313,6 +317,32 @@ const Info: React.FC<InfoProps> = ({ data }) => {
           </div>
         )}
       </div>
+
+      {/* Description */}
+      {descriptionText && (
+        <div className="space-y-3">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            Description
+          </h2>
+          <p
+            className={cn(
+              "text-sm sm:text-[15px] leading-relaxed text-foreground/80 whitespace-pre-line",
+              isLongDesc && !descExpanded && "line-clamp-5",
+            )}
+          >
+            {descriptionText}
+          </p>
+          {isLongDesc && (
+            <button
+              type="button"
+              onClick={() => setDescExpanded((v) => !v)}
+              className="text-xs font-semibold text-primary hover:underline"
+            >
+              {descExpanded ? "Show less" : "Read more"}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* What's included */}
       <div className="space-y-3">

@@ -16,6 +16,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { trackGenerateLead } from "@/lib/analytics";
+import { metaLead } from "@/lib/meta-pixel";
 
 declare global {
   interface Window {
@@ -28,6 +29,9 @@ function trackLeadSubmission(needsCount: number) {
 
   // GA4 standard lead event (GTM → GA4 → imported into Google Ads as a conversion)
   trackGenerateLead({ value: 1, form_name: "intake_request" });
+
+  // Meta Pixel Lead (fires only here, after a successful submit)
+  metaLead({ content_name: "intake_request" });
 
   // Keep the custom event in case existing GTM triggers rely on it.
   try {

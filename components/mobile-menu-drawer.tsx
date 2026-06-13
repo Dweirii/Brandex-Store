@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: "All", href: "/" },
   { label: "Packaging", href: "/category/packaging" },
   { label: "Mockups", href: "/category/mockups" },
+  { label: "PSD", href: "/category/psd-lab" },
 ]
 
 const SECONDARY_LINKS = [

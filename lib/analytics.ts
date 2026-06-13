@@ -118,11 +118,11 @@ export function trackGenerateLead(p: { value?: number; form_name?: string } = {}
 }
 
 /** Fired when a brand-new account is created. */
-export function trackSignUp(method = "Clerk") {
+export function trackSignUp(method = "email") {
   push("sign_up", { method });
 }
 
 /** Fired when an existing user signs in. */
-export function trackLogin(method = "Clerk") {
+export function trackLogin(method = "email") {
   push("login", { method });
 }

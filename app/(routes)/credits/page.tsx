@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { useCredits } from "@/hooks/use-credits";
 import { useBuyCreditsModal } from "@/hooks/use-buy-credits-modal";
 import { trackPurchase } from "@/lib/analytics";
+import { metaPurchase } from "@/lib/meta-pixel";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -67,6 +68,14 @@ function CreditsPageContent() {
               item_category: "credits",
               price: pending.price,
             }],
+          });
+          // Meta Pixel Purchase (real-money credit-pack purchase)
+          metaPurchase({
+            value: pending.price,
+            currency: "USD",
+            content_ids: [pending.packId],
+            content_type: "product",
+            num_items: 1,
           });
         }
       } catch { /* ignore */ }
